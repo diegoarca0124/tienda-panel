@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+	<title>Panel</title>
+	<base href="/">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="icon" type="image/x-icon" href="favicon.ico">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Nata+Sans:wght@100..900&display=swap" rel="stylesheet">
+	<link href="plugins/global/plugins.bundle.css" rel="stylesheet" type="text/css" />
+	<link href="css/style.bundle.css" rel="stylesheet" type="text/css" />
+	<link rel="stylesheet" href="css/theme.css">
+	<style>
+		
+		html, body {
+		height: 100%;
+		margin: 0;
+		padding: 0;
+		overflow: hidden;
+		}
+
+		#kt_app_root {
+			height: 100%;
+			overflow-y: auto;
+			-ms-overflow-style: none;
+			scrollbar-width: none;     
+		}
+
+		#kt_app_root::-webkit-scrollbar {
+		display: none;          
+		}
+		.form-outline-selector .ng-select-container {
+			border: 0px !important;
+			padding-left: 0px !important;
+			padding-right: 0px !important;
+			font-size: 1rem;
+			color: #191919 !important;
+			border-radius: 0px !important;
+			box-shadow: none !important
+		}
+		.form-outline-selector .ng-select-container .ng-value-container .ng-input{
+			padding-left: 0px !important;
+		}
+		.invalid-feedback {
+			position: absolute;
+			bottom: -13px !important; /* o el valor que necesites */
+			left: 0;
+		}
+		.pb-8px{
+			padding-bottom: 8px;
+		}
+
+		.mb-8{
+			margin-bottom: 2rem !important;
+		}
+
+		.ng-select-container{
+			border: 1px solid #DBDFE9 !important;
+			border-radius: 0px !important;
+			height: 46.53px !important;
+		}
+
+		.ng-value,.ng-option{
+			font-size: 1.1rem !important;
+			font-family: "Lexend" !important;
+			color: #4B5675 !important;
+    		font-weight: 500;
+		}
+
+		.ng-placeholder{
+			font-size: 1.1rem !important;
+			font-family: "Lexend" !important;
+			color: #9da1bc !important;
+    		font-weight: 500;
+		}
+
+		
+	
+	</style>
+</head>
+<body id="kt_app_body" data-kt-app-layout="dark-sidebar" data-kt-app-header-fixed="true" data-kt-app-sidebar-enabled="true" data-kt-app-sidebar-fixed="true" data-kt-app-sidebar-hoverable="true" data-kt-app-sidebar-push-header="true" data-kt-app-sidebar-push-toolbar="true" data-kt-app-sidebar-push-footer="true" data-kt-app-toolbar-enabled="true" class="app-default">
+	<div class="d-flex flex-column flex-root app-root" id="kt_app_root">
+		<app-root style="height: 100% !important;"></app-root>
+	</div>
+
+  <script src="plugins/global/plugins.bundle.js"></script>
+  <script src="js/scripts.bundle.js"></script>
+	<script src="plugins/custom/datatables/datatables.bundle.js"></script>
+	<script src="js/widgets.bundle.js"></script>
+	<script src="js/custom/widgets.js"></script>
+	<script src="js/prism.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+	<script src="https://momentjs.com/downloads/moment.js"></script>
+	<script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+	<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+	<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+</body>
+</html>

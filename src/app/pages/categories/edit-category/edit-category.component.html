@@ -1,0 +1,493 @@
+<div class="app-page flex-column flex-column-fluid" id="kt_app_page">
+	<app-topbar></app-topbar>
+	<div class="app-wrapper flex-column flex-row-fluid" id="kt_app_wrapper">
+		<app-sidebar></app-sidebar>
+		<div class="app-main flex-column flex-row-fluid">
+			<div class="d-flex flex-column flex-column-fluid">
+				<div id="kt_app_toolbar" class="app-toolbar py-5 py-lg-6">
+					<div id="kt_app_toolbar_container" class="app-container container-fluid d-flex flex-stack">
+						<div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
+							<h1 class="page-heading d-flex text-dark fw-bold fs-3 flex-column justify-content-center my-0">Categorías</h1>
+
+							<ul class="breadcrumb breadcrumb-separatorless fw-semibold fs-7 my-0 pt-1">
+								<li class="breadcrumb-item text-muted">
+									<a [routerLink]="['/products/categories']" class="text-muted text-hover-primary"> Categorías </a>
+								</li>
+								<li class="breadcrumb-item">
+									<span class="bullet bg-gray-400 w-5px h-2px"></span>
+								</li>
+								<li class="breadcrumb-item text-primary">Editar categoría</li>
+							</ul>
+						</div>
+						<div class="d-flex align-items-center gap-2 gap-lg-3"></div>
+					</div>
+				</div>
+				<div class="app-content flex-column-fluid">
+					<div class="app-container container">
+						<div class="card mb-10">
+							<!--begin::Card header-->
+							<div class="card-header">
+								<!--begin::Heading-->
+								<h4 class="card-title m-0 d-flex flex-column">
+									<span class="fs-5">Editar Categoría</span>
+									<span class="text-gray-600 mt-1 fw-400 fs-0-9rem">
+										Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eligendi, quaerat..
+									</span>
+								</h4>
+								<!--end::Heading-->
+							</div>
+							<!--end::Card header-->
+
+							<!--begin::Card body-->
+							<div class="card-body p-0" *ngIf="!loading">
+								<!--begin::Table wrapper-->
+								<div class="table-responsive mb-5" *ngIf="!errorMsmServerGetCategory">
+									<!--begin::Table-->
+									<table class="table align-middle table-row-bordered table-row-solid gy-4 gs-9 mb-0">
+										<!--begin::Tbody-->
+										<tbody class="fw-6">
+											<tr>
+												<td class="py-5 font-normal w-350px">
+													<label class="fs-6 text-gray-700 required">Título</label>
+													<div class="text-muted fs-8">
+														<small>Título de la categoría.</small>
+													</div>
+												</td>
+												<td class="py-5 text-gray-800 font-normaltext-sm">
+													<div class="position-relative pb-8px min-w-400px">
+														<input
+															type="text"
+															class="form-control"
+															placeholder="Computers & Accessories"
+															name="name"
+															[(ngModel)]="category.name"
+															[ngClass]="{ 'is-invalid': errorsCategory?.name }"
+														/>
+														<!--end::Input-->
+														<div class="invalid-feedback mt-0" *ngIf="errorsCategory?.name">
+															<small>
+																{{ errorsCategory?.name[0] || '' }}
+															</small>
+														</div>
+													</div>
+												</td>
+											</tr>
+											<tr>
+												<td class="py-5 font-normal">
+													<label class="fs-6 text-gray-700 required">Descripción</label>
+													<div class="text-muted fs-8">
+														<small>Descripción de la categoría.</small>
+													</div>
+												</td>
+												<td class="py-5 text-gray-800 font-normaltext-sm">
+													<div class="position-relative pb-8px min-w-400px">
+														<textarea
+															type="text"
+															class="form-control"
+															placeholder="Descripción de la categoría"
+															name="description"
+															[(ngModel)]="category.description"
+															[ngClass]="{ 'is-invalid': errorsCategory?.description }"
+														></textarea>
+														<!--end::Input-->
+														<div class="invalid-feedback mt-0" *ngIf="errorsCategory?.description">
+															<small>
+																{{ errorsCategory?.description[0] || '' }}
+															</small>
+														</div>
+													</div>
+												</td>
+											</tr>
+											<tr>
+												<td class="py-5 text-gray-800 font-normaltext-sm" colspan="2">
+													<div class="mb-5">
+														<label class="fs-6 text-gray-700 mt-2 required">Icono</label>
+														<div class="text-muted fs-8">
+															<small> Icono visible en la tienda. </small>
+														</div>
+													</div>
+
+													<div class="position-relative pb-8px min-w-400px">
+														<textarea
+															name="icon"
+															[(ngModel)]="category.icon"
+															class="form-control"
+															[ngClass]="{ 'is-invalid': errorsCategory?.icon }"
+															placeholder="Código SVG"
+															style="height: 300px"
+														></textarea>
+
+														<!--end::Input-->
+														<div class="invalid-feedback mt-0 d-block" *ngIf="errorsCategory?.icon">
+															<small>{{ errorsCategory?.icon[0] }}</small>
+														</div>
+													</div>
+												</td>
+											</tr>
+										</tbody>
+										<!--end::Tbody-->
+									</table>
+									<!--end::Table-->
+								</div>
+								<!--end::Table wrapper-->
+								<ng-container *ngIf="errorMsmServerGetCategory">
+									<app-not-found [error]="errorMsmServerGetCategory"></app-not-found>
+								</ng-container>
+							</div>
+							<div class="card-body p-0" *ngIf="loading">
+								<!--begin::Table wrapper-->
+								<div class="table-responsive mb-5">
+									<!--begin::Table-->
+									<table class="table align-middle table-row-bordered table-row-solid gy-4 gs-9 mb-0">
+										<!--begin::Tbody-->
+										<tbody class="fw-6">
+											<tr>
+												<td class="py-5 font-normal w-350px">
+													<label class="fs-6 text-gray-700 required">Título</label>
+													<div class="text-muted fs-8">
+														<small>Título de la categoría.</small>
+													</div>
+												</td>
+												<td class="py-5 text-gray-800 font-normaltext-sm">
+													<div class="position-relative pb-8px min-w-400px">
+														<div class="d-flex justify-content-end gap-2">
+															<div class="form-control-solid form-control-load" style="height: 43.56px; width: 100%"></div>
+														</div>
+													</div>
+												</td>
+											</tr>
+											<tr>
+												<td class="py-5 font-normal">
+													<label class="fs-6 text-gray-700 required">Descripción</label>
+													<div class="text-muted fs-8">
+														<small>Descripción de la categoría.</small>
+													</div>
+												</td>
+												<td class="py-5 text-gray-800 font-normaltext-sm">
+													<div class="position-relative pb-8px min-w-400px">
+														<div class="d-flex justify-content-end gap-2">
+															<div class="form-control-solid form-control-load" style="height: 65px; width: 100%"></div>
+														</div>
+													</div>
+												</td>
+											</tr>
+											<tr>
+												<td class="py-5 text-gray-800 font-normaltext-sm" colspan="2">
+													<div class="mb-5">
+														<label class="fs-6 text-gray-700 mt-2 required">Icono</label>
+														<div class="text-muted fs-8">
+															<small> Icono visible en la tienda. </small>
+														</div>
+													</div>
+
+													<div class="position-relative pb-8px min-w-400px">
+														<div class="position-relative pb-8px min-w-400px">
+															<div class="d-flex justify-content-end gap-2">
+																<div class="form-control-solid form-control-load" style="height: 300px; width: 100%"></div>
+															</div>
+														</div>
+													</div>
+												</td>
+											</tr>
+										</tbody>
+										<!--end::Tbody-->
+									</table>
+									<!--end::Table-->
+								</div>
+							</div>
+
+							<!--end::Card body-->
+							<div class="card-footer">
+								<button
+									class="btn btn-sm btn-primary my-1 cursor-pointer"
+									[disabled]="loading || loadBtn || errorMsmServerGetCategory"
+									(click)="!loading && !loadBtn && !errorMsmServerGetCategory && update()"
+									type="button"
+								>
+									<ng-container *ngIf="loadBtn">
+										<span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
+										<span role="status">Procesando...</span>
+									</ng-container>
+
+									<ng-container *ngIf="!loadBtn"> Actualizar categoría </ng-container>
+								</button>
+							</div>
+						</div>
+
+						<div class="card mb-10" *ngIf="!errorMsmServerGetCategory">
+							<div class="card-header">
+								<!--begin::Heading-->
+								<h4 class="card-title m-0 d-flex flex-column">
+									<span class="fs-5">Subcategorías</span>
+									<span class="text-gray-600 mt-1 fw-400 fs-0-9rem">
+										Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eligendi, quaerat..
+									</span>
+								</h4>
+								<!--end::Heading-->
+							</div>
+							<div class="card-body p-0" *ngIf="!loadingSubcategories">
+								<!--begin::Table wrapper-->
+								<div class="table-responsive mb-5" *ngIf="!errorMsmServerGetCategory">
+									<!--begin::Table-->
+									<table class="table align-middle table-row-bordered table-row-solid gy-4 gs-9 mb-0">
+										<!--begin::Tbody-->
+										<tbody class="fw-6">
+											<tr>
+												<td class="py-5 font-normal w-350px">
+													<label class="fs-6 text-gray-700 required">Título</label>
+													<div class="text-muted fs-8">
+														<small>Título de la categoría.</small>
+													</div>
+												</td>
+												<td class="py-5 text-gray-800 font-normaltext-sm">
+													<div class="position-relative pb-8px min-w-400px">
+														<input
+															type="text"
+															class="form-control"
+															placeholder="Computers & Accessories"
+															name="name"
+															[(ngModel)]="subcategory.name"
+															[ngClass]="{ 'is-invalid': errorsSubcategory?.name }"
+														/>
+														<!--end::Input-->
+														<div class="invalid-feedback mt-0" *ngIf="errorsSubcategory?.name">
+															<small>
+																{{ errorsSubcategory?.name[0] || '' }}
+															</small>
+														</div>
+													</div>
+												</td>
+											</tr>
+											<tr>
+												<td class="py-5 font-normal w-350px">
+													<label class="fs-6 text-gray-700 required">Icono</label>
+													<div class="text-muted fs-8">
+														<small>Icono visible en la tienda.</small>
+													</div>
+												</td>
+												<td class="py-5 text-gray-800 font-normaltext-sm">
+													<div class="position-relative pb-8px min-w-400px">
+														<textarea
+															name="icon"
+															[(ngModel)]="subcategory.icon"
+															class="form-control"
+															[ngClass]="{ 'is-invalid': errorsSubcategory?.icon }"
+															placeholder="Código SVG"
+														></textarea>
+														<!--end::Input-->
+														<div class="invalid-feedback mt-0" *ngIf="errorsSubcategory?.icon">
+															<small>
+																{{ errorsSubcategory?.icon[0] || '' }}
+															</small>
+														</div>
+													</div>
+												</td>
+											</tr>
+										</tbody>
+										<!--end::Tbody-->
+									</table>
+									<!--end::Table-->
+								</div>
+							</div>
+							<div class="card-body p-0" *ngIf="loadingSubcategories">
+								<!--begin::Table wrapper-->
+								<div class="table-responsive mb-5">
+									<!--begin::Table-->
+									<table class="table align-middle table-row-bordered table-row-solid gy-4 gs-9 mb-0">
+										<!--begin::Tbody-->
+										<tbody class="fw-6">
+											<tr>
+												<td class="py-5 font-normal w-350px">
+													<label class="fs-6 text-gray-700 required">Título</label>
+													<div class="text-muted fs-8">
+														<small>Título de la categoría.</small>
+													</div>
+												</td>
+												<td class="py-5 text-gray-800 font-normaltext-sm">
+													<div class="position-relative pb-8px min-w-400px">
+														<div class="d-flex justify-content-end gap-2">
+															<div class="form-control-solid form-control-load" style="height: 43.56px; width: 100%"></div>
+														</div>
+													</div>
+												</td>
+											</tr>
+											<tr>
+												<td class="py-5 font-normal w-350px">
+													<label class="fs-6 text-gray-700 required">Título</label>
+													<div class="text-muted fs-8">
+														<small>Título de la categoría.</small>
+													</div>
+												</td>
+												<td class="py-5 text-gray-800 font-normaltext-sm">
+													<div class="position-relative pb-8px min-w-400px">
+														<div class="d-flex justify-content-end gap-2">
+															<div class="form-control-solid form-control-load" style="height: 65px; width: 100%"></div>
+														</div>
+													</div>
+												</td>
+											</tr>
+										</tbody>
+										<!--end::Tbody-->
+									</table>
+									<!--end::Table-->
+								</div>
+							</div>
+							<div class="card-body pt-0 d-flex gap-3">
+								<button
+									class="btn btn-sm btn-primary my-1 cursor-pointer"
+									[disabled]="loadingSubcategories || loadBtnSubcat || errorMsmServerGetSubcategory"
+									(click)="!loadingSubcategories && !loadBtnSubcat && !errorMsmServerGetSubcategory && add()"
+									type="button"
+								>
+									<ng-container *ngIf="loadBtnSubcat">
+										<span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
+										<span role="status">Procesando...</span>
+									</ng-container>
+
+									<ng-container *ngIf="!loadBtnSubcat">
+										{{ typeForm == 'edit' ? 'Actualizar' : 'Agregar' }}
+									</ng-container>
+								</button>
+
+								<button class="btn btn-sm btn-warning my-1 cursor-pointer text-dark" *ngIf="typeForm == 'edit'" (click)="cancelEdit()">
+									Cancelar Edición
+								</button>
+							</div>
+							<div class="table-responsive" style="overflow-y: auto">
+								<table
+									class="table table-bordered table-striped align-middle mb-0 bg-white"
+									[ngClass]="{
+										'h-100': subcategories.length == 0 && !loadingSubcategories,
+										'table-hover': subcategories.length >= 1,
+									}"
+								>
+									<tbody *ngIf="!loadingSubcategories">
+										<ng-container *ngIf="subcategories.length >= 1">
+											<tr *ngFor="let item of subcategories">
+												<td class="h-58px">
+													<div class="d-flex align-items-center gap-2">
+														<div class="symbol me-3">
+															<span
+																class="symbol-label fw-bold"
+																style="height: 36px; width: 36px; border: 1px dashed #e3e3e3"
+																[innerHTML]="item.icon | safeHtml"
+															>
+															</span>
+														</div>
+														<div class="d-flex flex-column">
+															<a class="text-decoration-none text-dark">
+																{{ item.name }}
+															</a>
+															<small class="text-gray-600">{{ item.slug }}</small>
+														</div>
+													</div>
+												</td>
+												<td class="h-58px">
+													<span
+														class="badge rounded-pill text-dark fw-700"
+														[ngClass]="{ 'bg-outline-danger': !item.status, 'bg-outline-success': item.status }"
+													>
+														<span
+															class="d-inline-block bg-danger rounded-circle me-1"
+															style="width: 8px; height: 8px"
+															[ngClass]="{ 'bg-danger': !item.status, 'bg-success': item.status }"
+														></span>
+														{{ item.status ? 'Activo' : 'Inactivo' }}
+													</span>
+												</td>
+												<td class="text-end position-relative h-58px">
+													<div class="dropdown">
+														<button
+															class="btn btn-light btn-sm border-dashed dropdown-toggle"
+															data-bs-toggle="dropdown"
+															aria-expanded="false"
+															style="padding-right: 10.25px !important; padding-left: 10.25px !important"
+														>
+															<i class="bi bi-three-dots-vertical"></i>
+														</button>
+														<app-modal-delete
+															[id]="'modalDelete-' + item.id"
+															[title]="item.status ? 'Desactivar Categoría' : 'Activar Categoría'"
+															[description]="
+																item.status
+																	? '¿Estás seguro de que deseas desactivar esta categoría?'
+																	: '¿Estás seguro de que deseas activar esta categoría?'
+															"
+															[textButton]="item.status ? 'Desactivar' : 'Activar'"
+															(actionConfirmed)="setStatus(item.id, item.status)"
+															[loadBtnDelete]="loadBtnDelete"
+														>
+														</app-modal-delete>
+
+														<div id="dropdown" class="dropdown-menu" data-bs-display="static">
+															<a class="dropdown-item cursor-pointer" (click)="editSubcategory(item)"> <i class="bi bi-pen me-2"></i>Editar </a>
+															<a class="dropdown-item cursor-pointer" data-bs-toggle="modal" [attr.data-bs-target]="'#modalDelete-' + item?.id">
+																<i *ngIf="item?.status" class="bi bi-x-lg me-2"></i>
+																<i *ngIf="!item?.status" class="bi bi-check2 me-2"></i>
+																{{ item?.status ? 'Desactivar' : 'Activar' }}
+															</a>
+														</div>
+													</div>
+												</td>
+											</tr>
+										</ng-container>
+									</tbody>
+
+									<!-- INICIO PRECARGADOR -->
+									<tbody *ngIf="loadingSubcategories">
+										<tr *ngFor="let item of arrDataSkull">
+											<td class="h-58px">
+												<div class="d-flex align-items-center gap-2">
+													<div class="form-control-solid form-control-load" style="width: 36px; height: 36px"></div>
+													<!-- Esto puede quedar así, es pequeño pero fijo -->
+													<div class="d-flex flex-column gap-2" style="width: 300px">
+														<!-- Esto permitirá que el contenido se ajuste -->
+														<div class="form-control-solid form-control-load" style="height: 13px; width: 60%; max-width: 120px"></div>
+														<!-- 60% o max-width -->
+														<div class="form-control-solid form-control-load" style="height: 9px; width: 40%; max-width: 80px"></div>
+														<!-- 40% o max-width -->
+													</div>
+												</div>
+											</td>
+
+											<td class="h-58px">
+												<div class="form-control-solid form-control-load" style="height: 21.05px; width: 71.4px; border-radius: 50rem"></div>
+											</td>
+
+											<td class="d-flex justify-content-end h-58px">
+												<div class="form-control-solid form-control-load" style="height: 36.48px; width: 40.05px"></div>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+
+						<div class="d-flex flex-column mb-10">
+							<ng-container *ngIf="!loading">
+								<ng-container *ngIf="!errorMsmServerGetCategory">
+									<small class="text-muted fs-8"> Creación: {{ category.createdAt | date: 'medium' }} </small>
+									<small class="text-muted fs-8"> Actualización: {{ category.updatedAt | date: 'medium' }} </small>
+									<small class="text-muted fs-8">
+										Estado:
+										<ng-container *ngIf="category.statusAt">
+											{{ category.statusAt | date: 'medium' }}
+										</ng-container>
+										<ng-container *ngIf="!category.statusAt"> --- </ng-container>
+									</small>
+								</ng-container>
+							</ng-container>
+							<ng-container *ngIf="loading">
+								<div class="d-flex flex-column gap-2">
+									<div class="form-control-solid form-control-load" style="width: 200px; height: 10px"></div>
+									<div class="form-control-solid form-control-load" style="width: 200px; height: 10px"></div>
+									<div class="form-control-solid form-control-load" style="width: 200px; height: 10px"></div>
+								</div>
+							</ng-container>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

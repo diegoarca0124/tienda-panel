@@ -1,0 +1,30 @@
+<input
+  type="file"
+  [id]="inputId"
+  class="d-none"
+  accept="image/*"
+  (change)="onFileChange($event)"
+/>
+<div class="w-100">
+  <label [for]="inputId" class="upload-label flex-fill" [ngClass]="{'border-danger': hasError }" 
+  style="justify-content: space-between;" [title]="fileName">
+ 
+    <ng-container *ngIf="imagePreview; else emptyState">
+      <div class="d-flex align-items-center gap-3">
+        <img [src]="imagePreview" alt="Preview" class="preview-img" style="border-radius: 5px;"/>
+        <span class="file-name">{{ fileName }}</span>
+      </div>
+      <button
+        type="button"
+        class="btn-clear"
+        (click)="clearImage(); $event.stopPropagation()"
+      >
+        ✕
+      </button>
+    </ng-container>
+
+    <ng-template #emptyState>
+      <span class="placeholder-text">Upload image here</span>
+    </ng-template>
+  </label>
+</div>

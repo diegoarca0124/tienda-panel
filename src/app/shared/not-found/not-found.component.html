@@ -1,0 +1,17 @@
+<div class="d-flex flex-column align-items-center justify-content-center py-15">
+	<span class="badge bg-primary border border-primary mb-3 text-white"> {{ error.statusCode }} {{ error.error }} </span>
+
+	<h3 class="fs-4 fw-semibold text-center mb-2">
+		{{ error.message || 'Página no encontrada' }}
+	</h3>
+
+	<div class="text-center text-gray-600 mb-4">
+		<!-- ✅ Para todos los errores 5xx -->
+		<span *ngIf="error.statusCode >= 500 && error.statusCode < 600">
+			Ha ocurrido un error. Estamos trabajando para solucionarlo, intenta de nuevo en unos momentos.
+		</span>
+
+		<!-- ✅ Para todos los errores 4xx -->
+		<span *ngIf="error.statusCode >= 400 && error.statusCode < 500"> Solicitud no válida. Verifica los datos antes de continuar. </span>
+	</div>
+</div>

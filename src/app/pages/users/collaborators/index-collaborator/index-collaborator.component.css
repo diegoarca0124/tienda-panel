@@ -1,0 +1,8 @@
+.content-table-responsive {
+	height: calc(100vh - 350px);
+}
+
+.dropdown-menu {
+	position: fixed !important; /* o absolute, pero usando popper */
+	z-index: 1050; /* mayor que la tabla */
+}

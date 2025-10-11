@@ -1,0 +1,5 @@
+.txt-body {
+	white-space: normal; /* Permite que el texto haga salto de línea */
+	word-wrap: break-word; /* Rompe palabras largas si es necesario */
+	overflow-wrap: break-word; /* Alternativa moderna */
+}
