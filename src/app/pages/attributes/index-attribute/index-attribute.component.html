@@ -64,15 +64,15 @@
 													placeholder="Buscar atributo"
 													name="filter"
 													[(ngModel)]="filter"
-													(keyup.ENTER)="redirect()"
+													(keyup.ENTER)="onFilterOrStatusChange()"
 												/>
-												<i class="bi bi-search position-absolute cursor-pointer" style="right: 20px" (click)="redirect()"></i>
+												<i class="bi bi-search position-absolute cursor-pointer" style="right: 20px" (click)="onFilterOrStatusChange()"></i>
 											</div>
 										</div>
 
 										<div class="d-flex flex-column gap-2">
 											<span class="text-gray-500 fs-7 me-2 fw-500">Estado</span>
-											<select class="form-select w-auto" name="status" [(ngModel)]="status" (change)="redirect()">
+											<select class="form-select w-auto" name="status" [(ngModel)]="status" (change)="onFilterOrStatusChange()">
 												<option value="Todos">Todos</option>
 												<option value="Activos">Activos</option>
 												<option value="Inactivos">Inactivos</option>
@@ -94,7 +94,7 @@
 												[clearable]="false"
 												[closeOnSelect]="false"
 												class="select-categories"
-												(change)="redirect()"
+												(change)="onFilterOrStatusChange()"
 												[loading]="loadingCategories"
 												[disabled]="loadingCategories"
 												appendTo="body"
@@ -215,9 +215,11 @@
 																</tr>
 															</ng-container>
 															<ng-container *ngIf="attributes.length == 0">
-																<tr class="" style="background-color: #f9f9f9">
-																	<td>
-																		<app-not-found title="No se encontraron registros que coincidan."></app-not-found>
+																<tr class="" style="background-color: #fff">
+																	<td colspan="5">
+																		<app-not-found
+																			[error]="{ message: 'No se encontraron registros que coincidan.', statusCode: 404 }"
+																		></app-not-found>
 																	</td>
 																</tr>
 															</ng-container>

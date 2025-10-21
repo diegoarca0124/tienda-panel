@@ -34,13 +34,13 @@
 													placeholder="Buscar marca"
 													name="filter"
 													[(ngModel)]="filter"
-													(keyup.ENTER)="redirect()"
+													(keyup.ENTER)="onFilterOrStatusChange()"
 												/>
-												<i class="bi bi-search position-absolute cursor-pointer" style="right: 20px" (click)="redirect()"></i>
+												<i class="bi bi-search position-absolute cursor-pointer" style="right: 20px" (click)="onFilterOrStatusChange()"></i>
 											</div>
 										</div>
 										<div>
-											<select class="form-select form-select-sm w-auto" name="status" [(ngModel)]="status" (change)="redirect()">
+											<select class="form-select form-select-sm w-auto" name="status" [(ngModel)]="status" (change)="onFilterOrStatusChange()">
 												<option value="Todos">Todos</option>
 												<option value="Activos">Activos</option>
 												<option value="Inactivos">Inactivos</option>
@@ -173,9 +173,9 @@
 														</tr>
 													</ng-container>
 													<ng-container *ngIf="brands.length == 0">
-														<tr class="" style="background-color: #f9f9f9">
-															<td>
-																<app-not-found title="No se encontraron registros que coincidan."></app-not-found>
+														<tr class="" style="background-color: #fff">
+															<td colspan="5">
+																<app-not-found [error]="{ message: 'No se encontraron registros que coincidan.', statusCode: 404 }"></app-not-found>
 															</td>
 														</tr>
 													</ng-container>

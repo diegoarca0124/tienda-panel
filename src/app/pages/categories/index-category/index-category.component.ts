@@ -68,6 +68,11 @@ export class IndexCategoryComponent {
 		});
 	}
 
+	onFilterOrStatusChange() {
+		this.currentPage = 1;
+		this.redirect();
+	}
+
 	sortData(column: string) {
 		const result = sortColumnsTable(this.categories, column, this.sortColumn, this.sortDirection);
 

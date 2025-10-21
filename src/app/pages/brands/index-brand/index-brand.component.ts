@@ -39,7 +39,7 @@ export class IndexBrandComponent {
 	public errorMsmServerListBrands: string = '';
 	private destroy$ = new Subject<void>();
 	public columns = [
-		{ key: 'name', label: 'Colaborador', width: '50%' },
+		{ key: 'name', label: 'Marca', width: '50%' },
 		{ key: 'status', label: 'Estado', width: '40%' },
 	];
 	public sortColumn: string = '';
@@ -68,6 +68,11 @@ export class IndexBrandComponent {
 
 			this.init_brands(this.filter, this.currentPage, this.status, this.limit);
 		});
+	}
+
+	onFilterOrStatusChange() {
+		this.currentPage = 1;
+		this.redirect();
 	}
 
 	sortData(column: string) {

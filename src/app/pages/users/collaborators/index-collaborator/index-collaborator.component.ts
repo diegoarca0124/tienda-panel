@@ -78,6 +78,11 @@ export class IndexCollaboratorComponent {
 		this.screenHeight = window.innerHeight;
 	}
 
+	onFilterOrStatusChange() {
+		this.currentPage = 1;
+		this.redirect();
+	}
+
 	sortData(column: string) {
 		const result = sortColumnsTable(this.collaborators, column, this.sortColumn, this.sortDirection);
 
@@ -108,6 +113,7 @@ export class IndexCollaboratorComponent {
 			)
 			.subscribe({
 				next: (next: { collaborators: CollaboratorList[]; currentPage: number; totalCollaborators: number; totalPages: number }) => {
+					this.currentPage = next.currentPage;
 					this.collaborators = next.collaborators;
 					this.totalPages = next.totalPages;
 				},
@@ -123,13 +129,14 @@ export class IndexCollaboratorComponent {
 	}
 
 	redirect() {
-		this._router.navigate(['/users/collaborators'], {
+		this._router.navigate([], {
 			queryParams: {
 				filter: this.filter,
 				page: this.currentPage,
 				limit: this.limit,
 				status: this.status,
 			},
+			queryParamsHandling: 'merge',
 		});
 	}
 

@@ -39,14 +39,17 @@ export const routes: Routes = [
 		children: [
 			{
 				path: '',
+				canActivate: [AuthGuard],
 				loadComponent: () => import('./pages/categories/index-category/index-category.component').then((m) => m.IndexCategoryComponent),
 			},
 			{
 				path: 'create',
+				canActivate: [AuthGuard],
 				loadComponent: () => import('./pages/categories/create-category/create-category.component').then((m) => m.CreateCategoryComponent),
 			},
 			{
 				path: ':id/edit',
+				canActivate: [AuthGuard],
 				loadComponent: () => import('./pages/categories/edit-category/edit-category.component').then((m) => m.EditCategoryComponent),
 			},
 		],
@@ -56,14 +59,17 @@ export const routes: Routes = [
 		children: [
 			{
 				path: '',
+				canActivate: [AuthGuard],
 				loadComponent: () => import('./pages/brands/index-brand/index-brand.component').then((m) => m.IndexBrandComponent),
 			},
 			{
 				path: 'create',
+				canActivate: [AuthGuard],
 				loadComponent: () => import('./pages/brands/create-brand/create-brand.component').then((m) => m.CreateBrandComponent),
 			},
 			{
 				path: ':id/edit',
+				canActivate: [AuthGuard],
 				loadComponent: () => import('./pages/brands/edit-brand/edit-brand.component').then((m) => m.EditBrandComponent),
 			},
 		],
@@ -73,14 +79,17 @@ export const routes: Routes = [
 		children: [
 			{
 				path: '',
+				canActivate: [AuthGuard],
 				loadComponent: () => import('./pages/attributes/index-attribute/index-attribute.component').then((m) => m.IndexAttributeComponent),
 			},
 			{
 				path: 'create',
+				canActivate: [AuthGuard],
 				loadComponent: () => import('./pages/attributes/create-attribute/create-attribute.component').then((m) => m.CreateAttributeComponent),
 			},
 			{
 				path: ':id/edit',
+				canActivate: [AuthGuard],
 				loadComponent: () => import('./pages/attributes/edit-attribute/edit-attribute.component').then((m) => m.EditAttributeComponent),
 			},
 		],

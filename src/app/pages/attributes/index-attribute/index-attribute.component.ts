@@ -54,7 +54,7 @@ export class IndexAttributeComponent {
 	public categories: string = '';
 	public categoriesSelected: any = [];
 	public columns = [
-		{ key: 'name', label: 'Colaborador', width: '50%' },
+		{ key: 'name', label: 'Atributo', width: '50%' },
 		{ key: 'status', label: 'Estado', width: '40%' },
 	];
 	public sortColumn: string = '';
@@ -97,6 +97,11 @@ export class IndexAttributeComponent {
 				this.init_attributes(this.filter, this.currentPage, this.status, this.limit, this.categories);
 				this.init_categories();
 			});
+	}
+
+	onFilterOrStatusChange() {
+		this.currentPage = 1;
+		this.redirect();
 	}
 
 	sortData(column: string) {

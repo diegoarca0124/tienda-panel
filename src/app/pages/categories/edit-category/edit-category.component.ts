@@ -99,10 +99,14 @@ export class EditCategoryComponent {
 			finalize(() => (this.loading = false)),
 			tap({
 				next: (next) => {
+					console.log(next);
+
 					this.category = next;
 					this.subcategory.categoryId = id;
 				},
 				error: (err) => {
+					console.log(err);
+
 					const error = err.error;
 					this.errorMsmServerGetCategory = error;
 				},
