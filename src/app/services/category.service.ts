@@ -60,4 +60,12 @@ export class CategoryService {
 	update_subcategory(id: string, subcategory: Subcategory): Observable<any> {
 		return this.http.put(`${this.apiUrl}/category/update_subcategory/${id}`, subcategory, { headers: this.getHeaders() });
 	}
+
+	get_categories_by_select(): Observable<any> {
+		return this.http.get(`${this.apiUrl}/category/get_categories_by_select`, { headers : this.getHeaders() });
+	}
+
+	get_subcategories_by_select(id: string): Observable<any> {
+		return this.http.get(`${this.apiUrl}/category/get_subcategories_by_select/${id}`, { headers : this.getHeaders() });
+	}
 }

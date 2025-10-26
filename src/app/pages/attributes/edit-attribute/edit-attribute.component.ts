@@ -6,6 +6,7 @@ import { Attribute } from '@app/common/interface/attribute.interface';
 import { withMinLoadingTime } from '@app/common/interface/with-min-loading-time.interface';
 import { IconCheckComponent } from '@app/icons/icon-check/icon-check.component';
 import { AttributeService } from '@app/services/attribute.service';
+import { CategoryService } from '@app/services/category.service';
 import { GLOBAL } from '@app/services/GLOBAL';
 import { NotFoundComponent } from '@app/shared/not-found/not-found.component';
 import { SidebarComponent } from '@app/shared/sidebar/sidebar.component';
@@ -47,7 +48,8 @@ export class EditAttributeComponent {
 
 	constructor(
 		private _route: ActivatedRoute,
-		private attributeService: AttributeService
+		private attributeService: AttributeService,
+		private categoryService: CategoryService,
 	) {}
 
 	ngOnInit() {
@@ -89,7 +91,7 @@ export class EditAttributeComponent {
 	init_categories() {
 		this.loadingCategories = true;
 		this.errorMsmSeverListCategories = '';
-		this.attributeService
+		this.categoryService
 			.get_categories_by_select()
 			.pipe(
 				takeUntil(this.destroy$),

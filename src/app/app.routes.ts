@@ -94,6 +94,26 @@ export const routes: Routes = [
 			},
 		],
 	},
+	{
+		path: 'products/articles',
+		children: [
+			{
+				path: '',
+				canActivate: [AuthGuard],
+				loadComponent: () => import('./pages/products/index-product/index-product.component').then((m) => m.IndexProductComponent),
+			},
+			{
+				path: 'create',
+				canActivate: [AuthGuard],
+				loadComponent: () => import('./pages/products/create-product/create-product.component').then((m) => m.CreateProductComponent),
+			},
+			{
+				path: ':id/edit',
+				canActivate: [AuthGuard],
+				loadComponent: () => import('./pages/products/edit-product/edit-product.component').then((m) => m.EditProductComponent),
+			},
+		],
+	},
 	// fallback
 	{ path: '**', redirectTo: '' },
 ];

@@ -5,6 +5,7 @@ import { Router, RouterModule } from '@angular/router';
 import { Attribute } from '@app/common/interface/attribute.interface';
 import { withMinLoadingTime } from '@app/common/interface/with-min-loading-time.interface';
 import { AttributeService } from '@app/services/attribute.service';
+import { CategoryService } from '@app/services/category.service';
 import { GLOBAL } from '@app/services/GLOBAL';
 import { SidebarComponent } from '@app/shared/sidebar/sidebar.component';
 import { TopbarComponent } from '@app/shared/topbar/topbar.component';
@@ -38,6 +39,7 @@ export class CreateAttributeComponent {
 
 	constructor(
 		private attributeService: AttributeService,
+		private categoryService: CategoryService,
 		private _router: Router
 	) {}
 
@@ -48,7 +50,7 @@ export class CreateAttributeComponent {
 	init_categories() {
 		this.loadingCategories = true;
 		this.errorMsmSeverListCategories = '';
-		this.attributeService
+		this.categoryService
 			.get_categories_by_select()
 			.pipe(
 				takeUntil(this.destroy$),

@@ -16,14 +16,6 @@ export class AttributeService {
 		private authService: AuthService
 	) {}
 
-	get_categories_by_select(): Observable<any> {
-		const headers = new HttpHeaders({
-			'Content-Type': 'application/json',
-			Authorization: `Bearer ${this.authService.getToken() || ''}`,
-		});
-		return this.http.get(`${this.apiUrl}/attribute/get_categories_by_select`, { headers });
-	}
-
 	create_attribute(attribute: Attribute): Observable<any> {
 		const headers = new HttpHeaders({
 			'Content-Type': 'application/json',

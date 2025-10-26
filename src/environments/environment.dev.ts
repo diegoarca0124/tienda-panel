@@ -1,4 +1,6 @@
 export const environment = {
 	production: true,
-	apiUrl: 'http://localhost:4000/api', // URL para desarrollo
+	apiUrl: 'http://localhost:4000/api',
+	apiKeyTinymce: 'ibnochn023y8x8370tat34a18ik0jrebebdz7yl4579nypqh',
+	tinymceSettings: 'basic',
 };

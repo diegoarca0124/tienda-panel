@@ -9,6 +9,7 @@ import { closeModal } from '@app/common/utils/close-modal.util';
 import { sortColumnsTable } from '@app/common/utils/sort-columns-table.util';
 import { ValidateQueryParams } from '@app/common/utils/validate-query-params.util';
 import { AttributeService } from '@app/services/attribute.service';
+import { CategoryService } from '@app/services/category.service';
 import { GLOBAL } from '@app/services/GLOBAL';
 import { ModalDeleteComponent } from '@app/shared/modal-delete/modal-delete.component';
 import { NotFoundComponent } from '@app/shared/not-found/not-found.component';
@@ -63,6 +64,7 @@ export class IndexAttributeComponent {
 	constructor(
 		private _router: Router,
 		private attributeService: AttributeService,
+		private categoryService:CategoryService,
 		private _route: ActivatedRoute
 	) {}
 
@@ -167,7 +169,7 @@ export class IndexAttributeComponent {
 	init_categories() {
 		this.loadingCategories = true;
 		this.errorMsmSeverListCategories = '';
-		this.attributeService
+		this.categoryService
 			.get_categories_by_select()
 			.pipe(
 				takeUntil(this.destroy$),
