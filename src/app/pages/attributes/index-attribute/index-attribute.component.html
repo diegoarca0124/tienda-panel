@@ -93,7 +93,7 @@
 												placeholder="Buscar por categorías"
 												[clearable]="false"
 												[closeOnSelect]="false"
-												class="select-categories"
+												class="select-element"
 												(change)="onFilterOrStatusChange()"
 												[loading]="loadingCategories"
 												[disabled]="loadingCategories"
@@ -240,9 +240,15 @@
 																<div class="d-flex align-items-center gap-2">
 																	<div class="d-flex flex-column gap-2" style="width: 300px">
 																		<!-- Esto permitirá que el contenido se ajuste -->
-																		<div class="form-control-solid form-control-load" style="height: 13px; width: 60%; max-width: 120px; border-radius: 5px;"></div>
+																		<div
+																			class="form-control-solid form-control-load"
+																			style="height: 13px; width: 60%; max-width: 120px; border-radius: 5px"
+																		></div>
 																		<!-- 60% o max-width -->
-																		<div class="form-control-solid form-control-load" style="height: 9px; width: 40%; max-width: 80px; border-radius: 5px;"></div>
+																		<div
+																			class="form-control-solid form-control-load"
+																			style="height: 9px; width: 40%; max-width: 80px; border-radius: 5px"
+																		></div>
 																		<!-- 40% o max-width -->
 																	</div>
 																</div>

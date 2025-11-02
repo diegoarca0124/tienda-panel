@@ -10,16 +10,18 @@ import { Brand } from '@app/common/interface/brand.interface';
 })
 export class BrandService {
 	private apiUrl = environment.apiUrl;
-
+	private getHeaders(): HttpHeaders {
+		return new HttpHeaders({
+			'Content-Type': 'application/json',
+			Authorization: `Bearer ${this.authService.getToken() || ''}`,
+		});
+	}
 	constructor(
 		private http: HttpClient,
 		private authService: AuthService
 	) {}
 
 	create_brand(brand: any): Observable<any> {
-		const headers = new HttpHeaders({
-			Authorization: `Bearer ${this.authService.getToken() || ''}`,
-		});
 		let data = new FormData();
 		data.append('name', brand.name || '');
 		data.append('country', JSON.stringify(brand.country));
@@ -27,31 +29,21 @@ export class BrandService {
 		data.append('websiteUrl', brand.websiteUrl || '');
 		data.append('logoUrl', brand.logoUrl);
 		data.append('bannerUrl', brand.bannerUrl);
-		return this.http.post(`${this.apiUrl}/brand/create_brand`, data, { headers });
+		return this.http.post(`${this.apiUrl}/brand/create_brand`, data, { headers: this.getHeaders() });
 	}
 
 	get_brands(filter: string, page: number, limit: number, status: string): Observable<any> {
-		const headers = new HttpHeaders({
-			'Content-Type': 'application/json',
-			Authorization: `Bearer ${this.authService.getToken() || ''}`,
+		return this.http.get(`${this.apiUrl}/brand/get_brands?filter=${filter}&page=${page}&limit=${limit}&status=${status}`, {
+			headers: this.getHeaders(),
 		});
-		return this.http.get(`${this.apiUrl}/brand/get_brands?filter=${filter}&page=${page}&limit=${limit}&status=${status}`, { headers });
 	}
 
 	update_status_brand(id: string, data: { status: boolean }): Observable<any> {
-		const headers = new HttpHeaders({
-			'Content-Type': 'application/json',
-			Authorization: `Bearer ${this.authService.getToken() || ''}`,
-		});
-		return this.http.put(`${this.apiUrl}/brand/update_status_brand/${id}`, data, { headers });
+		return this.http.put(`${this.apiUrl}/brand/update_status_brand/${id}`, data, { headers: this.getHeaders() });
 	}
 
 	get_brand(id: string): Observable<any> {
-		const headers = new HttpHeaders({
-			'Content-Type': 'application/json',
-			Authorization: `Bearer ${this.authService.getToken() || ''}`,
-		});
-		return this.http.get(`${this.apiUrl}/brand/get_brand/${id}`, { headers });
+		return this.http.get(`${this.apiUrl}/brand/get_brand/${id}`, { headers: this.getHeaders() });
 	}
 
 	update_brand(id: string, brand: Brand): Observable<any> {
@@ -68,10 +60,11 @@ export class BrandService {
 		} else {
 			data = brand;
 		}
-		const headers = new HttpHeaders({
-			Authorization: `Bearer ${this.authService.getToken() || ''}`,
-		});
 
-		return this.http.put(`${this.apiUrl}/brand/update_brand/${id}`, data, { headers });
+		return this.http.put(`${this.apiUrl}/brand/update_brand/${id}`, data, { headers: this.getHeaders() });
+	}
+
+	get_brands_by_select(): Observable<any> {
+		return this.http.get(`${this.apiUrl}/brand/get_brands_by_select`, { headers: this.getHeaders() });
 	}
 }

@@ -1,0 +1,8 @@
+.brand-image {
+	width: 20px;
+	height: 20px;
+	object-fit: contain;
+	margin-right: 8px;
+	border: 1px dashed #c4cada;
+	border-radius: 50%;
+}

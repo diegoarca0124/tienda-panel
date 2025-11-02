@@ -65,6 +65,7 @@ body {
 .form-control-load {
 	background: #e7e7e7 no-repeat !important;
 	cursor: progress !important;
+	border-radius: 0.475rem !important;
 }
 
 .border-dashed {
@@ -102,12 +103,6 @@ body {
 	display: none !important;
 }
 
-input,
-select,
-textarea {
-	border-radius: 0px !important;
-}
-
 .mx-w-350px {
 	max-width: 350px !important;
 }
@@ -122,27 +117,32 @@ textarea {
 
 /***/
 
-.select-categories .ng-placeholder {
+.select-element .ng-placeholder {
 	top: 12px !important;
 }
 
-.select-categories .ng-value {
+.select-element .ng-value {
 	margin-right: 5px !important;
-	padding: 3px 10px !important;
-	font-size: 0.9rem !important;
+	padding: 3px 5px !important;
+	font-size: 1.1rem !important;
 }
 
-.select-categories .ng-select-container .ng-value-container {
+.select-element .ng-input input {
+	margin-top: 6px !important;
+}
+
+.select-element .ng-select-container .ng-value-container {
 	width: 400px !important;
+	padding-left: 13px !important;
 }
 
-.select-categories .ng-select-container {
+.select-element .ng-select-container {
 	height: auto !important;
-	min-height: 46.53px !important;
+	min-height: 43.56px !important;
 }
 
-.select-categories .ng-option {
-	font-size: 0.98rem !important;
+.select-element .ng-option {
+	font-size: 1.1rem !important;
 }
 
 .py-15 {
@@ -169,4 +169,77 @@ textarea {
 	white-space: nowrap; /* evita que el texto haga wrap */
 	overflow: hidden;
 	text-overflow: ellipsis;
+}
+
+/***********************************/
+
+.tagify.form-control {
+	width: 100%;
+	padding-top: 0.475rem !important;
+	font-size: 1rem;
+	line-height: 1.5;
+	min-height: 43.56px !important;
+	padding-left: 5px !important;
+	background-color: #ffffff;
+	border: 1px solid #dbdfe9;
+	display: flex;
+	align-items: center;
+	font-size: 1.1rem;
+	gap: 0.7rem !important;
+	transition:
+		border-color 0.15s ease-in-out,
+		box-shadow 0.15s ease-in-out;
+}
+
+/* 🔹 Efecto al enfocar */
+.tagify.form-control:focus-within {
+}
+
+/* 🔹 Cada etiqueta */
+.tagify__tag {
+}
+
+/* 🔹 Texto dentro del tag */
+.tagify__tag-text {
+}
+
+/* 🔹 Área donde se escribe */
+.tagify__input {
+	color: #4b5675 !important;
+	font-size: 1.1rem !important;
+	font-family: 'Lexend' !important;
+}
+
+.tagify__input::before {
+	font-size: 1.1rem !important;
+	font-family: 'Lexend' !important;
+	color: #9da1bc !important;
+	font-weight: 500;
+}
+
+.tagify__tag {
+	padding: 0.25rem !important;
+}
+
+.tagify__tag-text {
+	color: #4b5675 !important;
+	font-size: 1rem !important;
+	font-family: 'Lexend' !important;
+}
+
+/******************************************/
+
+.tox-tinymce {
+	border: 1px solid #dbdfe9 !important;
+	font-family: 'Lexend' !important;
+	border-radius: 0.475rem !important;
+}
+
+.tox .tox-menubar {
+	gap: 10px !important;
+}
+
+.tox .tox-edit-area::before {
+	content: '' !important;
+	border: 0px !important;
 }
