@@ -1,0 +1,17 @@
+export const packages = [
+	{ name: 'Caja de cartón'},
+	{ name: 'Sobre acolchado'},
+	{ name: 'Bolsa plástica (courier bag)'},
+	{ name: 'Tubo de envío'},
+	{ name: 'Palé o tarima'},
+	{ name: 'Caja reforzada'},
+	{ name: 'Caja pequeña'},
+	{ name: 'Caja mediana'},
+	{ name: 'Caja grande'},
+	{ name: 'Sobre de papel'},
+	{ name: 'Bolsa reciclable'},
+	{ name: 'Embalaje de burbujas'},
+	{ name: 'Caja de madera'},
+	{ name: 'Contenedor plástico'},
+	{ name: 'Sin empaque (entrega directa)'},
+];

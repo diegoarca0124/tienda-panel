@@ -3,4 +3,5 @@
     [(ngModel)]="content"
     [init]="properties"
     class="w-full"
+    (ngModelChange)="onEditorChange($event)"
 ></editor>

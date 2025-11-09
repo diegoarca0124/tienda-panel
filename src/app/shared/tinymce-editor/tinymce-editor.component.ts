@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { EditorModule } from '@tinymce/tinymce-angular';
 import { environment } from 'environments/environment.dev';
@@ -15,10 +15,15 @@ import { environment } from 'environments/environment.dev';
 export class TinymceEditorComponent {
   @Input() properties = {};
   public apiKeyTinymce = environment.apiKeyTinymce;
-  content = '<p>Descripción del producto...</p>';
-
+  public content = '';
+  @Output() contentChange = new EventEmitter<string>();
+  
   ngOnInit(){
     console.log(this.apiKeyTinymce);
     
+  }
+
+  onEditorChange(event: any) {
+    this.contentChange.emit(this.content);
   }
 }

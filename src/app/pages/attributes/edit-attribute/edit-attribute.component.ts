@@ -17,7 +17,8 @@ declare const toastr: any;
 
 @Component({
 	selector: 'app-edit-attribute',
-	imports: [TopbarComponent, SidebarComponent, CommonModule, FormsModule, RouterModule, NgSelectModule, IconCheckComponent, NotFoundComponent],
+	imports: [TopbarComponent, SidebarComponent, CommonModule, FormsModule, RouterModule, NgSelectModule, 
+		IconCheckComponent, NotFoundComponent],
 	templateUrl: './edit-attribute.component.html',
 	styleUrl: './edit-attribute.component.css',
 })

@@ -4,19 +4,34 @@ export interface Product {
 	slug: string;
 	type: string; //Fisico  | Digital | Servicio
 	description: string;
+	extract: string;
+	mainAttribute: string | any;
+	mainAttributeValue: string | undefined;
 	cover: string;
-	tags?: string[];
-	labels?: string[];
+	tags: string[];
+	unitOfMeasure: string | undefined;
 	onSale: boolean;
 	freeShipping: boolean;
 	priceRegular: number | string;
 	priceDiscount: number | string;
-	brandId: string;
-	categoryId: string;
-	subcategoryId: string;
+	brandId: string | undefined;
+	categoryId: string | undefined;
+	subcategoryId: string | undefined;
 	countryOfOrigin?: string;
-	status?: boolean;
+	status?: string;
+	isBestSeller: boolean,
+	isNewArrival: boolean,
+	isFeatured: boolean,
+	isLimitedEdition: boolean,
+	isPreOrder: boolean,
+	isExportable: boolean,
+	allowBackorder: boolean,
 	createdAt?: Date;
 	updatedAt?: Date;
 	statusAt?: Date;
+	weight: string;
+	visibility: string;
+	condition: string | undefined;
+	warranty: string | undefined;
+	
 }

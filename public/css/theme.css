@@ -46,6 +46,21 @@ body {
 	cursor: pointer;
 }
 
+.option-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.option-item .text-ellipsis {
+  display: inline-block;
+  max-width: 100%;         /* Usa el ancho disponible del contenedor */
+  overflow: hidden;         /* Oculta el texto que se sale */
+  text-overflow: ellipsis;  /* Muestra los puntos suspensivos */
+  white-space: nowrap;      /* Evita que el texto salte de línea */
+}
+
 .bg-outline-danger {
 	color: #f8285a;
 	background-color: #ffeef3;
@@ -123,7 +138,7 @@ body {
 
 .select-element .ng-value {
 	margin-right: 5px !important;
-	padding: 3px 5px !important;
+	padding: 3px 0px !important;
 	font-size: 1.1rem !important;
 }
 
@@ -133,22 +148,36 @@ body {
 
 .select-element .ng-select-container .ng-value-container {
 	width: 400px !important;
-	padding-left: 13px !important;
+	padding-left: 10px !important;
 }
 
 .select-element .ng-select-container {
 	height: auto !important;
 	min-height: 43.56px !important;
+	
 }
 
 .select-element .ng-option {
 	font-size: 1.1rem !important;
+	border-bottom: 1px solid #e8f2ff;
 }
 
 .py-15 {
 	padding-top: 5rem !important;
 	padding-bottom: 5rem !important;
 }
+
+span.ng-option-label {
+    color: black;
+    text-transform: uppercase;
+    font-weight: 700;
+}
+
+.ng-optgroup {
+    background: #f1faff;
+	border-left: 2px solid #1B84FF;
+}
+
 
 /***/
 
@@ -199,6 +228,10 @@ body {
 .tagify__tag {
 }
 
+.tox-mbtn__select-label{
+	font-size: .85rem !important;	
+}
+
 /* 🔹 Texto dentro del tag */
 .tagify__tag-text {
 }
@@ -235,11 +268,11 @@ body {
 	border-radius: 0.475rem !important;
 }
 
-.tox .tox-menubar {
-	gap: 10px !important;
-}
-
 .tox .tox-edit-area::before {
 	content: '' !important;
 	border: 0px !important;
+}
+
+.tox-promotion{
+	display: none !important;
 }

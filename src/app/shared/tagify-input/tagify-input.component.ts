@@ -1,51 +1,59 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, Input, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import Tagify from '@yaireo/tagify';
 
 @Component({
-	selector: 'app-tagify-input',
-	imports: [FormsModule, CommonModule],
-	templateUrl: './tagify-input.component.html',
-	styleUrl: './tagify-input.component.css',
+  selector: 'app-tagify-input',
+  standalone: true,
+  imports: [FormsModule, CommonModule],
+  templateUrl: './tagify-input.component.html',
+  styleUrl: './tagify-input.component.css',
 })
 export class TagifyInputComponent {
-	@Input() whiteList: string[] = [];
-	@ViewChild('tagInput', { static: true }) tagInput!: ElementRef<HTMLInputElement>;
-	private tagify?: Tagify;
+  @Input() whiteList: string[] = [];
 
-	ngAfterViewInit() {
-		this.initTagify();
-	}
+  // 🔹 Nuevo Output para emitir los cambios
+  @Output() tagsChange = new EventEmitter<string[]>();
 
-	private initTagify() {
-		// 🔹 Destruye instancia anterior si existe (por hot reload)
-		if (this.tagify) {
-			this.tagify.destroy();
-		}
+  @ViewChild('tagInput', { static: true }) tagInput!: ElementRef<HTMLInputElement>;
+  private tagify?: Tagify;
 
-		this.tagify = new Tagify(this.tagInput.nativeElement, {
-			whitelist: this.whiteList,
-			maxTags: 20,
-			dropdown: {
-				enabled: 1,
-				position: 'text',
-			},
-		});
+  ngAfterViewInit() {
+    this.initTagify();
+  }
 
-		// 🔹 Agregar clases de Bootstrap
-		const tagifyEl = this.tagInput.nativeElement.closest('.tagify');
-		if (tagifyEl) tagifyEl.classList.add('form-control', 'py-2');
+  private initTagify() {
+    if (this.tagify) {
+      this.tagify.destroy();
+    }
 
-		// 🔹 Escuchar eventos
-		this.tagify.on('add', (e) => console.log('Etiqueta agregada:', e.detail.data));
-		this.tagify.on('remove', (e) => console.log('Etiqueta eliminada:', e.detail.data));
-	}
+    this.tagify = new Tagify(this.tagInput.nativeElement, {
+      whitelist: this.whiteList,
+      maxTags: 20,
+      dropdown: {
+        enabled: 1,
+        position: 'text',
+      },
+    });
 
-	ngOnDestroy() {
-		if (this.tagify) {
-			this.tagify.destroy();
-			this.tagify = undefined;
-		}
-	}
+    const tagifyEl = this.tagInput.nativeElement.closest('.tagify');
+    if (tagifyEl) tagifyEl.classList.add('form-control', 'py-2');
+
+    // 🔹 Emitir cuando se agrega o elimina una etiqueta
+    this.tagify.on('add', () => this.emitTags());
+    this.tagify.on('remove', () => this.emitTags());
+  }
+
+  private emitTags() {
+    const tags = this.tagify?.value.map((t: any) => t.value) || [];
+    this.tagsChange.emit(tags);
+  }
+
+  ngOnDestroy() {
+    if (this.tagify) {
+      this.tagify.destroy();
+      this.tagify = undefined;
+    }
+  }
 }
