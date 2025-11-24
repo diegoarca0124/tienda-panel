@@ -7,7 +7,8 @@ export interface Product {
 	extract: string;
 	mainAttribute: string | any;
 	mainAttributeValue: string | undefined;
-	cover: string;
+	cover: File | undefined | null;
+	miniature: File | undefined | null;
 	tags: string[];
 	unitOfMeasure: string | undefined;
 	onSale: boolean;

@@ -2,3 +2,7 @@
 	position: fixed !important; /* o absolute, pero usando popper */
 	z-index: 1050; /* mayor que la tabla */
 }
+
+.active{
+	background-color: #1B84FF !important
+}

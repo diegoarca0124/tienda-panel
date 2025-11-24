@@ -2,6 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component, signal, WritableSignal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { pageLimit } from '@app/common/constants/pageLimit.constant';
+import { statusTable } from '@app/common/constants/statusTable.contant';
 import { BrandList } from '@app/common/interface/brand-list.interface';
 import { Brand } from '@app/common/interface/brand.interface';
 import { withMinLoadingTime } from '@app/common/interface/with-min-loading-time.interface';
@@ -15,13 +17,14 @@ import { NotFoundComponent } from '@app/shared/not-found/not-found.component';
 import { PaginationComponent } from '@app/shared/pagination/pagination.component';
 import { SidebarComponent } from '@app/shared/sidebar/sidebar.component';
 import { TopbarComponent } from '@app/shared/topbar/topbar.component';
+import { NgSelectModule } from '@ng-select/ng-select';
 import { finalize, Subject, takeUntil } from 'rxjs';
 declare const toastr: any;
 declare const $: any;
 
 @Component({
 	selector: 'app-index-brand',
-	imports: [TopbarComponent, SidebarComponent, RouterModule, CommonModule, FormsModule, ModalDeleteComponent, PaginationComponent, NotFoundComponent],
+	imports: [TopbarComponent, SidebarComponent, RouterModule, CommonModule, FormsModule, ModalDeleteComponent, PaginationComponent, NotFoundComponent, NgSelectModule],
 	templateUrl: './index-brand.component.html',
 	styleUrl: './index-brand.component.css',
 })
@@ -39,11 +42,13 @@ export class IndexBrandComponent {
 	public errorMsmServerListBrands: string = '';
 	private destroy$ = new Subject<void>();
 	public columns = [
-		{ key: 'name', label: 'Marca', width: '50%' },
-		{ key: 'status', label: 'Estado', width: '40%' },
+		{ key: 'name', label: 'Marca', classCol: 'col-w-xs-200 col-w-md-250' },
+		{ key: 'status', label: 'Estado', classCol: 'col-w-xs-200 col-w-md-250' },
 	];
 	public sortColumn: string = '';
 	public sortDirection: 'asc' | 'desc' = 'asc';
+	public pageLimit = pageLimit;
+	public statusTable = statusTable;
 
 	constructor(
 		private _router: Router,

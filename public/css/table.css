@@ -1,0 +1,173 @@
+/* ============================================================
+   GENERAL
+   ============================================================ */
+.modern-table {
+  width: 100%;
+  border-collapse: collapse !important; /* evita bordes dobles */
+}
+
+/* Bordes uniformes */
+.modern-table th,
+.modern-table td {
+  border: 1px solid #e8eaed !important; /* 1px uniforme */
+}
+
+/* Evitar bordes duplicados por Bootstrap */
+.table-bordered > :not(caption) > * {
+  border-width: 0 !important;
+}
+
+.table-bordered > :not(caption) > * > * {
+  border-width: 1px !important; /* solo borde de celdas */
+}
+
+/* Texto truncado */
+.table th,
+.table td {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Padding y fuente consistente */
+.table > :not(caption) > * > * {
+  padding: 0.4rem 0.75rem !important;
+}
+
+/* .table,
+.table * {
+    font-family: "Inter" !important;
+} */
+
+/* ============================================================
+   ENCABEZADOS
+   ============================================================ */
+.modern-table thead th {
+  background: #f7f8fa;
+  color: #5e6c84;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 10px 12px;
+}
+
+/* ============================================================
+   CUERPO
+   ============================================================ */
+.modern-table tbody tr td {
+  vertical-align: middle;
+}
+
+/* ============================================================
+   ÚLTIMA COLUMNA (ACCIONES)
+   ============================================================ */
+.modern-table td:last-child,
+.modern-table th:last-child {
+  width: 1%;
+  white-space: nowrap;
+  text-align: end;
+}
+
+/* Acción con ancho exacto */
+.col-actions {
+  width: 58px !important;
+  min-width: 58px !important;
+  max-width: 58px !important;
+}
+
+/* ============================================================
+   BOTÓN ICONO
+   ============================================================ */
+.icon-btn {
+  background: transparent;
+  border: none;
+  padding: 6px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+.icon-btn i {
+  font-size: 18px;
+  color: #42526e;
+}
+
+/* ============================================================
+   TABLE LAYOUT FIXED (opcional)
+   ============================================================ */
+.table-fixed {
+  table-layout: fixed;
+  width: 100%;
+}
+
+.table-fixed .col-actions {
+  width: 48px !important;    /* Ancho mínimo para icon-btn */
+  min-width: 48px !important;
+  white-space: nowrap;       /* Evita que se colapse */
+}
+/* ============================================================
+   SISTEMA DE ANCHOS RESPONSIVE
+   ============================================================ */
+
+/* XS (base) */
+.col-w-xs-20   { width: 20px; }
+.col-w-xs-40   { width: 40px; }
+.col-w-xs-50   { width: 50px; }
+.col-w-xs-60   { width: 60px; }
+.col-w-xs-80   { width: 80px; }
+.col-w-xs-100  { width: 100px; }
+.col-w-xs-120  { width: 120px; }
+.col-w-xs-150  { width: 150px; }
+.col-w-xs-180  { width: 180px; }
+.col-w-xs-200  { width: 200px; }
+.col-w-xs-220  { width: 220px; }
+.col-w-xs-250  { width: 250px; }
+.col-w-xs-280  { width: 280px; }
+.col-w-xs-300  { width: 300px; }
+.col-w-xs-350  { width: 350px; }
+.col-w-xs-400  { width: 400px; }
+
+/* MD */
+@media (min-width: 768px) {
+  .col-w-md-200 { width: 200px; }
+  .col-w-md-250 { width: 250px; }
+  .col-w-md-300 { width: 300px; }
+  .col-w-md-350 { width: 350px; }
+  .col-w-md-400 { width: 400px; }
+  .col-w-md-450 { width: 450px; }
+}
+
+/* LG */
+@media (min-width: 992px) {
+  .col-w-lg-200 { width: 200px; }
+  .col-w-lg-250 { width: 250px; }
+  .col-w-lg-300 { width: 300px; }
+  .col-w-lg-350 { width: 350px; }
+  .col-w-lg-400 { width: 400px; }
+  .col-w-lg-450 { width: 450px; }
+  .col-w-lg-500 { width: 500px; }
+}
+
+/* XL */
+@media (min-width: 1200px) {
+  .col-w-xl-250 { width: 250px; }
+  .col-w-xl-300 { width: 300px; }
+  .col-w-xl-350 { width: 350px; }
+  .col-w-xl-400 { width: 400px; }
+  .col-w-xl-450 { width: 450px; }
+  .col-w-xl-500 { width: 500px; }
+  .col-w-xl-600 { width: 600px; }
+}
+
+/* XXL */
+@media (min-width: 1400px) {
+  .col-w-xxl-300 { width: 300px; }
+  .col-w-xxl-400 { width: 400px; }
+  .col-w-xxl-500 { width: 500px; }
+  .col-w-xxl-600 { width: 600px; }
+  .col-w-xxl-700 { width: 700px; }
+}
+
+

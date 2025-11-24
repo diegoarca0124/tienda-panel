@@ -12,11 +12,12 @@ import { UploadImageComponent } from '@app/shared/upload-image/upload-image.comp
 import { BrandService } from '@app/services/brand.service';
 import { withMinLoadingTime } from '@app/common/interface/with-min-loading-time.interface';
 import { GLOBAL } from '@app/services/GLOBAL';
+import { AlertComponent } from '@app/shared/alert/alert.component';
 declare const toastr: any;
 
 @Component({
 	selector: 'app-create-brand',
-	imports: [TopbarComponent, SidebarComponent, CommonModule, FormsModule, RouterModule, NgSelectModule, UploadImageComponent],
+	imports: [TopbarComponent, SidebarComponent, CommonModule, FormsModule, RouterModule, NgSelectModule, UploadImageComponent, AlertComponent],
 	templateUrl: './create-brand.component.html',
 	styleUrl: './create-brand.component.css',
 })
@@ -34,6 +35,7 @@ export class CreateBrandComponent {
 	private destroy$ = new Subject<void>();
 	public loadBtn = false;
 	public errorMsmServer: string = '';
+	public msmErrorBrand: any = [];
 	public errorsBrand: any = {
 		logoUrl: [],
 		bannerUrl: [],
@@ -55,11 +57,6 @@ export class CreateBrandComponent {
 
 	create() {
 		this.loadBtn = true;
-		this.errorsBrand = {
-			logoUrl: [],
-			bannerUrl: [],
-		};
-
 		this.brandService
 			.create_brand(this.brand)
 			.pipe(
@@ -74,18 +71,20 @@ export class CreateBrandComponent {
 					this._router.navigate(['/products/brands']);
 				},
 				error: (err) => {
-					console.log(err.error);
-
+					this.errorsBrand = {
+						logoUrl: [],
+						bannerUrl: [],
+					};
 					const error = err.error;
 					this.errorMsmServer = error.message || '¡Error desconocido!';
 					toastr.error(this.errorMsmServer);
 
 					if (error.validation) {
-						// ✅ FUSIONAMOS para mantener logoUrl y bannerUrl si no llegan en la respuesta
 						this.errorsBrand = {
 							...this.errorsBrand, // mantiene las claves existentes
 							...error.validation, // sobrescribe solo los campos que traen error
 						};
+						this.msmErrorBrand = Object.values(this.errorsBrand).flat();
 						this.errorMsmServer = '';
 					}
 

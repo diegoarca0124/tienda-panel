@@ -22,106 +22,335 @@
 						<div class="d-flex align-items-center gap-2 gap-lg-3"></div>
 					</div>
 				</div>
-				<div class="app-content flex-column-fluid">
-					<div class="app-container container">
-						<div class="row mb-10">
-							<div class="col-lg-3">
-								<div class="card card-flush py-4 mb-7">
-									<div class="card-header">
-										<div class="card-title">
-											<h2>Visibilidad</h2>
-										</div>
-									</div>
-									<div class="card-body d-flex flex-column gap-6 pt-0">
-										<div class="fv-row">
-											<label class="fw-500 text-gray-800 fs-6 mb-2 required">Visibilidad</label>
-											<ng-select
-												[items]="visibilities_"
-												bindLabel="name"
-												bindValue="name"
-												[(ngModel)]="product.visibility"
-												placeholder="Visibilidad"
-												[clearable]="false"
-												[closeOnSelect]="true"
-												class="select-element"
-												appendTo="body"
-											>
-												<!-- 🔹 Opción en el dropdown -->
-												<ng-template ng-option-tmp let-item="item">
-													<div class="option-item d-flex gap-3 align-items-center">
-														<div class="d-flex align-items-center" [class]="item.class" [innerHTML]="item.icon" style="color: #9da1bc;font-size: 1.4rem;"></div>
-														<span>{{ item.name }}</span>
-													</div>
-												</ng-template>
+				<div class="app-container container-fluid">
+					<app-alert [classAlert]="'bg-light-danger border-danger border-dashed mb-7'"
+					[title]="'¡Error de validación!'"
+					[description]="'The inline icons can be colored using .svg-icon-{color} class that defined with '"
+					>
+					</app-alert>
+					<div class="row mb-10">
 
-												<!-- 🔹 Opción seleccionada en el input -->
-												<ng-template ng-label-tmp let-item="item">
-													<div class="selected-item d-flex gap-3 align-items-center">
-														<div class="d-flex align-items-center" [class]="item.class" [innerHTML]="item.icon" style="color: #9da1bc;font-size: 1.4rem;"></div>
-														<span>{{ item.name }}</span>
-													</div>
-												</ng-template>
-											</ng-select>
-										</div>
-										<div class="fv-row">
-											<label class="fw-500 text-gray-800 fs-6 mb-2 required">Estado</label>
-											<ng-select
-												[items]="statusProduct_"
-												bindLabel="name"
-												bindValue="name"
-												[(ngModel)]="product.status"
-												placeholder="Estado"
-												[clearable]="false"
-												[closeOnSelect]="true"
-												class="select-element"
-												appendTo="body"
-											>
-												<!-- 🔹 Opción en el dropdown -->
-												<ng-template ng-option-tmp let-item="item">
-													<div class="option-item d-flex gap-3 align-items-center">
-														<div class="d-flex align-items-center" [innerHTML]="item.icon" style="color: #9da1bc;font-size: 1.4rem;"></div>
-														<span>{{ item.name }}</span>
-													</div>
-												</ng-template>
-
-												<!-- 🔹 Opción seleccionada en el input -->
-												<ng-template ng-label-tmp let-item="item">
-													<div class="selected-item d-flex gap-3 align-items-center">
-														<div class="d-flex align-items-center" [innerHTML]="item.icon" style="color: #9da1bc;font-size: 1.4rem;"></div>
-														<span>{{ item.name }}</span>
-													</div>
-												</ng-template>
-											</ng-select>
-										</div>
-
-										<div class="d-flex gap-3">
-											<a class="btn btn-primary btn-sm flex-fill" (click)="create()">
-												Publicar
-											</a>
-											<a class="btn btn-light-primary btn-sm flex-fill">
-												Vista previa
-											</a>
-										</div>
+						<div class="col-xxl-3 col-xl-4 col-lg-12" *ngIf="widthScreen > 1200">
+							<div class="card card-flush py-4 mb-7">
+								<div class="card-header">
+									<div class="card-title">
+										<h2>Visibilidad</h2>
 									</div>
 								</div>
-								<div class="card card-flush py-4">
-									<div class="card-header">
-										<div class="card-title">
-											<h2>Caracteristicas</h2>
+								<div class="card-body d-flex flex-column gap-6 pt-0">
+									<div class="fv-row">
+										<div class="d-flex justify-content-between align-items-center mb-2">
+											<label class="fw-500 text-gray-800 fs-6 required">
+												Visibilidad
+											</label>
+										</div>
+										<ng-select
+											[items]="visibilities_"
+											bindLabel="name"
+											bindValue="name"
+											[(ngModel)]="product.visibility"
+											placeholder="Visibilidad"
+											[clearable]="false"
+											[closeOnSelect]="true"
+											class="select-element mb-1"
+											appendTo="body"
+										>
+											<!-- 🔹 Opción en el dropdown -->
+											<ng-template ng-option-tmp let-item="item">
+												<div class="option-item d-flex gap-3 align-items-center">
+													<div class="d-flex align-items-center" [class]="item.class" [innerHTML]="item.icon" style="color: #9da1bc;font-size: 1.4rem;"></div>
+													<span>{{ item.name }}</span>
+												</div>
+											</ng-template>
+
+											<!-- 🔹 Opción seleccionada en el input -->
+											<ng-template ng-label-tmp let-item="item">
+												<div class="selected-item d-flex gap-3 align-items-center">
+													<div class="d-flex align-items-center" [class]="item.class" [innerHTML]="item.icon" style="color: #9da1bc;font-size: 1.4rem;"></div>
+													<span>{{ item.name }}</span>
+												</div>
+											</ng-template>
+										</ng-select>
+										<span class="fs-8 text-muted">{{labelHelper.visibility}}</span>
+									</div>
+									<div class="fv-row">
+										<div class="d-flex justify-content-between align-items-center mb-2">
+											<label class="fw-500 text-gray-800 fs-6 required">
+												Estado
+											</label>
+										</div>
+										<ng-select
+											[items]="statusProduct_"
+											bindLabel="name"
+											bindValue="name"
+											[(ngModel)]="product.status"
+											placeholder="Estado"
+											[clearable]="false"
+											[closeOnSelect]="true"
+											class="select-element mb-1"
+											appendTo="body"
+										>
+											<!-- 🔹 Opción en el dropdown -->
+											<ng-template ng-option-tmp let-item="item">
+												<div class="option-item d-flex gap-3 align-items-center">
+													<div class="d-flex align-items-center" [innerHTML]="item.icon" style="color: #9da1bc;font-size: 1.4rem;"></div>
+													<span>{{ item.name }}</span>
+												</div>
+											</ng-template>
+
+											<!-- 🔹 Opción seleccionada en el input -->
+											<ng-template ng-label-tmp let-item="item">
+												<div class="selected-item d-flex gap-3 align-items-center">
+													<div class="d-flex align-items-center" [innerHTML]="item.icon" style="color: #9da1bc;font-size: 1.4rem;"></div>
+													<span>{{ item.name }}</span>
+												</div>
+											</ng-template>
+										</ng-select>
+										<span class="fs-8 text-muted">{{labelHelper.status}}</span>
+									</div>
+									<div class="d-flex gap-3">
+										<a class="btn btn-primary btn-sm flex-fill" (click)="create()">
+											Publicar
+										</a>
+										<a class="btn btn-light-primary btn-sm flex-fill" style="white-space: nowrap;">
+											Vista previa
+										</a>
+									</div>
+								</div>
+							</div>
+							<div class="card card-flush py-4 mb-7">
+								<div class="card-header">
+									<div class="card-title">
+										<h2>Portada</h2>
+									</div>
+								</div>
+								<div class="card-body d-flex flex-column gap-6 pt-0 text-center">
+									<div class="w-100 h-200px d-flex justify-content-center align-items-center" style="
+									box-shadow: 0 0.5rem 1.5rem 0.5rem rgba(0, 0, 0, 0.075); 
+									border-radius: 5px;
+									background-size: cover;
+									background-position: start;
+									" [ngStyle]="{'background-image': 'url(' + cover?.preview + ')'}">
+										<app-icon-image classSVG="h-100px w-100px" *ngIf="cover == undefined"></app-icon-image>
+										
+									</div>
+
+									<span class="text-muted fs-7">Solo se aceptan archivos de imagen *.png, .jpg y .jpeg.</span>
+								</div>
+							</div>
+							<div class="card card-flush py-4">
+								<div class="card-header">
+									<div class="card-title">
+										<h2>Caracteristicas</h2>
+									</div>
+								</div>
+								<div class="card-body d-flex flex-column gap-6 pt-0">
+									<div class="fv-row">
+										<label class="fw-500 text-gray-800 fs-6 mb-2 required">Categoría</label>
+										<ng-select
+											[items]="categories_"
+											bindLabel="name"
+											bindValue="id"
+											[(ngModel)]="product.categoryId"
+											placeholder="Categorías"
+											[clearable]="false"
+											[closeOnSelect]="true"
+											class="select-element mb-1"
+											(change)="onSelectCategory()"
+											[loading]="loadingCategories"
+											[disabled]="loadingCategories"
+											appendTo="body"
+										>
+											<!-- Opción en el dropdown -->
+											<ng-template ng-option-tmp let-item="item">
+												<div class="option-item d-flex gap-3 align-items-center">
+													<div class="d-flex align-items-center svg-icon svg-icon-3" [class]="item.class" [innerHTML]="item.icon" style="color: #9da1bc;font-size: 1.4rem;"></div>
+													<span class="text-ellipsis">{{ item.name }}</span>
+												</div>
+											</ng-template>
+											
+
+											<!-- Opción seleccionada en el input -->
+											<ng-template ng-label-tmp let-item="item">
+												<div class="option-item d-flex gap-3 align-items-center">
+													<div class="d-flex align-items-center svg-icon svg-icon-3" [class]="item.class" [innerHTML]="item.icon" style="color: #9da1bc;font-size: 1.4rem;"></div>
+													<span>{{ item.name }}</span>
+												</div>
+											</ng-template>
+
+											<ng-template ng-loading-text>
+												<div class="spinner-container">
+													<span class="spinner-border spinner-border-sm"></span>
+												</div>
+											</ng-template>
+										</ng-select>
+										<span class="fs-8 text-muted">{{labelHelper.categoryId}}</span>
+									</div>
+									<div class="fv-row">
+										<label class="fw-500 text-gray-800 fs-6 mb-2 required">Subcategoría</label>
+										<ng-select
+											[items]="subcategories_"
+											bindLabel="name"
+											bindValue="id"
+											[(ngModel)]="product.subcategoryId"
+											placeholder="Subcategorías"
+											[clearable]="false"
+											[closeOnSelect]="true"
+											class="select-element mb-1"
+											[loading]="loadingSubcategories"
+											[disabled]="loadingSubcategories"
+											appendTo="body"
+										>
+											<!-- Opción en el dropdown -->
+											<ng-template ng-option-tmp let-item="item">
+												<div class="option-item d-flex gap-3 align-items-center">
+													<div class="d-flex align-items-center svg-icon svg-icon-3" [class]="item.class" [innerHTML]="item.icon" style="color: #9da1bc;font-size: 1.4rem;"></div>
+													<span class="text-ellipsis">{{ item.name }}</span>
+												</div>
+											</ng-template>
+											
+
+											<!-- Opción seleccionada en el input -->
+											<ng-template ng-label-tmp let-item="item">
+												<div class="option-item d-flex gap-3 align-items-center">
+													<div class="d-flex align-items-center svg-icon svg-icon-3" [class]="item.class" [innerHTML]="item.icon" style="color: #9da1bc;font-size: 1.4rem;"></div>
+													<span>{{ item.name }}</span>
+												</div>
+											</ng-template>
+
+											<ng-template ng-loading-text>
+												<div class="spinner-container">
+													<span class="spinner-border spinner-border-sm"></span>
+												</div>
+											</ng-template>
+										</ng-select>
+										<span class="fs-8 text-muted">{{labelHelper.subcategoryId}}</span>
+									</div>
+									
+								</div>
+							</div>
+						</div>
+						<!--end::Table wrapper-->
+						<div class="col-xxl-9 col-xl-8 col-lg-12">
+							<div class="card card-flush py-4">
+								<div class="card-header">
+									<div class="card-title">
+										<h2 *ngIf="option == 1">General</h2>
+										<h2 *ngIf="option == 2">Descripción</h2>
+										<h2 *ngIf="option == 3">Etiquetas</h2>
+										<h2 *ngIf="option == 4">Propiedades</h2>
+										<h2 *ngIf="option == 5">Envío</h2>
+										<h2 *ngIf="option == 6">Galería</h2>
+										<h2 *ngIf="option == 7">Variaciones</h2>
+									</div>
+								</div>
+								<div class="card-body pt-1">
+									<ul class="nav nav-pills">
+										<li class="nav-item">
+											<a class="nav-link cursor-pointer bg-light" [ngClass]="{ 'active': option == 1 }" (click)="setOption(1)">General</a>
+										</li>
+										<li class="nav-item">
+											<a class="nav-link cursor-pointer bg-light" [ngClass]="{ 'active': option == 2 }" (click)="setOption(2)">Descripción</a>
+										</li>
+										<li class="nav-item">
+											<a class="nav-link cursor-pointer bg-light" [ngClass]="{ 'active': option == 3 }" (click)="setOption(3)">Etiquetas</a>
+										</li>
+										<li class="nav-item">
+											<a class="nav-link cursor-pointer bg-light" [ngClass]="{ 'active': option == 4 }" (click)="setOption(4)">Propiedades</a>
+										</li>
+										<li class="nav-item">
+											<a class="nav-link cursor-pointer bg-light" [ngClass]="{ 'active': option == 5 }" (click)="setOption(5)">Envío</a>
+										</li>
+										<li class="nav-item">
+											<a class="nav-link cursor-pointer bg-light" [ngClass]="{ 'active': option == 6 }" (click)="setOption(6)">Imagenes</a>
+										</li>
+										<li class="nav-item">
+											<a class="nav-link cursor-pointer bg-light" [ngClass]="{ 'active': option == 7 }" (click)="setOption(7)">Variaciones</a>
+										</li>
+									</ul>
+								</div>
+								<div class="card-body d-flex flex-column gap-6 pt-1" [ngClass]="{'d-none': option != 1}">
+									<div class="fv-row">
+										<label class="required fw-500 text-gray-800 fs-6 mb-1">Título</label>
+										<input type="text" name="name" class="form-control" placeholder="Product name" [(ngModel)]="product.name" />
+										<span class="fs-8 text-muted">{{labelHelper.name}}</span>
+									</div>
+									<div class="row">
+										<div class="col-6">
+											<div class="d-flex flex-column fv-row fv-plugins-icon-container">
+												<!--begin::Label-->
+												<label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2">
+													<span class="required">Miniatura</span>
+												</label>
+												<!--end::Label-->
+
+												<div class="mb-1">
+													<app-upload-image
+														(fileSelected)="product.miniature = $event ? $event : undefined"
+														(validationError)="errorsProduct.miniature[0] = $event ?? ''"
+														[aspectMode]="'square'"
+														[inputId]="'logoUrl'"
+														[hasError]="errorsProduct?.miniature[0]"
+													></app-upload-image>
+												</div>
+
+												<span class="fs-8 text-muted">Miniatura representativa del producto en 1:1.</span>
+											</div>
+										</div>
+										<div class="col-6">
+											<div class="d-flex flex-column fv-row fv-plugins-icon-container">
+												<label class="fw-500 text-gray-800 fs-6 mb-2 required">Marca</label>
+												<ng-select
+													[items]="brands_"
+													bindLabel="name"
+													bindValue="id"
+													[(ngModel)]="product.brandId"
+													placeholder="Buscar por marca"
+													[clearable]="false"
+													[closeOnSelect]="true"
+													class="select-element mb-1"
+													[loading]="loadingBrands"
+													[disabled]="loadingBrands"
+													appendTo="body"
+												>
+													<!-- 🔹 Opción en el dropdown -->
+													<ng-template ng-option-tmp let-item="item">
+														<div class="option-item">
+															<img *ngIf="item.logoUrl" [src]="item.logoUrl" alt="{{ item.name }}" class="brand-image" />
+															<span>{{ item.name }}</span>
+														</div>
+													</ng-template>
+
+													<!-- 🔹 Opción seleccionada en el input -->
+													<ng-template ng-label-tmp let-item="item">
+														<div class="selected-item">
+															<img *ngIf="item.logoUrl" [src]="item.logoUrl" alt="{{ item.name }}" class="brand-image" />
+															<span>{{ item.name }}</span>
+														</div>
+													</ng-template>
+
+													<ng-template ng-loading-text>
+														<div class="spinner-container">
+															<span class="spinner-border spinner-border-sm"></span>
+														</div>
+													</ng-template>
+												</ng-select>
+												<span class="fs-8 text-muted">{{labelHelper.brandId}}</span>
+											</div>
 										</div>
 									</div>
-									<div class="card-body d-flex flex-column gap-6 pt-0">
-										<div class="fv-row">
+									<div class="row" *ngIf="widthScreen <= 1200">
+										<div class="col-md-6 mb-6 mb-md-0">
 											<label class="fw-500 text-gray-800 fs-6 mb-2 required">Categoría</label>
 											<ng-select
 												[items]="categories_"
 												bindLabel="name"
-												bindValue="id"
+    											bindValue="value"
 												[(ngModel)]="product.categoryId"
 												placeholder="Categorías"
 												[clearable]="false"
 												[closeOnSelect]="true"
-												class="select-element"
+												class="select-element mb-1"
 												(change)="onSelectCategory()"
 												[loading]="loadingCategories"
 												[disabled]="loadingCategories"
@@ -150,8 +379,9 @@
 													</div>
 												</ng-template>
 											</ng-select>
+											<span class="fs-8 text-muted">{{labelHelper.categoryId}}</span>
 										</div>
-										<div class="fv-row">
+										<div class="col-md-6">
 											<label class="fw-500 text-gray-800 fs-6 mb-2 required">Subcategoría</label>
 											<ng-select
 												[items]="subcategories_"
@@ -161,7 +391,7 @@
 												placeholder="Subcategorías"
 												[clearable]="false"
 												[closeOnSelect]="true"
-												class="select-element"
+												class="select-element mb-1"
 												[loading]="loadingSubcategories"
 												[disabled]="loadingSubcategories"
 												appendTo="body"
@@ -189,8 +419,290 @@
 													</div>
 												</ng-template>
 											</ng-select>
+											<span class="fs-8 text-muted">{{labelHelper.subcategoryId}}</span>
 										</div>
-										<div class="fv-row">
+									</div>
+									<div class="row">
+										<div class="col-md-6 mb-6 mb-md-0">
+											<div class="d-flex justify-content-between align-items-center mb-2">
+												<label class="fw-500 text-gray-800 fs-6 required">
+													Atributo principal
+												</label>
+											</div>
+											<ng-select
+												[items]="attributes_"
+												bindLabel="name"
+												[(ngModel)]="product.mainAttribute"
+												placeholder="Atributos"
+												[clearable]="false"
+												[closeOnSelect]="true"
+												class="select-element mb-1"
+												(change)="onSelectAttribute()"
+												[loading]="loadingAttributes"
+												[disabled]="loadingAttributes"
+												appendTo="body"
+											>
+												<!-- Opción en el dropdown -->
+												<ng-template ng-option-tmp let-item="item">
+													<span class="text-ellipsis">{{ item.name }}</span>
+												</ng-template>
+
+												<!-- Opción seleccionada en el input -->
+												<ng-template ng-label-tmp let-item="item">
+													<span class="text-ellipsis">{{ item.name }}</span>
+												</ng-template>
+
+												<ng-template ng-loading-text>
+													<div class="spinner-container">
+														<span class="spinner-border spinner-border-sm"></span>
+													</div>
+												</ng-template>
+											</ng-select>
+											<span class="fs-8 text-muted">{{labelHelper.mainAttribute}}</span>
+										</div>
+										<div class="col-md-6">
+											<div class="d-flex justify-content-between align-items-center mb-2">
+												<label class="fw-500 text-gray-800 fs-6 required">
+													Valor atributo
+												</label>
+											</div>
+											<ng-select
+												[items]="valuesAttribute_"
+												bindLabel="value"
+												bindValue="value"
+												[(ngModel)]="product.mainAttributeValue"
+												placeholder="Valores"
+												[clearable]="false"
+												[closeOnSelect]="true"
+												class="select-element mb-1"
+												[loading]="loadingValuesAttribute"
+												[disabled]="loadingValuesAttribute"
+												appendTo="body"
+											>
+												<!-- Opción en el dropdown -->
+												<ng-template ng-option-tmp let-item="item">
+													<span class="text-ellipsis">{{ item.value }}</span>
+												</ng-template>
+
+												<!-- Opción seleccionada en el input -->
+												<ng-template ng-label-tmp let-item="item">
+													<span class="text-ellipsis">{{ item.value }}</span>
+												</ng-template>
+
+												<ng-template ng-loading-text>
+													<div class="spinner-container">
+														<span class="spinner-border spinner-border-sm"></span>
+													</div>
+												</ng-template>
+											</ng-select>
+											<span class="fs-8 text-muted">{{labelHelper.mainAttributeValue}}</span>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-6 mb-6 mb-md-0">
+											<div class="d-flex justify-content-between align-items-center mb-2">
+												<label class="fw-500 text-gray-800 fs-6 required">
+													Unidad medida
+												</label>
+											</div>
+											<ng-select
+												[items]="units_"
+												[(ngModel)]="product.unitOfMeasure"
+												placeholder="Unidad"
+												[clearable]="false"
+												[closeOnSelect]="true"
+												[groupBy]="'group'"
+												bindLabel="name"
+												bindValue="name"
+												class="select-element mb-1"
+												appendTo="body"
+											>
+												<!-- Opción en el dropdown -->
+												<ng-template ng-option-tmp let-item="item">
+													<div class="option-item d-flex gap-3 align-items-center">
+														<div class="option-name">{{ item.name }}</div>
+														<small class="option-value text-gray-500"> - {{ item.abbr }}</small>
+													</div>
+												</ng-template>
+
+												<!-- Opción seleccionada en el input -->
+												<ng-template ng-label-tmp let-item="item">
+													{{ item.name }}
+												</ng-template>
+
+												<ng-template ng-loading-text>
+													<div class="spinner-container">
+													<span class="spinner-border spinner-border-sm"></span>
+													</div>
+												</ng-template>
+											</ng-select>
+											<span class="fs-8 text-muted">{{labelHelper.unitOfMeasure}}</span>
+										</div>
+										<div class="col-md-6">
+											<div class="d-flex justify-content-between align-items-center mb-2">
+												<label class="fw-500 text-gray-800 fs-6 required">
+													Condición
+												</label>
+											</div>
+											<ng-select
+												[items]="conditions_"
+												[(ngModel)]="product.condition"
+												placeholder="Condición del producto"
+												[clearable]="false"
+												[closeOnSelect]="true"
+												bindLabel="name"
+												bindValue="name"
+												class="select-element mb-1"
+												appendTo="body"
+											>
+												<!-- Opción en el dropdown -->
+												<ng-template ng-option-tmp let-item="item">
+													<div class="d-flex align-items-center gap-2">
+													<span class="bullet bullet-dot h-10px w-10px" [ngClass]="'bg-' + item.color"></span>
+													<span>{{ item.name }}</span>
+													</div>
+												</ng-template>
+
+												<!-- Opción seleccionada en el input -->
+												<ng-template ng-label-tmp let-item="item">
+													<div class="d-flex align-items-center gap-2">
+													<span class="bullet bullet-dot h-10px w-10px" [ngClass]="'bg-' + item.color"></span>
+													<span>{{ item.name }}</span>
+													</div>
+												</ng-template>
+
+												<ng-template ng-loading-text>
+													<div class="spinner-container">
+													<span class="spinner-border spinner-border-sm"></span>
+													</div>
+												</ng-template>
+											</ng-select>
+											<span class="fs-8 text-muted">{{labelHelper.condition}}</span>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-6 mb-6 mb-md-0">
+											<label class="fw-500 text-gray-800 fs-6 mb-2 required">Garantía</label>
+											<ng-select
+												[items]="warranties_"
+												[(ngModel)]="product.warranty"
+												placeholder="Garantía"
+												[clearable]="false"
+												[closeOnSelect]="true"
+												bindLabel="name"
+												bindValue="name"
+												class="select-element mb-1"
+												appendTo="body"
+											>
+												<!-- Opción en el dropdown -->
+												<ng-template ng-option-tmp let-item="item">
+													<div class="d-flex flex-column">
+														<span>{{ item.name }}</span>
+														<div
+															class="me-2"
+															[ngStyle]="{
+																'background-color': 'var(--bs-' + item.color + ')',
+																'height.px': 4,
+																'width.%': 
+																	item.value === 'none' ? 5 :
+																	item.value.includes('15_days') ? 15 :
+																	item.value.includes('30_days') ? 25 :
+																	item.value.includes('3_months') ? 40 :
+																	item.value.includes('6_months') ? 60 :
+																	item.value.includes('1_year') ? 80 :
+																	item.value.includes('2_years') ? 90 :
+																	item.value.includes('manufacturer') ? 95 :
+																	item.value.includes('lifetime') ? 100 : 50
+															}"
+														></div>
+														
+													</div>
+												</ng-template>
+
+												<!-- Opción seleccionada en el input -->
+												<ng-template ng-label-tmp let-item="item">
+													{{ item.name }}
+												</ng-template>
+
+												<ng-template ng-loading-text>
+													<div class="spinner-container">
+														<span class="spinner-border spinner-border-sm"></span>
+													</div>
+												</ng-template>
+											</ng-select>
+											<span class="fs-8 text-muted">{{labelHelper.warranty}}</span>
+										</div>
+										<div class="col-md-6">
+											<label class="fw-500 text-gray-800 fs-6 mb-2">País de fabricación</label>
+											<div [ngClass]="{ 'is-invalid': false }">
+												<ng-select
+													[items]="countries"
+													bindLabel="country"
+													placeholder="Países"
+													[clearable]="false"
+													[(ngModel)]="product.countryOfOrigin"
+													appendTo="body"
+													class="select-element mb-1"
+												>
+													<!-- Opción en el dropdown -->
+													<ng-template ng-option-tmp let-item="item">
+														<img [src]="item.flag" width="20" height="15" style="margin-right: 8px" />
+														{{ item.name }}
+													</ng-template>
+
+													<!-- Opción seleccionada en el input -->
+													<ng-template ng-label-tmp let-item="item">
+														<img [src]="item.flag" width="20" height="15" style="margin-right: 8px" />
+														{{ item.name }}
+													</ng-template>
+												</ng-select>
+												<span class="fs-8 text-muted">{{labelHelper.countryOfOrigin}}</span>
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-6 mb-6 mb-md-0">
+											<div class="d-flex justify-content-between align-items-center mb-2">
+												<label class="fw-500 text-gray-800 fs-6 required">
+													Precio regular
+												</label>
+											</div>
+											<input
+												currencyMask
+												type="text"
+												[options]="currencyOptions"
+												class="form-control mb-1"
+												placeholder="Precio Normal"
+												name="priceRegular"
+												[(ngModel)]="product.priceRegular"
+											/>
+											<span class="fs-8 text-muted">{{labelHelper.priceRegular}}</span>
+										</div>
+										<div class="col-md-6">
+											<div class="d-flex justify-content-between align-items-center mb-2">
+												<label class="fw-500 text-gray-800 fs-6 required">
+													Precio descuento
+												</label>
+												<div class="cursor-pointer">
+													<i class="bi bi-info-circle" placement="left" 
+													[ngbTooltip]="labelHelper.priceDiscount"
+													tooltipClass="tooltip-dark"></i>
+												</div>
+											</div>
+											<input
+												currencyMask
+												type="text"
+												[options]="currencyOptions"
+												class="form-control mb-1"
+												placeholder="Precio Descuento"
+												name="priceDiscount"
+												[(ngModel)]="product.priceDiscount"
+											/>
+											<span class="fs-8 text-muted">{{labelHelper.priceDiscount}}</span>
+										</div>
+									</div>
+									<div class="row" *ngIf="widthScreen <= 1200">
+										<div class="col-md-6 mb-6 mb-md-0">
 											<label class="fw-500 text-gray-800 fs-6 mb-2 required">Marca</label>
 											<ng-select
 												[items]="brands_"
@@ -200,7 +712,7 @@
 												placeholder="Buscar por marca"
 												[clearable]="false"
 												[closeOnSelect]="true"
-												class="select-element"
+												class="select-element mb-1"
 												[loading]="loadingBrands"
 												[disabled]="loadingBrands"
 												appendTo="body"
@@ -227,750 +739,611 @@
 													</div>
 												</ng-template>
 											</ng-select>
+											<span class="fs-8 text-muted">{{labelHelper.brandId}}</span>
 										</div>
 									</div>
-								</div>
-							</div>
-							<!--end::Table wrapper-->
-							<div class="col-lg-9">
-								<div class="card card-flush py-4">
-									<div class="card-header">
-										<div class="card-title">
-											<h2 *ngIf="option == 1">General</h2>
-											<h2 *ngIf="option == 2">Descripción</h2>
-											<h2 *ngIf="option == 3">Etiquetas</h2>
-											<h2 *ngIf="option == 4">Propiedades</h2>
-											<h2 *ngIf="option == 5">Envío</h2>
+									<div class="d-flex flex-column">
+										<div class="d-flex justify-content-between align-items-center mb-2">
+											<label class="fw-500 text-gray-800 fs-6 required">
+												Etiquetas
+											</label>
 										</div>
-										<div class="card-toolbar">
-											<ul class="nav nav-pills">
-												<li class="nav-item">
-													<a class="nav-link cursor-pointer" [ngClass]="{ active: option == 1 }" (click)="setOption(1)">General</a>
-												</li>
-												<li class="nav-item">
-													<a class="nav-link cursor-pointer" [ngClass]="{ active: option == 2 }" (click)="setOption(2)">Descripción</a>
-												</li>
-												<li class="nav-item">
-													<a class="nav-link cursor-pointer" [ngClass]="{ active: option == 3 }" (click)="setOption(3)">Etiquetas</a>
-												</li>
-												<li class="nav-item">
-													<a class="nav-link cursor-pointer" [ngClass]="{ active: option == 4 }" (click)="setOption(4)">Propiedades</a>
-												</li>
-												<li class="nav-item">
-													<a class="nav-link cursor-pointer" [ngClass]="{ active: option == 5 }" (click)="setOption(5)">Envío</a>
-												</li>
-											</ul>
-										</div>
+										<app-tagify-input class="mb-1" [whiteList]="whiteListTags" (tagsChange)="onTagsChange($event)"></app-tagify-input>
+										<span class="fs-8 text-muted">{{labelHelper.categoryId}}</span>
 									</div>
-									<div class="card-body d-flex flex-column gap-6 pt-3" [ngClass]="{'d-none': option != 1}">
-										<div class="fv-row">
-											<label class="required fw-500 text-gray-800 fs-6 mb-2">Título</label>
-											<input type="text" name="name" class="form-control" placeholder="Product name" [(ngModel)]="product.name" />
-										</div>
-										<div class="row">
-											<div class="col-md-6">
-												<label class="fw-500 text-gray-800 fs-6 mb-2">Atributo principal</label>
-												<ng-select
-													[items]="attributes_"
-													bindLabel="name"
-													[(ngModel)]="product.mainAttribute"
-													placeholder="Atributos"
-													[clearable]="false"
-													[closeOnSelect]="true"
-													class="select-element"
-													(change)="onSelectAttribute()"
-													[loading]="loadingAttributes"
-													[disabled]="loadingAttributes"
-													appendTo="body"
-												>
-													<!-- Opción en el dropdown -->
-													<ng-template ng-option-tmp let-item="item">
-														<span class="text-ellipsis">{{ item.name }}</span>
-													</ng-template>
-
-													<!-- Opción seleccionada en el input -->
-													<ng-template ng-label-tmp let-item="item">
-														<span class="text-ellipsis">{{ item.name }}</span>
-													</ng-template>
-
-													<ng-template ng-loading-text>
-														<div class="spinner-container">
-															<span class="spinner-border spinner-border-sm"></span>
-														</div>
-													</ng-template>
-												</ng-select>
-											</div>
-											<div class="col-md-6">
-												<label class="fw-500 text-gray-800 fs-6 mb-2">Valor atributo</label>
-												<ng-select
-													[items]="valuesAttribute_"
-													bindLabel="value"
-													bindValue="value"
-													[(ngModel)]="product.mainAttributeValue"
-													placeholder="Valores"
-													[clearable]="false"
-													[closeOnSelect]="true"
-													class="select-element"
-													[loading]="loadingValuesAttribute"
-													[disabled]="loadingValuesAttribute"
-													appendTo="body"
-												>
-													<!-- Opción en el dropdown -->
-													<ng-template ng-option-tmp let-item="item">
-														<span class="text-ellipsis">{{ item.value }}</span>
-													</ng-template>
-
-													<!-- Opción seleccionada en el input -->
-													<ng-template ng-label-tmp let-item="item">
-														<span class="text-ellipsis">{{ item.value }}</span>
-													</ng-template>
-
-													<ng-template ng-loading-text>
-														<div class="spinner-container">
-															<span class="spinner-border spinner-border-sm"></span>
-														</div>
-													</ng-template>
-												</ng-select>
-											</div>
-										</div>
-										<div class="row">
-											<div class="col-md-6">
-												<label class="fw-500 text-gray-800 fs-6 mb-2 required">Unidad de medida</label>
-												<ng-select
-													[items]="units_"
-													[(ngModel)]="product.unitOfMeasure"
-													placeholder="Unidad"
-													[clearable]="false"
-													[closeOnSelect]="true"
-													[groupBy]="'group'"
-													bindLabel="name"
-													bindValue="name"
-													class="select-element"
-													appendTo="body"
-												>
-													<!-- Opción en el dropdown -->
-													<ng-template ng-option-tmp let-item="item">
-														<div class="option-item d-flex gap-3 align-items-center">
-															<div class="option-name">{{ item.name }}</div>
-															<small class="option-value text-gray-500"> - {{ item.value }}</small>
-														</div>
-													</ng-template>
-
-													<!-- Opción seleccionada en el input -->
-													<ng-template ng-label-tmp let-item="item">
-														{{ item.name }}
-													</ng-template>
-
-													<ng-template ng-loading-text>
-														<div class="spinner-container">
-														<span class="spinner-border spinner-border-sm"></span>
-														</div>
-													</ng-template>
-												</ng-select>
-											</div>
-											<div class="col-md-6">
-												<label class="fw-500 text-gray-800 fs-6 mb-2 required">Condición</label>
-												<ng-select
-													[items]="conditions_"
-													[(ngModel)]="product.condition"
-													placeholder="Condición del producto"
-													[clearable]="false"
-													[closeOnSelect]="true"
-													bindLabel="name"
-													bindValue="name"
-													class="select-element"
-													appendTo="body"
-												>
-													<!-- Opción en el dropdown -->
-													<ng-template ng-option-tmp let-item="item">
-														<div class="d-flex align-items-center gap-2">
-														<span class="bullet bullet-dot h-10px w-10px" [ngClass]="'bg-' + item.color"></span>
-														<span>{{ item.name }}</span>
-														</div>
-													</ng-template>
-
-													<!-- Opción seleccionada en el input -->
-													<ng-template ng-label-tmp let-item="item">
-														<div class="d-flex align-items-center gap-2">
-														<span class="bullet bullet-dot h-10px w-10px" [ngClass]="'bg-' + item.color"></span>
-														<span>{{ item.name }}</span>
-														</div>
-													</ng-template>
-
-													<ng-template ng-loading-text>
-														<div class="spinner-container">
-														<span class="spinner-border spinner-border-sm"></span>
-														</div>
-													</ng-template>
-												</ng-select>
-											</div>
-										</div>
-										<div class="row">
-											<div class="col-md-6">
-												<label class="fw-500 text-gray-800 fs-6 mb-2 required">Garantía</label>
-												<ng-select
-													[items]="warranties_"
-													[(ngModel)]="product.warranty"
-													placeholder="Garantía"
-													[clearable]="false"
-													[closeOnSelect]="true"
-													bindLabel="name"
-													bindValue="name"
-													class="select-element"
-													appendTo="body"
-												>
-													<!-- Opción en el dropdown -->
-													<ng-template ng-option-tmp let-item="item">
-														<div class="d-flex flex-column">
-															<span>{{ item.name }}</span>
-															<div
-																class="me-2"
-																[ngStyle]="{
-																	'background-color': 'var(--bs-' + item.color + ')',
-																	'height.px': 4,
-																	'width.%': 
-																		item.value === 'none' ? 5 :
-																		item.value.includes('15_days') ? 15 :
-																		item.value.includes('30_days') ? 25 :
-																		item.value.includes('3_months') ? 40 :
-																		item.value.includes('6_months') ? 60 :
-																		item.value.includes('1_year') ? 80 :
-																		item.value.includes('2_years') ? 90 :
-																		item.value.includes('manufacturer') ? 95 :
-																		item.value.includes('lifetime') ? 100 : 50
-																}"
-															></div>
-															
-														</div>
-													</ng-template>
-
-													<!-- Opción seleccionada en el input -->
-													<ng-template ng-label-tmp let-item="item">
-														{{ item.name }}
-													</ng-template>
-
-													<ng-template ng-loading-text>
-														<div class="spinner-container">
-															<span class="spinner-border spinner-border-sm"></span>
-														</div>
-													</ng-template>
-												</ng-select>
-
-											</div>
-											<div class="col-md-6">
-												<label class="fw-500 text-gray-800 fs-6 mb-2">País de fabricación</label>
-												<div [ngClass]="{ 'is-invalid': false }">
-													<ng-select
-														[items]="countries"
-														bindLabel="country"
-														placeholder="Países"
-														[clearable]="false"
-														[(ngModel)]="product.countryOfOrigin"
-														appendTo="body"
-														class="select-element"
-													>
-														<!-- Opción en el dropdown -->
-														<ng-template ng-option-tmp let-item="item">
-															<img [src]="item.flag" width="20" height="15" style="margin-right: 8px" />
-															{{ item.name }}
-														</ng-template>
-
-														<!-- Opción seleccionada en el input -->
-														<ng-template ng-label-tmp let-item="item">
-															<img [src]="item.flag" width="20" height="15" style="margin-right: 8px" />
-															{{ item.name }}
-														</ng-template>
-													</ng-select>
-												</div>
-											</div>
-										</div>
-										<div class="row">
-											<div class="col-md-6">
-												<label class="fw-500 text-gray-800 fs-6 mb-2 required">Precio Normal</label>
-												<input
-													currencyMask
-													type="text"
-													[options]="currencyOptions"
-													class="form-control"
-													placeholder="Precio Normal"
-													name="priceRegular"
-													[(ngModel)]="product.priceRegular"
-												/>
-											</div>
-											<div class="col-md-6">
-												<label class="fw-500 text-gray-800 fs-6 mb-2">Precio Descuento</label>
-												<input
-													currencyMask
-													type="text"
-													[options]="currencyOptions"
-													class="form-control"
-													placeholder="Precio Descuento"
-													name="priceDiscount"
-													[(ngModel)]="product.priceDiscount"
-												/>
-											</div>
-										</div>
-										<div class="d-flex flex-column">
-											<label class="required fw-500 text-gray-800 fs-6 mb-2">Etiquetas</label>
-											<app-tagify-input [whiteList]="whiteListTags" (tagsChange)="onTagsChange($event)"></app-tagify-input>
-										</div>
-										<div class="fv-row">
-											<label class="required fw-500 text-gray-800 fs-6 mb-2">Contenido</label>
+									<div class="fv-row">
+										<label class="required fw-500 text-gray-800 fs-6 mb-2">Contenido</label>
+										<div class="mb-1">
 											<app-tinymce-editor [properties]="properties" (contentChange)="onContentChange($event)"></app-tinymce-editor>
 										</div>
-										<div class="fv-row">
-											<label class="required fw-500 text-gray-800 fs-6 mb-2">Extracto</label>
-											<textarea class="form-control" placeholder="Reseña corta del producto" [(ngModel)]="product.extract"></textarea>
-										</div>
+										<span class="fs-8 text-muted">{{labelHelper.description}}</span>
 									</div>
-									<div class="card-body d-flex flex-column gap-6 pt-3" [ngClass]="{'d-none': option != 2}">
-										<div class="row" *ngFor="let item of arrProperties; let idx = index">
-											<div class="col-lg-6">
-												<ng-select
-													[items]="attributes_"
-													bindLabel="name"
-													[(ngModel)]="item.attribute"
-													placeholder="Atributos"
-													[clearable]="false"
-													[closeOnSelect]="true"
-													class="select-element"
-													(change)="onSelectAttributeProperty(idx)"
-													[loading]="loadingAttributes"
-													[disabled]="loadingAttributes"
-													appendTo="body"
-												>
-													<!-- Opción en el dropdown -->
-													<ng-template ng-option-tmp let-item="item">
-														<span class="text-ellipsis">{{ item.name }}</span>
-													</ng-template>
-
-													<!-- Opción seleccionada en el input -->
-													<ng-template ng-label-tmp let-item="item">
-														<span class="text-ellipsis">{{ item.name }}</span>
-													</ng-template>
-
-													<ng-template ng-loading-text>
-														<div class="spinner-container">
-															<span class="spinner-border spinner-border-sm"></span>
-														</div>
-													</ng-template>
-												</ng-select>
-											</div>
-											<div class="col-lg-5">
-												<ng-select
-													[items]="item.data"
-													bindLabel="value"
-													[(ngModel)]="item.value"
-													placeholder="Valores"
-													[clearable]="false"
-													[closeOnSelect]="true"
-													class="select-element"
-													[loading]="item.loading"
-													[disabled]="item.loading"
-													appendTo="body"
-												>
-													<!-- Opción en el dropdown -->
-													<ng-template ng-option-tmp let-item="item">
-														<span class="text-ellipsis">{{ item.value }}</span>
-													</ng-template>
-
-													<!-- Opción seleccionada en el input -->
-													<ng-template ng-label-tmp let-item="item">
-														<span class="text-ellipsis">{{ item.value }}</span>
-													</ng-template>
-
-													<ng-template ng-loading-text>
-														<div class="spinner-container">
-															<span class="spinner-border spinner-border-sm"></span>
-														</div>
-													</ng-template>
-												</ng-select>
-											</div>
-											<div class="col-lg-1">
-												<button class="btn btn-icon btn-icon-danger btn-text-danger" style="background-color: #f9f9f9;" (click)="onRemoveAttributeProperty(idx)">
-													<app-icon-trash></app-icon-trash>
-												</button>
+									<div class="fv-row">
+										<div class="d-flex justify-content-between align-items-center mb-2">
+											<label class="fw-500 text-gray-800 fs-6 required">
+												Extracto
+											</label>
+											<div class="cursor-pointer">
+												<i class="bi bi-info-circle" placement="left" 
+												[ngbTooltip]="labelHelper.extract"
+												tooltipClass="tooltip-dark"></i>
 											</div>
 										</div>
-										<div class="row">
-											<a class="cursor-pointer" (click)="addAttribute()">Nueva propiedad</a>
-										</div>
+										<textarea class="form-control mb-1" placeholder="Reseña corta del producto" [(ngModel)]="product.extract"></textarea>
+										<span class="fs-8 text-muted">{{labelHelper.extract}}</span>
 									</div>
-									<div class="card-body d-flex flex-column gap-6 pt-3" [ngClass]="{'d-none': option != 3}">
-										<!-- Más vendido -->
-										<label class="form-check form-check-custom form-check-solid align-items-center">
-											<input class="form-check-input me-3" type="checkbox" [(ngModel)]="product.isBestSeller" />
-											<span class="form-check-label d-flex flex-column align-items-start">
-												<span class="fw-500 text-gray-800 fs-6 mb-0">Más vendido</span>
-												<small>Marca este producto como uno de los más populares o con mayores ventas.</small>
-											</span>
-										</label>
-										<div class="separator separator-dashed"></div>
-
-										<!-- Nuevo -->
-										<label class="form-check form-check-custom form-check-solid align-items-center">
-											<input class="form-check-input me-3" type="checkbox" [(ngModel)]="product.isNewArrival" />
-											<span class="form-check-label d-flex flex-column align-items-start">
-												<span class="fw-500 text-gray-800 fs-6 mb-0">Nuevo</span>
-												<small>Indica que este producto fue recientemente agregado al catálogo.</small>
-											</span>
-										</label>
-										<div class="separator separator-dashed"></div>
-
-										<!-- Destacado -->
-										<label class="form-check form-check-custom form-check-solid align-items-center">
-											<input class="form-check-input me-3" type="checkbox" [(ngModel)]="product.isFeatured" />
-											<span class="form-check-label d-flex flex-column align-items-start">
-												<span class="fw-500 text-gray-800 fs-6 mb-0">Destacado</span>
-												<small>Resalta este producto en la página principal o secciones destacadas.</small>
-											</span>
-										</label>
-										<div class="separator separator-dashed"></div>
-
-										<!-- Edición limitada -->
-										<label class="form-check form-check-custom form-check-solid align-items-center">
-											<input class="form-check-input me-3" type="checkbox" [(ngModel)]="product.isLimitedEdition" />
-											<span class="form-check-label d-flex flex-column align-items-start">
-												<span class="fw-500 text-gray-800 fs-6 mb-0">Edición limitada</span>
-												<small>Marca el producto como una versión exclusiva o de tiraje limitado.</small>
-											</span>
-										</label>
-										<div class="separator separator-dashed"></div>
-
-										<!-- Preventa -->
-										<label class="form-check form-check-custom form-check-solid align-items-center">
-											<input class="form-check-input me-3" type="checkbox" [(ngModel)]="product.isPreOrder" />
-											<span class="form-check-label d-flex flex-column align-items-start">
-												<span class="fw-500 text-gray-800 fs-6 mb-0">Preventa</span>
-												<small>Permite reservar el producto antes de su lanzamiento o disponibilidad.</small>
-											</span>
-										</label>
-										<div class="separator separator-dashed"></div>
-
-										<!-- Exportable -->
-										<label class="form-check form-check-custom form-check-solid align-items-center">
-											<input class="form-check-input me-3" type="checkbox" [(ngModel)]="product.isExportable" />
-											<span class="form-check-label d-flex flex-column align-items-start">
-												<span class="fw-500 text-gray-800 fs-6 mb-0">Exportable</span>
-												<small>Indica que este producto puede venderse o enviarse internacionalmente.</small>
-											</span>
-										</label>
-										<div class="separator separator-dashed"></div>
-
-										<!-- Permitir Backorder -->
-										<label class="form-check form-check-custom form-check-solid align-items-center">
-											<input class="form-check-input me-3" type="checkbox" [(ngModel)]="product.allowBackorder" />
-											<span class="form-check-label d-flex flex-column align-items-start">
-												<span class="fw-500 text-gray-800 fs-6 mb-0">Permitir backorder</span>
-												<small>Permite que el cliente compre el producto aunque esté sin stock disponible.</small>
-											</span>
-										</label>
-
-									</div>
-									<div class="card-body d-flex flex-column gap-6 pt-3" [ngClass]="{'d-none': option != 4}">
-										<div class="row">
-											<div class="col-md-6">
-												<label class="fw-500 text-gray-800 fs-6 mb-2 required">Unidad peso</label>
-												<ng-select
-													[items]="weightUnits_"
-													bindLabel="name"
-													[(ngModel)]="physical.weightUnit"
-													placeholder="Unidad de medida"
-													[clearable]="false"
-													[closeOnSelect]="true"
-													class="select-element"
-													appendTo="body"
-												>
-													<!-- Opción en el dropdown -->
-													<ng-template ng-option-tmp let-item="item">
-														<div class="option-item d-flex gap-3 align-items-center">
-															<div class="option-name">{{ item.name }}</div>
-															<small class="option-value text-gray-500"> - {{ item.abbr }}</small>
-														</div>
-													</ng-template>
-
-													<!-- Opción seleccionada en el input -->
-													<ng-template ng-label-tmp let-item="item">
-														{{ item.name }}
-													</ng-template>
-
-													<ng-template ng-loading-text>
-														<div class="spinner-container">
-															<span class="spinner-border spinner-border-sm"></span>
-														</div>
-													</ng-template>
-												</ng-select>
-											</div>
-											<div class="col-md-6">
-												<label class="fw-500 text-gray-800 fs-6 mb-2 required">Unidad longitud</label>
-												<ng-select
-												[items]="dimensiontUnits_"
+								</div>
+								<div class="card-body d-flex flex-column gap-6 pt-1" [ngClass]="{'d-none': option != 2}">
+									<div class="row" *ngFor="let item of arrProperties; let idx = index">
+										<div class="col-lg-6">
+											<ng-select
+												[items]="attributes_"
 												bindLabel="name"
-												[(ngModel)]="physical.dimensionUnit"   
-												placeholder="Unidad de medida"
+												[(ngModel)]="item.attribute"
+												placeholder="Atributos"
 												[clearable]="false"
 												[closeOnSelect]="true"
 												class="select-element"
+												(change)="onSelectAttributeProperty(idx)"
+												[loading]="loadingAttributes"
+												[disabled]="loadingAttributes"
 												appendTo="body"
-												(change)="asd()">
-													<!-- Opción en el dropdown -->
-													<ng-template ng-option-tmp let-item="item">
-														<div class="option-item d-flex gap-3 align-items-center">
-															<div class="option-name">{{ item.name }}</div>
-															<small class="option-value text-gray-500"> - {{ item.abbr }}</small>
-														</div>
-													</ng-template>
+											>
+												<!-- Opción en el dropdown -->
+												<ng-template ng-option-tmp let-item="item">
+													<span class="text-ellipsis">{{ item.name }}</span>
+												</ng-template>
 
-													<!-- Opción seleccionada en el input -->
-													<ng-template ng-label-tmp let-item="item">
-														{{ item.name }}
-													</ng-template>
+												<!-- Opción seleccionada en el input -->
+												<ng-template ng-label-tmp let-item="item">
+													<span class="text-ellipsis">{{ item.name }}</span>
+												</ng-template>
 
-													<ng-template ng-loading-text>
-														<div class="spinner-container">
-															<span class="spinner-border spinner-border-sm"></span>
-														</div>
-													</ng-template>
-												</ng-select>
-											</div>
-										</div>
-										<div class="row">
-											<div class="col-md-3">
-												<label class="fw-500 text-gray-800 fs-6 mb-2 required">Ancho</label>
-												<input type="number" class="form-control" placeholder="Ancho" [(ngModel)]="physical.width">
-											</div>
-											<div class="col-md-3">
-												<label class="fw-500 text-gray-800 fs-6 mb-2 required">Alto</label>
-												<input type="number" class="form-control" placeholder="Alto" [(ngModel)]="physical.height">
-											</div>
-											<div class="col-md-3">
-												<label class="fw-500 text-gray-800 fs-6 mb-2 required">Largo</label>
-												<input type="number" class="form-control" placeholder="Largo" [(ngModel)]="physical.length">
-											</div>
-											<div class="col-md-3">
-												<label class="fw-500 text-gray-800 fs-6 mb-2 required">Peso</label>
-												<input type="number" class="form-control" placeholder="Peso" [(ngModel)]="physical.weight">
-											</div>
-										</div>
-										<div class="row">
-											<div class="col-md-6">
-												<label class="fw-500 text-gray-800 fs-6 mb-2 required">Material principal</label>
-												<ng-select
-													[items]="materials_"
-													[(ngModel)]="physical.material"
-													placeholder="Materiales"
-													[clearable]="false"
-													[closeOnSelect]="true"
-													[groupBy]="'group'"
-													bindLabel="name"
-													bindValue="name"
-													class="select-element"
-													appendTo="body"
-												>
-													<!-- Opción en el dropdown -->
-													<ng-template ng-option-tmp let-item="item">
-														<div class="option-item d-flex gap-3 align-items-center">
-															<div class="option-name">{{ item.name }}</div>
-														</div>
-													</ng-template>
-
-													<!-- Opción seleccionada en el input -->
-													<ng-template ng-label-tmp let-item="item">
-														{{ item.name }}
-													</ng-template>
-
-													<ng-template ng-loading-text>
-														<div class="spinner-container">
+												<ng-template ng-loading-text>
+													<div class="spinner-container">
 														<span class="spinner-border spinner-border-sm"></span>
-														</div>
-													</ng-template>
-												</ng-select>
-											</div>
-											<div class="col-md-6">
-												<label class="fw-500 text-gray-800 fs-6 mb-2 required">Unidad Temperatura</label>
-												<ng-select
-													[items]="temperatures_"
-													bindLabel="name"
-													[(ngModel)]="physical.storageTempUnit"
-													placeholder="Unidade temperatura"
-													[clearable]="false"
-													[closeOnSelect]="true"
-													class="select-element"
-													appendTo="body"
-												>
-													<!-- Opción en el dropdown -->
-													<ng-template ng-option-tmp let-item="item">
-														<div class="option-item d-flex gap-3 align-items-center">
-															<div class="option-name">{{ item.name }}</div>
-															<small class="option-value text-gray-500"> - {{ item.abbr }}</small>
-														</div>
-													</ng-template>
-
-													<!-- Opción seleccionada en el input -->
-													<ng-template ng-label-tmp let-item="item">
-														{{ item.name }}
-													</ng-template>
-
-													<ng-template ng-loading-text>
-														<div class="spinner-container">
-															<span class="spinner-border spinner-border-sm"></span>
-														</div>
-													</ng-template>
-												</ng-select>
-											</div>
+													</div>
+												</ng-template>
+											</ng-select>
 										</div>
-										<div class="row mb-2">
-											<div class="col-md-6">
-												<label class="fw-500 text-gray-800 fs-6 mb-2 required">Temperatura min.</label>
-												<input type="number" class="form-control" placeholder="Minima" [(ngModel)]="physical.minStorageTemp">
-											</div>
-											<div class="col-md-6">
-												<label class="fw-500 text-gray-800 fs-6 mb-2 required">Temperatura max</label>
-												<input type="number" class="form-control" placeholder="Maxima" [(ngModel)]="physical.maxStorageTemp">
-											</div>
+										<div class="col-lg-5">
+											<ng-select
+												[items]="item.data"
+												bindLabel="value"
+												[(ngModel)]="item.value"
+												placeholder="Valores"
+												[clearable]="false"
+												[closeOnSelect]="true"
+												class="select-element"
+												[loading]="item.loading"
+												[disabled]="item.loading"
+												appendTo="body"
+											>
+												<!-- Opción en el dropdown -->
+												<ng-template ng-option-tmp let-item="item">
+													<span class="text-ellipsis">{{ item.value }}</span>
+												</ng-template>
+
+												<!-- Opción seleccionada en el input -->
+												<ng-template ng-label-tmp let-item="item">
+													<span class="text-ellipsis">{{ item.value }}</span>
+												</ng-template>
+
+												<ng-template ng-loading-text>
+													<div class="spinner-container">
+														<span class="spinner-border spinner-border-sm"></span>
+													</div>
+												</ng-template>
+											</ng-select>
 										</div>
-										<!-- ¿Es frágil? -->
-										<label class="form-check form-check-custom form-check-solid align-items-center">
-											<input class="form-check-input me-3" type="checkbox" [(ngModel)]="physical.isFragile" />
-											<span class="form-check-label d-flex flex-column align-items-start">
-												<span class="fw-500 text-gray-800 fs-6 mb-0">Es frágil</span>
-												<small>Marca si el producto requiere un manejo cuidadoso durante el envío.</small>
-											</span>
-										</label>
-										<div class="separator separator-dashed"></div>
-
-										<!-- ¿Es perecible? -->
-										<label class="form-check form-check-custom form-check-solid align-items-center">
-											<input class="form-check-input me-3" type="checkbox" [(ngModel)]="physical.isPerishable" />
-											<span class="form-check-label d-flex flex-column align-items-start">
-												<span class="fw-500 text-gray-800 fs-6 mb-0">Es perecible</span>
-												<small>Indica si el producto se deteriora con el tiempo o tiene fecha de vencimiento.</small>
-											</span>
-											</label>
-										<div class="separator separator-dashed"></div>
-
-										<!-- ¿Es ecológico / reciclable? -->
-										<label class="form-check form-check-custom form-check-solid align-items-center">
-											<input class="form-check-input me-3" type="checkbox" [(ngModel)]="physical.isEcoFriendly" />
-											<span class="form-check-label d-flex flex-column align-items-start">
-												<span class="fw-500 text-gray-800 fs-6 mb-0">Ecológico / reciclable</span>
-												<small>Marca si el producto o su empaque es reciclable o respetuoso con el medio ambiente.</small>
-											</span>
-										</label>
-										<div class="separator separator-dashed"></div>
-
-										<!-- ¿Es biodegradable? -->
-										<label class="form-check form-check-custom form-check-solid align-items-center">
-											<input class="form-check-input me-3" type="checkbox" [(ngModel)]="physical.isBiodegradable" />
-											<span class="form-check-label d-flex flex-column align-items-start">
-												<span class="fw-500 text-gray-800 fs-6 mb-0">Biodegradable</span>
-												<small>Marca si el producto puede descomponerse naturalmente sin dañar el ambiente.</small>
-											</span>
-										</label>
-										<div class="separator separator-dashed"></div>
-
-										<!-- ¿Es peligroso? -->
-										<label class="form-check form-check-custom form-check-solid align-items-center">
-											<input class="form-check-input me-3" type="checkbox" [(ngModel)]="physical.isHazardous" />
-											<span class="form-check-label d-flex flex-column align-items-start">
-												<span class="fw-500 text-gray-800 fs-6 mb-0">Material peligroso</span>
-												<small>Indica si el producto requiere un manejo o transporte regulado por seguridad.</small>
-											</span>
-										</label>
-										<div class="separator separator-dashed"></div>
-
-										<!-- ¿Requiere refrigeración? -->
-										<label class="form-check form-check-custom form-check-solid align-items-center">
-											<input class="form-check-input me-3" type="checkbox" [(ngModel)]="physical.idRequiresRefrigeration" />
-											<span class="form-check-label d-flex flex-column align-items-start">
-												<span class="fw-500 text-gray-800 fs-6 mb-0">Requiere refrigeración</span>
-												<small>Marca si el producto necesita mantenerse refrigerado o en cadena de frío.</small>
-											</span>
-										</label>
-										<div class="separator separator-dashed"></div>
-
-										<!-- ¿Es inflamable? -->
-										<label class="form-check form-check-custom form-check-solid align-items-center">
-											<input class="form-check-input me-3" type="checkbox" [(ngModel)]="physical.isFlammable" />
-											<span class="form-check-label d-flex flex-column align-items-start">
-												<span class="fw-500 text-gray-800 fs-6 mb-0">Es inflamable</span>
-												<small>Indica si el producto puede encenderse fácilmente o requiere precauciones especiales.</small>
-											</span>
-										</label>
-										<div class="separator separator-dashed"></div>
-
-										<!-- ¿Requiere ensamblaje? -->
-										<label class="form-check form-check-custom form-check-solid align-items-center">
-											<input class="form-check-input me-3" type="checkbox" [(ngModel)]="physical.isRequiresAssembly" />
-											<span class="form-check-label d-flex flex-column align-items-start">
-												<span class="fw-500 text-gray-800 fs-6 mb-0">Requiere ensamblaje</span>
-												<small>Marca si el producto necesita ser armado por el cliente o instalador.</small>
-											</span>
-										</label>
+										<div class="col-lg-1">
+											<button class="btn btn-icon btn-icon-danger btn-text-danger" style="background-color: #f9f9f9;" (click)="onRemoveAttributeProperty(idx)">
+												<app-icon-trash></app-icon-trash>
+											</button>
+										</div>
 									</div>
-									<div class="card-body d-flex flex-column gap-6 pt-3" [ngClass]="{'d-none': option != 5}">
-										<div class="row">
-											<div class="col-md-6">
-												<label class="fw-500 text-gray-800 fs-6 mb-2 required">Empaquetado</label>
-												<ng-select
-													[items]="packages_"
-													bindLabel="name"
-													[(ngModel)]="shipping.packageType"
-													placeholder="Tipo de empaque"
-													[clearable]="false"
-													[closeOnSelect]="true"
-													class="select-element"
-													appendTo="body"
-												>
-													<!-- Opción en el dropdown -->
-													<ng-template ng-option-tmp let-item="item">
-														<div class="option-item d-flex gap-3 align-items-center">
-															<div class="option-name">{{ item.name }}</div>
-														</div>
-													</ng-template>
+									<div class="row">
+										<a class="cursor-pointer" (click)="addAttribute()">Nueva propiedad</a>
+									</div>
+								</div>
+								<div class="card-body d-flex flex-column gap-6 pt-1" [ngClass]="{'d-none': option != 3}">
+									<!-- Más vendido -->
+									<label class="form-check form-check-custom form-check-solid align-items-center">
+										<input class="form-check-input me-3" type="checkbox" [(ngModel)]="product.isBestSeller" />
+										<span class="form-check-label d-flex flex-column align-items-start">
+											<span class="fw-500 text-gray-800 fs-6 mb-0">Más vendido</span>
+											<small>Marca este producto como uno de los más populares o con mayores ventas.</small>
+										</span>
+									</label>
+									<div class="separator separator-dashed"></div>
 
-													<!-- Opción seleccionada en el input -->
-													<ng-template ng-label-tmp let-item="item">
-														{{ item.name }}
-													</ng-template>
+									<!-- Nuevo -->
+									<label class="form-check form-check-custom form-check-solid align-items-center">
+										<input class="form-check-input me-3" type="checkbox" [(ngModel)]="product.isNewArrival" />
+										<span class="form-check-label d-flex flex-column align-items-start">
+											<span class="fw-500 text-gray-800 fs-6 mb-0">Nuevo</span>
+											<small>Indica que este producto fue recientemente agregado al catálogo.</small>
+										</span>
+									</label>
+									<div class="separator separator-dashed"></div>
 
-													<ng-template ng-loading-text>
-														<div class="spinner-container">
-															<span class="spinner-border spinner-border-sm"></span>
-														</div>
-													</ng-template>
-												</ng-select>
-											</div>
-											<div class="col-md-6">
-												<label class="fw-500 text-gray-800 fs-6 mb-2 required">Días de preparación</label>
-												<input type="number" class="form-control" [(ngModel)]="shipping.handlingDays" placeholder="Días para el envío">
+									<!-- Destacado -->
+									<label class="form-check form-check-custom form-check-solid align-items-center">
+										<input class="form-check-input me-3" type="checkbox" [(ngModel)]="product.isFeatured" />
+										<span class="form-check-label d-flex flex-column align-items-start">
+											<span class="fw-500 text-gray-800 fs-6 mb-0">Destacado</span>
+											<small>Resalta este producto en la página principal o secciones destacadas.</small>
+										</span>
+									</label>
+									<div class="separator separator-dashed"></div>
+
+									<!-- Edición limitada -->
+									<label class="form-check form-check-custom form-check-solid align-items-center">
+										<input class="form-check-input me-3" type="checkbox" [(ngModel)]="product.isLimitedEdition" />
+										<span class="form-check-label d-flex flex-column align-items-start">
+											<span class="fw-500 text-gray-800 fs-6 mb-0">Edición limitada</span>
+											<small>Marca el producto como una versión exclusiva o de tiraje limitado.</small>
+										</span>
+									</label>
+									<div class="separator separator-dashed"></div>
+
+									<!-- Preventa -->
+									<label class="form-check form-check-custom form-check-solid align-items-center">
+										<input class="form-check-input me-3" type="checkbox" [(ngModel)]="product.isPreOrder" />
+										<span class="form-check-label d-flex flex-column align-items-start">
+											<span class="fw-500 text-gray-800 fs-6 mb-0">Preventa</span>
+											<small>Permite reservar el producto antes de su lanzamiento o disponibilidad.</small>
+										</span>
+									</label>
+									<div class="separator separator-dashed"></div>
+
+									<!-- Exportable -->
+									<label class="form-check form-check-custom form-check-solid align-items-center">
+										<input class="form-check-input me-3" type="checkbox" [(ngModel)]="product.isExportable" />
+										<span class="form-check-label d-flex flex-column align-items-start">
+											<span class="fw-500 text-gray-800 fs-6 mb-0">Exportable</span>
+											<small>Indica que este producto puede venderse o enviarse internacionalmente.</small>
+										</span>
+									</label>
+									<div class="separator separator-dashed"></div>
+
+									<!-- Permitir Backorder -->
+									<label class="form-check form-check-custom form-check-solid align-items-center">
+										<input class="form-check-input me-3" type="checkbox" [(ngModel)]="product.allowBackorder" />
+										<span class="form-check-label d-flex flex-column align-items-start">
+											<span class="fw-500 text-gray-800 fs-6 mb-0">Permitir backorder</span>
+											<small>Permite que el cliente compre el producto aunque esté sin stock disponible.</small>
+										</span>
+									</label>
+
+								</div>
+								<div class="card-body d-flex flex-column gap-6 pt-1" [ngClass]="{'d-none': option != 4}">
+									<div class="row">
+										<div class="col-md-6">
+											<label class="fw-500 text-gray-800 fs-6 mb-2 required">Unidad peso</label>
+											<ng-select
+												[items]="weightUnits_"
+												bindLabel="name"
+												[(ngModel)]="physical.weightUnit"
+												placeholder="Unidad de medida"
+												[clearable]="false"
+												[closeOnSelect]="true"
+												class="select-element mb-1"
+												appendTo="body"
+											>
+												<!-- Opción en el dropdown -->
+												<ng-template ng-option-tmp let-item="item">
+													<div class="option-item d-flex gap-3 align-items-center">
+														<div class="option-name">{{ item.name }}</div>
+														<small class="option-value text-gray-500"> - {{ item.abbr }}</small>
+													</div>
+												</ng-template>
+
+												<!-- Opción seleccionada en el input -->
+												<ng-template ng-label-tmp let-item="item">
+													{{ item.name }}
+												</ng-template>
+
+												<ng-template ng-loading-text>
+													<div class="spinner-container">
+														<span class="spinner-border spinner-border-sm"></span>
+													</div>
+												</ng-template>
+											</ng-select>
+											<span class="fs-8 text-muted">{{labelHelper.weightUnit}}</span>
+										</div>
+										<div class="col-md-6">
+											<label class="fw-500 text-gray-800 fs-6 mb-2 required">Unidad longitud</label>
+											<ng-select
+											[items]="dimensiontUnits_"
+											bindLabel="name"
+											[(ngModel)]="physical.dimensionUnit"   
+											placeholder="Unidad de medida"
+											[clearable]="false"
+											[closeOnSelect]="true"
+											class="select-element mb-1"
+											appendTo="body">
+												<!-- Opción en el dropdown -->
+												<ng-template ng-option-tmp let-item="item">
+													<div class="option-item d-flex gap-3 align-items-center">
+														<div class="option-name">{{ item.name }}</div>
+														<small class="option-value text-gray-500"> - {{ item.abbr }}</small>
+													</div>
+												</ng-template>
+
+												<!-- Opción seleccionada en el input -->
+												<ng-template ng-label-tmp let-item="item">
+													{{ item.name }}
+												</ng-template>
+
+												<ng-template ng-loading-text>
+													<div class="spinner-container">
+														<span class="spinner-border spinner-border-sm"></span>
+													</div>
+												</ng-template>
+											</ng-select>
+											<span class="fs-8 text-muted">{{labelHelper.dimensionUnit}}</span>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-3">
+											<label class="fw-500 text-gray-800 fs-6 mb-2 required">Ancho</label>
+											<input type="number" class="form-control mb-1" placeholder="Ancho" [(ngModel)]="physical.width">
+											<span class="fs-8 text-muted">{{labelHelper.width}}</span>
+										</div>
+										<div class="col-md-3">
+											<label class="fw-500 text-gray-800 fs-6 mb-2 required">Alto</label>
+											<input type="number" class="form-control mb-1" placeholder="Alto" [(ngModel)]="physical.height">
+											<span class="fs-8 text-muted">{{labelHelper.height}}</span>
+										</div>
+										<div class="col-md-3">
+											<label class="fw-500 text-gray-800 fs-6 mb-2 required">Largo</label>
+											<input type="number" class="form-control mb-1" placeholder="Largo" [(ngModel)]="physical.length">
+											<span class="fs-8 text-muted">{{labelHelper.length}}</span>
+										</div>
+										<div class="col-md-3">
+											<label class="fw-500 text-gray-800 fs-6 mb-2 required">Peso</label>
+											<input type="number" class="form-control mb-1" placeholder="Peso" [(ngModel)]="physical.weight">
+											<span class="fs-8 text-muted">{{labelHelper.weight}}</span>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-6">
+											<label class="fw-500 text-gray-800 fs-6 mb-2 required">Material principal</label>
+											<ng-select
+												[items]="materials_"
+												[(ngModel)]="physical.material"
+												placeholder="Materiales"
+												[clearable]="false"
+												[closeOnSelect]="true"
+												[groupBy]="'group'"
+												bindLabel="name"
+												bindValue="name"
+												class="select-element mb-1"
+												appendTo="body"
+											>
+												<!-- Opción en el dropdown -->
+												<ng-template ng-option-tmp let-item="item">
+													<div class="option-item d-flex gap-3 align-items-center">
+														<div class="option-name">{{ item.name }}</div>
+													</div>
+												</ng-template>
+
+												<!-- Opción seleccionada en el input -->
+												<ng-template ng-label-tmp let-item="item">
+													{{ item.name }}
+												</ng-template>
+
+												<ng-template ng-loading-text>
+													<div class="spinner-container">
+													<span class="spinner-border spinner-border-sm"></span>
+													</div>
+												</ng-template>
+											</ng-select>
+
+											<span class="fs-8 text-muted">{{labelHelper.material}}</span>
+										</div>
+										<div class="col-md-6">
+											<label class="fw-500 text-gray-800 fs-6 mb-2">Unidad Temperatura</label>
+											<ng-select
+												[items]="temperatures_"
+												bindLabel="name"
+												[(ngModel)]="physical.storageTempUnit"
+												placeholder="Unidade temperatura"
+												[clearable]="false"
+												[closeOnSelect]="true"
+												class="select-element mb-1"
+												appendTo="body"
+											>
+												<!-- Opción en el dropdown -->
+												<ng-template ng-option-tmp let-item="item">
+													<div class="option-item d-flex gap-3 align-items-center">
+														<div class="option-name">{{ item.name }}</div>
+														<small class="option-value text-gray-500"> - {{ item.abbr }}</small>
+													</div>
+												</ng-template>
+
+												<!-- Opción seleccionada en el input -->
+												<ng-template ng-label-tmp let-item="item">
+													{{ item.name }}
+												</ng-template>
+
+												<ng-template ng-loading-text>
+													<div class="spinner-container">
+														<span class="spinner-border spinner-border-sm"></span>
+													</div>
+												</ng-template>
+											</ng-select>
+											<span class="fs-8 text-muted">{{labelHelper.storageTempUnit}}</span>
+										</div>
+									</div>
+									<div class="row mb-2">
+										<div class="col-md-6">
+											<label class="fw-500 text-gray-800 fs-6 mb-2">Temperatura min.</label>
+											<input type="number" class="form-control mb-1" placeholder="Minima" [(ngModel)]="physical.minStorageTemp">
+											<span class="fs-8 text-muted">{{labelHelper.minStorageTemp}}</span>
+										</div>
+										<div class="col-md-6">
+											<label class="fw-500 text-gray-800 fs-6 mb-2">Temperatura max</label>
+											<input type="number" class="form-control mb-1" placeholder="Maxima" [(ngModel)]="physical.maxStorageTemp">
+											<span class="fs-8 text-muted">{{labelHelper.maxStorageTemp}}</span>
+										</div>
+									</div>
+									<!-- ¿Es frágil? -->
+									<label class="form-check form-check-custom form-check-solid align-items-center">
+										<input class="form-check-input me-3" type="checkbox" [(ngModel)]="physical.isFragile" />
+										<span class="form-check-label d-flex flex-column align-items-start">
+											<span class="fw-500 text-gray-800 fs-6 mb-0">Es frágil</span>
+											<small>Marca si el producto requiere un manejo cuidadoso durante el envío.</small>
+										</span>
+									</label>
+									<div class="separator separator-dashed"></div>
+
+									<!-- ¿Es perecible? -->
+									<label class="form-check form-check-custom form-check-solid align-items-center">
+										<input class="form-check-input me-3" type="checkbox" [(ngModel)]="physical.isPerishable" />
+										<span class="form-check-label d-flex flex-column align-items-start">
+											<span class="fw-500 text-gray-800 fs-6 mb-0">Es perecible</span>
+											<small>Indica si el producto se deteriora con el tiempo o tiene fecha de vencimiento.</small>
+										</span>
+										</label>
+									<div class="separator separator-dashed"></div>
+
+									<!-- ¿Es ecológico / reciclable? -->
+									<label class="form-check form-check-custom form-check-solid align-items-center">
+										<input class="form-check-input me-3" type="checkbox" [(ngModel)]="physical.isEcoFriendly" />
+										<span class="form-check-label d-flex flex-column align-items-start">
+											<span class="fw-500 text-gray-800 fs-6 mb-0">Ecológico / reciclable</span>
+											<small>Marca si el producto o su empaque es reciclable o respetuoso con el medio ambiente.</small>
+										</span>
+									</label>
+									<div class="separator separator-dashed"></div>
+
+									<!-- ¿Es biodegradable? -->
+									<label class="form-check form-check-custom form-check-solid align-items-center">
+										<input class="form-check-input me-3" type="checkbox" [(ngModel)]="physical.isBiodegradable" />
+										<span class="form-check-label d-flex flex-column align-items-start">
+											<span class="fw-500 text-gray-800 fs-6 mb-0">Biodegradable</span>
+											<small>Marca si el producto puede descomponerse naturalmente sin dañar el ambiente.</small>
+										</span>
+									</label>
+									<div class="separator separator-dashed"></div>
+
+									<!-- ¿Es peligroso? -->
+									<label class="form-check form-check-custom form-check-solid align-items-center">
+										<input class="form-check-input me-3" type="checkbox" [(ngModel)]="physical.isHazardous" />
+										<span class="form-check-label d-flex flex-column align-items-start">
+											<span class="fw-500 text-gray-800 fs-6 mb-0">Material peligroso</span>
+											<small>Indica si el producto requiere un manejo o transporte regulado por seguridad.</small>
+										</span>
+									</label>
+									<div class="separator separator-dashed"></div>
+
+									<!-- ¿Requiere refrigeración? -->
+									<label class="form-check form-check-custom form-check-solid align-items-center">
+										<input class="form-check-input me-3" type="checkbox" [(ngModel)]="physical.idRequiresRefrigeration" />
+										<span class="form-check-label d-flex flex-column align-items-start">
+											<span class="fw-500 text-gray-800 fs-6 mb-0">Requiere refrigeración</span>
+											<small>Marca si el producto necesita mantenerse refrigerado o en cadena de frío.</small>
+										</span>
+									</label>
+									<div class="separator separator-dashed"></div>
+
+									<!-- ¿Es inflamable? -->
+									<label class="form-check form-check-custom form-check-solid align-items-center">
+										<input class="form-check-input me-3" type="checkbox" [(ngModel)]="physical.isFlammable" />
+										<span class="form-check-label d-flex flex-column align-items-start">
+											<span class="fw-500 text-gray-800 fs-6 mb-0">Es inflamable</span>
+											<small>Indica si el producto puede encenderse fácilmente o requiere precauciones especiales.</small>
+										</span>
+									</label>
+									<div class="separator separator-dashed"></div>
+
+									<!-- ¿Requiere ensamblaje? -->
+									<label class="form-check form-check-custom form-check-solid align-items-center">
+										<input class="form-check-input me-3" type="checkbox" [(ngModel)]="physical.isRequiresAssembly" />
+										<span class="form-check-label d-flex flex-column align-items-start">
+											<span class="fw-500 text-gray-800 fs-6 mb-0">Requiere ensamblaje</span>
+											<small>Marca si el producto necesita ser armado por el cliente o instalador.</small>
+										</span>
+									</label>
+								</div>
+								<div class="card-body d-flex flex-column gap-6 pt-1" [ngClass]="{'d-none': option != 5}">
+									<div class="row">
+										<div class="col-md-6">
+											<label class="fw-500 text-gray-800 fs-6 mb-2 required">Empaquetado</label>
+											<ng-select
+												[items]="packages_"
+												bindLabel="name"
+												[(ngModel)]="shipping.packageType"
+												placeholder="Tipo de empaque"
+												[clearable]="false"
+												[closeOnSelect]="true"
+												class="select-element mb-1"
+												appendTo="body"
+											>
+												<!-- Opción en el dropdown -->
+												<ng-template ng-option-tmp let-item="item">
+													<div class="option-item d-flex gap-3 align-items-center">
+														<div class="option-name">{{ item.name }}</div>
+													</div>
+												</ng-template>
+
+												<!-- Opción seleccionada en el input -->
+												<ng-template ng-label-tmp let-item="item">
+													{{ item.name }}
+												</ng-template>
+
+												<ng-template ng-loading-text>
+													<div class="spinner-container">
+														<span class="spinner-border spinner-border-sm"></span>
+													</div>
+												</ng-template>
+											</ng-select>
+											<span class="fs-8 text-muted">{{labelHelper.packageType}}</span>
+										</div>
+										<div class="col-md-6">
+											<label class="fw-500 text-gray-800 fs-6 mb-2 required">Días de preparación</label>
+											<input type="number" class="form-control mb-1" [(ngModel)]="shipping.handlingDays" placeholder="Días para el envío">
+											<span class="fs-8 text-muted">{{labelHelper.handlingDays}}</span>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-12">
+											<label class="fw-500 text-gray-800 fs-6 mb-2">
+												Instrucciones de envío
+											</label>
+											<textarea name="" class="form-control mb-1" placeholder="Especifica algunas instrucciones"></textarea>
+											<span class="fs-8 text-muted">{{labelHelper.specialInstructions}}</span>
+										</div>
+									</div>
+
+									<label class="form-check form-check-custom form-check-solid align-items-center">
+										<input class="form-check-input me-3" type="checkbox" [(ngModel)]="shipping.freeShipping" />
+										<span class="form-check-label d-flex flex-column align-items-start">
+											<span class="fw-500 text-gray-800 fs-6 mb-0">Envío gratuito</span>
+											<small>Activa esta opción si el producto se enviará sin costo adicional para el cliente.</small>
+										</span>
+									</label>
+									<div class="separator separator-dashed my-2"></div>
+
+									<label class="form-check form-check-custom form-check-solid align-items-center">
+										<input class="form-check-input me-3" type="checkbox" [(ngModel)]="shipping.pickupInStore" />
+										<span class="form-check-label d-flex flex-column align-items-start">
+											<span class="fw-500 text-gray-800 fs-6 mb-0">Recojo en tienda</span>
+											<small>Marca esta opción si el cliente puede recoger el producto directamente en una sucursal.</small>
+										</span>
+									</label>
+								</div>
+								<div class="card-body d-flex flex-column gap-6 pt-1" [ngClass]="{'d-none': option != 6}">
+									<app-upload-images (filesSelected)="onSelectFiles($event)"></app-upload-images>
+
+									<div class="row g-3">
+										<div class="col-6 col-md-4 col-lg-3"
+											*ngFor="let item of images; let idx = index">
+
+											<a class="d-block overlay position-relative"
+											data-fslightbox="lightbox-basic"
+											[href]="item.preview">
+
+												<div class="overlay-wrapper
+															bgi-no-repeat bgi-position-center bgi-size-cover
+															card-rounded min-h-175px"
+													[ngStyle]="{'background-image': 'url(' + item.preview + ')'}">
+												</div>
+												
+												<div class="overlay-layer card-rounded bg-dark bg-opacity-25 shadow">
+													<i class="bi bi-eye-fill text-white fs-3x"></i>
+													
+												</div>
+												<span class="badge badge-dark position-absolute" style="top: 10px;left:10px" *ngIf="cover?.index == item.index">Cover</span>
+											</a>
+											
+
+											<div class="d-flex gap-3">
+												<small class="text-danger cursor-pointer" (click)="removeImage(idx)"  *ngIf="cover?.index != item.index">Eliminar</small>
+												<small class="text-primary cursor-pointer" (click)="onSelectedBanner(item)" *ngIf="cover?.index != item.index">Establecer portada</small>
 											</div>
 										</div>
-										<div class="row">
-											<div class="col-12">
-												<label class="fw-500 text-gray-800 fs-6 mb-2 required">
-													Instrucciones de envío
-												</label>
-												<textarea name="" class="form-control" placeholder="Especifica algunas instrucciones"></textarea>
-											</div>
+									</div>
+								</div>
+								<div class="card-body d-flex flex-column gap-6 pt-1" [ngClass]="{'d-none': option != 7}">
+									<div class="row">
+										<div class="col-md-6">
+											<label class="fw-500 text-gray-800 fs-6 mb-2 required">Atributo principal</label>
+											<input type="text" class="form-control mb-1" [(ngModel)]="variation.name" placeholder="Tallas">
+											<span class="fs-8 text-muted">Valor refencial de la pestaña general.</span>
 										</div>
+										<div class="col-md-6">
+											<label class="fw-500 text-gray-800 fs-6 mb-2 required">Plantilla SKU</label>
+											<ng-select
+												[items]="skuPatterns"
+												bindLabel="name"
+												[(ngModel)]="variation.skuPattern"
+												placeholder="Tipo de empaque"
+												[clearable]="false"
+												[closeOnSelect]="true"
+												class="select-element mb-1"
+												appendTo="body"
+											>
+												<!-- Opción en el dropdown -->
+												<ng-template ng-option-tmp let-item="item">
+													<div class="option-item d-flex flex-column align-items-start">
+														<div class="option-name">{{ item.example }}</div>
+														<small class="text-gray-500">{{item.name}}</small>
+													</div>
+												</ng-template>
 
-										<label class="form-check form-check-custom form-check-solid align-items-center">
-											<input class="form-check-input me-3" type="checkbox" [(ngModel)]="shipping.freeShipping" />
-											<span class="form-check-label d-flex flex-column align-items-start">
-												<span class="fw-500 text-gray-800 fs-6 mb-0">Envío gratuito</span>
-												<small>Activa esta opción si el producto se enviará sin costo adicional para el cliente.</small>
-											</span>
-										</label>
-										<div class="separator separator-dashed my-2"></div>
+												<!-- Opción seleccionada en el input -->
+												<ng-template ng-label-tmp let-item="item">
+													{{ item.example }}
+												</ng-template>
 
-										<label class="form-check form-check-custom form-check-solid align-items-center">
-											<input class="form-check-input me-3" type="checkbox" [(ngModel)]="shipping.pickupInStore" />
-											<span class="form-check-label d-flex flex-column align-items-start">
-												<span class="fw-500 text-gray-800 fs-6 mb-0">Recojo en tienda</span>
-												<small>Marca esta opción si el cliente puede recoger el producto directamente en una sucursal.</small>
-											</span>
-										</label>
+												<ng-template ng-loading-text>
+													<div class="spinner-container">
+														<span class="spinner-border spinner-border-sm"></span>
+													</div>
+												</ng-template>
+											</ng-select>
+											<span class="fs-8 text-muted">Combinacion de campos para SKU.</span>
+										</div>
+										
+									</div>
+									<div class="row">
+										<a class="cursor-pointer" (click)="addVariation()">Agregar variación</a>
+									</div>
+
+									<div class="row" *ngIf="variations.length >= 1">
+										<div class="col-12">
+											<table class="table align-middle table-row-dashed fs-6 gy-3 mb-0"
+											style="border: 1px solid #eeeeee;">
+												<thead>
+													<tr class="text-start text-gray-500 fw-bold fs-7 text-uppercase gs-0">
+														<th class="min-w-100px">Variación</th>
+														<th class="text-end min-w-50px">Quitar</th>
+													</tr>
+												</thead>
+												<tbody class="fw-bold text-gray-600">
+													<tr *ngFor="let item of variations; let idx = index">
+														<td>
+															<div class="d-flex align-items-center gap-3">
+																<div class="d-flex flex-column text-muted">
+																	<a href="#" class="text-gray-800 text-hover-primary fw-bold">
+																		{{item.name}}
+																	</a>
+																	<div class="fs-7">{{item.skuPattern.name}}</div>
+																</div>
+															</div>
+														</td>
+														<td class="text-end">
+															<a (click)="onRemoveVariation(idx)" class="btn btn-sm btn-icon btn-light-danger btn-active-light-danger toggle h-25px w-25px">
+																<app-icon-trash></app-icon-trash>
+															</a>
+														</td>
+													</tr>
+												</tbody>
+											</table>
+										</div>
 									</div>
 								</div>
 							</div>

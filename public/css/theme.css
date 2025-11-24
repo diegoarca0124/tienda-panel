@@ -3,11 +3,15 @@
 }
 
 body {
-	background-color: #f9f9f9 !important;
+	background-color: white !important;
 }
 
 .cursor-disabled {
 	cursor: not-allowed !important;
+}
+
+.h-45px{
+	height: 45px !important;
 }
 
 .ls-1px {
@@ -46,19 +50,8 @@ body {
 	cursor: pointer;
 }
 
-.option-item {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  width: 100%;
-}
-
-.option-item .text-ellipsis {
-  display: inline-block;
-  max-width: 100%;         /* Usa el ancho disponible del contenedor */
-  overflow: hidden;         /* Oculta el texto que se sale */
-  text-overflow: ellipsis;  /* Muestra los puntos suspensivos */
-  white-space: nowrap;      /* Evita que el texto salte de línea */
+.btn{
+	border-radius: .225rem !important;
 }
 
 .bg-outline-danger {
@@ -112,10 +105,7 @@ body {
 
 .card {
 	border-radius: 0px !important;
-}
-
-.dropdown-toggle::after {
-	display: none !important;
+	box-shadow: rgb(0 0 0 / 6%) 0.5rem 0.5rem 1.5rem 0.5rem !important;
 }
 
 .mx-w-350px {
@@ -132,51 +122,13 @@ body {
 
 /***/
 
-.select-element .ng-placeholder {
-	top: 12px !important;
-}
-
-.select-element .ng-value {
-	margin-right: 5px !important;
-	padding: 3px 0px !important;
-	font-size: 1.1rem !important;
-}
-
-.select-element .ng-input input {
-	margin-top: 6px !important;
-}
-
-.select-element .ng-select-container .ng-value-container {
-	width: 400px !important;
-	padding-left: 10px !important;
-}
-
-.select-element .ng-select-container {
-	height: auto !important;
-	min-height: 43.56px !important;
-	
-}
-
-.select-element .ng-option {
-	font-size: 1.1rem !important;
-	border-bottom: 1px solid #e8f2ff;
-}
 
 .py-15 {
 	padding-top: 5rem !important;
 	padding-bottom: 5rem !important;
 }
 
-span.ng-option-label {
-    color: black;
-    text-transform: uppercase;
-    font-weight: 700;
-}
 
-.ng-optgroup {
-    background: #f1faff;
-	border-left: 2px solid #1B84FF;
-}
 
 
 /***/
@@ -186,18 +138,6 @@ span.ng-option-label {
 	backdrop-filter: blur(10px); /* borra solo el fondo */
 	border: 1px solid;
 	width: 400px !important;
-}
-
-.table-dark th {
-	background-color: #151921 !important; /* tu color */
-	color: #fff !important; /* texto blanco */
-}
-
-.table th,
-.table td {
-	white-space: nowrap; /* evita que el texto haga wrap */
-	overflow: hidden;
-	text-overflow: ellipsis;
 }
 
 /***********************************/
@@ -230,6 +170,8 @@ span.ng-option-label {
 
 .tox-mbtn__select-label{
 	font-size: .85rem !important;	
+	color: #9da1bc !important;
+	font-weight: 500 !important;
 }
 
 /* 🔹 Texto dentro del tag */
@@ -260,6 +202,13 @@ span.ng-option-label {
 	font-family: 'Lexend' !important;
 }
 
+.text-ellipsis {
+  white-space: nowrap;        /* No saltar de línea */
+  overflow: hidden;           /* Ocultar lo que no entra */
+  text-overflow: ellipsis;    /* Mostrar "..." */
+  display: block;             /* Necesario para que funcione correctamente */
+}
+
 /******************************************/
 
 .tox-tinymce {
@@ -276,3 +225,24 @@ span.ng-option-label {
 .tox-promotion{
 	display: none !important;
 }
+
+/**************************************************/
+
+.tooltip-dark .tooltip-inner {
+  background: rgba(0, 0, 0, 0.826) !important; /* negro suave transparente */
+  backdrop-filter: blur(10px) !important;     /* efecto blur (desenfoque) */
+  -webkit-backdrop-filter: blur(10px) !important;
+
+  color: #fff !important;
+  padding: 10px 16px !important;
+  font-size: 13px !important;
+  border-radius: 10px !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45) !important;
+}
+
+/* Flecha */
+.tooltip-dark .tooltip-arrow::before {
+  border-top-color: rgba(0, 0, 0, 0.45) !important;
+}
+

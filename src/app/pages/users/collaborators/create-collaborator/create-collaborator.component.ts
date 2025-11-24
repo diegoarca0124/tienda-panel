@@ -12,11 +12,15 @@ import { TopbarComponent } from '@app/shared/topbar/topbar.component';
 import { finalize, takeUntil } from 'rxjs';
 import { Subject } from 'rxjs/internal/Subject';
 import { IMaskModule } from 'angular-imask';
+import { rols } from '@app/common/constants/rols.constant';
+import { NgSelectModule } from '@ng-select/ng-select';
+import { identityDocuments } from '@app/common/constants/identityDocuments .constant';
+import { AlertComponent } from '@app/shared/alert/alert.component';
 declare const toastr: any;
 
 @Component({
 	selector: 'app-create-collaborator',
-	imports: [SidebarComponent, TopbarComponent, CommonModule, FormsModule, RouterModule, IMaskModule],
+	imports: [SidebarComponent, TopbarComponent, CommonModule, FormsModule, RouterModule, IMaskModule, NgSelectModule, AlertComponent],
 	templateUrl: './create-collaborator.component.html',
 	styleUrl: './create-collaborator.component.css',
 })
@@ -24,17 +28,20 @@ export class CreateCollaboratorComponent {
 	public collaborator: Collaborator = {
 		names: '',
 		surname: '',
-		type_document: '',
+		type_document: undefined,
 		number_document: '',
-		role: '',
+		role: undefined,
 		email: '',
 		password: '',
 		phone: '',
 	};
 	public errorsCollaborator: any = {};
+	public msmErrorCollaborator: any = [];
 	private destroy$ = new Subject<void>();
 	public loadBtn: boolean = false;
 	public errorMsmServer: string = '';
+	public rols = rols;
+	public identityDocuments = identityDocuments;
 
 	constructor(
 		private authService: AuthService,
@@ -63,7 +70,6 @@ export class CreateCollaboratorComponent {
 
 	create() {
 		this.loadBtn = true;
-
 		this.collaboratorService
 			.create_collaborator(this.collaborator)
 			.pipe(
@@ -81,10 +87,11 @@ export class CreateCollaboratorComponent {
 					const error = err.error;
 					this.errorMsmServer = error.message || '¡Error desconocido!';
 					toastr.error(this.errorMsmServer);
-
 					if (error.validation) {
 						this.errorsCollaborator = error.validation;
+						this.msmErrorCollaborator =Object.values(this.errorsCollaborator).flat();
 						this.errorMsmServer = '';
+						console.log(this.msmErrorCollaborator);
 					}
 				},
 			});

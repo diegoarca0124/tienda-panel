@@ -6,3 +6,7 @@
 	border: 1px dashed #c4cada;
 	border-radius: 50%;
 }
+
+.active{
+	background-color: #1B84FF !important
+}

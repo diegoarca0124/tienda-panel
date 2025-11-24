@@ -25,290 +25,283 @@
 				<div class="app-content flex-column-fluid">
 					<div class="app-container container">
 						<div class="card mb-7">
-							<div class="card-header">
+							<div class="card-header" style="background-color: #f8f8f8;">
 								<h4 class="card-title m-0 d-flex flex-column">
-									<span class="fs-5">Editar Atributos</span>
+									<span class="fs-5 fw-600">Editar Atributos</span>
 									<span class="text-gray-600 mt-1 fw-400 fs-0-9rem">
 										Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eligendi, quaerat..
 									</span>
 								</h4>
 							</div>
-							<div class="card-body p-0 mb-2" *ngIf="!loading">
-								<div class="table-responsive" style="overflow: visible" *ngIf="!errorMsmServerGetAttribute">
-									<table class="table align-middle table-row-bordered table-row-solid gy-4 gs-9 mb-0">
-										<tbody class="fw-6">
-											<tr>
-												<td class="py-5 font-normal">
-													<label class="fs-6 text-gray-700 required">Nombres</label>
-													<div class="text-muted fs-8">
-														<small>Nombres completos del usuario.</small>
-													</div>
-												</td>
-												<td class="py-5 text-gray-800 font-normaltext-sm min-w-400px">
-													<div class="position-relative pb-8px">
-														<input
-															type="text"
-															class="form-control"
-															placeholder="RAM"
-															name="name"
-															[(ngModel)]="attribute.name"
-															[ngClass]="{ 'is-invalid': errorsAtribute?.name }"
-														/>
-														<div class="invalid-feedback mt-0" *ngIf="errorsAtribute?.name">
-															<small>
-																{{ errorsAtribute?.name[0] || '' }}
-															</small>
-														</div>
-													</div>
-												</td>
-											</tr>
-											<tr>
-												<td class="py-5 font-normal">
-													<label class="fs-6 text-gray-700">Unidad</label>
-													<div class="text-muted fs-8">
-														<small>Unidad de agrupamiento para atributo.</small>
-													</div>
-												</td>
-												<td class="py-5 text-gray-800 font-normaltext-sm min-w-400px">
-													<div class="position-relative pb-8px">
-														<input
-															type="text"
-															class="form-control"
-															placeholder="GB"
-															name="unit"
-															[(ngModel)]="attribute.unit"
-															[ngClass]="{ 'is-invalid': errorsAtribute?.unit }"
-														/>
-														<div class="invalid-feedback mt-0" *ngIf="errorsAtribute?.unit">
-															<small>
-																{{ errorsAtribute?.unit[0] || '' }}
-															</small>
-														</div>
-													</div>
-												</td>
-											</tr>
-											<tr>
-												<td class="py-5 font-normal">
-													<div class="d-flex gap-3">
-														<span class="fs-6 text-gray-700 required">Categorías</span>
-														<small class="text-primary cursor-pointer" (click)="init_categories()">Recargar</small>
-													</div>
-													<div class="text-muted fs-8">
-														<small>Categorías donde esta disponible el atributo.</small>
-													</div>
-												</td>
-												<td class="py-5 text-gray-800 font-normaltext-sm min-w-400px">
-													<div class="position-relative pb-8px">
-														<div [ngClass]="{ 'is-invalid': errorsAtribute?.categories }">
-															<ng-select
-																[items]="categories"
-																bindLabel="name"
-																bindValue="id"
-																[(ngModel)]="categoriesSelected"
-																[multiple]="true"
-																placeholder="Selecciona países"
-																[clearable]="false"
-																[closeOnSelect]="false"
-																class="select-element"
-																appendTo="body"
-																[loading]="loadingCategories"
-																[disabled]="loadingCategories"
-															>
-																<!-- Opción en el dropdown -->
-																<ng-template ng-option-tmp let-item="item">
-																	{{ item.name }}
-																</ng-template>
+							<div class="card-body"  *ngIf="!loading">
+								<ng-container *ngIf="!errorMsmServerGetAttribute">
+									<div class="row">
+										<div class="col-lg-6">
+											<div class="d-flex flex-column mb-5 fv-row fv-plugins-icon-container">
+												<!--begin::Label-->
+												<label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2">
+													<span class="required">Nombre</span>
+												</label>
+												<!--end::Label-->
 
-																<!-- Opción seleccionada en el input -->
-																<ng-template ng-label-tmp let-item="item">
-																	{{ item.name }}
-																</ng-template>
+												<input type="text" 
+												class="form-control mb-1" 
+												placeholder="Almacenamiento"
+												name="name" 
+												[(ngModel)]="attribute.name"
+												[ngClass]="{'is-invalid': errorsAtribute?.name}">
 
-																<ng-template ng-loading-text>
-																	<div class="spinner-container">
-																		<span class="spinner-border spinner-border-sm"></span>
-																	</div>
-																</ng-template>
-															</ng-select>
-														</div>
-														<div class="invalid-feedback mt-0 d-block" *ngIf="errorsAtribute?.categories">
-															<small>
-																{{ errorsAtribute?.categories[0] || '' }}
-															</small>
-														</div>
-													</div>
-												</td>
-											</tr>
-										</tbody>
-									</table>
-								</div>
+												<span class="fs-8 text-muted">Nombre de la propiedad.</span>
+											</div>
+										</div>
+										<div class="col-lg-6">
+											<div class="d-flex flex-column mb-5 fv-row fv-plugins-icon-container">
+												<!--begin::Label-->
+												<label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2">
+													<span class="required">Unidad</span>
+												</label>
+												<!--end::Label-->
+
+												<input
+													type="text"
+													class="form-control mb-1"
+													placeholder="GB"
+													name="unit"
+													[(ngModel)]="attribute.unit"
+													[ngClass]="{ 'is-invalid': errorsAtribute?.unit }"
+												/>
+
+												<span class="fs-8 text-muted">Unidad de agrupamiento para atributo.</span>
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-lg-12">
+											<div class="d-flex flex-column mb-5 fv-row fv-plugins-icon-container">
+												<!--begin::Label-->
+												<label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2">
+													<span class="required">Categorías</span>
+												</label>
+												<!--end::Label-->
+
+												<div [ngClass]="{ 'is-invalid': errorsAtribute?.categories }">
+													<ng-select
+														[items]="categories"
+														bindLabel="name"
+														bindValue="id"
+														[(ngModel)]="categoriesSelected"
+														[multiple]="true"
+														placeholder="Selecciona países"
+														[clearable]="false"
+														[closeOnSelect]="false"
+														class="select-element mb-1"
+														appendTo="body"
+														[loading]="loadingCategories"
+														[disabled]="loadingCategories"
+													>
+														<!-- Opción en el dropdown -->
+														<ng-template ng-option-tmp let-item="item">
+															{{ item.name }}
+														</ng-template>
+
+														<!-- Opción seleccionada en el input -->
+														<ng-template ng-label-tmp let-item="item">
+															{{ item.name }}
+														</ng-template>
+
+														<ng-template ng-loading-text>
+															<div class="spinner-container">
+																<span class="spinner-border spinner-border-sm"></span>
+															</div>
+														</ng-template>
+													</ng-select>
+												</div>
+
+												<span class="fs-8 text-muted">Categorías donde esta disponible el atributo.</span>
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-12">
+											<div class="d-flex flex-column mb-5 fv-row fv-plugins-icon-container">
+												<!--begin::Label-->
+												<label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2 gap-5">
+													<span class="">Valor</span>
+												</label>
+												<!--end::Label-->
+
+												<div class="input-group mb-1">
+													<input
+														type="text"
+														class="form-control"
+														placeholder="RAM"
+														name="value"
+														[(ngModel)]="value"
+														[ngClass]="{ 'is-invalid': errorsAtribute?.value }"
+														(keyup.ENTER)="add()"
+													/>
+
+													<button
+														class="btn btn-primary"
+														type="button"
+														[disabled]="loadingValues || loadValueBtn"
+														(click)="add()"
+														style="border-radius: 0px !important"
+													>
+														<ng-container *ngIf="loadingValues || loadValueBtn; else actionButton">
+															<span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+														</ng-container>
+
+														<ng-template #actionButton>
+															<app-icon-check></app-icon-check>
+														</ng-template>
+													</button>
+												</div>
+
+												<span class="fs-8 text-muted">Nuevo valor del atributo.</span>
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-12">
+											<ng-container *ngIf="!loadingValues">
+												<div class="d-flex flex-wrap gap-3" *ngIf="!errorMsmSeverListValues">
+													<span
+														class="btn badge badge-light fw-bold px-4 py-2 cursor-pointer btn-active-light-danger"
+														*ngFor="let item of values; let index = index"
+														(dblclick)="remove(index)"
+													>
+														{{ item.value }}
+													</span>
+												</div>
+												<ng-container *ngIf="errorMsmSeverListValues">
+													<app-not-found [error]="errorMsmSeverListValues"></app-not-found>
+												</ng-container>
+											</ng-container>
+											<div class="d-flex flex-wrap gap-3" *ngIf="loadingValues">
+												<div class="form-control-solid form-control-load" style="height: 24.05px; width: 50px; border-radius: 5px"></div>
+
+												<div class="form-control-solid form-control-load" style="height: 24.05px; width: 30px; border-radius: 5px"></div>
+
+												<div class="form-control-solid form-control-load" style="height: 24.05px; width: 110px; border-radius: 5px"></div>
+
+												<div class="form-control-solid form-control-load" style="height: 24.05px; width: 70px; border-radius: 5px"></div>
+
+												<div class="form-control-solid form-control-load" style="height: 24.05px; width: 25px; border-radius: 5px"></div>
+
+												<div class="form-control-solid form-control-load" style="height: 24.05px; width: 45px; border-radius: 5px"></div>
+											</div>
+										</div>
+									</div>
+								</ng-container>
 								<ng-container *ngIf="errorMsmServerGetAttribute">
 									<app-not-found [error]="errorMsmServerGetAttribute"></app-not-found>
 								</ng-container>
 							</div>
+							<div class="card-body"  *ngIf="loading">
+								<div class="row">
+									<div class="col-lg-6">
+										<div class="d-flex flex-column mb-5 fv-row fv-plugins-icon-container">
+											<!--begin::Label-->
+											<label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2">
+												<span class="required">Nombre</span>
+											</label>
+											<!--end::Label-->
 
-							<div class="card-body p-0 mb-2" *ngIf="loading">
-								<div class="table-responsive" style="overflow: visible">
-									<table class="table align-middle table-row-bordered table-row-solid gy-4 gs-9 mb-0">
-										<tbody class="fw-6">
-											<tr>
-												<td class="py-5 font-normal">
-													<label class="fs-6 text-gray-700 required">Nombres</label>
-													<div class="text-muted fs-8">
-														<small>Nombres completos del usuario.</small>
-													</div>
-												</td>
-												<td class="py-5 text-gray-800 font-normaltext-sm min-w-400px">
-													<div class="position-relative pb-8px min-w-400px">
-														<div class="d-flex justify-content-end gap-2">
-															<div class="form-control-solid form-control-load" style="height: 43.56px; width: 100%"></div>
-														</div>
-													</div>
-												</td>
-											</tr>
-											<tr>
-												<td class="py-5 font-normal">
-													<label class="fs-6 text-gray-700 required">Unidad</label>
-													<div class="text-muted fs-8">
-														<small>Unidad de agrupamiento para atributo.</small>
-													</div>
-												</td>
-												<td class="py-5 text-gray-800 font-normaltext-sm min-w-400px">
-													<div class="position-relative pb-8px min-w-400px">
-														<div class="d-flex justify-content-end gap-2">
-															<div class="form-control-solid form-control-load" style="height: 43.56px; width: 100%"></div>
-														</div>
-													</div>
-												</td>
-											</tr>
-											<tr>
-												<td class="py-5 font-normal">
-													<label class="fs-6 text-gray-700 required">Categorías</label>
-													<div class="text-muted fs-8">
-														<small>Categorías donde esta disponible el atributo.</small>
-													</div>
-												</td>
-												<td class="py-5 text-gray-800 font-normaltext-sm min-w-400px">
-													<div class="position-relative pb-8px min-w-400px">
-														<div class="d-flex justify-content-end gap-2">
-															<div class="form-control-solid form-control-load" style="height: 46.52px; width: 100%"></div>
-														</div>
-													</div>
-												</td>
-											</tr>
-										</tbody>
-									</table>
-								</div>
-							</div>
-						</div>
+											<div class="d-flex justify-content-end gap-2 mb-1">
+												<div class="form-control-solid form-control-load" style="height: 43.56px; width: 100%"></div>
+											</div>
 
-						<div class="d-flex mb-10">
-							<button
-								class="btn btn-sm btn-primary my-1 cursor-pointer"
-								[disabled]="loading || loadBtn || errorMsmServerGetAttribute"
-								(click)="!loading && !loadBtn && !errorMsmServerGetAttribute && update()"
-								type="button"
-							>
-								<ng-container *ngIf="loadBtn">
-									<span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
-									<span role="status">Procesando...</span>
-								</ng-container>
-
-								<ng-container *ngIf="!loadBtn"> Actualizar atributo </ng-container>
-							</button>
-						</div>
-
-						<div class="card mb-10">
-							<div class="card-header">
-								<h4 class="card-title m-0 d-flex flex-column">
-									<span class="fs-5">Nuevo Atributos</span>
-									<span class="text-gray-600 mt-1 fw-400 fs-0-9rem">
-										Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eligendi, quaerat..
-									</span>
-								</h4>
-							</div>
-							<div class="card-body p-0">
-								<div class="table-responsive" style="overflow: visible">
-									<table class="table align-middle table-row-bordered table-row-solid gy-4 gs-9 mb-0">
-										<tbody class="fw-6">
-											<tr>
-												<td class="py-5 font-normal">
-													<label class="fs-6 text-gray-700 required">Valor</label>
-													<div class="text-muted fs-8">
-														<small>Nuevo valor del atributo.</small>
-													</div>
-												</td>
-												<td class="py-5 text-gray-800 font-normaltext-sm min-w-400px">
-													<div class="position-relative pb-8px">
-														<div class="input-group">
-															<input
-																type="text"
-																class="form-control"
-																placeholder="RAM"
-																name="value"
-																[(ngModel)]="value"
-																[ngClass]="{ 'is-invalid': errorsAtribute?.value }"
-																(keyup.ENTER)="add()"
-															/>
-
-															<button
-																class="btn btn-primary"
-																type="button"
-																[disabled]="loadingValues || loadValueBtn"
-																(click)="add()"
-																style="border-radius: 0px !important"
-															>
-																<ng-container *ngIf="loadingValues || loadValueBtn; else actionButton">
-																	<span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
-																</ng-container>
-
-																<ng-template #actionButton>
-																	<app-icon-check></app-icon-check>
-																</ng-template>
-															</button>
-														</div>
-														<div class="invalid-feedback mt-0 d-block" *ngIf="errorsAtribute?.value">
-															<small>
-																{{ errorsAtribute?.value[0] || '' }}
-															</small>
-														</div>
-													</div>
-												</td>
-											</tr>
-										</tbody>
-									</table>
-								</div>
-							</div>
-							<div class="card-body">
-								<ng-container *ngIf="!loadingValues">
-									<div class="d-flex flex-wrap gap-3" *ngIf="!errorMsmSeverListValues">
-										<span
-											class="btn badge badge-light fw-bold px-4 py-2 cursor-pointer btn-active-light-danger"
-											*ngFor="let item of values; let index = index"
-											(dblclick)="remove(index)"
-										>
-											{{ item.value }}
-										</span>
+											<span class="fs-8 text-muted">Nombre de la propiedad.</span>
+										</div>
 									</div>
-									<ng-container *ngIf="errorMsmSeverListValues">
-										<app-not-found [error]="errorMsmSeverListValues"></app-not-found>
-									</ng-container>
-								</ng-container>
-								<div class="d-flex flex-wrap gap-3" *ngIf="loadingValues">
-									<div class="form-control-solid form-control-load" style="height: 24.05px; width: 50px; border-radius: 5px"></div>
+									<div class="col-lg-6">
+										<div class="d-flex flex-column mb-5 fv-row fv-plugins-icon-container">
+											<!--begin::Label-->
+											<label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2">
+												<span class="required">Unidad</span>
+											</label>
+											<!--end::Label-->
 
-									<div class="form-control-solid form-control-load" style="height: 24.05px; width: 30px; border-radius: 5px"></div>
+											<div class="d-flex justify-content-end gap-2 mb-1">
+												<div class="form-control-solid form-control-load" style="height: 43.56px; width: 100%"></div>
+											</div>
 
-									<div class="form-control-solid form-control-load" style="height: 24.05px; width: 110px; border-radius: 5px"></div>
+											<span class="fs-8 text-muted">Unidad de agrupamiento para atributo.</span>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-lg-12">
+										<div class="d-flex flex-column mb-5 fv-row fv-plugins-icon-container">
+											<!--begin::Label-->
+											<label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2">
+												<span class="required">Categorías</span>
+											</label>
+											<!--end::Label-->
 
-									<div class="form-control-solid form-control-load" style="height: 24.05px; width: 70px; border-radius: 5px"></div>
+											<div class="d-flex justify-content-end gap-2 mb-1">
+												<div class="form-control-solid form-control-load" style="height: 43.56px; width: 100%"></div>
+											</div>
 
-									<div class="form-control-solid form-control-load" style="height: 24.05px; width: 25px; border-radius: 5px"></div>
+											<span class="fs-8 text-muted">Categorías donde esta disponible el atributo.</span>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-12">
+										<div class="d-flex flex-column mb-5 fv-row fv-plugins-icon-container">
+											<!--begin::Label-->
+											<label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2 gap-5">
+												<span class="">Valor</span>
+											</label>
+											<!--end::Label-->
 
-									<div class="form-control-solid form-control-load" style="height: 24.05px; width: 45px; border-radius: 5px"></div>
+											<div class="d-flex justify-content-end gap-2 mb-1">
+												<div class="form-control-solid form-control-load" style="height: 43.56px; width: 100%"></div>
+											</div>
+
+											<span class="fs-8 text-muted">Nuevo valor del atributo.</span>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-12">
+										<div class="d-flex flex-wrap gap-3">
+											<div class="form-control-solid form-control-load" style="height: 24.05px; width: 50px; border-radius: 5px"></div>
+
+											<div class="form-control-solid form-control-load" style="height: 24.05px; width: 30px; border-radius: 5px"></div>
+
+											<div class="form-control-solid form-control-load" style="height: 24.05px; width: 110px; border-radius: 5px"></div>
+
+											<div class="form-control-solid form-control-load" style="height: 24.05px; width: 70px; border-radius: 5px"></div>
+
+											<div class="form-control-solid form-control-load" style="height: 24.05px; width: 25px; border-radius: 5px"></div>
+
+											<div class="form-control-solid form-control-load" style="height: 24.05px; width: 45px; border-radius: 5px"></div>
+										</div>
+									</div>
 								</div>
 							</div>
+							
+							<div class="card-footer" style="background-color: #f8f8f8;">
+								<button
+									class="btn btn-sm btn-primary my-1 cursor-pointer"
+									[disabled]="loading || loadBtn || errorMsmServerGetAttribute"
+									(click)="!loading && !loadBtn && !errorMsmServerGetAttribute && update()"
+									type="button"
+								>
+									<ng-container *ngIf="loadBtn">
+										<span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
+										<span role="status">Procesando...</span>
+									</ng-container>
+
+									<ng-container *ngIf="!loadBtn"> Actualizar atributo </ng-container>
+								</button>
+							</div>
 						</div>
+						
+
 					</div>
 				</div>
 			</div>

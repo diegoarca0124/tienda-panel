@@ -7,6 +7,7 @@ import { withMinLoadingTime } from '@app/common/interface/with-min-loading-time.
 import { AttributeService } from '@app/services/attribute.service';
 import { CategoryService } from '@app/services/category.service';
 import { GLOBAL } from '@app/services/GLOBAL';
+import { AlertComponent } from '@app/shared/alert/alert.component';
 import { SidebarComponent } from '@app/shared/sidebar/sidebar.component';
 import { TopbarComponent } from '@app/shared/topbar/topbar.component';
 import { NgSelectModule } from '@ng-select/ng-select';
@@ -15,7 +16,7 @@ declare const toastr: any;
 
 @Component({
 	selector: 'app-create-attribute',
-	imports: [TopbarComponent, SidebarComponent, CommonModule, FormsModule, RouterModule, NgSelectModule],
+	imports: [TopbarComponent, SidebarComponent, CommonModule, FormsModule, RouterModule, NgSelectModule, AlertComponent],
 	templateUrl: './create-attribute.component.html',
 	styleUrl: './create-attribute.component.css',
 })
@@ -32,10 +33,12 @@ export class CreateAttributeComponent {
 	public values: Array<{ value: string }> = [];
 	public value: string = '';
 	public errorMsmSeverListCategories: string = '';
+	public msmErrorAttribute: any = [];
 	public categoriesSelected = [];
 	public loadingCategories: boolean = true;
 	public errorMsmServer: string = '';
 	public categories = [];
+	public option = 1;
 
 	constructor(
 		private attributeService: AttributeService,
@@ -45,6 +48,10 @@ export class CreateAttributeComponent {
 
 	ngOnInit() {
 		this.init_categories();
+	}
+
+	setOption(value: number) {
+		this.option = value;
 	}
 
 	init_categories() {
@@ -114,6 +121,7 @@ export class CreateAttributeComponent {
 
 					if (error.validation) {
 						this.errorsAtribute = error.validation;
+						this.msmErrorAttribute =Object.values(this.errorsAtribute).flat();
 						this.errorMsmServer = '';
 					}
 				},

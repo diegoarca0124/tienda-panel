@@ -24,7 +24,7 @@
 					<div class="app-container container-fluid">
 						<div class="row g-3 g-lg-4">
 							<div class="col-12">
-								<div class="d-flex justify-content-between flex-nowrap gap-2 mt-5">
+								<div class="d-flex justify-content-between align-items-center flex-nowrap gap-2 mt-5">
 									<div class="d-flex gap-2">
 										<div>
 											<div class="d-flex align-items-center position-relative">
@@ -40,11 +40,37 @@
 											</div>
 										</div>
 										<div>
-											<select class="form-select form-select-sm w-auto" name="status" [(ngModel)]="status" (change)="onFilterOrStatusChange()">
-												<option value="Todos">Todos</option>
-												<option value="Activos">Activos</option>
-												<option value="Inactivos">Inactivos</option>
-											</select>
+											<ng-select
+												[items]="statusTable"
+												bindLabel="name"
+												bindValue="value"
+												name="status"
+												(change)="onFilterOrStatusChange()"
+												[(ngModel)]="status"
+												placeholder="Estado"
+												[clearable]="false"
+												[closeOnSelect]="true"
+												class="select-element-sm mb-1"
+												appendTo="body"
+												[searchable]="false"
+											>
+												<!-- Opción en el dropdown -->
+												<ng-template ng-option-tmp let-item="item">
+													<div class="d-flex align-items-center gap-2">
+													<span class="bullet bullet-dot h-10px w-10px" [ngClass]="'bg-' + item.color"></span>
+													<span>{{ item.name }}</span>
+													</div>
+												</ng-template>
+
+												<!-- Opción seleccionada en el input -->
+												<ng-template ng-label-tmp let-item="item">
+													<div class="d-flex align-items-center gap-2">
+													<span class="bullet bullet-dot h-10px w-10px" [ngClass]="'bg-' + item.color"></span>
+													<span>{{ item.name }}</span>
+													</div>
+												</ng-template>
+											</ng-select>
+											
 										</div>
 									</div>
 									<div class="dropdown">
@@ -66,8 +92,6 @@
 											<li>
 												<hr class="dropdown-divider" />
 											</li>
-											<!-- Separador -->
-											<!-- Opción "Edit" -->
 											<li>
 												<a class="dropdown-item" href="#"> <i class="bi bi-folder-symlink me-2"></i> Importar </a>
 											</li>
@@ -75,161 +99,157 @@
 									</div>
 								</div>
 
-								<div class="content-table-responsive">
-									<div class="table-responsive my-7" style="overflow-y: auto">
-										<table
-											class="table table-bordered align-middle mb-0 bg-white"
-											[ngClass]="{
-												'h-100': brands.length == 0 && !loading,
-												'table-hover': brands.length >= 1,
-											}"
-										>
-											<thead class="table-dark">
-												<tr>
-													<th
-														*ngFor="let col of columns"
-														[style.width]="col.width"
-														(click)="!loading && sortData(col.key)"
-														[ngClass]="{ 'cursor-pointer': !loading, 'cursor-disabled': loading }"
-													>
-														<div class="d-flex justify-content-between align-items-center">
-															<span class="text-uppercase fw-500">{{ col.label }}</span>
-															<i class="bi" [ngClass]="getSortIcon(col.key)"></i>
-														</div>
-													</th>
-													<th style="width: 10%" class="text-end text-uppercase fw-500">Acciones</th>
-												</tr>
-											</thead>
-											<tbody *ngIf="!loading">
-												<ng-container *ngIf="!errorMsmServerListBrands">
-													<ng-container *ngIf="brands.length >= 1">
-														<tr *ngFor="let item of brands">
-															<td class="h-58px">
-																<div class="d-flex align-items-center gap-2">
-																	<div class="symbol me-3">
-																		<div class="symbol me-3" style="height: 36px; width: 36px; border: 1px dashed #e3e3e3">
-																			<img [src]="item.logoUrl" class="h-100 w-100" alt="" />
-																		</div>
-																	</div>
-																	<div class="d-flex flex-column">
-																		<a class="text-decoration-none text-dark">
-																			{{ item.name }}
-																		</a>
-																		<small class="text-gray-600">
-																			<a class="text-primary" target="_blank" [href]="item.websiteUrl">{{ item.websiteUrl }}</a>
-																		</small>
-																	</div>
-																</div>
-															</td>
-															<td class="h-58px">
-																<span
-																	class="badge rounded-pill text-dark fw-700"
-																	[ngClass]="{ 'bg-outline-danger': !item.status, 'bg-outline-success': item.status }"
-																>
-																	<span
-																		class="d-inline-block bg-danger rounded-circle me-1"
-																		style="width: 8px; height: 8px"
-																		[ngClass]="{ 'bg-danger': !item.status, 'bg-success': item.status }"
-																	></span>
-																	{{ item.status ? 'Activo' : 'Inactivo' }}
-																</span>
-															</td>
-															<td class="text-end position-relative h-58px">
-																<div class="dropdown">
-																	<button
-																		class="btn btn-light btn-sm border-dashed dropdown-toggle"
-																		data-bs-toggle="dropdown"
-																		aria-expanded="false"
-																		style="padding-right: 10.25px !important; padding-left: 10.25px !important"
-																	>
-																		<i class="bi bi-three-dots-vertical"></i>
-																	</button>
-																	<app-modal-delete
-																		[id]="'modalDelete-' + item.id"
-																		[title]="item.status ? 'Desactivar el registro' : 'Activar el registro'"
-																		[description]="
-																			item.status
-																				? `¿Estás seguro de que deseas desactivar a <b>${item.name}</b>?`
-																				: `¿Estás seguro de que deseas activar a <b>${item.name}</b>?`
-																		"
-																		[textButton]="item.status ? 'Desactivar' : 'Activar'"
-																		(actionConfirmed)="setStatus(item.id, item.status)"
-																		[loadBtnDelete]="loadBtnDelete"
-																	>
-																	</app-modal-delete>
+								<div class="table-responsive my-7">
+									<table class="table table-bordered table-fixed modern-table mb-0" 
+									[ngClass]="{
+									'h-100': brands.length == 0 && !loading,
+									'table-hover': brands.length >= 1,
+									}">
+										<colgroup>
+											<col *ngFor="let col of columns" [ngClass]="col.classCol">
+											<col style="width: 38px">
+										</colgroup>
+										<thead style="background-color: #f8f8f8;">
+											<tr>
+												<th
+													*ngFor="let col of columns"
+													(click)="!loading && sortData(col.key)"
+													[ngClass]="[
+														col.classCol,
+														!loading ? 'cursor-pointer' : 'cursor-disabled'
+													]"
+												>
+													<div class="d-flex justify-content-between align-items-center">
+														<span class="fw-500 fs-7">{{ col.label }}</span>
+														<i class="bi" [ngClass]="getSortIcon(col.key)"></i>
+													</div>
+												</th>
+												<th>
+												</th>
+											</tr>
+										</thead>
 
-																	<div id="dropdown" class="dropdown-menu" data-bs-display="static">
-																		<a class="dropdown-item cursor-pointer" [routerLink]="['/products/brands/' + item?.id + '/edit']">
-																			<i class="bi bi-pen me-2"></i>Editar
-																		</a>
-																		<a class="dropdown-item cursor-pointer" data-bs-toggle="modal" [attr.data-bs-target]="'#modalDelete-' + item?.id">
-																			<i *ngIf="item?.status" class="bi bi-x-lg me-2"></i>
-																			<i *ngIf="!item?.status" class="bi bi-check2 me-2"></i>
-																			{{ item?.status ? 'Desactivar' : 'Activar' }}
-																		</a>
-																	</div>
-																</div>
-															</td>
-														</tr>
-													</ng-container>
-													<ng-container *ngIf="brands.length == 0">
-														<tr class="" style="background-color: #fff">
-															<td colspan="5">
-																<app-not-found [error]="{ message: 'No se encontraron registros que coincidan.', statusCode: 404 }"></app-not-found>
-															</td>
-														</tr>
-													</ng-container>
-												</ng-container>
-												<ng-container *ngIf="errorMsmServerListBrands">
-													<tr style="background-color: #f9f9f9">
-														<td colspan="5">
-															<app-not-found [error]="errorMsmServerListBrands"></app-not-found>
-														</td>
-													</tr>
-												</ng-container>
-											</tbody>
-
-											<!-- INICIO PRECARGADOR -->
-											<tbody *ngIf="loading">
-												<tr *ngFor="let item of arrDataSkull">
-													<td class="h-58px">
+										<tbody>
+											<!-- ======================= LOADING (SKELETON) ======================= -->
+											<ng-container *ngIf="loading">
+												<tr *ngFor="let s of arrDataSkull">
+													<td class="col-w-xs-200 col-w-md-250 h-45px">
 														<div class="d-flex align-items-center gap-2">
-															<div class="form-control-solid form-control-load" style="width: 36px; height: 36px; border-radius: 5px;"></div>
-															<!-- Esto puede quedar así, es pequeño pero fijo -->
-															<div class="d-flex flex-column gap-2" style="width: 300px">
-																<!-- Esto permitirá que el contenido se ajuste -->
-																<div class="form-control-solid form-control-load" style="height: 13px; width: 60%; max-width: 120px; border-radius: 5px;"></div>
-																<!-- 60% o max-width -->
-																<div class="form-control-solid form-control-load" style="height: 9px; width: 40%; max-width: 80px; border-radius: 5px;"></div>
-																<!-- 40% o max-width -->
+															<div class="form-control-solid form-control-load" style="width: 32px; height: 32px; border-radius: 5px"></div>
+
+															<div class="d-flex flex-column gap-2" style="width: 100%; max-width: 250px">
+																<div class="form-control-solid form-control-load" style="height: 10px; width: 60%; border-radius: 3px"></div>
+																<div class="form-control-solid form-control-load" style="height: 9px; width: 40%; border-radius: 3px"></div>
 															</div>
 														</div>
 													</td>
 
-													<td class="h-58px">
-														<div class="form-control-solid form-control-load" style="height: 21.05px; width: 71.4px; border-radius: 50rem"></div>
+													<td class="col-w-xs-100 h-45px">
+														<div class="form-control-solid form-control-load" style="height: 20px; width: 70px; border-radius: 50rem"></div>
 													</td>
 
-													<td class="d-flex justify-content-end h-58px">
-														<div class="form-control-solid form-control-load" style="height: 36.48px; width: 40.05px; border-radius: 5px;"></div>
+													<td class="col-actions h-45px">
+														<div class="form-control-solid form-control-load" style="height: 30px; width: 35px; border-radius: 5px"></div>
 													</td>
 												</tr>
-											</tbody>
-										</table>
+											</ng-container>
+
+											<!-- ======================= DATOS ======================= -->
+											<ng-container *ngIf="!loading && brands.length >= 1">
+												<tr *ngFor="let item of brands">
+
+													<td class="col-w-xs-200 col-w-md-250 h-45px">
+														<div class="d-flex align-items-center gap-2">
+															<div class="symbol me-3" style="height: 30px; width: 30px; border: 1px dashed #e3e3e3">
+																<img [src]="item.logoUrl" class="h-100 w-100" alt="" />
+															</div>
+
+															<div class="d-flex flex-column">
+																<a class="text-decoration-none text-dark fs-8 fw-600">{{ item.name }}</a>
+																<small class="text-gray-800">{{ item.slug }}</small>
+															</div>
+														</div>
+													</td>
+
+													<td class="col-w-xs-100 h-45px">
+														<span class="badge rounded-pill text-dark fw-800"
+															[ngClass]="{ 'bg-outline-danger': !item.status, 'bg-outline-success': item.status }">
+														<span class="d-inline-block rounded-circle me-1"
+																style="width: 8px; height: 8px"
+																[ngClass]="{ 'bg-danger': !item.status, 'bg-success': item.status }"></span>
+														{{ item.status ? 'Activo' : 'Inactivo' }}
+														</span>
+													</td>
+
+													<td class="col-actions h-45px">
+														<div class="dropdown">
+															<button class="icon-btn dropdown-toggle"
+															data-bs-toggle="dropdown"
+															aria-expanded="false">
+																<i class="bi bi-three-dots"></i>
+															</button>
+
+															<app-modal-delete
+																[id]="'modalDelete-' + item.id"
+																[title]="item.status ? 'Desactivar el registro' : 'Activar el registro'"
+																[description]="
+																	item.status
+																		? `¿Estás seguro de que deseas desactivar a <b>${item.name}</b>?`
+																		: `¿Estás seguro de que deseas activar a <b>${item.name}</b>?`
+																"
+																[textButton]="item.status ? 'Desactivar' : 'Activar'"
+																(actionConfirmed)="setStatus(item.id!, item.status!)"
+																[loadBtnDelete]="loadBtnDelete"
+															>
+															</app-modal-delete>
+
+															<div id="dropdown" class="dropdown-menu" data-bs-display="static">
+																<a class="dropdown-item cursor-pointer" [routerLink]="['/products/brands/' + item?.id + '/edit']">
+																	<i class="bi bi-pen me-2"></i>Editar
+																</a>
+																<a class="dropdown-item cursor-pointer" data-bs-toggle="modal" [attr.data-bs-target]="'#modalDelete-' + item?.id">
+																	<i *ngIf="item?.status" class="bi bi-x-lg me-2"></i>
+																	<i *ngIf="!item?.status" class="bi bi-check2 me-2"></i>
+																	{{ item?.status ? 'Desactivar' : 'Activar' }}
+																</a>
+															</div>
+														</div>
+													</td>
+
+												</tr>
+											</ng-container>
+
+											<!-- ======================= SIN RESULTADOS ======================= -->
+											<tr *ngIf="!loading && brands.length == 0">
+												<td colspan="5">
+													<app-not-found [error]="{ message: 'No se encontraron registros que coincidan.', statusCode: 404 }"></app-not-found>
+												</td>
+											</tr>
+
+											<!-- ======================= ERROR ======================= -->
+											<tr *ngIf="!loading && errorMsmServerListBrands">
+												<td colspan="5">
+													<app-not-found [error]="errorMsmServerListBrands"></app-not-found>
+												</td>
+											</tr>
+
+										</tbody>
+
+									</table>
+								</div>
+
+								<div class="d-flex justify-content-between" *ngIf="brands.length >= 1">
+									<div class="d-flex align-items-center gap-2">
+										Ver
+										<select class="form-select form-select-sm w-auto" name="limit" [(ngModel)]="limit" (change)="setLimit()">
+											<option value="10">10</option>
+											<option value="20">20</option>
+											<option value="25">25</option>
+										</select>
+										Por pagina
 									</div>
-									<div class="d-flex justify-content-between" *ngIf="brands.length >= 1">
-										<div class="d-flex align-items-center gap-2">
-											Ver
-											<select class="form-select form-select-sm w-auto" name="limit" [(ngModel)]="limit" (change)="setLimit()">
-												<option value="10">10</option>
-												<option value="20">20</option>
-												<option value="25">25</option>
-											</select>
-											Por pagina
-										</div>
-										<div class="d-flex align-items-center gap-3">
-											<app-pagination [currentPage]="currentPage" [totalPages]="totalPages" (pageChanged)="onPageChange($event)"> </app-pagination>
-										</div>
+									<div class="d-flex align-items-center gap-3">
+										<app-pagination [currentPage]="currentPage" [totalPages]="totalPages" (pageChanged)="onPageChange($event)"> </app-pagination>
 									</div>
 								</div>
 							</div>

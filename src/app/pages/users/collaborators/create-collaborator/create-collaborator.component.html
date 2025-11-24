@@ -30,248 +30,238 @@
                 </div>
                 <div class="app-content  flex-column-fluid">
                     <div class="app-container container">
+
+                        <app-alert *ngIf="msmErrorCollaborator.length >= 1" [classAlert]="'bg-light-danger border-danger border-dashed mb-7'"
+                        [title]="'¡Error de validación! ' + `(${msmErrorCollaborator.length})`"
+                        [description]="msmErrorCollaborator[0]"
+                        >
+                        </app-alert>
+
                         <div class="card mb-10">
                             <!--begin::Card header-->
-                            <div class="card-header">
+                            <div class="card-header" style="background-color: #f8f8f8;">
                                 <!--begin::Heading-->
                                 <h4 class="card-title m-0 d-flex flex-column">
-                                    <span class="fs-5">Nuevo Colaborador</span>
+                                    <span class="fs-5 fw-600">Nuevo Colaborador</span>
                                     <span class="text-gray-600 mt-1 fw-400 fs-0-9rem">
-                                      Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eligendi, quaerat..
+                                      Agrega un nuevo colaborador completando los datos requeridos en el formulario.
                                     </span>
                                 </h4>
                                 <!--end::Heading-->
                             </div>
                             <!--end::Card header-->
-                        
                             <!--begin::Card body-->
-                            <div class="card-body p-0">
-                                <!--begin::Table wrapper-->
-                                <div class="table-responsive mb-5">
-                                    <!--begin::Table-->
-                                    <table class="table align-middle table-row-bordered table-row-solid gy-4 gs-9 mb-0">
-                                        <!--begin::Tbody-->
-                                        <tbody class="fw-6">
-                                            <tr>
-                                                <td class="py-5 font-normal">
-                                                    <label class="fs-6 text-gray-700 required">Nombres</label>
-                                                    <div class="text-muted fs-8">
-                                                        <small>Nombres completos del usuario.</small>
-                                                    </div>
-                                                </td>
-                                                <td class="py-5 text-gray-800 font-normaltext-sm min-w-400px">
-                                                    <div class="position-relative pb-8px">
-                                                        <input type="text" 
-                                                        class="form-control" 
-                                                        placeholder="Sheldon Lee"
-                                                        name="names" 
-                                                        [(ngModel)]="collaborator.names"
-                                                        [ngClass]="{'is-invalid': errorsCollaborator?.names}">
-                                                        <!--end::Input-->
-                                                        <div class="invalid-feedback mt-0" *ngIf="errorsCollaborator?.names">
-                                                            <small>
-                                                                {{errorsCollaborator?.names[0] || ''}}
-                                                            </small>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                            </tr> 
-                                            <tr>
-                                                <td class="py-5 font-normal">
-                                                    <label class="fs-6 text-gray-700 mt-2 required">Apellidos</label>
-                                                    <div class="text-muted fs-8">
-                                                        <small>
-                                                            Apellido paterno y materno del usuario.
-                                                        </small>
-                                                    </div>
-                                                </td>
-                                                <td class="py-5 text-gray-800 font-normaltext-sm min-w-400px">
-                                                    <div class="position-relative pb-8px">
-                                                        <input type="text" 
-                                                        class="form-control" 
-                                                        placeholder="Cooper"
-                                                        name="surname" 
-                                                        [(ngModel)]="collaborator.surname"
-                                                        [ngClass]="{'is-invalid': errorsCollaborator?.surname}">
-                                                        <!--end::Input-->
-                                                        <div class="invalid-feedback mt-0" *ngIf="errorsCollaborator?.surname">
-                                                            <small>{{errorsCollaborator?.surname[0] || ''}}</small>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                            </tr> 
-                                            <tr>
-                                                <td class="py-5 font-normal">
-                                                    <label class="fs-6 text-gray-700 mt-2 required">Rol</label>
-                                                    <div class="text-muted fs-8">
-                                                        <small>
-                                                            Clasificación del colaborador.
-                                                        </small>
-                                                    </div>
-                                                </td>
-                                                <td class="py-5 text-gray-800 font-normaltext-sm min-w-400px">
-                                                    <div class="position-relative pb-8px">
-                                                        <select class="form-select" 
-                                                        name="number_document" 
-                                                        [(ngModel)]="collaborator.role"
-                                                        [ngClass]="{'is-invalid': errorsCollaborator?.role}">
-                                                            <option value="" selected disabled>Seleccionar</option>
-                                                            <option value="VENDEDOR">VENDEDOR</option>
-                                                            <option value="SECTORISTA">SECTORISTA</option>
-                                                            <option value="DEFAULT">DEFAULT</option>
-                                                        </select>
-                                                        <!--end::Input-->
-                                                        <div class="invalid-feedback mt-0" *ngIf="errorsCollaborator?.role">
-                                                            <small>{{errorsCollaborator?.role[0]}}</small>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                            </tr>  
-                                            <tr>
-                                                <td class="py-5 font-normal">
-                                                    <label class="fs-6 text-gray-700 mt-2 required">Tipo de documento</label>
-                                                    <div class="text-muted fs-8">
-                                                        <small>
-                                                            Tipo de documento de identidad.
-                                                        </small>
-                                                    </div>
-                                                </td>
-                                                <td class="py-5 text-gray-800 font-normaltext-sm min-w-400px">
-                                                    <div class="position-relative pb-8px">
-                                                        <select class="form-select" 
-                                                        name="number_document" 
-                                                        [(ngModel)]="collaborator.type_document"
-                                                        [ngClass]="{'is-invalid': errorsCollaborator?.type_document}">
-                                                            <option value="" selected disabled>Seleccionar</option>
-                                                            <option value="DNI">DNI</option>
-                                                            <option value="CARNET DE EXTRANJERÍA">CARNET DE EXTRANJERÍA</option>
-                                                        </select>
-                                                        <!--end::Input-->
-                                                        <div class="invalid-feedback mt-0" *ngIf="errorsCollaborator?.type_document">
-                                                            <small>{{errorsCollaborator?.type_document[0]}}</small>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                            </tr>         
-                                            <tr>
-                                                <td class="py-5 font-normal">
-                                                    <label class="fs-6 text-gray-700 mt-2 required">Número de documento</label>
-                                                    <div class="text-muted fs-8">
-                                                        <small>
-                                                            Código únido de documento.
-                                                        </small>
-                                                    </div>
-                                                </td>
-                                                <td class="py-5 text-gray-800 font-normaltext-sm min-w-400px">
-                                                    <div class="position-relative pb-8px">
-                                                        <input type="text" 
-                                                        class="form-control" 
-                                                        placeholder="Número de documento"
-                                                        [imask]="{ mask: (collaborator.type_document == 'DNI') ? '00000000' : '0000000000000000000', unmask: true }"
-                                                        name="number_document" 
-                                                        [(ngModel)]="collaborator.number_document"
-                                                        [ngClass]="{'is-invalid': errorsCollaborator?.number_document}">
-                                                        <!--end::Input-->
-                                                        <div class="invalid-feedback mt-0" *ngIf="errorsCollaborator?.number_document">
-                                                            <small>{{errorsCollaborator?.number_document[0]}}</small>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                            </tr>    
-                                            <tr>
-                                                <td class="py-5 font-normal">
-                                                    <label class="fs-6 text-gray-700 mt-2 required">Correo Electrónico</label>
-                                                    <div class="text-muted fs-8">
-                                                        <small>
-                                                            Correo corporativo del usuario.
-                                                        </small>
-                                                    </div>
-                                                </td>
-                                                <td class="py-5 text-gray-800 font-normaltext-sm min-w-400px">
-                                                    <div class="position-relative pb-8px">
-                                                        <input type="email" 
-                                                        class="form-control" 
-                                                        placeholder="sheldon.cooper@praxiscomercial.pe"
-                                                        name="email" 
-                                                        [(ngModel)]="collaborator.email"
-                                                        [ngClass]="{'is-invalid': errorsCollaborator?.email}"
-                                                        >
-                                                        <div class="invalid-feedback mt-0" *ngIf="errorsCollaborator?.email">
-                                                            <small>{{errorsCollaborator?.email[0] || ''}}</small>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                            </tr>  
-                                            <tr>
-                                                <td class="py-5 font-normal">
-                                                    <label class="fs-6 text-gray-700 mt-2 required">Telefono</label>
-                                                    <div class="text-muted fs-8">
-                                                        <small>
-                                                            Número telefonico con prefijo peruano.
-                                                        </small>
-                                                    </div>
-                                                </td>
-                                                <td class="py-5 text-gray-800 font-normaltext-sm min-w-400px">
-                                                    <div class="position-relative pb-8px">
-                                                        <input type="text" 
-                                                        class="form-control" 
-                                                        name="phone" 
-                                                        [(ngModel)]="collaborator.phone"
-                                                        [ngClass]="{'is-invalid': errorsCollaborator?.phone}"
-                                                        placeholder="987654321"
-                                                        [imask]="{ mask: '000000000', unmask: true }"
-                                                        >
-                                                        <div class="invalid-feedback mt-0" *ngIf="errorsCollaborator?.phone">
-                                                            <small>{{errorsCollaborator?.phone[0]}}</small>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                            </tr>  
-                                            <tr>
-                                                <td class="py-5 font-normal">
-                                                    <label class="fs-6 text-gray-700 mt-2 required">Password</label>
-                                                    <div class="text-muted fs-8">
-                                                        <small>Contraseña de acceso.</small>
-                                                    </div>
-                                                </td>
-                                                <td class="py-5 text-gray-800 font-normaltext-sm min-w-400px">
-                                                    <div class="position-relative pb-8px">
-                                                        <div class="input-group">
-                                                            <input 
-                                                                type="text" 
-                                                                class="form-control border-end-0" 
-                                                                placeholder="Contraseña segura"
-                                                                name="password" 
-                                                                [(ngModel)]="collaborator.password"
-                                                                [ngClass]="{'is-invalid': errorsCollaborator?.password}"
-                                                            >
-                                                            <span class="input-group-text bg-white border-start-0 px-5"
-                                                            [ngClass]="{'border-danger': errorsCollaborator?.password}" style="border-radius: 0px !important;">
-                                                                <a 
-                                                                class="text-primary cursor-pointer pb-1" 
-                                                                (click)="generatePassword()" 
-                                                                style="font-size: 0.85rem; text-decoration: none;">
-                                                                Generar
-                                                                </a>
-                                                            </span>
-                                                        </div>
-                                                        <div class="invalid-feedback mt-0 d-block" *ngIf="errorsCollaborator?.password">
-                                                            <small>{{ errorsCollaborator?.password[0]  || '' }}</small>
-                                                        </div>
-                                                    </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="d-flex flex-column mb-5 fv-row fv-plugins-icon-container">
+                                            <!--begin::Label-->
+                                            <label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2">
+                                                <span class="required">Nombres</span>
+                                            </label>
+                                            <!--end::Label-->
 
-                                                </td>
-                                            </tr>          
-                                        </tbody>
-                                        <!--end::Tbody-->
-                                    </table>
-                                    <!--end::Table-->
+                                            <input type="text" 
+                                            class="form-control mb-1" 
+                                            placeholder="Sheldon Lee"
+                                            name="names" 
+                                            [(ngModel)]="collaborator.names"
+                                            [ngClass]="{'is-invalid': errorsCollaborator?.names}">
+
+                                            <span class="fs-8 text-muted">Nombres completos del usuario.</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="d-flex flex-column mb-5 fv-row fv-plugins-icon-container">
+                                            <!--begin::Label-->
+                                            <label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2">
+                                                <span class="required">Apellidos</span>
+                                            </label>
+                                            <!--end::Label-->
+
+                                            <input type="text" 
+                                            class="form-control mb-1" 
+                                            placeholder="Cooper"
+                                            name="surname" 
+                                            [(ngModel)]="collaborator.surname"
+                                            [ngClass]="{'is-invalid': errorsCollaborator?.surname}">
+
+                                            <span class="fs-8 text-muted">Apellido paterno y materno del usuario.</span>
+                                        </div>
+                                    </div>
                                 </div>
-                                <!--end::Table wrapper-->
-                                
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="d-flex flex-column mb-5 fv-row fv-plugins-icon-container">
+                                            <!--begin::Label-->
+                                            <label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2">
+                                                <span class="required">Rol</span>
+                                            </label>
+                                            <!--end::Label-->
+
+                                            <div [ngClass]="{ 'is-invalid': errorsCollaborator?.role }">
+                                                <ng-select
+                                                    [items]="rols"
+                                                    bindLabel="name"
+												    bindValue="value"
+                                                    name="role"
+                                                    [(ngModel)]="collaborator.role"
+                                                    placeholder="Rol"
+                                                    [clearable]="false"
+                                                    [closeOnSelect]="true"
+                                                    class="select-element mb-1"
+                                                    appendTo="body"
+                                                    [searchable]="false"
+                                                >
+                                                    <!-- Opción en el dropdown -->
+                                                    <ng-template ng-option-tmp let-item="item">
+                                                        <span>{{ item.name }}</span>
+                                                    </ng-template>
+
+                                                    <!-- Opción seleccionada en el input -->
+                                                    <ng-template ng-label-tmp let-item="item">
+                                                        <span>{{ item.name }}</span>
+                                                    </ng-template>
+                                                </ng-select>
+                                            </div>
+                                            <span class="fs-8 text-muted">Clasificación del colaborador.</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="d-flex flex-column mb-5 fv-row fv-plugins-icon-container">
+                                            <!--begin::Label-->
+                                            <label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2">
+                                                <span class="required">Correo electrónico</span>
+                                            </label>
+                                            <!--end::Label-->
+
+                                            <input
+                                                type="email"
+                                                class="form-control mb-1"
+                                                placeholder="sheldon.cooper@praxiscomercial.pe"
+                                                name="email"
+                                                [(ngModel)]="collaborator.email"
+                                                [ngClass]="{ 'is-invalid': errorsCollaborator?.email }"
+                                            />
+
+                                            <span class="fs-8 text-muted">Correo corporativo del usuario.</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="d-flex flex-column mb-5 fv-row fv-plugins-icon-container">
+                                            <!--begin::Label-->
+                                            <label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2">
+                                                <span class="required">Tipo de documento</span>
+                                            </label>
+                                            <!--end::Label-->
+
+                                            <div [ngClass]="{ 'is-invalid': errorsCollaborator?.type_document }">
+                                                <ng-select
+                                                    [items]="identityDocuments"
+                                                    bindLabel="name"
+                                                    [(ngModel)]="collaborator.type_document"
+                                                    placeholder="Tipo de documento"
+                                                    [clearable]="false"
+                                                    [closeOnSelect]="true"
+                                                    class="select-element mb-1"
+                                                    appendTo="body"
+                                                >
+                                                    <!-- Opción en el dropdown -->
+                                                    <ng-template ng-option-tmp let-item="item">
+                                                        <div class="option-item d-flex gap-3 align-items-center">
+                                                            <div class="option-name">{{ item.name }}</div>
+                                                        </div>
+                                                    </ng-template>
+
+                                                    <!-- Opción seleccionada en el input -->
+                                                    <ng-template ng-label-tmp let-item="item">
+                                                        {{ item.name }}
+                                                    </ng-template>
+                                                </ng-select>
+                                            </div>
+
+                                            <span class="fs-8 text-muted">Tipo de documento de identidad.</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="d-flex flex-column mb-5 fv-row fv-plugins-icon-container">
+                                            <!--begin::Label-->
+                                            <label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2">
+                                                <span class="required">Número de documento</span>
+                                            </label>
+                                            <!--end::Label-->
+
+                                            <input type="text" 
+                                            class="form-control mb-1" 
+                                            placeholder="Número de documento"
+                                            [disabled]="collaborator.type_document == undefined"
+                                            [imask]="{ mask: (collaborator.type_document?.name == 'DNI') ? '00000000' : '0000000000000000000', unmask: true }"
+                                            name="number_document" 
+                                            [(ngModel)]="collaborator.number_document"
+                                            [ngClass]="{'is-invalid': errorsCollaborator?.number_document}">
+
+                                            <span class="fs-8 text-muted">Documento de identidad nacional.</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="d-flex flex-column fv-row fv-plugins-icon-container">
+                                            <!--begin::Label-->
+                                            <label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2">
+                                                <span class="required">Telefono</span>
+                                            </label>
+                                            <!--end::Label-->
+
+                                            <input type="text" 
+                                            class="form-control mb-1" 
+                                            name="phone" 
+                                            [(ngModel)]="collaborator.phone"
+                                            [ngClass]="{'is-invalid': errorsCollaborator?.phone}"
+                                            placeholder="987654321"
+                                            [imask]="{ mask: '000000000', unmask: true }"
+                                            >
+
+                                            <span class="fs-8 text-muted">Número telefonico con prefijo peruano.</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="d-flex flex-column fv-row fv-plugins-icon-container">
+                                            <!--begin::Label-->
+                                            <label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2">
+                                                <span class="required">Contraseña</span>
+                                            </label>
+                                            <!--end::Label-->
+
+                                            <div class="input-group mb-1">
+                                                <input 
+                                                    type="text" 
+                                                    class="form-control border-end-0" 
+                                                    placeholder="Contraseña segura"
+                                                    name="password" 
+                                                    [(ngModel)]="collaborator.password"
+                                                    [ngClass]="{'is-invalid': errorsCollaborator?.password}"
+                                                >
+                                                <span class="input-group-text bg-white border-start-0 px-5"
+                                                [ngClass]="{'border-danger': errorsCollaborator?.password}">
+                                                    <a 
+                                                    class="text-primary cursor-pointer" 
+                                                    (click)="generatePassword()" 
+                                                    style="font-size: 0.85rem; text-decoration: none;">
+                                                    Generar
+                                                    </a>
+                                                </span>
+                                            </div>
+
+                                            <span class="fs-8 text-muted">Contraseña de acceso a la plataforma.</span>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             <!--end::Card body-->
-                            <div class="card-footer">
+                            <div class="card-footer"  style="background-color: #f8f8f8;">
                                 <a *ngIf="!loadBtn" class="btn btn-sm btn-primary my-1 cursor-pointer" (click)="create()">
                                     Crear colaborador
                                 </a>

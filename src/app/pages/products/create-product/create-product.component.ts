@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { SidebarComponent } from '@app/shared/sidebar/sidebar.component';
 import { TinymceEditorComponent } from '@app/shared/tinymce-editor/tinymce-editor.component';
@@ -30,6 +30,14 @@ import { materials } from '@app/common/constants/materials.constant';
 import { temperatures } from '@app/common/constants/temperatures.cosntant';
 import { packages } from '@app/common/constants/packages.constant';
 import { IconTrashComponent } from '@app/icons/icon-trash/icon-trash.component';
+import { UploadImagesComponent } from '@app/shared/upload-images/upload-images.component';
+declare var refreshFsLightbox: any;
+import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+import { productFormHelp } from './constants/formProductHelper';
+import { IconImageComponent } from '@app/icons/icon-image/icon-image.component';
+import { AlertComponent } from '@app/shared/alert/alert.component';
+import { UploadImageComponent } from '@app/shared/upload-image/upload-image.component';
+import { skuPatterns } from '@app/common/constants/skuPatterns.constant';
 
 @Component({
 	selector: 'app-create-product',
@@ -43,8 +51,15 @@ import { IconTrashComponent } from '@app/icons/icon-trash/icon-trash.component';
 		FormsModule,
 		TagifyInputComponent,
 		NgxCurrencyDirective,
+		IconTrashComponent,
+		UploadImagesComponent,
+		NgbTooltipModule,
+		IconImageComponent,
+		AlertComponent,
+		UploadImageComponent,
 		IconTrashComponent
 	],
+	schemas: [CUSTOM_ELEMENTS_SCHEMA],
 	templateUrl: './create-product.component.html',
 	styleUrl: './create-product.component.css',
 })
@@ -55,7 +70,8 @@ export class CreateProductComponent {
 		type: 'Fisico',
 		description: '',
 		extract: '',
-		cover: '',
+		cover: undefined as File | undefined,
+		miniature: undefined as File | undefined,
 		onSale: false,
 		freeShipping: false,
 		priceRegular: '',
@@ -80,6 +96,12 @@ export class CreateProductComponent {
 		warranty: undefined,
 		tags: []
 	};
+
+	public errorsProduct: any = {
+		cover: [],
+		miniature: [],
+	};
+
 
 	public physical = {
 		weightUnit: undefined,
@@ -108,6 +130,13 @@ export class CreateProductComponent {
 		specialInstructions: '',
 		handlingDays: ''
 	}
+
+	public variation = {
+		skuPattern: undefined,
+		name: ''
+	}
+
+	public labelHelper = productFormHelp;
 	private destroy$ = new Subject<void>();
 	public loadBtn = false;
 	public properties = environment.tinymceSettings == 'basic' ? basic_properties : full_properties;
@@ -158,6 +187,11 @@ export class CreateProductComponent {
 			loading: false
 		}
 	];
+	public variations : Array<{name: string, skuPattern: any | undefined}> = [];
+	public images : Array<{file: File, preview: string, index: number}> = [];
+	public cover : {file: File, preview: string, index: number} | undefined = undefined;
+	public widthScreen : number = window.innerWidth;
+	public skuPatterns = skuPatterns;
 	
 	constructor(
 		private attributeService: AttributeService,
@@ -180,6 +214,12 @@ export class CreateProductComponent {
 			...v,
 			icon: this.sanitizer.bypassSecurityTrustHtml(v.icon)
 		}));
+	}
+
+	@HostListener('window:resize', [])
+	onResize() {
+		this.widthScreen = window.innerWidth;
+		console.log(this.widthScreen);
 	}
 
 	init_categories() {
@@ -316,6 +356,10 @@ export class CreateProductComponent {
 			});
 	}
 
+	onSelectedBanner(image : {file: File, preview: string, index: number}){
+		this.cover = image;
+	}
+
 	onSelectCategory() {
 		this.product.subcategoryId = undefined;
 		this.init_subcategories(this.product.categoryId);
@@ -334,7 +378,24 @@ export class CreateProductComponent {
 
 	onRemoveAttributeProperty(idx: number){
 		this.arrProperties.splice(idx,1)
+	}
+	
+	onRemoveVariation(idx: number){
+		this.variations.splice(idx,1)
 	}	
+
+	onSelectFiles(event: any){
+		this.images.push(...event);
+		this.images.forEach((element, index) => {
+			element.index = index;
+		});
+
+
+		console.log(this.images);
+		setTimeout(() => {
+			refreshFsLightbox();
+		}, 50);
+	}
 
 	setOption(value: number) {
 		this.option = value;
@@ -352,8 +413,14 @@ export class CreateProductComponent {
 		});
 	}
 
-	asd(){
+	removeImage(idx: number){
+		this.images.splice(idx,1)	
+	}
+	
+	addVariation(){
+		console.log(this.variation);
 		
+		this.variations.push({...this.variation});
 	}
 
 	create() {

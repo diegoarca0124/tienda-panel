@@ -4,9 +4,9 @@ export interface CollaboratorList {
 	surname: string;
 	email: string;
 	phone: string;
-	role: string;
+	role?: string | undefined;
 	status?: boolean;
 	number_document: string;
-	type_document: string;
+	type_document: string | undefined;
 	prefix?: string;
 }

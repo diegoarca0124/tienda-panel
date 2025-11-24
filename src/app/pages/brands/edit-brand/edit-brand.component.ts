@@ -7,6 +7,7 @@ import { Brand } from '@app/common/interface/brand.interface';
 import { withMinLoadingTime } from '@app/common/interface/with-min-loading-time.interface';
 import { BrandService } from '@app/services/brand.service';
 import { GLOBAL } from '@app/services/GLOBAL';
+import { AlertComponent } from '@app/shared/alert/alert.component';
 import { NotFoundComponent } from '@app/shared/not-found/not-found.component';
 import { SidebarComponent } from '@app/shared/sidebar/sidebar.component';
 import { TopbarComponent } from '@app/shared/topbar/topbar.component';
@@ -18,7 +19,7 @@ declare const $: any;
 
 @Component({
 	selector: 'app-edit-brand',
-	imports: [TopbarComponent, SidebarComponent, CommonModule, FormsModule, RouterModule, NgSelectModule, UploadImageComponent, NotFoundComponent],
+	imports: [TopbarComponent, SidebarComponent, CommonModule, FormsModule, RouterModule, NgSelectModule, UploadImageComponent, NotFoundComponent, AlertComponent],
 	templateUrl: './edit-brand.component.html',
 	styleUrl: './edit-brand.component.css',
 })
@@ -34,6 +35,7 @@ export class EditBrandComponent {
 	public croppedImage: string | null = null;
 	public countries = countries;
 	private destroy$ = new Subject<void>();
+	public msmErrorBrand: any = [];
 	public loadBtn = false;
 	public id: string = '';
 	public loading = true;
@@ -126,6 +128,7 @@ export class EditBrandComponent {
 
 					if (error.validation) {
 						this.errorsBrand = error.validation;
+						this.msmErrorBrand =Object.values(this.errorsBrand).flat();
 						this.errorMsmServer = '';
 					}
 				},

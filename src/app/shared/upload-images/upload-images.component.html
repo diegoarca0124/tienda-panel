@@ -1,0 +1,33 @@
+<div 
+  class="upload-container cursor-pointer" 
+  [class.dragging]="isDragging"
+>
+  <!-- 🔥 SPINNER OVERLAY -->
+  <div class="loading-overlay" *ngIf="isLoading">
+    <div class="text-center">
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+  </div>
+
+  <label [for]="inputId" class="upload-label cursor-pointer">
+    <app-icon-upload classIcon="svg-icon-4x mb-2"></app-icon-upload>
+    
+    <div>
+      <p class="fw-500 mb-1">Arrastra tus imágenes aquí o haz clic para subir</p>
+      <small class="text-muted">Múltiples imágenes (JPG, PNG, WEBP)</small>
+    </div>
+  </label>
+
+  <input
+    #fileInput
+    type="file"
+    [id]="inputId"
+    class="d-none"
+    accept="image/*"
+    multiple
+    (change)="onFilesChange($event)"
+  />
+
+</div>

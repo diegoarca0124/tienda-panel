@@ -24,12 +24,19 @@
 				</div>
 				<div class="app-content flex-column-fluid">
 					<div class="app-container container">
+
+						<app-alert *ngIf="msmErrorCategory.length >= 1" [classAlert]="'bg-light-danger border-danger border-dashed mb-7'"
+                        [title]="'¡Error de validación! ' + `(${msmErrorCategory.length})`"
+                        [description]="msmErrorCategory[0]"
+                        >
+                        </app-alert>
+
 						<div class="card mb-10">
 							<!--begin::Card header-->
-							<div class="card-header">
+							<div class="card-header"  style="background-color: #f8f8f8;">
 								<!--begin::Heading-->
 								<h4 class="card-title m-0 d-flex flex-column">
-									<span class="fs-5">Nuevo Categoría</span>
+									<span class="fs-5 fw-600">Nuevo Categoría</span>
 									<span class="text-gray-600 mt-1 fw-400 fs-0-9rem">
 										Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eligendi, quaerat..
 									</span>
@@ -37,102 +44,77 @@
 								<!--end::Heading-->
 							</div>
 							<!--end::Card header-->
-
 							<!--begin::Card body-->
-							<div class="card-body p-0">
+							<div class="card-body">
 								<!--begin::Table wrapper-->
-								<div class="table-responsive mb-5">
-									<!--begin::Table-->
-									<table class="table align-middle table-row-bordered table-row-solid gy-4 gs-9 mb-0">
-										<!--begin::Tbody-->
-										<tbody class="fw-6">
-											<tr>
-												<td class="py-5 font-normal">
-													<label class="fs-6 text-gray-700 required">Título</label>
-													<div class="text-muted fs-8">
-														<small>Título de la categoría.</small>
-													</div>
-												</td>
-												<td class="py-5 text-gray-800 font-normaltext-sm">
-													<div class="position-relative pb-8px min-w-400px">
-														<input
-															type="text"
-															class="form-control"
-															placeholder="Computers & Accessories"
-															name="name"
-															[(ngModel)]="category.name"
-															[ngClass]="{ 'is-invalid': errorsCategory?.name }"
-														/>
-														<!--end::Input-->
-														<div class="invalid-feedback mt-0" *ngIf="errorsCategory?.name">
-															<small>
-																{{ errorsCategory?.name[0] || '' }}
-															</small>
-														</div>
-													</div>
-												</td>
-											</tr>
-											<tr>
-												<td class="py-5 font-normal">
-													<label class="fs-6 text-gray-700 required">Descripción</label>
-													<div class="text-muted fs-8">
-														<small>Descripción de la categoría.</small>
-													</div>
-												</td>
-												<td class="py-5 text-gray-800 font-normaltext-sm">
-													<div class="position-relative pb-8px min-w-400px">
-														<textarea
-															type="text"
-															class="form-control"
-															placeholder="Descripción de la categoría"
-															name="description"
-															[(ngModel)]="category.description"
-															[ngClass]="{ 'is-invalid': errorsCategory?.description }"
-														></textarea>
-														<!--end::Input-->
-														<div class="invalid-feedback mt-0" *ngIf="errorsCategory?.description">
-															<small>
-																{{ errorsCategory?.description[0] || '' }}
-															</small>
-														</div>
-													</div>
-												</td>
-											</tr>
-											<tr>
-												<td class="py-5 text-gray-800 font-normaltext-sm" colspan="2">
-													<div class="mb-5">
-														<label class="fs-6 text-gray-700 mt-2 required">Icono</label>
-														<div class="text-muted fs-8">
-															<small> Icono visible en la tienda. </small>
-														</div>
-													</div>
+								<div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="d-flex flex-column mb-5 fv-row fv-plugins-icon-container">
+                                            <!--begin::Label-->
+                                            <label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2">
+                                                <span class="required">Título</span>
+                                            </label>
+                                            <!--end::Label-->
 
-													<div class="position-relative pb-8px min-w-400px">
-														<textarea
-															name="icon"
-															[(ngModel)]="category.icon"
-															class="form-control"
-															[ngClass]="{ 'is-invalid': errorsCategory?.icon }"
-															placeholder="Código SVG"
-														></textarea>
+                                            <input type="text" 
+                                            class="form-control mb-1" 
+                                            placeholder="Computers & Accessories"
+                                            name="name" 
+                                            [(ngModel)]="category.name"
+                                            [ngClass]="{'is-invalid': errorsCategory?.name}">
 
-														<!--end::Input-->
-														<div class="invalid-feedback mt-0 d-block" *ngIf="errorsCategory?.icon">
-															<small>{{ errorsCategory?.icon[0] }}</small>
-														</div>
-													</div>
-												</td>
-											</tr>
-										</tbody>
-										<!--end::Tbody-->
-									</table>
-									<!--end::Table-->
-								</div>
+                                            <span class="fs-8 text-muted">Título de la categoría.</span>
+                                        </div>
+                                    </div>
+                                </div>
+								<div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="d-flex flex-column mb-5 fv-row fv-plugins-icon-container">
+                                            <!--begin::Label-->
+                                            <label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2">
+                                                <span class="required">Descripción</span>
+                                            </label>
+                                            <!--end::Label-->
+
+                                            <textarea
+												type="text"
+												class="form-control mb-1"
+												placeholder="Descripción de la categoría"
+												name="description"
+												[(ngModel)]="category.description"
+												[ngClass]="{ 'is-invalid': errorsCategory?.description }"
+											></textarea>
+
+                                            <span class="fs-8 text-muted">Descripción de la categoría.</span>
+                                        </div>
+                                    </div>
+                                </div>
+								<div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="d-flex flex-column fv-row fv-plugins-icon-container">
+                                            <!--begin::Label-->
+                                            <label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2">
+                                                <span class="required">Icono</span>
+                                            </label>
+                                            <!--end::Label-->
+
+                                            <textarea
+												name="icon"
+												[(ngModel)]="category.icon"
+												class="form-control mb-1"
+												[ngClass]="{ 'is-invalid': errorsCategory?.icon }"
+												placeholder="Código SVG"
+											></textarea>
+
+                                            <span class="fs-8 text-muted">Icono visible en la tienda.</span>
+                                        </div>
+                                    </div>
+                                </div>
 								<!--end::Table wrapper-->
 							</div>
 
 							<!--end::Card body-->
-							<div class="card-footer">
+							<div class="card-footer"  style="background-color: #f8f8f8;">
 								<a *ngIf="!loadBtn" class="btn btn-sm btn-primary my-1 cursor-pointer" (click)="create()"> Crear categoría </a>
 								<button *ngIf="loadBtn" class="btn btn-sm btn-primary my-1 cursor-pointer" type="button" disabled>
 									<span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>

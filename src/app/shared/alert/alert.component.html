@@ -1,0 +1,12 @@
+<div class="alert alert-dismissible border d-flex flex-column flex-sm-row w-100 p-5  gap-3" style="border-radius: 0px !important;"
+[ngClass]="classAlert">
+    <app-icon-alert [classIcon]="'svg-icon-2hx svg-icon-danger'"></app-icon-alert>
+    <!--begin::Content-->
+    <div class="d-flex flex-column pe-0 pe-sm-10">
+        <h5 class="mb-1 text-gray-800">{{title || '¡Ocurrió un problema!'}}</h5>
+        <span class="text-gray-700">
+            {{description}}
+        </span>
+    </div>
+</div>
+

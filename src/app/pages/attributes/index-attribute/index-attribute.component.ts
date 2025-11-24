@@ -1,7 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, signal, WritableSignal } from '@angular/core';
+import { Component, EventEmitter, Input, Output, signal, WritableSignal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { pageLimit } from '@app/common/constants/pageLimit.constant';
+import { statusTable } from '@app/common/constants/statusTable.contant';
 import { AttributeList } from '@app/common/interface/attribute-list.interface';
 import { Attribute } from '@app/common/interface/attribute.interface';
 import { withMinLoadingTime } from '@app/common/interface/with-min-loading-time.interface';
@@ -11,6 +13,7 @@ import { ValidateQueryParams } from '@app/common/utils/validate-query-params.uti
 import { AttributeService } from '@app/services/attribute.service';
 import { CategoryService } from '@app/services/category.service';
 import { GLOBAL } from '@app/services/GLOBAL';
+import { MenuSelectCategoriesComponent } from '@app/shared/menu-select-categories/menu-select-categories.component';
 import { ModalDeleteComponent } from '@app/shared/modal-delete/modal-delete.component';
 import { NotFoundComponent } from '@app/shared/not-found/not-found.component';
 import { PaginationComponent } from '@app/shared/pagination/pagination.component';
@@ -33,6 +36,7 @@ declare const $: any;
 		NotFoundComponent,
 		ModalDeleteComponent,
 		NgSelectModule,
+		MenuSelectCategoriesComponent
 	],
 	templateUrl: './index-attribute.component.html',
 	styleUrl: './index-attribute.component.css',
@@ -45,22 +49,23 @@ export class IndexAttributeComponent {
 	public limit: number = 10;
 	public totalPages: number = 0;
 	public loading: boolean = true;
-	public loadingCategories: boolean = true;
+	
 	private destroy$ = new Subject<void>();
 	public errorMsmServerListAttributes: string = '';
-	public errorMsmSeverListCategories: string = '';
+
 	public arrDataSkull: Array<any> = Array.from({ length: 5 }, () => ({}));
 	public attributes: AttributeList[] = [];
-	public categories_ = [];
-	public categories: string = '';
+	public categories: any = '';
 	public categoriesSelected: any = [];
 	public columns = [
-		{ key: 'name', label: 'Atributo', width: '50%' },
-		{ key: 'status', label: 'Estado', width: '40%' },
+		{ key: 'name', label: 'Atributo', classCol: 'col-w-xs-200 col-w-md-250' },
+		{ key: 'status', label: 'Estado', classCol: 'col-w-xs-200 col-w-md-250' },
 	];
 	public sortColumn: string = '';
 	public sortDirection: 'asc' | 'desc' = 'asc';
-
+	public pageLimit = pageLimit;
+	public statusTable = statusTable;
+	
 	constructor(
 		private _router: Router,
 		private attributeService: AttributeService,
@@ -97,7 +102,6 @@ export class IndexAttributeComponent {
 
 				// ✅ Cargar datos independientes
 				this.init_attributes(this.filter, this.currentPage, this.status, this.limit, this.categories);
-				this.init_categories();
 			});
 	}
 
@@ -135,15 +139,6 @@ export class IndexAttributeComponent {
 		});
 	}
 
-	validateParamsId(key: string) {
-		if (key == 'Todos') {
-			return key;
-		} else {
-			let categories: any = key.split(',').filter((item: any) => this.categories_.some((prev: any) => prev.id == item)) || [];
-			return categories.join(',');
-		}
-	}
-
 	init_attributes(filter: string, page: number, status: string, limit: number, categories: string) {
 		this.loading = true;
 		this.errorMsmServerListAttributes = '';
@@ -166,26 +161,14 @@ export class IndexAttributeComponent {
 			});
 	}
 
-	init_categories() {
-		this.loadingCategories = true;
-		this.errorMsmSeverListCategories = '';
-		this.categoryService
-			.get_categories_by_select()
-			.pipe(
-				takeUntil(this.destroy$),
-				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
-				finalize(() => (this.loadingCategories = false))
-			)
-			.subscribe({
-				next: (next) => {
-					console.log(next);
-					this.categories_ = next;
-				},
-				error: (err) => {
-					const error = err.error;
-					this.errorMsmSeverListCategories = error;
-				},
-			});
+	
+
+	getCategories(categories: any){
+		console.log(categories);
+		this.categoriesSelected = categories
+		.filter((c: any) => c.checked)
+		.map((c: any) => c.id);
+		this.redirect();
 	}
 
 	setLimit() {

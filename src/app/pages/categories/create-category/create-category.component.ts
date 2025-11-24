@@ -13,11 +13,12 @@ import { oneDark } from '@codemirror/theme-one-dark';
 import { CategoryService } from '@app/services/category.service';
 import { withMinLoadingTime } from '@app/common/interface/with-min-loading-time.interface';
 import { GLOBAL } from '@app/services/GLOBAL';
+import { AlertComponent } from '@app/shared/alert/alert.component';
 declare const toastr: any;
 
 @Component({
 	selector: 'app-create-category',
-	imports: [TopbarComponent, SidebarComponent, FormsModule, CommonModule, RouterModule],
+	imports: [TopbarComponent, SidebarComponent, FormsModule, CommonModule, RouterModule, AlertComponent],
 	templateUrl: './create-category.component.html',
 	styleUrl: './create-category.component.css',
 })
@@ -27,6 +28,7 @@ export class CreateCategoryComponent {
 	private destroy$ = new Subject<void>();
 	public loadBtn: boolean = false;
 	public errorsCategory: any = {};
+	public msmErrorCategory: any = [];
 	public errorMsmServer: string = '';
 	public category: Category = {
 		name: '',
@@ -67,6 +69,7 @@ export class CreateCategoryComponent {
 
 					if (error.validation) {
 						this.errorsCategory = error.validation;
+						this.msmErrorCategory =Object.values(this.errorsCategory).flat();
 						this.errorMsmServer = '';
 					}
 				},

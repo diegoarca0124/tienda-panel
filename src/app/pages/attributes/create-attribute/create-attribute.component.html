@@ -24,12 +24,19 @@
 				</div>
 				<div class="app-content flex-column-fluid">
 					<div class="app-container container">
+
+						<app-alert *ngIf="msmErrorAttribute.length >= 1" [classAlert]="'bg-light-danger border-danger border-dashed mb-7'"
+                        [title]="'¡Error de validación! ' + `(${msmErrorAttribute.length})`"
+                        [description]="msmErrorAttribute[0]"
+                        >
+                        </app-alert>
+
 						<div class="card mb-10">
 							<!--begin::Card header-->
-							<div class="card-header">
+							<div class="card-header" style="background-color: #f8f8f8;">
 								<!--begin::Heading-->
 								<h4 class="card-title m-0 d-flex flex-column">
-									<span class="fs-5">Nuevo Atributos</span>
+									<span class="fs-5 fw-600">Nuevo Atributos</span>
 									<span class="text-gray-600 mt-1 fw-400 fs-0-9rem">
 										Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eligendi, quaerat..
 									</span>
@@ -39,208 +46,147 @@
 							<!--end::Card header-->
 
 							<!--begin::Card body-->
-							<div class="card-body p-0 mb-2">
-								<!--begin::Table wrapper-->
-								<div class="table-responsive" style="overflow: visible">
-									<!--begin::Table-->
-									<table class="table align-middle table-row-bordered table-row-solid gy-4 gs-9 mb-0">
-										<!--begin::Tbody-->
-										<tbody class="fw-6">
-											<tr>
-												<td class="py-5 font-normal">
-													<label class="fs-6 text-gray-700 required">Nombres</label>
-													<div class="text-muted fs-8">
-														<small>Nombres completos del usuario.</small>
-													</div>
-												</td>
-												<td class="py-5 text-gray-800 font-normaltext-sm min-w-400px">
-													<div class="position-relative pb-8px">
-														<input
-															type="text"
-															class="form-control"
-															placeholder="RAM"
-															name="name"
-															[(ngModel)]="attribute.name"
-															[ngClass]="{ 'is-invalid': errorsAtribute?.name }"
-														/>
-														<!--end::Input-->
-														<div class="invalid-feedback mt-0" *ngIf="errorsAtribute?.name">
-															<small>
-																{{ errorsAtribute?.name[0] || '' }}
-															</small>
-														</div>
-													</div>
-												</td>
-											</tr>
-											<tr>
-												<td class="py-5 font-normal">
-													<label class="fs-6 text-gray-700">Unidad</label>
-													<div class="text-muted fs-8">
-														<small>Unidad de agrupamiento para atributo.</small>
-													</div>
-												</td>
-												<td class="py-5 text-gray-800 font-normaltext-sm min-w-400px">
-													<div class="position-relative pb-8px">
-														<input
-															type="text"
-															class="form-control"
-															placeholder="GB"
-															name="unit"
-															[(ngModel)]="attribute.unit"
-															[ngClass]="{ 'is-invalid': errorsAtribute?.unit }"
-														/>
-														<!--end::Input-->
-														<div class="invalid-feedback mt-0" *ngIf="errorsAtribute?.unit">
-															<small>
-																{{ errorsAtribute?.unit[0] || '' }}
-															</small>
-														</div>
-													</div>
-												</td>
-											</tr>
-											<tr>
-												<td class="py-5 font-normal">
-													<div class="d-flex gap-3">
-														<span class="fs-6 text-gray-700 required">Categorías</span>
-														<small class="text-primary cursor-pointer" (click)="init_categories()">Recargar</small>
-													</div>
-													<div class="text-muted fs-8">
-														<small>Categorías donde esta disponible el atributo.</small>
-													</div>
-												</td>
-												<td class="py-5 text-gray-800 font-normaltext-sm min-w-400px">
-													<div class="position-relative pb-8px">
-														<!-- country-select.component.html -->
-														<div [ngClass]="{ 'is-invalid': errorsAtribute?.categories }">
-															<ng-select
-																[items]="categories"
-																bindLabel="name"
-																bindValue="id"
-																[(ngModel)]="categoriesSelected"
-																[multiple]="true"
-																placeholder="Selecciona países"
-																[clearable]="false"
-																[closeOnSelect]="false"
-																class="select-element"
-																appendTo="body"
-																[loading]="loadingCategories"
-																[disabled]="loadingCategories"
-															>
-																<!-- Opción en el dropdown -->
-																<ng-template ng-option-tmp let-item="item">
-																	{{ item.name }}
-																</ng-template>
+							<ng-container>
+								<div class="card-body">
+									<div class="row">
+										<div class="col-lg-6">
+											<div class="d-flex flex-column mb-5 fv-row fv-plugins-icon-container">
+												<!--begin::Label-->
+												<label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2">
+													<span class="required">Nombre</span>
+												</label>
+												<!--end::Label-->
 
-																<!-- Opción seleccionada en el input -->
-																<ng-template ng-label-tmp let-item="item">
-																	{{ item.name }}
-																</ng-template>
+												<input type="text" 
+												class="form-control mb-1" 
+												placeholder="Almacenamiento"
+												name="name" 
+												[(ngModel)]="attribute.name"
+												[ngClass]="{'is-invalid': errorsAtribute?.name}">
 
-																<ng-template ng-loading-text>
-																	<div class="spinner-container">
-																		<span class="spinner-border spinner-border-sm"></span>
-																	</div>
-																</ng-template>
-															</ng-select>
-														</div>
+												<span class="fs-8 text-muted">Nombre de la propiedad.</span>
+											</div>
+										</div>
+										<div class="col-lg-6">
+											<div class="d-flex flex-column mb-5 fv-row fv-plugins-icon-container">
+												<!--begin::Label-->
+												<label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2">
+													<span class="">Unidad</span>
+												</label>
+												<!--end::Label-->
 
-														<!--end::Input-->
-														<div class="invalid-feedback mt-0 d-block" *ngIf="errorsAtribute?.categories">
-															<small>
-																{{ errorsAtribute?.categories[0] || '' }}
-															</small>
-														</div>
-													</div>
-												</td>
-											</tr>
-										</tbody>
-										<!--end::Tbody-->
-									</table>
-									<!--end::Table-->
+												<input type="text" 
+												class="form-control mb-1" 
+												placeholder="GB"
+												name="unit" 
+												[(ngModel)]="attribute.unit"
+												[ngClass]="{'is-invalid': errorsAtribute?.unit}">
+
+												<span class="fs-8 text-muted">Unidad de agrupamiento para atributo.</span>
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-lg-12">
+											<div class="d-flex flex-column mb-5 fv-row fv-plugins-icon-container">
+												<!--begin::Label-->
+												<label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2 gap-5">
+													<span class="required">Categorías</span>
+													<small class="text-primary cursor-pointer" (click)="init_categories()">Recargar</small>
+												</label>
+												<!--end::Label-->
+
+												<div [ngClass]="{ 'is-invalid': errorsAtribute?.categories }">
+													<ng-select
+														[items]="categories"
+														bindLabel="name"
+														bindValue="id"
+														[(ngModel)]="categoriesSelected"
+														[multiple]="true"
+														placeholder="Selecciona países"
+														[clearable]="false"
+														[closeOnSelect]="false"
+														class="select-element mb-1"
+														appendTo="body"
+														[loading]="loadingCategories"
+														[disabled]="loadingCategories"
+													>
+														<!-- Opción en el dropdown -->
+														<ng-template ng-option-tmp let-item="item">
+															{{ item.name }}
+														</ng-template>
+
+														<!-- Opción seleccionada en el input -->
+														<ng-template ng-label-tmp let-item="item">
+															{{ item.name }}
+														</ng-template>
+
+														<ng-template ng-loading-text>
+															<div class="spinner-container">
+																<span class="spinner-border spinner-border-sm"></span>
+															</div>
+														</ng-template>
+													</ng-select>
+												</div>
+
+												<span class="fs-8 text-muted">Categorías donde esta disponible el atributo.</span>
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-12">
+											<div class="d-flex flex-column mb-5 fv-row fv-plugins-icon-container">
+												<!--begin::Label-->
+												<label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2 gap-5">
+													<span class="">Valor</span>
+												</label>
+												<!--end::Label-->
+
+												<div class="input-group mb-1">
+													<input
+														type="text"
+														class="form-control"
+														placeholder="RAM"
+														name="value"
+														[(ngModel)]="value"
+														[ngClass]="{ 'is-invalid': errorsAtribute?.values }"
+														(keyup.ENTER)="add()"
+													/>
+
+													<button class="btn btn-primary" type="button" (click)="add()" style="border-radius: 0px !important">+</button>
+												</div>
+
+												<span class="fs-8 text-muted">Nuevo valor del atributo.</span>
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-12">
+											<div class="d-flex flex-wrap gap-3">
+												<span
+													class="btn badge badge-light fw-bold px-4 py-2 cursor-pointer btn-active-light-danger"
+													*ngFor="let item of values; let index = index"
+													(dblclick)="remove(index)"
+												>
+													{{ item.value }}
+												</span>
+											</div>
+										</div>
+									</div>
 								</div>
-							</div>
+								<div class="card-footer"  style="background-color: #f8f8f8;">
+									<a *ngIf="!loadBtn" class="btn btn-sm btn-primary my-1 cursor-pointer" (click)="create()">
+										Crear atributo
+									</a>
+									<button *ngIf="loadBtn" class="btn btn-sm btn-primary my-1 cursor-pointer" type="button" disabled>
+										<span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
+										<span role="status">Procesando...</span>
+									</button>
+								</div>
+							</ng-container>
 						</div>
 
-						<div class="card mb-10">
-							<!--begin::Card header-->
-							<div class="card-header">
-								<!--begin::Heading-->
-								<h4 class="card-title m-0 d-flex flex-column">
-									<span class="fs-5">Nuevo Atributos</span>
-									<span class="text-gray-600 mt-1 fw-400 fs-0-9rem">
-										Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eligendi, quaerat..
-									</span>
-								</h4>
-								<!--end::Heading-->
-							</div>
-							<!--end::Card header-->
 
-							<!--begin::Card body-->
-							<div class="card-body p-0">
-								<!--begin::Table wrapper-->
-								<div class="table-responsive" style="overflow: visible">
-									<!--begin::Table-->
-									<table class="table align-middle table-row-bordered table-row-solid gy-4 gs-9 mb-0">
-										<!--begin::Tbody-->
-										<tbody class="fw-6">
-											<tr>
-												<td class="py-5 font-normal">
-													<label class="fs-6 text-gray-700 required">Valor</label>
-													<div class="text-muted fs-8">
-														<small>Nuevo valor del atributo.</small>
-													</div>
-												</td>
-												<td class="py-5 text-gray-800 font-normaltext-sm min-w-400px">
-													<div class="position-relative pb-8px">
-														<div class="input-group">
-															<input
-																type="text"
-																class="form-control"
-																placeholder="RAM"
-																name="value"
-																[(ngModel)]="value"
-																[ngClass]="{ 'is-invalid': errorsAtribute?.values }"
-																(keyup.ENTER)="add()"
-															/>
-
-															<button class="btn btn-primary" type="button" (click)="add()" style="border-radius: 0px !important">+</button>
-														</div>
-														<!--end::Input-->
-														<div class="invalid-feedback mt-0 d-block" *ngIf="errorsAtribute?.values">
-															<small>
-																{{ errorsAtribute?.values[0] || '' }}
-															</small>
-														</div>
-													</div>
-												</td>
-											</tr>
-										</tbody>
-										<!--end::Tbody-->
-									</table>
-									<!--end::Table-->
-								</div>
-								<!--end::Table wrapper-->
-							</div>
-							<div class="card-body">
-								<div class="d-flex flex-wrap gap-3">
-									<span
-										class="btn badge badge-light fw-bold px-4 py-2 cursor-pointer btn-active-light-danger"
-										*ngFor="let item of values; let index = index"
-										(dblclick)="remove(index)"
-									>
-										{{ item.value }}
-									</span>
-								</div>
-							</div>
-						</div>
-
-						<div class="d-flex">
-							<a *ngIf="!loadBtn" class="btn btn-sm btn-primary my-1 cursor-pointer" (click)="create()"> Crear atributo </a>
-							<button *ngIf="loadBtn" class="btn btn-sm btn-primary my-1 cursor-pointer" type="button" disabled>
-								<span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
-								<span role="status">Procesando...</span>
-							</button>
-						</div>
 					</div>
 				</div>
 			</div>

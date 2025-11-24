@@ -1,10 +1,16 @@
 export const full_properties = {
-  height: 500,
+  selector: "#kt_docs_tinymce_plugins",
+  height: 200,
   menubar: 'file edit view insert format tools table help',
   language_url: '/plugins/tinymce/langs/es.js',
   language: 'es',
   branding: false,
   statusbar: true,
+
+  skin_url: "plugins/custom/tinymce/skins/ui/oxide",
+
+  // ⭐ Estilos del contenido interno del editor
+  content_css: "plugins/custom/tinymce/skins/content/default/content.css",
 
   // 🔌 Plugins necesarios
   plugins: [

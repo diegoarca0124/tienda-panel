@@ -18,12 +18,13 @@ import { Subcategory } from '@app/common/interface/subcategory.interface';
 import { DomSanitizer } from '@angular/platform-browser';
 import { SafeHtmlPipe } from '../../../common/pipes/safe-html.pipe';
 import { closeModal } from '@app/common/utils/close-modal.util';
+import { AlertComponent } from '@app/shared/alert/alert.component';
 declare const toastr: any;
 declare const $: any;
 
 @Component({
 	selector: 'app-edit-category',
-	imports: [TopbarComponent, SidebarComponent, FormsModule, CommonModule, RouterModule, NotFoundComponent, ModalDeleteComponent, SafeHtmlPipe],
+	imports: [TopbarComponent, SidebarComponent, FormsModule, CommonModule, RouterModule, NotFoundComponent, ModalDeleteComponent, SafeHtmlPipe, AlertComponent],
 	templateUrl: './edit-category.component.html',
 	styleUrl: './edit-category.component.css',
 })
@@ -50,12 +51,15 @@ export class EditCategoryComponent {
 	public loading = true;
 	public loadingSubcategories = true;
 	public subcategories: any = [];
+	public msmErrorCreateCategory : any= [];
+	public msmErrorCreateSubcategory : any= [];
 	public errorMsmServerGetCategory: string = '';
 	public errorMsmServerGetSubcategory: string = '';
 	public arrDataSkull: Array<any> = Array.from({ length: 5 }, () => ({}));
 	public loadBtnDelete: WritableSignal<boolean> = signal(false);
 	public typeForm: 'create' | 'edit' = 'create';
 	public errorMsmServer: string = '';
+	public option = 1;
 
 	constructor(
 		private categoryService: CategoryService,
@@ -73,7 +77,7 @@ export class EditCategoryComponent {
 					console.log(this.id);
 					return this.init_data(this.id); // devolvemos el observable
 				}),
-				switchMap(() => this.init_subcategories(this.id)) // encadenamos
+				switchMap(() => this.init_subcategories(this.id))
 			)
 			.subscribe({
 				next: (subcategories) => {
@@ -88,6 +92,10 @@ export class EditCategoryComponent {
 	ngOnDestroy(): void {
 		this.destroy$.next();
 		this.destroy$.complete();
+	}
+
+	setOption(value: number) {
+		this.option = value;
 	}
 
 	init_data(id: string): Observable<Category> {
@@ -134,6 +142,7 @@ export class EditCategoryComponent {
 
 	update() {
 		this.loadBtn = true;
+		this.msmErrorCreateCategory = [];
 		this.categoryService
 			.update_category(this.id, this.category)
 			.pipe(
@@ -154,6 +163,7 @@ export class EditCategoryComponent {
 
 					if (error.validation) {
 						this.errorsCategory = error.validation;
+						this.msmErrorCreateCategory = Object.values(this.errorsCategory).flat();
 						this.errorMsmServer = '';
 					}
 				},
@@ -167,6 +177,7 @@ export class EditCategoryComponent {
 
 	create_subcategory() {
 		this.loadBtnSubcat = true;
+		this.msmErrorCreateSubcategory = [];
 		this.categoryService
 			.create_subcategory(this.subcategory)
 			.pipe(
@@ -192,6 +203,7 @@ export class EditCategoryComponent {
 
 					if (error.validation) {
 						this.errorsSubcategory = error.validation;
+						this.msmErrorCreateSubcategory = Object.values(this.errorsSubcategory).flat();
 						this.errorMsmServer = '';
 					}
 				},
@@ -200,6 +212,7 @@ export class EditCategoryComponent {
 
 	update_subcategory() {
 		this.loadBtnSubcat = true;
+		this.msmErrorCreateSubcategory = [];
 		this.categoryService
 			.update_subcategory(this.subcategory?.id, this.subcategory)
 			.pipe(
@@ -221,6 +234,7 @@ export class EditCategoryComponent {
 
 					if (error.validation) {
 						this.errorsSubcategory = error.validation;
+						this.msmErrorCreateSubcategory = Object.values(this.errorsSubcategory).flat();
 						this.errorMsmServer = '';
 					}
 				},

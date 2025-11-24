@@ -2,20 +2,24 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { identityDocuments } from '@app/common/constants/identityDocuments .constant';
+import { rols } from '@app/common/constants/rols.constant';
 import { Collaborator } from '@app/common/interface/collaborator.interface';
 import { withMinLoadingTime } from '@app/common/interface/with-min-loading-time.interface';
 import { CollaboratorService } from '@app/services/collaborator.service';
 import { GLOBAL } from '@app/services/GLOBAL';
+import { AlertComponent } from '@app/shared/alert/alert.component';
 import { NotFoundComponent } from '@app/shared/not-found/not-found.component';
 import { SidebarComponent } from '@app/shared/sidebar/sidebar.component';
 import { TopbarComponent } from '@app/shared/topbar/topbar.component';
+import { NgSelectModule } from '@ng-select/ng-select';
 import { IMaskModule } from 'angular-imask';
 import { finalize, Subject, takeUntil } from 'rxjs';
 declare const toastr: any;
 
 @Component({
 	selector: 'app-edit-collaborator',
-	imports: [SidebarComponent, TopbarComponent, CommonModule, RouterModule, FormsModule, IMaskModule, NotFoundComponent],
+	imports: [SidebarComponent, TopbarComponent, CommonModule, RouterModule, FormsModule, IMaskModule, NotFoundComponent, NgSelectModule, AlertComponent],
 	templateUrl: './edit-collaborator.component.html',
 	styleUrl: './edit-collaborator.component.css',
 })
@@ -35,8 +39,11 @@ export class EditCollaboratorComponent {
 	public loading: boolean = true;
 	public id: string = '';
 	public errorsCollaborator: any = {};
+	public msmErrorCollaborator: any = [];
 	public errorMsmServerGetCollaborator: string = '';
 	public errorMsmServer: string = '';
+	public rols = rols;
+	public identityDocuments = identityDocuments;
 
 	constructor(
 		private collaboratorService: CollaboratorService,
@@ -94,7 +101,8 @@ export class EditCollaboratorComponent {
 
 	update() {
 		this.loadBtn = true;
-
+		console.log(this.collaborator);
+		
 		this.collaboratorService
 			.update_collaborator(this.id, this.collaborator)
 			.pipe(
@@ -120,6 +128,7 @@ export class EditCollaboratorComponent {
 
 					if (error.validation) {
 						this.errorsCollaborator = error.validation;
+						this.msmErrorCollaborator =Object.values(this.errorsCollaborator).flat();
 						this.errorMsmServer = '';
 					}
 				},

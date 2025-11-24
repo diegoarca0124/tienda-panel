@@ -10,10 +10,20 @@ import { Brand } from '@app/common/interface/brand.interface';
 })
 export class BrandService {
 	private apiUrl = environment.apiUrl;
-	private getHeaders(): HttpHeaders {
+	private getHeaders(body?: any): HttpHeaders {
+		const token = this.authService.getToken() || '';
+
+		// Si el body es FormData → NO PONEMOS Content-Type
+		if (body instanceof FormData) {
+			return new HttpHeaders({
+				Authorization: `Bearer ${token}`,
+			});
+		}
+
+		// Si es JSON normal → Content-Type: application/json
 		return new HttpHeaders({
 			'Content-Type': 'application/json',
-			Authorization: `Bearer ${this.authService.getToken() || ''}`,
+			Authorization: `Bearer ${token}`,
 		});
 	}
 	constructor(
@@ -29,7 +39,7 @@ export class BrandService {
 		data.append('websiteUrl', brand.websiteUrl || '');
 		data.append('logoUrl', brand.logoUrl);
 		data.append('bannerUrl', brand.bannerUrl);
-		return this.http.post(`${this.apiUrl}/brand/create_brand`, data, { headers: this.getHeaders() });
+		return this.http.post(`${this.apiUrl}/brand/create_brand`, data, { headers: this.getHeaders(data)});
 	}
 
 	get_brands(filter: string, page: number, limit: number, status: string): Observable<any> {
@@ -61,7 +71,7 @@ export class BrandService {
 			data = brand;
 		}
 
-		return this.http.put(`${this.apiUrl}/brand/update_brand/${id}`, data, { headers: this.getHeaders() });
+		return this.http.put(`${this.apiUrl}/brand/update_brand/${id}`, data, { headers: this.getHeaders(data) });
 	}
 
 	get_brands_by_select(): Observable<any> {

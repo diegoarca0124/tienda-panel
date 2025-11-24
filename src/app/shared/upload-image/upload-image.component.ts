@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { urlToImage } from '@app/common/utils/url-to-image.util';
+declare const toastr: any;
 
 @Component({
 	selector: 'app-upload-image',
@@ -106,8 +107,7 @@ export class UploadImageComponent {
 	}
 
 	private setError(message: string) {
-		console.log(message);
-
+		toastr.error(message);
 		this.imagePreview = null;
 		this.fileName = null;
 		this.fileSelected.emit(null);

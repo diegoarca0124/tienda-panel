@@ -195,5 +195,7 @@ export class EditAttributeComponent {
 			});
 	}
 
-	remove(idx: number) {}
+	remove(idx: number) {
+		
+	}
 }

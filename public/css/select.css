@@ -1,0 +1,117 @@
+
+.select-element .ng-placeholder {
+	top: 12px !important;
+}
+
+.select-element .ng-value {
+	margin-right: 5px !important;
+	padding: 3px 0px !important;
+	font-size: 1.1rem !important;
+}
+
+.select-element .ng-input input {
+	margin-top: 6px !important;
+}
+
+.select-element .ng-select-container .ng-value-container {
+	width: 400px !important;
+	padding-left: 10px !important;
+}
+
+.select-element .ng-select-container {
+	height: auto !important;
+	min-height: 43.56px !important;
+	
+}
+
+.select-element .ng-option {
+	font-size: 1.1rem !important;
+	border-bottom: 1px solid #e8f2ff;
+}
+
+.select-element .ng-select-container {
+    border: 1px solid #dbdfe9 !important;
+    border-radius: 0.475rem !important;
+    height: 46.53px !important;
+}
+
+.select-element .ng-value,
+.select-element .ng-option,
+.select-element .ng-select {
+    font-size: 1.2rem !important;
+    font-family: 'Lexend' !important;
+    color: #4b5675 !important;
+    font-weight: 500;
+}
+
+.select-element .ng-placeholder {
+    font-size: 1.1rem !important;
+    font-family: 'Lexend' !important;
+    color: #9da1bc !important;
+    font-weight: 500;
+}
+
+.select-element .ng-select-container {
+    border: 1px solid #dbdfe9 !important;
+    height: auto !important;
+	min-height: 42.92px !important;
+}
+
+.select-element .ng-value,
+.select-element .ng-option,
+.select-element .ng-select {
+    font-size: 1rem !important;
+    font-family: 'Lexend' !important;
+    color: #4b5675 !important;
+    font-weight: 500;
+}
+
+.select-element .ng-placeholder {
+    font-size: 1.1rem !important;
+    font-family: 'Lexend' !important;
+    color: #9da1bc !important;
+    font-weight: 500;
+}
+
+
+/* SELECT SMALL */
+
+.select-element-sm .ng-placeholder {
+	top: 12px !important;
+}
+
+.select-element-sm .ng-value {
+	margin-right: 5px !important;
+	padding: 3px 0px !important;
+	font-size: 1rem !important;
+}
+
+.select-element-sm .ng-input input {
+	margin-top: 6px !important;
+}
+
+.select-element-sm .ng-select-container .ng-value-container {
+	width: 100px !important;
+	padding-left: 10px !important;
+}
+
+.select-element-sm .ng-select-container {
+	height: auto !important;
+	min-height: 35px !important;
+}
+
+.select-element-sm .ng-option {
+	font-size: 1rem !important;
+	border-bottom: 1px solid #e8f2ff;
+	padding: 5px 10px !important;
+}
+
+/**/
+
+.select-element-multiple .ng-placeholder{
+	top: 10px !important;
+}
+
+.ng-select-multiple .ng-value{
+	padding: 3px 10px !important;
+}

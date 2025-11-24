@@ -2,6 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component, HostListener, signal, WritableSignal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { pageLimit } from '@app/common/constants/pageLimit.constant';
+import { statusTable } from '@app/common/constants/statusTable.contant';
 import { CollaboratorList } from '@app/common/interface/collaborator-list.interface';
 import { Collaborator } from '@app/common/interface/collaborator.interface';
 import { withMinLoadingTime } from '@app/common/interface/with-min-loading-time.interface';
@@ -18,6 +20,7 @@ import { NotFoundComponent } from '@app/shared/not-found/not-found.component';
 import { PaginationComponent } from '@app/shared/pagination/pagination.component';
 import { SidebarComponent } from '@app/shared/sidebar/sidebar.component';
 import { TopbarComponent } from '@app/shared/topbar/topbar.component';
+import { NgSelectModule } from '@ng-select/ng-select';
 import { Store } from '@ngrx/store';
 import { finalize } from 'rxjs';
 import { takeUntil } from 'rxjs/internal/operators/takeUntil';
@@ -27,7 +30,7 @@ declare const $: any;
 
 @Component({
 	selector: 'app-index-collaborator',
-	imports: [TopbarComponent, SidebarComponent, CommonModule, FormsModule, RouterModule, ModalDeleteComponent, NotFoundComponent, PaginationComponent],
+	imports: [TopbarComponent, SidebarComponent, CommonModule, FormsModule, RouterModule, ModalDeleteComponent, NotFoundComponent, PaginationComponent, NgSelectModule],
 	templateUrl: './index-collaborator.component.html',
 	styleUrl: './index-collaborator.component.css',
 })
@@ -45,11 +48,13 @@ export class IndexCollaboratorComponent {
 	public errorMsmServerListCollaborators: string = '';
 	private destroy$ = new Subject<void>();
 	public columns = [
-		{ key: 'names', label: 'Colaborador', width: '40%' },
-		{ key: 'role', label: 'Rol', width: '15%' },
-		{ key: 'number_document', label: 'Documento', width: '20%' },
-		{ key: 'status', label: 'Estado', width: '15%' },
+		{ key: 'names', label: 'Colaborador', classCol: 'col-w-xs-200 col-w-md-250' },
+		{ key: 'role', label: 'Rol', classCol: 'col-w-xs-100' },
+		{ key: 'number_document', label: 'Documento', classCol: 'col-w-xs-100' },
+		{ key: 'status', label: 'Estado', classCol: 'col-w-xs-100' },
 	];
+	public pageLimit = pageLimit;
+	public statusTable = statusTable;
 	public sortColumn: string = '';
 	public sortDirection: 'asc' | 'desc' = 'asc';
 
@@ -129,6 +134,8 @@ export class IndexCollaboratorComponent {
 	}
 
 	redirect() {
+		console.log(this.limit);
+		
 		this._router.navigate([], {
 			queryParams: {
 				filter: this.filter,

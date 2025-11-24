@@ -7,11 +7,11 @@
 
 	<div class="text-center text-gray-600 mb-4">
 		<!-- ✅ Para todos los errores 5xx -->
-		<span *ngIf="error.statusCode >= 500 && error.statusCode < 600">
+		<small *ngIf="error.statusCode >= 500 && error.statusCode < 600">
 			Ha ocurrido un error. Estamos trabajando para solucionarlo, intenta de nuevo en unos momentos.
-		</span>
+		</small>
 
 		<!-- ✅ Para todos los errores 4xx -->
-		<span *ngIf="error.statusCode >= 400 && error.statusCode < 500"> Solicitud no válida. Verifica los datos antes de continuar. </span>
+		<small *ngIf="error.statusCode >= 400 && error.statusCode < 500"> Solicitud no válida. Verifica los datos antes de continuar. </small>
 	</div>
 </div>
