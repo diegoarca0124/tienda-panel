@@ -97,7 +97,6 @@ export class EditBrandComponent {
 
 	update() {
 		this.loadBtn = true;
-
 		this.brandService
 			.update_brand(this.id, this.brand)
 			.pipe(
@@ -121,16 +120,25 @@ export class EditBrandComponent {
 				},
 				error: (err) => {
 					console.log(err);
-
+					this.errorsBrand = {
+						logoUrl: [],
+						bannerUrl: [],
+					};
 					const error = err.error;
 					this.errorMsmServer = error.message || '¡Error desconocido!';
 					toastr.error(this.errorMsmServer);
 
 					if (error.validation) {
-						this.errorsBrand = error.validation;
-						this.msmErrorBrand =Object.values(this.errorsBrand).flat();
+						this.errorsBrand = {
+							...this.errorsBrand,
+							...error.validation,
+						};
+						this.msmErrorBrand = Object.values(this.errorsBrand).flat();
 						this.errorMsmServer = '';
 					}
+
+					console.log(this.errorsBrand);
+					
 				},
 			});
 	}

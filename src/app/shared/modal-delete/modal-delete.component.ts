@@ -18,8 +18,7 @@ export class ModalDeleteComponent {
   @Input() loadBtnDelete: Signal<boolean> = signal(false);
 
   constructor(){
-    console.log(this.loadBtnDelete);
-    
+
   }
 
   closeModal() {

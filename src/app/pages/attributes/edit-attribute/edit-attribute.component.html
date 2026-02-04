@@ -24,6 +24,14 @@
 				</div>
 				<div class="app-content flex-column-fluid">
 					<div class="app-container container">
+
+						<app-alert *ngIf="msmErrorAttribute.length >= 1" [classAlert]="'bg-light-danger border-danger border-dashed mb-7'"
+						[title]="'¡Errores de Validación!'"
+						[description]="errorsAtribute"
+						[type]="'errors'"
+						[classIcon]="'svg-icon-danger'">
+						</app-alert>
+
 						<div class="card mb-7">
 							<div class="card-header" style="background-color: #f8f8f8;">
 								<h4 class="card-title m-0 d-flex flex-column">

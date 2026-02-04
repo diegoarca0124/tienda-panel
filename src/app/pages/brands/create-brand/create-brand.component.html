@@ -26,10 +26,11 @@
 					<div class="app-container container">
 					
 						<app-alert *ngIf="msmErrorBrand.length >= 1" [classAlert]="'bg-light-danger border-danger border-dashed mb-7'"
-                        [title]="'¡Error de validación! ' + `(${msmErrorBrand.length})`"
-                        [description]="msmErrorBrand[0]"
-                        >
-                        </app-alert>
+						[title]="'¡Errores de Validación!'"
+						[description]="errorsBrand"
+						[type]="'errors'"
+						[classIcon]="'svg-icon-danger'">
+						</app-alert>
 
 						<div class="card mb-10">
 							<!--begin::Card header-->

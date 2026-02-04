@@ -15,5 +15,9 @@ import { IconAlertComponent } from '@app/icons/icon-alert/icon-alert.component';
 export class AlertComponent {
   @Input() classAlert : string = '';
   @Input() title : string = '';
-  @Input() description : string = '';
+  @Input() classIcon: string = '';
+  @Input() description : { [key: string]: string[] } = {};
+  @Input() text : string = '';
+  @Input() type: string = '';
+  
 }

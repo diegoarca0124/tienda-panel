@@ -82,6 +82,7 @@ body {
 
 .border-danger {
 	border: 1px solid #f1416c !important;
+	border-radius: 6px !important;
 }
 
 .border-primary {
@@ -246,3 +247,16 @@ body {
   border-top-color: rgba(0, 0, 0, 0.45) !important;
 }
 
+.underline-dashed {
+  position: relative;
+  display: inline-block;
+}
+
+.underline-dashed::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -3px;              /* separación entre texto y línea */
+  border-bottom: 1px dashed #727272;
+}

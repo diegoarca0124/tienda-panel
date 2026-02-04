@@ -4,6 +4,7 @@ import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { urlToImage } from '@app/common/utils/url-to-image.util';
 declare const toastr: any;
+declare const $:any;
 
 @Component({
 	selector: 'app-upload-image',
@@ -18,10 +19,11 @@ export class UploadImageComponent {
 
 	@Output() fileSelected = new EventEmitter<File | null>();
 	@Output() validationError = new EventEmitter<string | null>();
-	@Input() aspectMode: 'square' | 'rectangle' | '2:1' = 'square';
+	@Input() aspectMode: 'square' | 'rectangle' | '2:1' | 'all' = 'square';
 	@Input() inputId: any = `fileInput-${Math.random().toString(36).substring(2, 9)}`;
 	@Input() hasError: any = '';
 	@Input() previewImage: any = false;
+	public isLoading = false;
 
 	constructor() {}
 
@@ -59,29 +61,31 @@ export class UploadImageComponent {
 			reader.onload = (e: any) => {
 				img.src = e.target.result;
 				img.onload = () => {
-					switch (this.aspectMode) {
-						case 'square':
-							if (img.width !== img.height) {
-								this.setError('La imagen debe ser cuadrada.');
-								return;
-							}
-							break;
+					if(this.aspectMode != 'all'){
+						switch (this.aspectMode) {
+							case 'square':
+								if (img.width !== img.height) {
+									this.setError('La imagen debe ser cuadrada.');
+									return;
+								}
+								break;
 
-						case 'rectangle':
-							if (img.width <= img.height) {
-								this.setError('La imagen debe ser horizontal (más ancha que alta).');
-								return;
-							}
-							break;
+							case 'rectangle':
+								if (img.width <= img.height) {
+									this.setError('La imagen debe ser horizontal (más ancha que alta).');
+									return;
+								}
+								break;
 
-						case '2:1':
-							const ratio = img.width / img.height;
-							if (Math.abs(ratio - 2) > 0.05) {
-								// 👉 tolerancia del 5% para evitar errores por 1px
-								this.setError('La imagen debe tener relación 2:1 (ejemplo: 1200x600).');
-								return;
-							}
-							break;
+							case '2:1':
+								const ratio = img.width / img.height;
+								if (Math.abs(ratio - 2) > 0.05) {
+									// 👉 tolerancia del 5% para evitar errores por 1px
+									this.setError('La imagen debe tener relación 2:1 (ejemplo: 1200x600).');
+									return;
+								}
+								break;
+						}
 					}
 
 					// ✅ Válida
@@ -104,6 +108,7 @@ export class UploadImageComponent {
 		this.fileSelected.emit(null);
 		this.validationError.emit(null);
 		this.hasError = false;
+		$(this.inputId).val(' ');
 	}
 
 	private setError(message: string) {

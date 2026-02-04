@@ -27,17 +27,19 @@
 
 						<ng-container *ngIf="option == 1">
 							<app-alert *ngIf="msmErrorCreateCategory.length >= 1" [classAlert]="'bg-light-danger border-danger border-dashed mb-7'"
-							[title]="'¡Error de validación! ' + `(${msmErrorCreateCategory.length})`"
-							[description]="msmErrorCreateCategory[0]"
-							>
+							[title]="'¡Errores de Validación!'"
+							[description]="errorsCategory"
+							[type]="'errors'"
+							[classIcon]="'svg-icon-danger'">
 							</app-alert>
 						</ng-container>
 
 						<ng-container *ngIf="option == 2">
 							<app-alert *ngIf="msmErrorCreateSubcategory.length >= 1" [classAlert]="'bg-light-danger border-danger border-dashed mb-7'"
-							[title]="'¡Error de validación! ' + `(${msmErrorCreateSubcategory.length})`"
-							[description]="msmErrorCreateSubcategory[0]"
-							>
+							[title]="'¡Errores de Validación!'"
+							[description]="errorsSubcategory"
+							[type]="'errors'"
+							[classIcon]="'svg-icon-danger'">
 							</app-alert>
 						</ng-container>
 						

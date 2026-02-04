@@ -1,0 +1,17 @@
+
+ <div class="position-relative">
+    <button type="button" class="btn btn-icon btn-active-color-gray-700 position-absolute translate-middle-y top-50 start-0" (click)="decrement()">
+        <i class="bi bi-dash fs-1 icon-round"></i>
+    </button>
+
+    <input type="text" 
+    type="number"
+    class="form-control ps-17"
+    [placeholder]="placeholder"
+    [ngModel]="inputValue"
+    (ngModelChange)="onInput($event)"/>
+
+    <button type="button" class="btn btn-icon btn-active-color-gray-700 position-absolute translate-middle-y top-50 end-0" (click)="increment()">
+        <i class="bi bi-plus fs-1 icon-round"></i>
+    </button>
+</div>

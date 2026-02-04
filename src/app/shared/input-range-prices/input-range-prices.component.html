@@ -1,0 +1,6 @@
+<div class="d-flex justify-content-between">
+    <span>S/ {{ minPrice | number:'1.0-0' }}</span>
+    <span>S/ {{ maxPrice | number:'1.0-0' }}</span>
+</div>
+<div #priceSlider></div>
+<small class="text-primary cursor-pointer" (click)="onApplyPricesRange()">Aplicar</small>

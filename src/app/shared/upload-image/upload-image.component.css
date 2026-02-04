@@ -8,14 +8,23 @@
 	cursor: pointer;
 	transition: border-color 0.2s ease;
 
-	height: 46.53px; /* alto fijo */
-	min-height: 46.53px;
-	max-height: 46.53px;
+	height: 42.92px !important; /* alto fijo */
+	min-height: 42.92px;
+	max-height: 42.92px;
 
 	font-size: 1.1rem !important;
 	font-family: 'Lexend' !important;
 	color: #4b5675 !important;
 	font-weight: 500;
+	overflow: hidden; 
+}
+
+.flex-content {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	flex: 1;
+	min-width: 0; /* 🔥 CLAVE ABSOLUTA */
 }
 
 .preview-img {
@@ -26,6 +35,7 @@
 
 .file-name {
 	flex: 1;
+	min-width: 0;
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -34,6 +44,7 @@
 }
 
 .btn-clear {
+	flex-shrink: 0; 
 	background: transparent;
 	border: none;
 	color: #dc3545;
@@ -60,3 +71,5 @@
 	text-overflow: ellipsis; /* agrega "..." al final */
 	vertical-align: middle; /* opcional, para alinear bien */
 }
+
+

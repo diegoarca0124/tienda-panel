@@ -8,6 +8,7 @@ import { IconCheckComponent } from '@app/icons/icon-check/icon-check.component';
 import { AttributeService } from '@app/services/attribute.service';
 import { CategoryService } from '@app/services/category.service';
 import { GLOBAL } from '@app/services/GLOBAL';
+import { AlertComponent } from '@app/shared/alert/alert.component';
 import { NotFoundComponent } from '@app/shared/not-found/not-found.component';
 import { SidebarComponent } from '@app/shared/sidebar/sidebar.component';
 import { TopbarComponent } from '@app/shared/topbar/topbar.component';
@@ -18,7 +19,7 @@ declare const toastr: any;
 @Component({
 	selector: 'app-edit-attribute',
 	imports: [TopbarComponent, SidebarComponent, CommonModule, FormsModule, RouterModule, NgSelectModule, 
-		IconCheckComponent, NotFoundComponent],
+		IconCheckComponent, NotFoundComponent, AlertComponent],
 	templateUrl: './edit-attribute.component.html',
 	styleUrl: './edit-attribute.component.css',
 })
@@ -34,6 +35,7 @@ export class EditAttributeComponent {
 		categories: [],
 		values: [],
 	};
+	public msmErrorAttribute: any = [];
 	public loading: boolean = true;
 	public loadingValues: boolean = true;
 	public values: Array<{ value: string }> = [];
@@ -46,6 +48,7 @@ export class EditAttributeComponent {
 	public errorMsmSeverListCategories: string = '';
 	public errorMsmSeverListValues: string = '';
 	public loadingCategories: boolean = true;
+	public errorMsmServer: string = '';
 
 	constructor(
 		private _route: ActivatedRoute,
@@ -172,25 +175,28 @@ export class EditAttributeComponent {
 		if (!this.attribute.unit) delete this.attribute.unit;
 		this.attributeService
 			.update_attribute(this.id, this.attribute)
-			.pipe(withMinLoadingTime(GLOBAL.MIN_LOADING_TIME), takeUntil(this.destroy$))
+			.pipe(
+				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
+				takeUntil(this.destroy$),
+				finalize(() => (this.loadBtn = false))
+			)
 			.subscribe({
 				next: (next) => {
 					this.attribute = next;
 					this.categoriesSelected = this.attribute.categories;
-					this.loadBtn = false;
 					toastr.success('Atributo actualizado correctamente.');
 					this.errorsAtribute = {};
 				},
-				error: (error) => {
-					console.log(error);
+				error: (err) => {
+					const error = err.error;
+					this.errorMsmServer = error.message || '¡Error desconocido!';
+					toastr.error(this.errorMsmServer);
 
-					this.errorsAtribute = {};
-					if (error.error.messages) {
-						this.errorsAtribute = error.error.messages;
-					} else {
-						toastr.error(error.error.message);
+					if (error.validation) {
+						this.errorsAtribute = error.validation;
+						this.msmErrorAttribute =Object.values(this.errorsAtribute).flat();
+						this.errorMsmServer = '';
 					}
-					this.loadBtn = false;
 				},
 			});
 	}

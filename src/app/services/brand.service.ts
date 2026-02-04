@@ -26,6 +26,7 @@ export class BrandService {
 			Authorization: `Bearer ${token}`,
 		});
 	}
+	
 	constructor(
 		private http: HttpClient,
 		private authService: AuthService

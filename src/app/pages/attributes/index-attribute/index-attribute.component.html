@@ -22,99 +22,67 @@
 				</div>
 				<div class="app-content flex-column-fluid">
 					<div class="app-container container-fluid">
-						<div class="row g-3 g-lg-4 mb-7">
-							
-							<div class="col-12">
-								<div class="d-flex justify-content-between align-items-center flex-nowrap gap-2 mt-5">
-									<div class="row">
-										<div class="col-lg-4">
-											<div class="position-relative">
-												<!-- Input con padding extra a la derecha -->
-												<input
-													type="text"
-													class="form-control pe-5" 
-													[placeholder]="'Buscar propiedad'"
-													name="filter"
-													[(ngModel)]="filter"
-													(keyup)="onFilterOrStatusChange()"
-												/>
+						<div class="row">
+							<div class="col-lg-4">
+								<div class="position-relative">
+									<!-- Input con padding extra a la derecha -->
+									<input
+										type="text"
+										class="form-control pe-5" 
+										[placeholder]="'Buscar propiedad'"
+										name="filter"
+										[(ngModel)]="filter"
+										(keyup)="onFilterOrStatusChange()"
+									/>
 
-												<!-- Icono dentro del input -->
-												<i 
-													class="bi bi-search position-absolute top-50 translate-middle-y cursor-pointer"
-													style="right: 12px"
-													(click)="onFilterOrStatusChange()"
-												></i>
-											</div>
-										</div>
-										<div class="col-lg-4">
-											<ng-select
-												[items]="statusTable"
-												bindLabel="name"
-												bindValue="value"
-												name="status"
-												(change)="onFilterOrStatusChange()"
-												[(ngModel)]="status"
-												placeholder="Estado"
-												[clearable]="false"
-												[closeOnSelect]="true"
-												class="select-element mb-1"
-												appendTo="body"
-												[searchable]="false"
-											>
-												<!-- Opción en el dropdown -->
-												<ng-template ng-option-tmp let-item="item">
-													<div class="d-flex align-items-center gap-2">
-													<span class="bullet bullet-dot h-10px w-10px" [ngClass]="'bg-' + item.color"></span>
-													<span>{{ item.name }}</span>
-													</div>
-												</ng-template>
-
-												<!-- Opción seleccionada en el input -->
-												<ng-template ng-label-tmp let-item="item">
-													<div class="d-flex align-items-center gap-2">
-													<span class="bullet bullet-dot h-10px w-10px" [ngClass]="'bg-' + item.color"></span>
-													<span>{{ item.name }}</span>
-													</div>
-												</ng-template>
-											</ng-select>
-										</div>
-										<div class="col-lg-4">
-											<app-menu-select-categories 
-											(applyCategories)="getCategories($event)"
-											[selectedCategories]="categories"
-											[title]="'Filtrar categorías'"
-											[placeholder]="'Buscar categoría'">
-											</app-menu-select-categories>
-										</div>	
-									</div>
-									<div class="dropdown">
-										<button
-											class="btn btn-primary btn-sm dropdown-toggle my-1"
-											type="button"
-											id="dropdownMenuButton"
-											data-bs-toggle="dropdown"
-											aria-expanded="false"
-										>
-											<i class="bi bi-sliders"></i> Opciones
-										</button>
-										<ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-											<li>
-												<a class="dropdown-item cursor-pointer" data-bs-toggle="modal" [attr.data-bs-target]="'#modalExport'">
-													<i class="bi bi-filetype-xls me-2"></i> Exportar XLS
-												</a>
-											</li>
-											<li>
-												<hr class="dropdown-divider" />
-											</li>
-											<li>
-												<a class="dropdown-item" href="#"> <i class="bi bi-folder-symlink me-2"></i> Importar </a>
-											</li>
-										</ul>
-									</div>
+									<!-- Icono dentro del input -->
+									<i 
+										class="bi bi-search position-absolute top-50 translate-middle-y cursor-pointer"
+										style="right: 12px"
+										(click)="onFilterOrStatusChange()"
+									></i>
 								</div>
 							</div>
-							
+							<div class="col-lg-4">
+								<ng-select
+									[items]="statusTable"
+									bindLabel="name"
+									bindValue="value"
+									name="status"
+									(change)="onFilterOrStatusChange()"
+									[(ngModel)]="status"
+									placeholder="Estado"
+									[clearable]="false"
+									[closeOnSelect]="true"
+									class="select-element mb-1"
+									appendTo="body"
+									[searchable]="false"
+								>
+									<!-- Opción en el dropdown -->
+									<ng-template ng-option-tmp let-item="item">
+										<div class="d-flex align-items-center gap-2">
+										<span class="bullet bullet-dot h-10px w-10px" [ngClass]="'bg-' + item.color"></span>
+										<span>{{ item.name }}</span>
+										</div>
+									</ng-template>
+
+									<!-- Opción seleccionada en el input -->
+									<ng-template ng-label-tmp let-item="item">
+										<div class="d-flex align-items-center gap-2">
+										<span class="bullet bullet-dot h-10px w-10px" [ngClass]="'bg-' + item.color"></span>
+										<span>{{ item.name }}</span>
+										</div>
+									</ng-template>
+								</ng-select>
+							</div>
+							<div class="col-lg-4">
+								<app-menu-select-categories 
+								(applyCategories)="getCategories($event)"
+								[selectedCategories]="categories"
+								[title]="'Filtrar categorías'"
+								[placeholder]="'Buscar categoría'">
+								</app-menu-select-categories>
+							</div>	
 						</div>
 
 						<div class="table-responsive my-7">

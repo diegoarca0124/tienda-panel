@@ -1,25 +1,26 @@
 export interface Product {
 	id?: string;
+	status?: string;
+	visibility: string;
 	name: string;
-	slug: string;
 	type: string; //Fisico  | Digital | Servicio
+	slug?: string;
 	description: string;
 	extract: string;
-	mainAttribute: string | any;
-	mainAttributeValue: string | undefined;
 	cover: File | undefined | null;
 	miniature: File | undefined | null;
-	tags: string[];
+	mainAttribute: string | any;
+	mainAttributeValue: string | undefined;
 	unitOfMeasure: string | undefined;
-	onSale: boolean;
-	freeShipping: boolean;
+	condition: string | undefined;
+	warranty: string | undefined;
+	countryOfOrigin?: any;
 	priceRegular: number | string;
-	priceDiscount: number | string;
+	priceDiscount?: number | string;
+	tags: string[];
 	brandId: string | undefined;
 	categoryId: string | undefined;
 	subcategoryId: string | undefined;
-	countryOfOrigin?: string;
-	status?: string;
 	isBestSeller: boolean,
 	isNewArrival: boolean,
 	isFeatured: boolean,
@@ -27,12 +28,12 @@ export interface Product {
 	isPreOrder: boolean,
 	isExportable: boolean,
 	allowBackorder: boolean,
+	productGroupId: string | undefined,
+	
 	createdAt?: Date;
 	updatedAt?: Date;
 	statusAt?: Date;
-	weight: string;
-	visibility: string;
-	condition: string | undefined;
-	warranty: string | undefined;
+
+	
 	
 }

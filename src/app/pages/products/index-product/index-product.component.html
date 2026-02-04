@@ -24,7 +24,315 @@
 					<div class="app-container container-fluid">
 						<div class="row g-3 g-lg-4">
 							<div class="col-12">
-								
+								<div class="d-flex align-items-center">
+									<div class="position-relative w-md-400px me-md-2">
+										<i class="bi bi-search fs-4 text-gray-500 position-absolute top-50 translate-middle ms-6"></i>
+										<input type="text" class="form-control ps-12"
+										placeholder="Buscar producto"
+										name="filter"
+										[(ngModel)]="filter"
+										(keyup.ENTER)="redirect()">
+									</div>
+									<div class="d-flex align-items-center">               
+										<button type="button" class="btn btn-primary me-5" (click)="redirect()">Buscar</button>
+
+										<button type="button" class="btn btn-secondary me-5" (click)="resetFilters()">Restablecer</button>
+										
+										<a href="#" id="kt_horizontal_search_advanced_link" class="btn btn-link" data-bs-toggle="collapse" data-bs-target="#kt_advanced_search_form" aria-expanded="true">Filtros Avanzados</a>
+									</div>
+								</div>
+
+								<div class="collapse" id="kt_advanced_search_form" style="" data-select2-id="select2-data-kt_advanced_search_form">
+									<div class="row mb-5">
+										<div class="col-12">
+											<div class="separator separator-dashed my-6"></div>
+										</div>
+										<div class="col-lg-3">
+											<app-menu-select-categories 
+											(applyCategories)="getCategories($event)"
+											[selectedCategories]="categories"
+											[title]="'Categorías'"
+											[placeholder]="'Filtrar por categoría'"
+											[sizeClass]="'lg'">
+											</app-menu-select-categories>
+										</div>	
+										<div class="col-lg-3">
+											<app-menu-select-brands 
+											(applyBrands)="getBrands($event)"
+											[selectedBrands]="brands"
+											[title]="'Marcas'"
+											[placeholder]="'Filtrar por marca'"
+											[sizeClass]="'lg'">
+											</app-menu-select-brands>
+										</div>
+										<div class="col-lg-3">
+											<app-menu-select-countries 
+											(applyCountries)="getCountries($event)"
+											[selectedCountries]="countries"
+											[title]="'Paises'"
+											[placeholder]="'Filtrar por paises'"
+											[sizeClass]="'lg'">
+											</app-menu-select-countries>
+										</div>
+										<div class="col-lg-3">
+											<ng-select
+												[items]="visibilityTable"
+												bindLabel="name"
+												bindValue="value"
+												name="visibility"
+												[(ngModel)]="visibility"
+												placeholder="Visibilidad"
+												[clearable]="false"
+												[closeOnSelect]="true"
+												class="select-element mb-1"
+												appendTo="body"
+											>
+												<!-- 🔹 Opción en el dropdown -->
+												<ng-template ng-option-tmp let-item="item">
+													<div class="option-item d-flex gap-3 align-items-center">
+														<div class="d-flex align-items-center" [class]="item.class" [innerHTML]="item.icon" style="color: #9da1bc;font-size: 1.4rem;"></div>
+														<span>{{ item.name }}</span>
+													</div>
+												</ng-template>
+
+												<!-- 🔹 Opción seleccionada en el input -->
+												<ng-template ng-label-tmp let-item="item">
+													<div class="selected-item d-flex gap-3 align-items-center">
+														<div class="d-flex align-items-center" [class]="item.class" [innerHTML]="item.icon" style="color: #9da1bc;font-size: 1.4rem;"></div>
+														<span>{{ item.name }}</span>
+													</div>
+												</ng-template>
+											</ng-select>
+										</div>
+										
+									</div>
+									<div class="row mb-5">
+										<div class="col-lg-4">
+											<div class="nav-group nav-group-fluid"  style="border: 1px solid #dbdfe9">            
+												<label *ngFor="let item of statusTable">     
+													<input type="radio" class="btn-check" name="type" value="has" [checked]="status == item.value">
+													<span class="btn btn-sm btn-color-muted btn-active btn-active-primary fw-bold px-4" (click)="onFilterStatusChange(item.value)">
+														<div class="d-flex align-items-center gap-2">
+														<span class="bullet bullet-dot h-10px w-10px" [ngClass]="'bg-' + item.color"></span>
+														<span>{{ item.name }}</span>
+														</div>
+													</span>
+												</label>
+											</div>
+										</div>
+										<div class="col-lg-5">
+											<div class="d-flex gap-5">
+												<app-input-dialer
+												[value]="minPrice"
+												(valueChange)="getMinPrice($event)"
+												placeholder="Mínimo"
+												[step]="5">
+												</app-input-dialer>
+
+												<app-input-dialer
+												[value]="maxPrice"
+												(valueChange)="getMaxPrice($event)"
+												placeholder="Máximo"
+												[step]="5">
+												</app-input-dialer>
+											</div>
+										</div>
+										<div class="col-lg-4">
+											
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-12">
+											<small class="text-primary cursor-pointer" (click)="redirect()">Aplicar Filtros</small>
+										</div>
+									</div>
+								</div>
+
+								<div class="d-flex mt-7">
+									<a href="#" class="btn btn-sm fw-bold btn-secondary" data-bs-toggle="modal" data-bs-target="#kt_modal_create_app">
+										Importar
+									</a>
+								</div>
+
+								<div class="table-responsive my-7">
+									<table class="table table-bordered table-fixed modern-table mb-0" 
+									[ngClass]="{
+									'h-100': products.length == 0 && !loading,
+									'table-hover': products.length >= 1,
+									}">
+										<colgroup>
+											<col *ngFor="let col of columns" [ngClass]="col.classCol">
+											<col style="width: 38px">
+										</colgroup>
+										<thead style="background-color: #f8f8f8;">
+											<tr>
+												<th
+													*ngFor="let col of columns"
+													
+													[ngClass]="[
+														col.classCol,
+														!loading ? 'cursor-pointer' : 'cursor-disabled'
+													]"
+												>
+													<div class="d-flex justify-content-between align-items-center">
+														<span class="fw-500 fs-7">{{ col.label }}</span>
+														<i class="bi bi-arrow-down-up"></i>
+													</div>
+												</th>
+												<th>
+												</th>
+											</tr>
+										</thead>
+
+										<tbody>
+											<!-- ======================= LOADING (SKELETON) ======================= -->
+											<ng-container *ngIf="loading">
+												<tr *ngFor="let s of arrDataSkull">
+													<td class="col-w-xs-200 col-w-md-250 h-45px">
+														<div class="d-flex align-items-center gap-2">
+															<div class="form-control-solid form-control-load" style="width: 32px; height: 32px; border-radius: 5px"></div>
+
+															<div class="d-flex flex-column gap-2" style="width: 100%; max-width: 250px">
+																<div class="form-control-solid form-control-load" style="height: 10px; width: 60%; border-radius: 3px"></div>
+																<div class="form-control-solid form-control-load" style="height: 9px; width: 40%; border-radius: 3px"></div>
+															</div>
+														</div>
+													</td>
+
+													<td class="col-w-xs-100 h-45px">
+														<div class="form-control-solid form-control-load" style="height: 20px; width: 70px; border-radius: 50rem"></div>
+													</td>
+
+													<td class="col-actions h-45px">
+														<div class="form-control-solid form-control-load" style="height: 30px; width: 35px; border-radius: 5px"></div>
+													</td>
+												</tr>
+											</ng-container>
+
+											<!-- ======================= DATOS ======================= -->
+											<ng-container *ngIf="!loading && products.length >= 1">
+												<tr *ngFor="let item of products">
+
+													<td class="col-w-xs-200 col-w-md-250 h-45px">
+														<div class="d-flex align-items-center gap-2 text-ellipsis">
+															<div class="symbol me-3" style="height: 45px; width: 45px; border: 1px dashed #e3e3e3">
+																<img [src]="item.cover" class="h-100 w-100" style="object-fit: cover;" />
+															</div>
+
+															<div class="d-flex flex-column">
+																<a class="text-decoration-none text-dark fs-7 fw-600 ">{{ item.name }}</a>
+																<ul class="list-inline d-flex mb-0">
+																	<li class="text-primary">
+																		<small>{{ item.category.name }}</small>
+																	</li>
+																	<li class="text-gray-600 px-2">
+																		<small>-</small>
+																	</li>
+																	<li class="text-primary">
+																		<small>{{ item.subcategory.name }}</small>
+																	</li>
+																</ul>
+															</div>
+														</div>
+													</td>
+
+													<td class="col-w-xs-200 col-w-md-250 h-45px">
+														<div class="d-flex align-items-center gap-2">
+															<div class="symbol me-2" style="height: 30px; width: 30px; border: 1px dashed #e3e3e3">
+																<img [src]="item.brand.logoUrl" class="h-100 w-100" alt="" />
+															</div>
+
+															<div class="d-flex flex-column">
+																<a class="text-decoration-none text-dark fs-8 fw-600">{{ item.brand.name }}</a>
+																<small class="text-gray-800">{{ item.brand.slug }}</small>
+															</div>
+														</div>
+													</td>
+
+													<td class="col-w-xs-100 h-45px">
+														<div class="d-flex" *ngIf="!item.priceDiscount">
+															<span class="fs-6 text-gray-800 me-2">
+																{{item.priceRegular|currency: 'PEN'}}
+															</span>                
+														</div>
+														<div class="d-flex" *ngIf="item.priceDiscount">
+															<span class="fs-6 me-2">
+																{{ item.priceDiscount | currency: 'PEN' }}
+															</span>
+															<span class="text-danger" style="font-size: 1rem; position: relative; top: -0.3rem;">
+																<sup>
+																	<del>{{ item.priceRegular | currency: 'PEN' }}</del>
+																</sup>
+															</span>
+														</div>
+													</td>
+
+													<td class="col-w-xs-100 h-45px">
+														<span class="badge rounded-pill text-dark fw-800"
+															[ngClass]="{ 'bg-outline-warning': item.status == 'draft', 'bg-outline-success': item.status == 'published' }">
+														<span class="d-inline-block rounded-circle me-1"
+																style="width: 8px; height: 8px"
+																[ngClass]="{ 'bg-warning': item.status == 'draft', 'bg-success': item.status == 'published' }"></span>
+														{{ item.status == 'published' ? 'Publicado' : 'Borrador' }}
+														</span>
+													</td>
+
+													<td class="col-actions h-45px">
+														<div class="dropdown">
+															<button class="icon-btn dropdown-toggle"
+															data-bs-toggle="dropdown"
+															aria-expanded="false">
+																<i class="bi bi-three-dots"></i>
+															</button>
+
+															<app-modal-delete
+																[id]="'modalDelete-' + item.id"
+																[title]="item.status ? 'Desactivar el registro' : 'Activar el registro'"
+																[description]="
+																	item.status
+																		? `¿Estás seguro de que deseas desactivar a <b>${item.name}</b>?`
+																		: `¿Estás seguro de que deseas activar a <b>${item.name}</b>?`
+																"
+																[textButton]="item.status ? 'Desactivar' : 'Activar'"
+																(actionConfirmed)="setStatus(item.id!, item.status!)"
+																[loadBtnDelete]="loadBtnDelete"
+															>
+															</app-modal-delete>
+
+															<div id="dropdown" class="dropdown-menu" data-bs-display="static">
+																<a class="dropdown-item cursor-pointer" [routerLink]="['/products/articles/' + item?.id + '/edit']">
+																	<i class="bi bi-pen me-2"></i>Editar
+																</a>
+																<a class="dropdown-item cursor-pointer" data-bs-toggle="modal" [attr.data-bs-target]="'#modalDelete-' + item?.id">
+																	<i *ngIf="item?.status" class="bi bi-x-lg me-2"></i>
+																	<i *ngIf="!item?.status" class="bi bi-check2 me-2"></i>
+																	{{ item?.status ? 'Desactivar' : 'Activar' }}
+																</a>
+															</div>
+														</div>
+													</td>
+
+												</tr>
+											</ng-container>
+
+											<!-- ======================= SIN RESULTADOS ======================= -->
+											<tr *ngIf="!loading && products.length == 0">
+												<td colspan="5">
+													<app-not-found [error]="{ message: 'No se encontraron registros que coincidan.', statusCode: 404 }"></app-not-found>
+												</td>
+											</tr>
+
+											<!-- ======================= ERROR ======================= -->
+											<tr *ngIf="!loading && errorMsmServerListProducts">
+												<td colspan="5">
+													<app-not-found [error]="errorMsmServerListProducts"></app-not-found>
+												</td>
+											</tr>
+
+										</tbody>
+
+									</table>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -33,3 +341,4 @@
 		</div>
 	</div>
 </div>
+

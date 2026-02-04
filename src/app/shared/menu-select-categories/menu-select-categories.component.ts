@@ -32,12 +32,12 @@ export class MenuSelectCategoriesComponent {
   public errorMsmSeverListCategories: string = '';
   public loadingCategories: boolean = true;
 	@Input() selectedCategories: any = '';
+  @Input() sizeClass : 'sm' | 'lg' = 'sm';
 
   constructor(
     private categoryService:CategoryService, 
   ){
-    console.log(this.selectedCategories);
-    
+
   }
 
   ngOnInit(){
@@ -51,8 +51,7 @@ export class MenuSelectCategoriesComponent {
   }
 
   private applySelectedCategories() {
-    if (!this.selectedCategories || this.selectedCategories.length === 0) return;
-
+    /* if (!this.selectedCategories || this.selectedCategories.length === 0) return; */
     this.displayCategories = this.displayCategories.map(item => ({
       ...item,
       checked: this.selectedCategories.includes(item.id)
@@ -113,10 +112,14 @@ export class MenuSelectCategoriesComponent {
       ...prev,
       checked: false,
     }));
+    this.applyCategories.emit(this.displayCategories)
   }
 
   onApplyCategories(): void {
     this.applyCategories.emit(this.displayCategories); 
+  }
+
+  closeMenu(){
     const triggerEl = this.trigger.nativeElement;
     const dropdown = (window as any).bootstrap.Dropdown.getInstance(triggerEl)
       || new (window as any).bootstrap.Dropdown(triggerEl);

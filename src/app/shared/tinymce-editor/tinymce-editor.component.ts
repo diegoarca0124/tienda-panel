@@ -15,7 +15,7 @@ import { environment } from 'environments/environment.dev';
 export class TinymceEditorComponent {
   @Input() properties = {};
   public apiKeyTinymce = environment.apiKeyTinymce;
-  public content = '';
+  @Input() content: string = '';
   @Output() contentChange = new EventEmitter<string>();
   
   ngOnInit(){
