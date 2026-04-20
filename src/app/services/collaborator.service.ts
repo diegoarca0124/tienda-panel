@@ -25,8 +25,8 @@ export class CollaboratorService {
 		return this.http.post(`${this.apiUrl}/collaborator/create_collaborator`, collaborator, { headers: this.getHeaders() });
 	}
 
-	get_collaborators(filter: string, page: number, limit: number, status: string): Observable<any> {
-		return this.http.get(`${this.apiUrl}/collaborator/get_collaborators?filter=${filter}&page=${page}&limit=${limit}&status=${status}`, {
+	get_collaborators(filter: string, page: number, limit: number, status: string, sort: string): Observable<any> {
+		return this.http.get(`${this.apiUrl}/collaborator/get_collaborators?filter=${filter}&page=${page}&limit=${limit}&status=${status}&sort=${sort}`, {
 			headers: this.getHeaders(),
 		});
 	}

@@ -22,68 +22,127 @@
 				</div>
 				<div class="app-content flex-column-fluid">
 					<div class="app-container container-fluid">
-						<div class="row">
-							<div class="col-lg-4">
-								<div class="position-relative">
-									<!-- Input con padding extra a la derecha -->
-									<input
-										type="text"
-										class="form-control pe-5" 
-										[placeholder]="'Buscar propiedad'"
-										name="filter"
-										[(ngModel)]="filter"
-										(keyup)="onFilterOrStatusChange()"
-									/>
+						<div class="d-flex justify-content-between align-items-center flex-nowrap gap-2 mt-5">
+							<div class="d-flex gap-2">
+								<div>
+									<label class="fs-7 text-gray-600 fw-500">Busqueda</label>
+									<div class="d-flex align-items-center position-relative">
+										<input
+											type="text"
+											class="form-control form-control-sm w-200px"
+											placeholder="Buscar atributo"
+											name="filter"
+											[(ngModel)]="filter"
+											(keyup.ENTER)="onFilterOrStatusChange()"
+										/>
+										<i class="bi bi-search position-absolute cursor-pointer" style="right: 20px" (click)="onFilterOrStatusChange()"></i>
+									</div>
+								</div>
+								<div>
+									<label class="fs-7 text-gray-600 fw-500">Estado</label>
+									<ng-select
+										[items]="statusTable"
+										bindLabel="name"
+										bindValue="value"
+										name="status"
+										(change)="onFilterOrStatusChange()"
+										[(ngModel)]="status"
+										placeholder="Estado"
+										[clearable]="false"
+										[closeOnSelect]="true"
+										class="select-element-sm mb-1"
+										appendTo="body"
+										[searchable]="false"
+									>
+										<!-- Opción en el dropdown -->
+										<ng-template ng-option-tmp let-item="item">
+											<div class="d-flex align-items-center gap-2">
+											<span class="bullet bullet-dot h-10px w-10px" [ngClass]="'bg-' + item.color"></span>
+											<span>{{ item.name }}</span>
+											</div>
+										</ng-template>
 
-									<!-- Icono dentro del input -->
-									<i 
-										class="bi bi-search position-absolute top-50 translate-middle-y cursor-pointer"
-										style="right: 12px"
-										(click)="onFilterOrStatusChange()"
-									></i>
+										<!-- Opción seleccionada en el input -->
+										<ng-template ng-label-tmp let-item="item">
+											<div class="d-flex align-items-center gap-2">
+											<span class="bullet bullet-dot h-10px w-10px" [ngClass]="'bg-' + item.color"></span>
+											<span>{{ item.name }}</span>
+											</div>
+										</ng-template>
+									</ng-select>
+									
+								</div>
+								<div>
+									<label class="fs-7 text-gray-600 fw-500">Orden</label>
+									<ng-select
+										[items]="sortColumns"
+										bindLabel="name"
+										bindValue="value"
+										name="sort"
+										(change)="onFilterOrStatusChange()"
+										[(ngModel)]="sort"
+										placeholder="Orden"
+										[clearable]="false"
+										[closeOnSelect]="true"
+										class="select-element-sm mb-1"
+										appendTo="body"
+										[searchable]="false"
+									>
+										<!-- Opción en el dropdown -->
+										<ng-template ng-option-tmp let-item="item">
+											<div class="d-flex align-items-center gap-2">
+												<i [class]="item.icon"></i>
+												<span>{{ item.name }}</span>
+											</div>
+										</ng-template>
+
+										<!-- Opción seleccionada en el input -->
+										<ng-template ng-label-tmp let-item="item">
+											<div class="d-flex align-items-center gap-2">
+											<i [class]="item.icon"></i>
+											<span>{{ item.name }}</span>
+											</div>
+										</ng-template>
+									</ng-select>
+								</div>
+								<div>
+									<label class="fs-7 text-gray-600 fw-500">Categorías</label>
+									<app-menu-select-categories 
+									(applyCategories)="getCategories($event)"
+									[selectedCategories]="categories"
+									[title]="'Filtrar categorías'"
+									[placeholder]="'Buscar categoría'">
+									</app-menu-select-categories>
 								</div>
 							</div>
-							<div class="col-lg-4">
-								<ng-select
-									[items]="statusTable"
-									bindLabel="name"
-									bindValue="value"
-									name="status"
-									(change)="onFilterOrStatusChange()"
-									[(ngModel)]="status"
-									placeholder="Estado"
-									[clearable]="false"
-									[closeOnSelect]="true"
-									class="select-element mb-1"
-									appendTo="body"
-									[searchable]="false"
+							<div class="dropdown">
+								<button
+									class="btn btn-primary btn-sm dropdown-toggle my-1"
+									type="button"
+									id="dropdownMenuButton"
+									data-bs-toggle="dropdown"
+									aria-expanded="false"
 								>
-									<!-- Opción en el dropdown -->
-									<ng-template ng-option-tmp let-item="item">
-										<div class="d-flex align-items-center gap-2">
-										<span class="bullet bullet-dot h-10px w-10px" [ngClass]="'bg-' + item.color"></span>
-										<span>{{ item.name }}</span>
-										</div>
-									</ng-template>
-
-									<!-- Opción seleccionada en el input -->
-									<ng-template ng-label-tmp let-item="item">
-										<div class="d-flex align-items-center gap-2">
-										<span class="bullet bullet-dot h-10px w-10px" [ngClass]="'bg-' + item.color"></span>
-										<span>{{ item.name }}</span>
-										</div>
-									</ng-template>
-								</ng-select>
+									<i class="bi bi-sliders"></i> Opciones
+								</button>
+								<ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+									<li>
+										<a class="dropdown-item cursor-pointer" data-bs-toggle="modal" [attr.data-bs-target]="'#modalExport'">
+											<i class="bi bi-filetype-xls me-2"></i> Exportar XLS
+										</a>
+									</li>
+									<li>
+										<hr class="dropdown-divider" />
+									</li>
+									<li>
+										<a class="dropdown-item" href="#"> <i class="bi bi-folder-symlink me-2"></i> Importar </a>
+									</li>
+								</ul>
 							</div>
-							<div class="col-lg-4">
-								<app-menu-select-categories 
-								(applyCategories)="getCategories($event)"
-								[selectedCategories]="categories"
-								[title]="'Filtrar categorías'"
-								[placeholder]="'Buscar categoría'">
-								</app-menu-select-categories>
-							</div>	
+							
 						</div>
+
+						<small class="text-primary cursor-pointer" (click)="resetFilters()">Restablecer Filtros</small>
 
 						<div class="table-responsive my-7">
 							<table class="table table-bordered table-fixed modern-table mb-0" 
@@ -98,16 +157,9 @@
 								<thead style="background-color: #f8f8f8;">
 									<tr>
 										<th
-											*ngFor="let col of columns"
-											(click)="!loading && sortData(col.key)"
-											[ngClass]="[
-												col.classCol,
-												!loading ? 'cursor-pointer' : 'cursor-disabled'
-											]"
-										>
+											*ngFor="let col of columns">
 											<div class="d-flex justify-content-between align-items-center">
-												<span class="fw-500 fs-7">{{ col.label }}</span>
-												<i class="bi" [ngClass]="getSortIcon(col.key)"></i>
+												<span class="text-dark fw-600 fs-7 text-uppercase">{{ col.label }}</span>
 											</div>
 										</th>
 										<th>
@@ -147,8 +199,8 @@
 											<td class="col-w-xs-200 col-w-md-250">
 												<div class="d-flex align-items-center">
 													<div class="d-flex flex-column">
-														<a class="text-decoration-none text-dark"> {{ item.name }} ({{ item.valuesCount }}) </a>
-														<small class="text-primary">
+														<a class="text-decoration-none text-gray-700"> {{ item.name }} ({{ item.valuesCount }}) </a>
+														<small class="text-muted">
 															{{ item.categories.join(', ') }}
 														</small>
 													</div>
@@ -156,7 +208,7 @@
 											</td>
 
 											<td class="col-w-xs-100">
-												<span class="badge rounded-pill text-dark fw-800"
+												<span class="badge rounded-pill text-gray-700 fw-800"
 													[ngClass]="{ 'bg-outline-danger': !item.status, 'bg-outline-success': item.status }">
 												<span class="d-inline-block rounded-circle me-1"
 														style="width: 8px; height: 8px"
@@ -205,14 +257,14 @@
 
 									<!-- ======================= SIN RESULTADOS ======================= -->
 									<tr *ngIf="!loading && attributes.length == 0">
-										<td colspan="5">
+										<td colspan="3">
 											<app-not-found [error]="{ message: 'No se encontraron registros que coincidan.', statusCode: 404 }"></app-not-found>
 										</td>
 									</tr>
 
 									<!-- ======================= ERROR ======================= -->
 									<tr *ngIf="!loading && errorMsmServerListAttributes">
-										<td colspan="5">
+										<td colspan="3">
 											<app-not-found [error]="errorMsmServerListAttributes"></app-not-found>
 										</td>
 									</tr>
@@ -222,8 +274,8 @@
 							</table>
 						</div>
 
-						<div class="d-flex justify-content-between" *ngIf="attributes.length >= 1">
-							<div class="d-flex align-items-center gap-2">
+						<div class="d-flex justify-content-between " *ngIf="attributes.length >= 1">
+							<div class="d-flex align-items-center gap-2 text-gray-600">
 								Ver
 								<select class="form-select form-select-sm w-auto" name="limit" [(ngModel)]="limit" (change)="setLimit()">
 									<option value="10">10</option>

@@ -103,12 +103,14 @@ export class UploadImageComponent {
 	}
 
 	clearImage(): void {
+		console.log(this.inputId);
+		
 		this.imagePreview = null;
 		this.fileName = null;
 		this.fileSelected.emit(null);
 		this.validationError.emit(null);
 		this.hasError = false;
-		$(this.inputId).val(' ');
+		$('#'+this.inputId).val('');
 	}
 
 	private setError(message: string) {

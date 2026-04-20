@@ -3,7 +3,7 @@
     #trigger
     type="text" 
     name="name"
-    class="form-select dropdown-toggle w-100 text-ellipsis"
+    class="form-select dropdown-toggle w-100 text-ellipsis cursor-pointer"
     [ngClass]="{'form-select-sm': sizeClass == 'sm'}"
     data-bs-toggle="dropdown"
     aria-expanded="false"
@@ -101,7 +101,7 @@
         </ng-container>
     </div>
 
-    <div class="p-5">
+    <div class="p-2">
         <div class="col-12 d-flex justify-content-end gap-2">
             <button class="btn btn-sm text-primary" (click)="onRemoveCategories()">Limpiar</button>
             <button class="btn btn-sm btn-secondary" (click)="closeMenu()">

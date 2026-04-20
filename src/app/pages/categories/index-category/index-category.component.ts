@@ -21,6 +21,7 @@ import { SidebarComponent } from '@app/shared/sidebar/sidebar.component';
 import { TopbarComponent } from '@app/shared/topbar/topbar.component';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { finalize, Subject, takeUntil } from 'rxjs';
+import { sortColumnsCategories } from '../constants/sortColumnsCategories.constant';
 declare const toastr: any;
 declare const $: any;
 
@@ -36,6 +37,7 @@ export class IndexCategoryComponent {
 	public status: string = 'Todos';
 	public currentPage: number = 1;
 	public limit: number = 10;
+	public sort: string = 'Predeterminado';
 	public totalPages: number = 0;
 	public loading: boolean = true;
 	public arrDataSkull: Array<any> = Array.from({ length: 5 }, () => ({}));
@@ -51,6 +53,7 @@ export class IndexCategoryComponent {
 	public sortDirection: 'asc' | 'desc' = 'asc';
 	public pageLimit = pageLimit;
 	public statusTable = statusTable;
+	public sortColumns = sortColumnsCategories
 
 	constructor(
 		private _router: Router,
@@ -61,15 +64,16 @@ export class IndexCategoryComponent {
 
 	ngOnInit() {
 		this._route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params) => {
-			const isValid = ValidateQueryParams(this._route, params, this._router);
+			const sortArrStr = sortColumnsCategories.map(item => item.value);
+			const isValid = ValidateQueryParams(this._route, params, this._router, sortArrStr);
 			if (!isValid) return;
 
 			this.filter = params['filter'] || '';
 			this.currentPage = Number(params['page']);
 			this.limit = Number(params['limit']);
 			this.status = params['status'];
-
-			this.init_categories(this.filter, this.currentPage, this.status, this.limit);
+			this.sort = params['sort'];
+			this.init_categories(this.filter, this.currentPage, this.status, this.limit, this.sort);
 		});
 	}
 
@@ -96,11 +100,11 @@ export class IndexCategoryComponent {
 		this.destroy$.complete();
 	}
 
-	init_categories(filter: string, page: number, status: string, limit: number) {
+	init_categories(filter: string, page: number, status: string, limit: number, sort: string) {
 		this.loading = true;
 		this.errorMsmServerListCategories = '';
 		this.categoryService
-			.get_categories(filter, page, limit, status)
+			.get_categories(filter, page, limit, status, sort)
 			.pipe(
 				takeUntil(this.destroy$),
 				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
@@ -169,7 +173,27 @@ export class IndexCategoryComponent {
 				page: this.currentPage,
 				limit: this.limit,
 				status: this.status,
+				sort: this.sort
 			},
+		});
+	}
+
+	resetFilters(){
+		this.filter = '';
+		this.status = 'Todos';
+		this.sort = 'Predeterminado';
+		this.currentPage = 1;
+		this.limit = 10;
+
+		this._router.navigate([], {
+			queryParams: {
+				filter: null,
+				page: 1,
+				limit: 10,
+				status: null,
+				sort: null,
+			},
+			queryParamsHandling: 'merge',
 		});
 	}
 }

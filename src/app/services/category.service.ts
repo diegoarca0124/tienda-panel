@@ -27,8 +27,8 @@ export class CategoryService {
 		return this.http.post(`${this.apiUrl}/category/create_category`, category, { headers: this.getHeaders() });
 	}
 
-	get_categories(filter: string, page: number, limit: number, status: string): Observable<any> {
-		return this.http.get(`${this.apiUrl}/category/get_categories?filter=${filter}&page=${page}&limit=${limit}&status=${status}`, {
+	get_categories(filter: string, page: number, limit: number, status: string, sort : string): Observable<any> {
+		return this.http.get(`${this.apiUrl}/category/get_categories?filter=${filter}&page=${page}&limit=${limit}&status=${status}&sort=${sort}`, {
 			headers: this.getHeaders(),
 		});
 	}

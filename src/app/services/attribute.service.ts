@@ -26,9 +26,9 @@ export class AttributeService {
 		return this.http.post(`${this.apiUrl}/attribute/create_attribute`, attribute, { headers : this.getHeaders() });
 	}
 
-	get_attributes(filter: string, page: number, limit: number, status: string, categories: string): Observable<any> {
+	get_attributes(filter: string, page: number, limit: number, status: string, categories: string, sort : string): Observable<any> {
 		return this.http.get(
-			`${this.apiUrl}/attribute/get_attributes?filter=${filter}&page=${page}&limit=${limit}&status=${status}&categories=${categories}`,
+			`${this.apiUrl}/attribute/get_attributes?filter=${filter}&page=${page}&limit=${limit}&status=${status}&categories=${categories}&sort=${sort}`,
 			{ headers : this.getHeaders() }
 		);
 	}

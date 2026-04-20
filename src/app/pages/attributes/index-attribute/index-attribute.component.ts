@@ -21,6 +21,7 @@ import { SidebarComponent } from '@app/shared/sidebar/sidebar.component';
 import { TopbarComponent } from '@app/shared/topbar/topbar.component';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { filter, finalize, forkJoin, Subject, switchMap, takeUntil } from 'rxjs';
+import { sortColumnsBrands } from '../constants/sortColumnsAttributes.constant';
 declare const toastr: any;
 declare const $: any;
 
@@ -47,6 +48,7 @@ export class IndexAttributeComponent {
 	public status: string = 'Todos';
 	public currentPage: number = 1;
 	public limit: number = 10;
+	public sort: string = 'Predeterminado';
 	public totalPages: number = 0;
 	public loading: boolean = true;
 	
@@ -61,10 +63,9 @@ export class IndexAttributeComponent {
 		{ key: 'name', label: 'Atributo', classCol: 'col-w-xs-200 col-w-md-250' },
 		{ key: 'status', label: 'Estado', classCol: 'col-w-xs-200 col-w-md-250' },
 	];
-	public sortColumn: string = '';
-	public sortDirection: 'asc' | 'desc' = 'asc';
 	public pageLimit = pageLimit;
 	public statusTable = statusTable;
+	public sortColumns = sortColumnsBrands;
 	
 	constructor(
 		private _router: Router,
@@ -77,15 +78,27 @@ export class IndexAttributeComponent {
 		this._route.queryParams
 			.pipe(
 				takeUntil(this.destroy$),
-				filter((params) => ValidateQueryParams(this._route, params, this._router))
+
+				filter((params) => {
+					const sortArrStr = sortColumnsBrands.map(item => item.value);
+
+					const isValid = ValidateQueryParams(
+						this._route,
+						params,
+						this._router,
+						sortArrStr
+					);
+
+					return isValid;
+				})
 			)
 			.subscribe((params) => {
-				// ✅ Prepara parámetros con fallback
 				const queryCategory = params['categories'] ?? 'Todos';
 				this.filter = params['filter'] || '';
 				this.currentPage = Number(params['page']) || 1;
 				this.limit = Number(params['limit']) || 10;
 				this.status = params['status'] ?? '';
+				this.sort = params['sort'] ?? '';
 
 				// ✅ Evita bucle de navegación
 				if (this.categories !== queryCategory) {
@@ -101,25 +114,13 @@ export class IndexAttributeComponent {
 				}
 
 				// ✅ Cargar datos independientes
-				this.init_attributes(this.filter, this.currentPage, this.status, this.limit, this.categories);
+				this.init_attributes(this.filter, this.currentPage, this.status, this.limit, this.categories, this.sort);
 			});
 	}
 
 	onFilterOrStatusChange() {
 		this.currentPage = 1;
 		this.redirect();
-	}
-
-	sortData(column: string) {
-		const result = sortColumnsTable(this.attributes, column, this.sortColumn, this.sortDirection);
-		this.attributes = result.sortedData;
-		this.sortColumn = result.sortColumn;
-		this.sortDirection = result.sortDirection;
-	}
-
-	getSortIcon(column: string): string {
-		if (this.sortColumn !== column) return 'bi-arrow-down-up'; // Icono neutro
-		return this.sortDirection === 'asc' ? 'bi-arrow-up' : 'bi-arrow-down';
 	}
 
 	ngOnDestroy(): void {
@@ -135,15 +136,16 @@ export class IndexAttributeComponent {
 				limit: this.limit,
 				status: this.status,
 				categories: this.categoriesSelected.join(','),
+				sort: this.sort
 			},
 		});
 	}
 
-	init_attributes(filter: string, page: number, status: string, limit: number, categories: string) {
+	init_attributes(filter: string, page: number, status: string, limit: number, categories: string, sort: string) {
 		this.loading = true;
 		this.errorMsmServerListAttributes = '';
 		this.attributeService
-			.get_attributes(filter, page, limit, status, categories)
+			.get_attributes(filter, page, limit, status, categories, sort)
 			.pipe(
 				takeUntil(this.destroy$),
 				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
@@ -164,7 +166,6 @@ export class IndexAttributeComponent {
 	
 
 	getCategories(categories: any){
-		console.log(categories);
 		this.categoriesSelected = categories
 		.filter((c: any) => c.checked)
 		.map((c: any) => c.id);
@@ -206,5 +207,26 @@ export class IndexAttributeComponent {
 					toastr.error(error.error.message);
 				},
 			});
+	}
+
+	resetFilters(){
+		this.filter = '';
+		this.status = 'Todos';
+		this.categories = 'Todos';
+		this.sort = 'Predeterminado';
+		this.currentPage = 1;
+		this.limit = 10;
+
+		this._router.navigate([], {
+			queryParams: {
+				filter: null,
+				page: 1,
+				limit: 10,
+				status: null,
+				sort: null,
+				categories: null,
+			},
+			queryParamsHandling: 'merge',
+		});
 	}
 }

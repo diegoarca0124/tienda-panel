@@ -25,6 +25,7 @@ import { Store } from '@ngrx/store';
 import { finalize } from 'rxjs';
 import { takeUntil } from 'rxjs/internal/operators/takeUntil';
 import { Subject } from 'rxjs/internal/Subject';
+import { sortColumnsCollaborators } from '../constants/sortColumnsCollaborators.constant';
 declare const toastr: any;
 declare const $: any;
 
@@ -38,6 +39,7 @@ export class IndexCollaboratorComponent {
 	public loadBtnDelete: WritableSignal<boolean> = signal(false);
 	public filter: string = '';
 	public status: string = 'Todos';
+	public sort: string = 'Predeterminado';
 	public currentPage: number = 1;
 	public limit: number = 10;
 	public totalPages: number = 0;
@@ -55,8 +57,7 @@ export class IndexCollaboratorComponent {
 	];
 	public pageLimit = pageLimit;
 	public statusTable = statusTable;
-	public sortColumn: string = '';
-	public sortDirection: 'asc' | 'desc' = 'asc';
+	public sortColumns = sortColumnsCollaborators;
 
 	constructor(
 		private _router: Router,
@@ -66,15 +67,16 @@ export class IndexCollaboratorComponent {
 
 	ngOnInit() {
 		this._route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params) => {
-			const isValid = ValidateQueryParams(this._route, params, this._router);
+			const sortArrStr = sortColumnsCollaborators.map(item => item.value);
+			const isValid = ValidateQueryParams(this._route, params, this._router, sortArrStr);
 			if (!isValid) return;
 
 			this.filter = params['filter'] || '';
 			this.currentPage = Number(params['page']);
 			this.limit = Number(params['limit']);
 			this.status = params['status'];
-
-			this.init_collaborators(this.filter, this.currentPage, this.status, this.limit);
+			this.sort = params['sort'];
+			this.init_collaborators(this.filter, this.currentPage, this.status, this.limit, this.sort);
 		});
 	}
 
@@ -88,29 +90,16 @@ export class IndexCollaboratorComponent {
 		this.redirect();
 	}
 
-	sortData(column: string) {
-		const result = sortColumnsTable(this.collaborators, column, this.sortColumn, this.sortDirection);
-
-		this.collaborators = result.sortedData;
-		this.sortColumn = result.sortColumn;
-		this.sortDirection = result.sortDirection;
-	}
-
-	getSortIcon(column: string): string {
-		if (this.sortColumn !== column) return 'bi-arrow-down-up'; // Icono neutro
-		return this.sortDirection === 'asc' ? 'bi-arrow-up' : 'bi-arrow-down';
-	}
-
 	ngOnDestroy(): void {
 		this.destroy$.next();
 		this.destroy$.complete();
 	}
 
-	init_collaborators(filter: string, page: number, status: string, limit: number) {
+	init_collaborators(filter: string, page: number, status: string, limit: number, sort: string) {
 		this.loading = true;
 		this.errorMsmServerListCollaborators = '';
 		this.collaboratorService
-			.get_collaborators(filter, page, limit, status)
+			.get_collaborators(filter, page, limit, status, sort)
 			.pipe(
 				takeUntil(this.destroy$),
 				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
@@ -134,14 +123,13 @@ export class IndexCollaboratorComponent {
 	}
 
 	redirect() {
-		console.log(this.limit);
-		
 		this._router.navigate([], {
 			queryParams: {
 				filter: this.filter,
 				page: this.currentPage,
 				limit: this.limit,
 				status: this.status,
+				sort: this.sort
 			},
 			queryParamsHandling: 'merge',
 		});
@@ -196,5 +184,24 @@ export class IndexCollaboratorComponent {
 	onPageChange(newPage: number) {
 		this.currentPage = newPage;
 		this.redirect(); // o init_collaborators()
+	}
+
+	resetFilters(){
+		this.filter = '';
+		this.status = 'Todos';
+		this.sort = 'Predeterminado';
+		this.currentPage = 1;
+		this.limit = 10;
+
+		this._router.navigate([], {
+			queryParams: {
+				filter: null,
+				page: 1,
+				limit: 10,
+				status: null,
+				sort: null,
+			},
+			queryParamsHandling: 'merge',
+		});
 	}
 }

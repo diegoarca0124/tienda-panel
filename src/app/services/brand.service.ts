@@ -43,8 +43,8 @@ export class BrandService {
 		return this.http.post(`${this.apiUrl}/brand/create_brand`, data, { headers: this.getHeaders(data)});
 	}
 
-	get_brands(filter: string, page: number, limit: number, status: string): Observable<any> {
-		return this.http.get(`${this.apiUrl}/brand/get_brands?filter=${filter}&page=${page}&limit=${limit}&status=${status}`, {
+	get_brands(filter: string, page: number, limit: number, status: string, sort: string): Observable<any> {
+		return this.http.get(`${this.apiUrl}/brand/get_brands?filter=${filter}&page=${page}&limit=${limit}&status=${status}&sort=${sort}`, {
 			headers: this.getHeaders(),
 		});
 	}

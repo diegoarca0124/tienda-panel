@@ -27,6 +27,7 @@
 								<div class="d-flex justify-content-between align-items-center flex-nowrap gap-2 mt-5">
 									<div class="d-flex gap-2">
 										<div>
+											<label class="fs-7 text-gray-600 fw-500">Busqueda</label>
 											<div class="d-flex align-items-center position-relative">
 												<input
 													type="text"
@@ -40,6 +41,7 @@
 											</div>
 										</div>
 										<div>
+											<label class="fs-7 text-gray-600 fw-500">Estado</label>
 											<ng-select
 												[items]="statusTable"
 												bindLabel="name"
@@ -72,6 +74,39 @@
 											</ng-select>
 											
 										</div>
+										<div>
+											<label class="fs-7 text-gray-600 fw-500">Orden</label>
+											<ng-select
+												[items]="sortColumns"
+												bindLabel="name"
+												bindValue="value"
+												name="sort"
+												(change)="onFilterOrStatusChange()"
+												[(ngModel)]="sort"
+												placeholder="Orden"
+												[clearable]="false"
+												[closeOnSelect]="true"
+												class="select-element-sm mb-1"
+												appendTo="body"
+												[searchable]="false"
+											>
+												<!-- Opción en el dropdown -->
+												<ng-template ng-option-tmp let-item="item">
+													<div class="d-flex align-items-center gap-2">
+														<i [class]="item.icon"></i>
+														<span>{{ item.name }}</span>
+													</div>
+												</ng-template>
+
+												<!-- Opción seleccionada en el input -->
+												<ng-template ng-label-tmp let-item="item">
+													<div class="d-flex align-items-center gap-2">
+													<i [class]="item.icon"></i>
+													<span>{{ item.name }}</span>
+													</div>
+												</ng-template>
+											</ng-select>
+										</div>
 									</div>
 									<div class="dropdown">
 										<button
@@ -99,6 +134,8 @@
 									</div>
 								</div>
 
+								<small class="text-primary cursor-pointer" (click)="resetFilters()">Restablecer Filtros</small>
+
 								<div class="table-responsive my-7">
 									<table class="table table-bordered table-fixed modern-table mb-0" 
 									[ngClass]="{
@@ -113,15 +150,9 @@
 											<tr>
 												<th
 													*ngFor="let col of columns"
-													(click)="!loading && sortData(col.key)"
-													[ngClass]="[
-														col.classCol,
-														!loading ? 'cursor-pointer' : 'cursor-disabled'
-													]"
 												>
 													<div class="d-flex justify-content-between align-items-center">
-														<span class="fw-500 fs-7">{{ col.label }}</span>
-														<i class="bi" [ngClass]="getSortIcon(col.key)"></i>
+														<span class="text-dark fw-600 fs-7 text-uppercase">{{ col.label }}</span>
 													</div>
 												</th>
 												<th>
@@ -165,14 +196,14 @@
 															</div>
 
 															<div class="d-flex flex-column">
-																<a class="text-decoration-none text-dark fs-8 fw-600">{{ item.name }}</a>
-																<small class="text-gray-800">{{ item.slug }}</small>
+																<a class="text-decoration-none text-gray-700 fs-8 fw-700">{{ item.name }}</a>
+																<small class="text-gray-700">{{ item.slug }}</small>
 															</div>
 														</div>
 													</td>
 
 													<td class="col-w-xs-100 h-45px">
-														<span class="badge rounded-pill text-dark fw-800"
+														<span class="badge rounded-pill text-gray-700 fw-800"
 															[ngClass]="{ 'bg-outline-danger': !item.status, 'bg-outline-success': item.status }">
 														<span class="d-inline-block rounded-circle me-1"
 																style="width: 8px; height: 8px"
@@ -221,14 +252,14 @@
 
 											<!-- ======================= SIN RESULTADOS ======================= -->
 											<tr *ngIf="!loading && brands.length == 0">
-												<td colspan="5">
+												<td colspan="3">
 													<app-not-found [error]="{ message: 'No se encontraron registros que coincidan.', statusCode: 404 }"></app-not-found>
 												</td>
 											</tr>
 
 											<!-- ======================= ERROR ======================= -->
 											<tr *ngIf="!loading && errorMsmServerListBrands">
-												<td colspan="5">
+												<td colspan="3">
 													<app-not-found [error]="errorMsmServerListBrands"></app-not-found>
 												</td>
 											</tr>
@@ -239,7 +270,7 @@
 								</div>
 
 								<div class="d-flex justify-content-between" *ngIf="brands.length >= 1">
-									<div class="d-flex align-items-center gap-2">
+									<div class="d-flex align-items-center gap-2 text-gray-600">
 										Ver
 										<select class="form-select form-select-sm w-auto" name="limit" [(ngModel)]="limit" (change)="setLimit()">
 											<option value="10">10</option>
