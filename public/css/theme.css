@@ -260,3 +260,8 @@ body {
   bottom: -3px;              /* separación entre texto y línea */
   border-bottom: 1px dashed #727272;
 }
+
+.text-description-form{
+	display: block;
+	line-height:1.4;
+}

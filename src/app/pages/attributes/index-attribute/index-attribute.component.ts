@@ -44,6 +44,7 @@ declare const $: any;
 })
 export class IndexAttributeComponent {
 	public loadBtnDelete: WritableSignal<boolean> = signal(false);
+	public loadBtnMultipleStatus: WritableSignal<boolean> = signal(false);
 	public filter: string = '';
 	public status: string = 'Todos';
 	public currentPage: number = 1;
@@ -66,6 +67,7 @@ export class IndexAttributeComponent {
 	public pageLimit = pageLimit;
 	public statusTable = statusTable;
 	public sortColumns = sortColumnsBrands;
+	public selectedIds = new Set<string>();
 	
 	constructor(
 		private _router: Router,
@@ -227,6 +229,53 @@ export class IndexAttributeComponent {
 				categories: null,
 			},
 			queryParamsHandling: 'merge',
+		});
+	}
+
+	toggleItem(id: string, event: Event) {
+		const checked = (event.target as HTMLInputElement).checked;
+
+		if (checked) {
+			this.selectedIds.add(id);
+		} else {
+			this.selectedIds.delete(id);
+		}
+	}
+
+	getSelectedIds(): string[] {
+		return [...this.selectedIds];
+	}
+
+	onUpdateStatusMultiple(status: boolean){
+		this.loadBtnMultipleStatus.set(true);
+		this.attributeService
+		.update_status_attributes({
+			ids: this.getSelectedIds(),
+			status
+		})
+		.pipe(
+			takeUntil(this.destroy$),
+			withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
+			finalize(() => this.loadBtnMultipleStatus.set(false))
+		)
+		.subscribe({
+			next: (next: any) => {
+				console.log(next);
+				
+				this.attributes = this.attributes.map((prev: Attribute) => {
+					if (next.includes(prev.id)) {
+						return { ...prev, status: status };
+					}
+					return prev;
+				});
+
+				toastr.success('Se actualizó el estado correctamente.');
+				closeModal(status ? 'modalMultipleActive' : 'modalMultipleDisabled');
+				this.selectedIds.clear();
+			},
+			error: (error: any) => {
+				toastr.error(error.error.message);
+			},
 		});
 	}
 }

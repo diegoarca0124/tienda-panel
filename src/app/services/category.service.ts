@@ -68,4 +68,12 @@ export class CategoryService {
 	get_subcategories_by_select(id: string): Observable<any> {
 		return this.http.get(`${this.apiUrl}/category/get_subcategories_by_select/${id}`, { headers : this.getHeaders() });
 	}
+
+	update_status_categories(data: {ids: Array<string>, status: boolean}): Observable<any> {
+		return this.http.post(`${this.apiUrl}/category/update_status_categories`, data, { headers: this.getHeaders() });
+	}
+
+	update_status_subcategories(data: {ids: Array<string>, status: boolean}): Observable<any> {
+		return this.http.post(`${this.apiUrl}/category/update_status_subcategories`, data, { headers: this.getHeaders() });
+	}
 }

@@ -28,16 +28,22 @@
 									<div class="d-flex gap-2">
 										<div>
 											<label class="fs-7 text-gray-600 fw-500">Busqueda</label>
-											<div class="d-flex align-items-center position-relative">
+											<div class="position-relative mb-1">
 												<input
 													type="text"
-													class="form-control form-control-sm w-200px"
-													placeholder="Buscar marca"
+													class="form-control form-control-sm pe-15"
+													placeholder="Buscar categoría"
 													name="filter"
 													[(ngModel)]="filter"
 													(keyup.ENTER)="onFilterOrStatusChange()"
 												/>
-												<i class="bi bi-search position-absolute cursor-pointer" style="right: 20px" (click)="onFilterOrStatusChange()"></i>
+
+												<span
+													class="text-primary position-absolute top-50 end-0 translate-middle-y me-3 fw-600 fs-8"
+													style="pointer-events: none;background: #fff;padding: 1px;"
+												>
+													[ENTER]
+												</span>
 											</div>
 										</div>
 										<div>

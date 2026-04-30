@@ -14,11 +14,13 @@ import { CategoryService } from '@app/services/category.service';
 import { withMinLoadingTime } from '@app/common/interface/with-min-loading-time.interface';
 import { GLOBAL } from '@app/services/GLOBAL';
 import { AlertComponent } from '@app/shared/alert/alert.component';
+import { TextFieldModule } from '@angular/cdk/text-field';
 declare const toastr: any;
 
 @Component({
 	selector: 'app-create-category',
-	imports: [TopbarComponent, SidebarComponent, FormsModule, CommonModule, RouterModule, AlertComponent],
+	standalone: true,
+	imports: [TopbarComponent, SidebarComponent, FormsModule, CommonModule, RouterModule, AlertComponent, TextFieldModule],
 	templateUrl: './create-category.component.html',
 	styleUrl: './create-category.component.css',
 })
@@ -35,6 +37,13 @@ export class CreateCategoryComponent {
 		slug: '',
 		icon: '',
 		description: '',
+		isDimensions: false,
+		isCharacteristics: false,
+		isConditiom: false,
+		isWarranty: false,
+		isCountryOfOrigin: false,
+		isMaterial: false,
+		isTemperature: false,	
 	};
 
 	constructor(
@@ -49,6 +58,9 @@ export class CreateCategoryComponent {
 
 	create() {
 		this.loadBtn = true;
+		this.msmErrorCategory = [];
+		this.errorMsmServer = '';
+		this.errorsCategory = {};
 		this.categoryService
 			.create_category(this.category)
 			.pipe(
@@ -69,8 +81,7 @@ export class CreateCategoryComponent {
 
 					if (error.validation) {
 						this.errorsCategory = error.validation;
-						this.msmErrorCategory =Object.values(this.errorsCategory).flat();
-						this.errorMsmServer = '';
+						this.msmErrorCategory =Object.values(this.errorsCategory).flat();	
 					}
 				},
 			});

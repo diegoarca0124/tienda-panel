@@ -10,7 +10,10 @@ export const productFormHelp = {
   mainAttributeValue: "Valor del atributo principal (ej: rojo, M, algodón).",
 
   priceRegular: "Precio base o estándar de venta del producto.",
-  priceDiscount: "Precio rebajado (opcional). Si existe, reemplaza el precio regular.",
+  priceDiscount: "Precio rebajado. Si existe, reemplaza el precio regular.",
+  minStock: "Cantidad mínima para generar alerta de reposición.",
+  maxStock: "Cantidad máxima para evitar sobrealmacenamiento.",
+  maxOrderLimit: "Número máximo de unidades por pedido.",
   stockQuantity: "Cantidad total disponible en inventario.",
   unitOfMeasure: "Unidad de medida para la venta del producto.",
 
@@ -25,12 +28,12 @@ export const productFormHelp = {
   isLimitedEdition: "Producto de edición limitada o producción especial.",
   isPreOrder: "Disponible exclusivamente como preventa.",
   isExportable: "Indica si puede enviarse internacionalmente.",
-  allowBackorder: "Permitir compras aunque no haya stock disponible.",
+  allowBackorder: "Permitir compras en tienda aunque no haya stock disponible.",
   
   viewsCount: "Número total de vistas del producto (solo lectura).",
   salesCount: "Cantidad total de ventas del producto (solo lectura).",
 
-  countryOfOrigin: "País de fabricación del producto. Importante para aduanas y SEO.",
+  countryOfOrigin: "País de fabricación del producto.",
   
   reviewsCount: "Cantidad total de reseñas recibidas (solo lectura).",
   averageRating: "Promedio de calificación del producto (solo lectura).",
@@ -60,7 +63,7 @@ export const productFormHelp = {
   
   height: "Altura total del producto.",
   width: "Ancho total del producto.",
-  length: "Largo o profundidad del producto.",
+  length: "Profundidad del producto.",
   dimensionUnit: "Unidad de medida usada para las dimensiones (ej: cm, in).",
 
   isFragile: "Indica si el producto es frágil y requiere mayor cuidado en el envío.",
@@ -72,11 +75,11 @@ export const productFormHelp = {
   isFlammable: "Especifica si el producto es inflamable o sensible al calor.",
   isRequiresAssembly: "Indica si el producto necesita ensamblaje por parte del cliente.",
 
-  minStorageTemp: "Temperatura mínima recomendada para almacenar el producto.",
-  maxStorageTemp: "Temperatura máxima recomendada para almacenar el producto.",
+  minStorageTemp: "Temperatura mínima para almacenar el producto.",
+  maxStorageTemp: "Temperatura máxima para almacenar el producto.",
   storageTempUnit: "Unidad de medida para la temperatura (ej: °C, °F).",
 
-  material: "Material principal con el que está fabricado el producto (ej: plástico, metal, madera).",
+  material: "Material principal con el que está fabricado el producto.",
 
   // ----------------------------------------------------------------
   //               CAMPOS NUEVOS — PRODUCT SHIPPING

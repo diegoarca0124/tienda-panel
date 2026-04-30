@@ -57,7 +57,15 @@ export class AttributeService {
 		return this.http.get(`${this.apiUrl}/attribute/get_attributes_by_select`, { headers : this.getHeaders() });
 	}
 
+	get_attributes_by_category(id: string): Observable<any> {
+		return this.http.get(`${this.apiUrl}/attribute/get_attributes_by_category/${id}`, { headers : this.getHeaders() });
+	}
+
 	get_attributeValues_by_select(id: string): Observable<any> {
 		return this.http.get(`${this.apiUrl}/attribute/get_attributeValues_by_select/${id}`, { headers : this.getHeaders() });
+	}
+
+	update_status_attributes(data: {ids: Array<string>, status: boolean}): Observable<any> {
+		return this.http.post(`${this.apiUrl}/attribute/update_status_attributes`, data, { headers: this.getHeaders() });
 	}
 }

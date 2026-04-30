@@ -30,15 +30,40 @@
 						[type]="'errors'"
 						[classIcon]="'svg-icon-danger'">
 						</app-alert>
+
+						<div class="d-flex justify-content-between align-items-center mb-5">
+							<div class="d-flex">
+								<div class="me-3">
+									<div *ngIf="!loadProduct" class="symbol" style="height: 38px; width: 38px; border: 1px dashed #e3e3e3">
+										<img [src]="product.cover" class="h-100 w-100" style="object-fit: cover;" />
+									</div>
+									<div *ngIf="loadProduct" class="form-control-solid form-control-load" style="width: 36.67px; height: 36.67px; border-radius: 5px"></div>
+								</div>
+								<div>
+									<div>
+										<h3 class="fw-700 text-uppercase mb-0" *ngIf="!loadProduct">{{product.name}}</h3>
+										<div *ngIf="loadProduct" class="form-control-solid form-control-load mb-1" style="height: 18px; width: 150px"></div>
+									</div>
+									<a href="" class="text-primary" target="_blank">
+										<small>Ir a la tienda</small>
+									</a>
+								</div>
+							</div>
+							<div>
+								<a *ngIf="!loadBtn" class="btn btn-primary btn-sm flex-fill" (click)="update()">
+									Publicar
+								</a>
+								<button *ngIf="loadBtn" class="btn btn-primary btn-sm flex-fill" type="button" disabled>
+									<span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
+									<span role="status">Procesando...</span>
+								</button>
+							</div>
+						</div>
+
 						<div class="d-flex mb-10">
 							<div class="sidebar d-none d-xl-block">
-								<div class="card card-flush py-4 mb-7">
-									<div class="card-header">
-										<div class="card-title">
-											<h2>Visibilidad</h2>
-										</div>
-									</div>
-									<div class="card-body d-flex flex-column gap-6 pt-0">
+								<div class="card card-flush py-2 mb-7">
+									<div class="card-body d-flex flex-column gap-6 p-7">
 										<div class="fv-row">
 											<div class="d-flex justify-content-between align-items-center mb-2">
 												<label class="fw-500 text-gray-800 fs-6 required">
@@ -46,38 +71,33 @@
 												</label>
 											</div>
 											<div [ngClass]="{ 'is-invalid': errorsProduct?.visibility }">
-												<ng-container *ngIf="!loadProduct">
-													<ng-select
-														[items]="visibilities_"
-														bindLabel="name"
-														bindValue="value"
-														[(ngModel)]="product.visibility"
-														placeholder="Visibilidad"
-														[clearable]="false"
-														[closeOnSelect]="true"
-														class="select-element mb-1"
-														appendTo="body"
-													>
-														<!-- 🔹 Opción en el dropdown -->
-														<ng-template ng-option-tmp let-item="item">
-															<div class="option-item d-flex gap-3 align-items-center">
-																<div class="d-flex align-items-center" [class]="item.class" [innerHTML]="item.icon" style="color: #9da1bc;font-size: 1.4rem;"></div>
-																<span>{{ item.name }}</span>
-															</div>
-														</ng-template>
+												<ng-select
+													[items]="visibilities_"
+													bindLabel="name"
+													bindValue="value"
+													[(ngModel)]="product.visibility"
+													placeholder="Visibilidad"
+													[clearable]="false"
+													[closeOnSelect]="true"
+													class="select-element mb-1"
+													appendTo="body"
+												>
+													<!-- 🔹 Opción en el dropdown -->
+													<ng-template ng-option-tmp let-item="item">
+														<div class="option-item d-flex gap-3 align-items-center">
+															<div class="d-flex align-items-center" [class]="item.class" [innerHTML]="item.icon" style="color: #9da1bc;font-size: 1.4rem;"></div>
+															<span>{{ item.name }}</span>
+														</div>
+													</ng-template>
 
-														<!-- 🔹 Opción seleccionada en el input -->
-														<ng-template ng-label-tmp let-item="item">
-															<div class="selected-item d-flex gap-3 align-items-center">
-																<div class="d-flex align-items-center" [class]="item.class" [innerHTML]="item.icon" style="color: #9da1bc;font-size: 1.4rem;"></div>
-																<span>{{ item.name }}</span>
-															</div>
-														</ng-template>
-													</ng-select>
-												</ng-container>
-												<ng-container *ngIf="loadProduct">
-													<div class="form-control-solid form-control-load mb-1" style="height: 42.92px; width: 100%"></div>
-												</ng-container>
+													<!-- 🔹 Opción seleccionada en el input -->
+													<ng-template ng-label-tmp let-item="item">
+														<div class="selected-item d-flex gap-3 align-items-center">
+															<div class="d-flex align-items-center" [class]="item.class" [innerHTML]="item.icon" style="color: #9da1bc;font-size: 1.4rem;"></div>
+															<span>{{ item.name }}</span>
+														</div>
+													</ng-template>
+												</ng-select>
 											</div>
 											
 											<span class="fs-8 text-muted">{{labelHelper.visibility}}</span>
@@ -89,59 +109,104 @@
 												</label>
 											</div>
 											<div [ngClass]="{ 'is-invalid': errorsProduct?.status }">
-												<ng-container *ngIf="!loadProduct">
-													<ng-select
-														[items]="statusProduct_"
-														bindLabel="name"
-														bindValue="value"
-														[(ngModel)]="product.status"
-														placeholder="Estado"
-														[clearable]="false"
-														[closeOnSelect]="true"
-														class="select-element mb-1"
-														appendTo="body"
-													>
-														<!-- 🔹 Opción en el dropdown -->
-														<ng-template ng-option-tmp let-item="item">
-															<div class="option-item d-flex gap-3 align-items-center">
-																<div class="d-flex align-items-center" [innerHTML]="item.icon" style="color: #9da1bc;font-size: 1.4rem;"></div>
-																<span>{{ item.name }}</span>
-															</div>
-														</ng-template>
+												<ng-select
+													[items]="statusProduct_"
+													bindLabel="name"
+													bindValue="value"
+													[(ngModel)]="product.status"
+													placeholder="Estado"
+													[clearable]="false"
+													[closeOnSelect]="true"
+													class="select-element mb-1"
+													appendTo="body"
+												>
+													<!-- 🔹 Opción en el dropdown -->
+													<ng-template ng-option-tmp let-item="item">
+														<div class="option-item d-flex gap-3 align-items-center">
+															<div class="d-flex align-items-center" [innerHTML]="item.icon" style="color: #9da1bc;font-size: 1.4rem;"></div>
+															<span>{{ item.name }}</span>
+														</div>
+													</ng-template>
 
-														<!-- 🔹 Opción seleccionada en el input -->
-														<ng-template ng-label-tmp let-item="item">
-															<div class="selected-item d-flex gap-3 align-items-center">
-																<div class="d-flex align-items-center" [innerHTML]="item.icon" style="color: #9da1bc;font-size: 1.4rem;"></div>
-																<span>{{ item.name }}</span>
-															</div>
-														</ng-template>
-													</ng-select>
-												</ng-container>
-												<ng-container *ngIf="loadProduct">
-													<div class="form-control-solid form-control-load mb-1" style="height: 42.92px; width: 100%"></div>
-												</ng-container>
+													<!-- 🔹 Opción seleccionada en el input -->
+													<ng-template ng-label-tmp let-item="item">
+														<div class="selected-item d-flex gap-3 align-items-center">
+															<div class="d-flex align-items-center" [innerHTML]="item.icon" style="color: #9da1bc;font-size: 1.4rem;"></div>
+															<span>{{ item.name }}</span>
+														</div>
+													</ng-template>
+												</ng-select>
 											</div>
 											
 											<span class="fs-8 text-muted">{{labelHelper.status}}</span>
 										</div>
 									</div>
 								</div>
-								<div class="card card-flush py-4">
-									<div class="card-header">
-										<div class="card-title">
-											<h2>Caracteristicas</h2>
+								<div class="card card-flush py-2 mb-7">
+									<div class="card-body  d-flex flex-column gap-6 p-7">
+										<div class="fv-row">
+											<div class="d-flex justify-content-between align-items-center">
+												<label class="fw-500 text-gray-800 fs-6 mb-2 required">Marca</label>
+												<small class="text-primary cursor-pointer" (click)="refreshBrands()">Recargar</small>
+											</div>
+											
+											<div *ngIf="!loadProduct">
+												<div [ngClass]="{ 'is-invalid': errorsProduct?.brandId}">
+													<ng-select
+														[items]="brands_"
+														bindLabel="name"
+														bindValue="id"
+														[(ngModel)]="product.brandId"
+														placeholder="Buscar por marca"
+														[clearable]="false"
+														[closeOnSelect]="true"
+														class="select-element mb-1"
+														[loading]="loadingBrands"
+														[disabled]="loadingBrands"
+														appendTo="body"
+													>
+														<!-- 🔹 Opción en el dropdown -->
+														<ng-template ng-option-tmp let-item="item">
+															<div class="option-item">
+																<img *ngIf="item.logoUrl" [src]="item.logoUrl" alt="{{ item.name }}" class="brand-image" />
+																<span>{{ item.name }}</span>
+															</div>
+														</ng-template>
+
+														<!-- 🔹 Opción seleccionada en el input -->
+														<ng-template ng-label-tmp let-item="item">
+															<div class="selected-item">
+																<img *ngIf="item.logoUrl" [src]="item.logoUrl" alt="{{ item.name }}" class="brand-image" />
+																<span>{{ item.name }}</span>
+															</div>
+														</ng-template>
+
+														<ng-template ng-loading-text>
+															<div class="spinner-container">
+																<span class="spinner-border spinner-border-sm"></span>
+															</div>
+														</ng-template>
+													</ng-select>
+												</div>	
+											</div>
+											<div *ngIf="loadProduct">
+												<div class="form-control-solid form-control-load" style="height: 42.92px; width: 100%"></div>
+											</div>
+
+											<span
+												class="fs-8"
+												[ngClass]="errorMsmSeverListBrands ? 'text-danger' : 'text-muted'"
+											>
+											{{ (errorMsmSeverListBrands) ? errorMsmSeverListBrands : labelHelper.brandId }}
+											</span>
 										</div>
-									</div>
-									<div class="card-body d-flex flex-column gap-6 pt-0">
 										<div class="fv-row">
 											<div class="d-flex justify-content-between align-items-center">
 												<label class="fw-500 text-gray-800 fs-6 mb-2 required">Categoría</label>
 												<small class="text-primary cursor-pointer" (click)="refreshCategories()">Recargar</small>
 											</div>
-											
-											<div [ngClass]="{ 'is-invalid': errorsProduct?.categoryId}">
-												<ng-container *ngIf="!loadProduct">
+											<div *ngIf="!loadProduct">
+												<div [ngClass]="{ 'is-invalid': errorsProduct?.categoryId}">
 													<ng-select
 														[items]="categories_"
 														bindLabel="name"
@@ -153,7 +218,7 @@
 														class="select-element mb-1"
 														(change)="onSelectCategory()"
 														[loading]="loadingCategories"
-														[disabled]="loadingCategories"
+														[disabled]="true"
 														appendTo="body"
 													>
 														<!-- Opción en el dropdown -->
@@ -179,11 +244,12 @@
 															</div>
 														</ng-template>
 													</ng-select>
-												</ng-container>
-												<ng-container *ngIf="loadProduct">
-													<div class="form-control-solid form-control-load mb-1" style="height: 42.92px; width: 100%"></div>
-												</ng-container>
+												</div>		
 											</div>
+											<div *ngIf="loadProduct">
+												<div class="form-control-solid form-control-load" style="height: 42.92px; width: 100%"></div>
+											</div>
+											
 											
 											<span
 												class="fs-8"
@@ -198,9 +264,8 @@
 												<small *ngIf="product.categoryId" class="text-primary cursor-pointer" (click)="refreshSubcategories()">Recargar</small>
 												<small *ngIf="!product.categoryId" class="text-muted" style="cursor: not-allowed;">Recargar</small>
 											</div>
-											
-											<div [ngClass]="{ 'is-invalid': errorsProduct?.subcategoryId}">
-												<ng-container *ngIf="!loadProduct">
+											<div *ngIf="!loadProduct">
+												<div [ngClass]="{ 'is-invalid': errorsProduct?.subcategoryId}">
 													<ng-select
 														[items]="subcategories_"
 														bindLabel="name"
@@ -211,7 +276,7 @@
 														[closeOnSelect]="true"
 														class="select-element mb-1"
 														[loading]="loadingSubcategories"
-														[disabled]="loadingSubcategories"
+														[disabled]="true"
 														appendTo="body"
 													>
 														<!-- Opción en el dropdown -->
@@ -237,11 +302,12 @@
 															</div>
 														</ng-template>
 													</ng-select>
-												</ng-container>
-												<ng-container *ngIf="loadProduct">
-													<div class="form-control-solid form-control-load mb-1" style="height: 42.92px; width: 100%"></div>
-												</ng-container>
+												</div>		
 											</div>
+											<div *ngIf="loadProduct">
+												<div class="form-control-solid form-control-load" style="height: 42.92px; width: 100%"></div>
+											</div>
+											
 											
 											<span
 											class="fs-8"
@@ -250,46 +316,19 @@
 											{{ (errorMsmSeverListSubcategories) ? errorMsmSeverListSubcategories : labelHelper.subcategoryId }}
 											</span>
 										</div>
-										
 									</div>
 								</div>
 							</div>
 							<!--end::Table wrapper-->
 							<div class="flex-fill content">
-								<div class="card card-flush pt-4">
-									<div class="card-header">
-										<div class="card-title">
-											<h2 *ngIf="option == 1">General</h2>
-											<h2 *ngIf="option == 2">Descripción</h2>
-											<h2 *ngIf="option == 3">Etiquetas</h2>
-											<h2 *ngIf="option == 4">Propiedades</h2>
-											<h2 *ngIf="option == 5">Envío</h2>
-											<h2 *ngIf="option == 6">Galería</h2>
-											<h2 *ngIf="option == 7">Variaciones</h2>
-											<h2 *ngIf="option == 8">Grupo</h2>
-										</div>
-										<div class="card-toolbar">
-											<div class="d-flex">
-												<a *ngIf="!loadBtn" class="btn btn-primary btn-sm flex-fill" (click)="update()">
-													Publicar
-												</a>
-												<button *ngIf="loadBtn" class="btn btn-primary btn-sm flex-fill" type="button" disabled>
-													<span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
-													<span role="status">Procesando...</span>
-												</button>
-											</div>
-										</div>
-									</div>
+								<div class="card card-flush pt-7">
 									<div class="card-body pt-1">
 										<ul class="nav nav-pills nav-scroll">
 											<li class="nav-item">
 												<a class="nav-link cursor-pointer bg-light" [ngClass]="{ 'active': option == 1 }" (click)="setOption(1)">General</a>
 											</li>
-											<li>
-												<a class="nav-link cursor-pointer bg-light" [ngClass]="{ 'active': option == 2 }" (click)="setOption(2)">Caracteristicas</a>
-											</li>
 											<li class="nav-item">
-												<a class="nav-link cursor-pointer bg-light" [ngClass]="{ 'active': option == 3 }" (click)="setOption(3)">Etiquetas</a>
+												<a class="nav-link cursor-pointer bg-light" [ngClass]="{ 'active': option == 2 }" (click)="setOption(2)">Caracteristicas</a>
 											</li>
 											<li class="nav-item">
 												<a class="nav-link cursor-pointer bg-light" [ngClass]="{ 'active': option == 4 }" (click)="setOption(4)">Propiedades</a>
@@ -335,302 +374,502 @@
 											</div>
 										</div>
 									</div>
-									<div class="card-body d-flex flex-column gap-6 pt-1" [ngClass]="{'d-none': option != 1}">
-										<div class="fv-row">
-											<label class="required fw-500 text-gray-800 fs-6 mb-1">Título</label>
-											<input *ngIf="!loadProduct" type="text" name="name" class="form-control" 
-											placeholder="Product name" 
-											[(ngModel)]="product.name" 
-											[ngClass]="{ 'is-invalid': errorsProduct?.name }"
-											/>
-											<div *ngIf="loadProduct" class="form-control-solid form-control-load" style="height: 42.92px; width: 100%"></div>
-											<span class="fs-8 text-muted">{{labelHelper.name}}</span>
-										</div>
+									<div class="card-body d-flex flex-column pt-1" [ngClass]="{'d-none': option != 1}">
 										<div class="row">
-											<div class="col-6">
+											<div class="col-12 mb-4">
+												<label class="required fw-500 text-gray-800 fs-6 mb-1">Título</label>
+												<div *ngIf="!loadProduct">
+													<input type="text" name="name" class="form-control" placeholder="Product name" [(ngModel)]="product.name" 
+													[ngClass]="{ 'is-invalid': errorsProduct?.name }"/>
+												</div>
+												<div *ngIf="loadProduct">
+													<div class="form-control-solid form-control-load" style="height: 42.92px; width: 100%"></div>
+												</div>
+												<span class="fs-8 text-muted">{{labelHelper.name}}</span>
+											</div>
+											<div class="col-6 mb-4">
 												<div class="d-flex flex-column fv-row fv-plugins-icon-container">
-													<label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2">
+													<!--begin::Label-->
+													<label class="d-flex align-items-center fs-6 fw-semibold form-label mb-1">
 														<span class="required">Miniatura</span>
 													</label>
-													<div class="mb-1" *ngIf="!loadProduct">
-														<app-upload-image
-															(fileSelected)="product.miniature = $event ? $event : undefined"
-															(validationError)="errorsProduct.miniature[0] = $event ?? ''"
-															[aspectMode]="'all'"
-															[inputId]="'miniature'"
-															[hasError]="errorsProduct?.miniature[0]"
-															[previewImage]="miniatureUrlEdit"
-														></app-upload-image>
-													</div>
-													<div class="mb-1" *ngIf="loadProduct">
-														<div class="form-control-solid form-control-load" style="height: 42.92px; width: 100%"></div>
+													<!--end::Label-->
+
+													<div class="mb-1">
+														<div *ngIf="!loadProduct">
+															<app-upload-image
+																(fileSelected)="product.miniature = $event ? $event : undefined"
+																(validationError)="errorsProduct.miniature[0] = $event ?? ''"
+																[aspectMode]="'all'"
+																[inputId]="'miniature'"
+																[hasError]="errorsProduct?.miniature[0]"
+																[previewImage]="miniatureUrlEdit"
+															></app-upload-image>
+														</div>
+														<div *ngIf="loadProduct">
+															<div class="form-control-solid form-control-load" style="height: 42.92px; width: 100%"></div>
+														</div>
 													</div>
 
 													<span class="fs-8 text-muted">Miniatura representativa del producto en 1:1.</span>
 												</div>
 											</div>
-											<div class="col-6">
-												<div class="d-flex flex-column fv-row fv-plugins-icon-container">
-													<div class="d-flex justify-content-between align-items-center">
-														<label class="fw-500 text-gray-800 fs-6 mb-2 required">Marca</label>
-														<small class="text-primary cursor-pointer" (click)="refreshBrands()">Recargar</small>
-													</div>
-													<div *ngIf="!loadProduct" [ngClass]="{ 'is-invalid': errorsProduct?.brandId}">
-														<ng-select
-															[items]="brands_"
-															bindLabel="name"
-															bindValue="id"
-															[(ngModel)]="product.brandId"
-															placeholder="Buscar por marca"
-															[clearable]="false"
-															[closeOnSelect]="true"
-															class="select-element mb-1"
-															[loading]="loadingBrands"
-															[disabled]="loadingBrands"
-															appendTo="body"
-														>
-															<!-- 🔹 Opción en el dropdown -->
-															<ng-template ng-option-tmp let-item="item">
-																<div class="option-item">
-																	<img *ngIf="item.logoUrl" [src]="item.logoUrl" alt="{{ item.name }}" class="brand-image" />
-																	<span>{{ item.name }}</span>
-																</div>
-															</ng-template>
-
-															<!-- 🔹 Opción seleccionada en el input -->
-															<ng-template ng-label-tmp let-item="item">
-																<div class="selected-item">
-																	<img *ngIf="item.logoUrl" [src]="item.logoUrl" alt="{{ item.name }}" class="brand-image" />
-																	<span>{{ item.name }}</span>
-																</div>
-															</ng-template>
-
-															<ng-template ng-loading-text>
-																<div class="spinner-container">
-																	<span class="spinner-border spinner-border-sm"></span>
-																</div>
-															</ng-template>
-														</ng-select>
-													</div>
-													<div class="mb-1" *ngIf="loadProduct">
-														<div class="form-control-solid form-control-load" style="height: 42.92px; width: 100%"></div>
-													</div>
-													
-													<span
-														class="fs-8"
-														[ngClass]="errorMsmSeverListBrands ? 'text-danger' : 'text-muted'"
-													>
-													{{ (errorMsmSeverListBrands) ? errorMsmSeverListBrands : labelHelper.brandId }}
-													</span>
-												</div>
-											</div>
-										</div>
-										<div class="row" *ngIf="widthScreen <= 1200">
-											<div class="col-md-6 mb-6 mb-md-0">
-												<label class="fw-500 text-gray-800 fs-6 mb-2 required">Categoría</label>
-												<div  *ngIf="!loadProduct" [ngClass]="{ 'is-invalid': errorsProduct?.categoryId }">
-													<ng-select
-														[items]="categories_"
-														bindLabel="name"
-														bindValue="value"
-														[(ngModel)]="product.categoryId"
-														placeholder="Categorías"
-														[clearable]="false"
-														[closeOnSelect]="true"
-														class="select-element mb-1"
-														(change)="onSelectCategory()"
-														[loading]="loadingCategories"
-														[disabled]="loadingCategories"
-														appendTo="body"
-													>
-														<!-- Opción en el dropdown -->
-														<ng-template ng-option-tmp let-item="item">
-															<div class="option-item d-flex gap-3 align-items-center">
-																<div class="d-flex align-items-center svg-icon svg-icon-3" [class]="item.class" [innerHTML]="item.icon" style="color: #9da1bc;font-size: 1.4rem;"></div>
-																<span class="text-ellipsis">{{ item.name }}</span>
-															</div>
-														</ng-template>
-														
-
-														<!-- Opción seleccionada en el input -->
-														<ng-template ng-label-tmp let-item="item">
-															<div class="option-item d-flex gap-3 align-items-center">
-																<div class="d-flex align-items-center svg-icon svg-icon-3" [class]="item.class" [innerHTML]="item.icon" style="color: #9da1bc;font-size: 1.4rem;"></div>
-																<span>{{ item.name }}</span>
-															</div>
-														</ng-template>
-
-														<ng-template ng-loading-text>
-															<div class="spinner-container">
-																<span class="spinner-border spinner-border-sm"></span>
-															</div>
-														</ng-template>
-													</ng-select>
-												</div>
-												<div class="mb-1" *ngIf="loadProduct">
-													<div class="form-control-solid form-control-load" style="height: 42.92px; width: 100%"></div>
-												</div>
-												<span class="fs-8 text-muted">{{labelHelper.categoryId}}</span>
-											</div>
-											<div class="col-md-6">
-												<label class="fw-500 text-gray-800 fs-6 mb-2 required">Subcategoría</label>
-												<div *ngIf="!loadProduct" [ngClass]="{ 'is-invalid': errorsProduct?.subcategoryId }">
-													<ng-select
-														[items]="subcategories_"
-														bindLabel="name"
-														bindValue="id"
-														[(ngModel)]="product.subcategoryId"
-														placeholder="Subcategorías"
-														[clearable]="false"
-														[closeOnSelect]="true"
-														class="select-element mb-1"
-														[loading]="loadingSubcategories"
-														[disabled]="loadingSubcategories"
-														appendTo="body"
-													>
-														<!-- Opción en el dropdown -->
-														<ng-template ng-option-tmp let-item="item">
-															<div class="option-item d-flex gap-3 align-items-center">
-																<div class="d-flex align-items-center svg-icon svg-icon-3" [class]="item.class" [innerHTML]="item.icon" style="color: #9da1bc;font-size: 1.4rem;"></div>
-																<span class="text-ellipsis">{{ item.name }}</span>
-															</div>
-														</ng-template>
-														
-
-														<!-- Opción seleccionada en el input -->
-														<ng-template ng-label-tmp let-item="item">
-															<div class="option-item d-flex gap-3 align-items-center">
-																<div class="d-flex align-items-center svg-icon svg-icon-3" [class]="item.class" [innerHTML]="item.icon" style="color: #9da1bc;font-size: 1.4rem;"></div>
-																<span>{{ item.name }}</span>
-															</div>
-														</ng-template>
-
-														<ng-template ng-loading-text>
-															<div class="spinner-container">
-																<span class="spinner-border spinner-border-sm"></span>
-															</div>
-														</ng-template>
-													</ng-select>
-												</div>
-												<div class="mb-1" *ngIf="loadProduct">
-													<div class="form-control-solid form-control-load" style="height: 42.92px; width: 100%"></div>
-												</div>
-												<span class="fs-8 text-muted">{{labelHelper.subcategoryId}}</span>
-											</div>
-										</div>
-										<div class="row">
-											<div class="col-md-6 mb-6 mb-md-0">
-												<div class="d-flex justify-content-between align-items-center">
-													<label class="fw-500 text-gray-800 fs-6 mb-2 required">Atributo principal</label>
-													<small class="text-primary cursor-pointer" (click)="refreshAttributes()">Recargar</small>
-												</div>
-												<div [ngClass]="{ 'is-invalid': errorsProduct?.mainAttribute }">
-													<ng-container *ngIf="!loadProduct">
-														<ng-select
-															[items]="attributes_"
-															bindLabel="name"
-															[(ngModel)]="product.mainAttribute"
-															placeholder="Atributos"
-															[clearable]="false"
-															[closeOnSelect]="true"
-															class="select-element mb-1"
-															(change)="onSelectAttribute()"
-															[loading]="loadingAttributes"
-															[disabled]="loadingAttributes"
-															appendTo="body"
-														>
-															<!-- Opción en el dropdown -->
-															<ng-template ng-option-tmp let-item="item">
-																<span class="text-ellipsis">{{ item.name }}</span>
-															</ng-template>
-
-															<!-- Opción seleccionada en el input -->
-															<ng-template ng-label-tmp let-item="item">
-																<span class="text-ellipsis">{{ item.name }}</span>
-															</ng-template>
-
-															<ng-template ng-loading-text>
-																<div class="spinner-container">
-																	<span class="spinner-border spinner-border-sm"></span>
-																</div>
-															</ng-template>
-														</ng-select>
-													</ng-container>
-													<div class="mb-1" *ngIf="loadProduct">
-														<div class="form-control-solid form-control-load" style="height: 42.92px; width: 100%"></div>
-													</div>
-												</div>
-												<span
-													class="fs-8"
-													[ngClass]="errorMsmSeverListAttributes ? 'text-danger' : 'text-muted'"
-												>
-												{{ (errorMsmSeverListAttributes) ? errorMsmSeverListAttributes : labelHelper.mainAttribute }}
-												</span>
-											</div>
-											<div class="col-md-6">
-												<div class="d-flex justify-content-between align-items-center">
-														<label class="fw-500 text-gray-800 fs-6 mb-2 required">Valores Atributo</label>
-														<small *ngIf="product.mainAttribute" class="text-primary cursor-pointer" (click)="refreshAttributeValues()">Recargar</small>
-														<small *ngIf="!product.mainAttribute" class="text-muted" style="cursor: not-allowed;">Recargar</small>
-													</div>
-												<div *ngIf="!loadProduct" [ngClass]="{ 'is-invalid': errorsProduct?.mainAttributeValue }">
-													<ng-select
-														[items]="valuesAttribute_"
-														bindLabel="value"
-														bindValue="value"
-														[(ngModel)]="product.mainAttributeValue"
-														placeholder="Valores"
-														[clearable]="false"
-														[closeOnSelect]="true"
-														class="select-element mb-1"
-														[loading]="loadingValuesAttribute"
-														[disabled]="loadingValuesAttribute"
-														appendTo="body"
-													>
-														<!-- Opción en el dropdown -->
-														<ng-template ng-option-tmp let-item="item">
-															<span class="text-ellipsis">{{ item.value }}</span>
-														</ng-template>
-
-														<!-- Opción seleccionada en el input -->
-														<ng-template ng-label-tmp let-item="item">
-															<span class="text-ellipsis">{{ item.value }}</span>
-														</ng-template>
-
-														<ng-template ng-loading-text>
-															<div class="spinner-container">
-																<span class="spinner-border spinner-border-sm"></span>
-															</div>
-														</ng-template>
-													</ng-select>
-												</div>
-												<div class="mb-1" *ngIf="loadProduct">
-													<div class="form-control-solid form-control-load" style="height: 42.92px; width: 100%"></div>
-												</div>
-												<span
-													class="fs-8"
-													[ngClass]="errorMsmSeverListValuesAttribute ? 'text-danger' : 'text-muted'"
-												>
-												{{ (errorMsmSeverListValuesAttribute) ? errorMsmSeverListValuesAttribute : labelHelper.mainAttributeValue }}
-												</span>
-											</div>
-										</div>
-										<div class="row">
-											<div class="col-md-6 mb-6 mb-md-0">
-												<div class="d-flex justify-content-between align-items-center mb-2">
+											<div class="col-md-6 mb-4">
+												<div class="d-flex justify-content-between align-items-center mb-1">
 													<label class="fw-500 text-gray-800 fs-6 required">
 														Unidad medida
 													</label>
 												</div>
-												<div *ngIf="!loadProduct" [ngClass]="{ 'is-invalid': errorsProduct?.unitOfMeasure }">
+												<div class="mb-1">
+													<div *ngIf="!loadProduct">
+														<div [ngClass]="{ 'is-invalid': errorsProduct?.unitOfMeasure }">
+															<ng-select
+																[items]="units_"
+																[(ngModel)]="product.unitOfMeasure"
+																placeholder="Unidad"
+																[clearable]="false"
+																[closeOnSelect]="true"
+																[groupBy]="'group'"
+																bindLabel="name"
+																class="select-element"
+																appendTo="body"
+															>
+																<!-- Opción en el dropdown -->
+																<ng-template ng-option-tmp let-item="item">
+																	<div class="option-item d-flex gap-3 align-items-center">
+																		<div class="option-name">{{ item.name }}</div>
+																		<small class="option-value text-gray-500"> - {{ item.abbr }}</small>
+																	</div>
+																</ng-template>
+
+																<!-- Opción seleccionada en el input -->
+																<ng-template ng-label-tmp let-item="item">
+																	{{ item.name }}
+																</ng-template>
+
+																<ng-template ng-loading-text>
+																	<div class="spinner-container">
+																	<span class="spinner-border spinner-border-sm"></span>
+																	</div>
+																</ng-template>
+															</ng-select>
+														</div>
+													</div>
+													<div *ngIf="loadProduct">
+														<div class="form-control-solid form-control-load" style="height: 42.92px; width: 100%"></div>
+													</div>
+												</div>
+												<span class="fs-8 text-muted">{{labelHelper.unitOfMeasure}}</span>
+											</div>
+											<div class="col-md-6 mb-4" *ngIf="categorySelected.isMaterial">
+												<div class="d-flex justify-content-between align-items-center mb-1">
+													<label class="fw-500 text-gray-800 fs-6 required">
+														Material principal
+													</label>
+												</div>
+												<div class="mb-1">
+													<div *ngIf="!loadProduct">
+														<div [ngClass]="{ 'is-invalid': errorsProduct?.material }">
+															<ng-select
+																[items]="materials_"
+																[(ngModel)]="physical.material"
+																placeholder="Selecciona material"
+																[clearable]="false"
+																[groupBy]="'group'"
+																bindLabel="name"
+																bindValue="name"
+																class="select-element"
+																appendTo="body">
+															</ng-select>
+														</div>
+													</div>
+													<div *ngIf="loadProduct">
+														<div class="form-control-solid form-control-load" style="height: 42.92px; width: 100%"></div>
+													</div>
+												</div>
+												
+												<span class="fs-8 text-muted">{{ labelHelper.material }}</span>
+											</div>
+											<div class="col-md-6 mb-4" *ngIf="categorySelected.isConditiom">
+												<div class="d-flex justify-content-between align-items-center mb-1">
+													<label class="fw-500 text-gray-800 fs-6 required">
+														Condición
+													</label>
+												</div>
+												<div class="mb-1">
+													<div *ngIf="!loadProduct">
+														<div [ngClass]="{ 'is-invalid': errorsProduct?.condition }">
+															<ng-select
+																[items]="conditions_"
+																[(ngModel)]="product.condition"
+																placeholder="Condición del producto"
+																[clearable]="false"
+																[closeOnSelect]="true"
+																bindLabel="name"
+																bindValue="name"
+																class="select-element"
+																appendTo="body"
+															>
+																<!-- Opción en el dropdown -->
+																<ng-template ng-option-tmp let-item="item">
+																	<div class="d-flex align-items-center gap-2">
+																	<span class="bullet bullet-dot h-10px w-10px" [ngClass]="'bg-' + item.color"></span>
+																	<span>{{ item.name }}</span>
+																	</div>
+																</ng-template>
+
+																<!-- Opción seleccionada en el input -->
+																<ng-template ng-label-tmp let-item="item">
+																	<div class="d-flex align-items-center gap-2">
+																	<span class="bullet bullet-dot h-10px w-10px" [ngClass]="'bg-' + item.color"></span>
+																	<span>{{ item.name }}</span>
+																	</div>
+																</ng-template>
+
+																<ng-template ng-loading-text>
+																	<div class="spinner-container">
+																	<span class="spinner-border spinner-border-sm"></span>
+																	</div>
+																</ng-template>
+															</ng-select>
+														</div>
+													</div>
+													<div *ngIf="loadProduct">
+														<div class="form-control-solid form-control-load" style="height: 42.92px; width: 100%"></div>
+													</div>
+												</div>
+												
+												<span class="fs-8 text-muted">{{labelHelper.condition}}</span>
+											</div>
+											<div class="col-md-6 mb-4" *ngIf="categorySelected.isWarranti">
+												<label class="fw-500 text-gray-800 fs-6 mb-1 required">Garantía</label>
+												<div class="mb-1">
+													<div *ngIf="!loadProduct">
+														<div [ngClass]="{ 'is-invalid': errorsProduct?.warranty}">
+															<ng-select
+																[items]="warranties_"
+																[(ngModel)]="product.warranty"
+																placeholder="Garantía"
+																[clearable]="false"
+																[closeOnSelect]="true"
+																bindLabel="name"
+																bindValue="name"
+																class="select-element"
+																appendTo="body"
+															>
+																<!-- Opción en el dropdown -->
+																<ng-template ng-option-tmp let-item="item">
+																	<div class="d-flex flex-column">
+																		<span>{{ item.name }}</span>
+																		<div
+																			class="me-2"
+																			[ngStyle]="{
+																				'background-color': 'var(--bs-' + item.color + ')',
+																				'height.px': 4,
+																				'width.%': 
+																					item.value === 'none' ? 5 :
+																					item.value.includes('15_days') ? 15 :
+																					item.value.includes('30_days') ? 25 :
+																					item.value.includes('3_months') ? 40 :
+																					item.value.includes('6_months') ? 60 :
+																					item.value.includes('1_year') ? 80 :
+																					item.value.includes('2_years') ? 90 :
+																					item.value.includes('manufacturer') ? 95 :
+																					item.value.includes('lifetime') ? 100 : 50
+																			}"
+																		></div>
+																		
+																	</div>
+																</ng-template>
+
+																<!-- Opción seleccionada en el input -->
+																<ng-template ng-label-tmp let-item="item">
+																	{{ item.name }}
+																</ng-template>
+
+																<ng-template ng-loading-text>
+																	<div class="spinner-container">
+																		<span class="spinner-border spinner-border-sm"></span>
+																	</div>
+																</ng-template>
+															</ng-select>
+														</div>
+													</div>
+													<div *ngIf="loadProduct">
+														<div class="form-control-solid form-control-load" style="height: 42.92px; width: 100%"></div>
+													</div>
+												</div>
+												
+												<span class="fs-8 text-muted">{{labelHelper.warranty}}</span>
+											</div>
+											<div class="col-md-6 mb-4" *ngIf="categorySelected.isCountryOfOrigin">
+												<label class="fw-500 text-gray-800 fs-6 mb-1 required">País de fabricación</label>				
+												<div class="mb-1">
+													<div *ngIf="!loadProduct">
+														<div [ngClass]="{ 'is-invalid': errorsProduct?.countryOfOrigin }">
+															<ng-select
+																[items]="countries"
+																bindLabel="country"
+																placeholder="Países"
+																[clearable]="false"
+																[(ngModel)]="product.countryOfOrigin"
+																appendTo="body"
+																class="select-element mb-1"
+															>
+																<!-- Opción en el dropdown -->
+																<ng-template ng-option-tmp let-item="item">
+																	<img [src]="item.flag" width="20" height="15" style="margin-right: 8px" />
+																	{{ item.name }}
+																</ng-template>
+
+																<!-- Opción seleccionada en el input -->
+																<ng-template ng-label-tmp let-item="item">
+																	<img [src]="item.flag" width="20" height="15" style="margin-right: 8px" />
+																	{{ item.name }}
+																</ng-template>
+															</ng-select>
+														</div>
+													</div>
+													<div *ngIf="loadProduct">
+														<div class="form-control-solid form-control-load" style="height: 42.92px; width: 100%"></div>
+													</div>
+												</div>
+												<span class="fs-8 text-muted">{{labelHelper.countryOfOrigin}}</span>
+											</div>
+											<div class="col-md-12 mb-4">
+												<label class="required fw-500 text-gray-800 fs-6 mb-2">Contenido</label>
+												<div class="mb-1">
+													<div [hidden]="loadProduct">
+														<div [ngClass]="{ 'border-danger': errorsProduct?.description}">
+															<div #editor id="editor" style="height: 100px;"></div>
+														</div>
+													</div>
+													<div [hidden]="!loadProduct">
+														<div class="form-control-solid form-control-load"
+															style="height:141px;width:100%">
+														</div>
+													</div>
+												</div>
+												<span class="fs-8 text-muted">{{labelHelper.description}}</span>
+											</div>
+											<div class="col-md-12 mb-4">
+												<div class="d-flex flex-column">
+													<div class="d-flex justify-content-between align-items-center mb-2">
+														<label class="fw-500 text-gray-800 fs-6">
+															Etiquetas
+														</label>
+													</div>
+													<div class="mb-1">
+														<div *ngIf="!loadProduct" [ngClass]="{ 'is-invalid': errorsProduct?.tags}">
+															<app-tagify-input 
+															[whiteList]="whiteListTags" 
+															(tagsChange)="onTagsChange($event)"
+															[selectedTags]="product.tags"
+															></app-tagify-input>
+														</div>
+														<div *ngIf="loadProduct">
+															<div class="form-control-solid form-control-load" style="height: 42.92px; width: 100%"></div>
+														</div>
+													</div>
+													<span class="fs-8 text-muted">{{labelHelper.categoryId}}</span>
+												</div>
+											</div>
+											<div class="col-md-12 mb-4">
+												<div class="d-flex justify-content-between align-items-center mb-2">
+													<label class="fw-500 text-gray-800 fs-6 required">
+														Extracto
+													</label>
+													<div class="cursor-pointer">
+														<i class="bi bi-info-circle" placement="left" 
+														[ngbTooltip]="labelHelper.extract"
+														tooltipClass="tooltip-dark"></i>
+													</div>
+												</div>
+												<div class="mb-1">
+													<div *ngIf="!loadProduct">
+														<textarea class="form-control" placeholder="Reseña corta del producto" [(ngModel)]="product.extract" [ngClass]="{ 'is-invalid': errorsProduct?.extract}"></textarea>
+													</div>
+
+													<div *ngIf="loadProduct">
+														<div class="form-control-solid form-control-load" style="height: 64.38px; width: 100%"></div>
+													</div>
+												</div>
+												<span class="fs-8 text-muted">{{labelHelper.extract}}</span>
+											</div>
+										</div>
+										<div class="row">
+											<div class="col-lg-12 my-3">
+												<h4 class="mb-0">Precios</h4>
+												<span class="text-gray-600 mt-1 fw-400 fs-0-9rem">
+													Activa opciones promocionales, visibilidad y reglas de venta del producto.
+												</span>
+											</div>
+											<div class="col-md-6 mb-4">
+												<div class="d-flex justify-content-between align-items-center mb-1">
+													<label class="fw-500 text-gray-800 fs-6 required">
+														Precio regular
+													</label>
+												</div>
+												<input
+													currencyMask
+													type="text"
+													[options]="currencyOptions"
+													class="form-control mb-1"
+													placeholder="Precio Normal"
+													name="priceRegular"
+													[(ngModel)]="product.priceRegular"
+													[ngClass]="{ 'is-invalid': errorsProduct?.priceRegular}"
+												/>
+												<span class="fs-8 text-muted">{{labelHelper.priceRegular}}</span>
+											</div>
+											<div class="col-md-6">
+												<div class="d-flex justify-content-between align-items-center mb-1">
+													<label class="fw-500 text-gray-800 fs-6">
+														Precio descuento
+													</label>
+													<div class="cursor-pointer">
+														<i class="bi bi-info-circle" placement="left" 
+														[ngbTooltip]="labelHelper.priceDiscount"
+														tooltipClass="tooltip-dark"></i>
+													</div>
+												</div>
+												<input
+													currencyMask
+													type="text"
+													[options]="currencyOptions"
+													class="form-control mb-1"
+													placeholder="Precio Descuento"
+													name="priceDiscount"
+													[(ngModel)]="product.priceDiscount"
+													[ngClass]="{ 'is-invalid': errorsProduct?.priceDiscount}"
+												/>
+												<span class="fs-8 text-muted">{{labelHelper.priceDiscount}}</span>
+											</div>
+										</div>
+									</div>
+									<div class="card-body d-flex flex-column gap-4 pt-1" [ngClass]="{'d-none': option != 2}">
+										<div class="row">
+											<div class="col-12">
+												<app-alert 
+												[classAlert]="'bg-light-primary border-primary border-dashed mb-3'"
+												[title]="'¿Para que sirve esto?'"
+												[text]="'Ingresa las características del producto que se mostrarán en la tienda en línea (ejemplo: Tela: Algodón, RAM: 32GB, Pantalla: Amoled, Batería: 500 mAh, Talla: S).'"
+												[type]="'information'"
+												[classIcon]="'svg-icon-2hx svg-icon-primary'">
+												</app-alert>
+											</div>
+										</div>
+										<ng-container *ngIf="!loadingAttributes">
+											<div class="row" *ngFor="let item of arrProperties; let idx = index">
+												<div class="col-md">
+													<div [ngClass]="{ 'is-invalid': errorsUpdateProductDescripcion?.attributeId && idSelectProductDescripcion == item.id}">
+														<ng-select
+															[items]="attributes_"
+															bindLabel="name"
+															bindValue="id"
+															class="select-element-sm mb-1"
+															[(ngModel)]="item.attributeId"
+															placeholder="Atributos"
+															(change)="onSelectAttributeProperty(idx)"
+															[clearable]="false"
+															[closeOnSelect]="true">
+														</ng-select>
+													</div>
+													
+												</div>
+
+												<div class="col-md">
+													<div [ngClass]="{ 'is-invalid': errorsUpdateProductDescripcion?.value && idSelectProductDescripcion == item.id}">
+														<ng-select
+															[items]="item.data"
+															bindLabel="value"
+															bindValue="value"
+															class="select-element-sm mb-1"
+															[(ngModel)]="item.value"
+															placeholder="Valores"
+															[clearable]="false"
+															[closeOnSelect]="true">
+														</ng-select>
+													</div>
+													
+												</div>
+
+												<div class="col-auto">
+													<div class="d-flex gap-2">
+														<button
+														class="btn btn-light-primary btn-icon btn-sm"
+														(click)="arrProperties[idx].id ? onUpdateAttributeProperty(idx) : onCreateAttributeProperty(idx)"
+														[disabled]="loadBtnEditOrCreateProductDescripcion && (item?.id ? idSelectProductDescripcion == item.id : true)"	
+														>
+															<ng-container
+																*ngIf="loadBtnEditOrCreateProductDescripcion && idSelectProductDescripcion == item.id; else iconCheck">
+																<span class="spinner-border spinner-border-sm"></span>
+															</ng-container>
+
+															<ng-template #iconCheck>
+																<app-icon-check></app-icon-check>
+															</ng-template>
+														</button>
+
+														<button
+														class="btn btn-light-danger btn-icon btn-sm"
+														(click)="arrProperties[idx].id ? onDeleteAttributeProperty(idx) : onCreateAttributeProperty(idx)"
+														[disabled]="!item?.id || (loadBtnDeleteProductDescripcion && idSelectToDeleteProductDescripcion == item.id)"ñ
+														>
+															<ng-container
+																*ngIf="loadBtnDeleteProductDescripcion && idSelectToDeleteProductDescripcion == item.id; else iconTrash">
+																<span class="spinner-border spinner-border-sm"></span>
+															</ng-container>
+
+															<ng-template #iconTrash>
+																<app-icon-trash></app-icon-trash>
+															</ng-template>
+														</button>
+
+													</div>
+												</div>
+											</div>
+										</ng-container>
+										<ng-container *ngIf="loadingAttributes">
+											<div class="row" *ngFor="let item of [1,2,3,4]">
+												<div class="col-md">
+													<div class="form-control-solid form-control-load" style="height: 35px; width: 100%"></div>
+												</div>
+
+												<div class="col-md">
+													<div class="form-control-solid form-control-load" style="height: 35px; width: 100%"></div>
+												</div>
+
+												<div class="col-auto">
+													<div class="d-flex gap-2">
+														<div class="form-control-solid form-control-load" style="height: 35px; width: 35px"></div>
+														<div class="form-control-solid form-control-load" style="height: 35px; width: 35px"></div>
+													</div>
+												</div>
+											</div>
+										</ng-container>
+										<div class="row">
+											<a class="cursor-pointer" (click)="addAttribute()">Nueva caracteristica</a>
+										</div>
+									</div>
+									<div class="card-body d-flex flex-column gap-6 pt-1" [ngClass]="{'d-none': option != 4}">
+										<div class="row" *ngIf="categorySelected.isDimensions">
+											<div class="col-lg-12 mb-5">
+												<h4 class="mb-0">Medidas Fisicas</h4>
+												<span class="text-gray-600 mt-1 fw-400 fs-0-9rem">
+													Ingresa las medidas y peso reales del producto para mejorar costos de envío y gestión logística.
+												</span>
+											</div>
+											<div class="col-md-6 mb-4">
+												<label class="fw-500 text-gray-800 fs-6 mb-2" [ngClass]="{'required': categorySelected.isDimensions}">Unidad peso</label>
+												<div [ngClass]="{ 'is-invalid': errorsProduct?.weightUnit }">
 													<ng-select
-														[items]="units_"
-														[(ngModel)]="product.unitOfMeasure"
-														placeholder="Unidad"
+														[items]="weightUnits_"
+														bindLabel="name"
+														[(ngModel)]="physical.weightUnit"
+														placeholder="Unidad de medida"
 														[clearable]="false"
 														[closeOnSelect]="true"
-														[groupBy]="'group'"
-														bindLabel="name"
 														class="select-element mb-1"
 														appendTo="body"
 													>
@@ -649,100 +888,30 @@
 
 														<ng-template ng-loading-text>
 															<div class="spinner-container">
-															<span class="spinner-border spinner-border-sm"></span>
+																<span class="spinner-border spinner-border-sm"></span>
 															</div>
 														</ng-template>
 													</ng-select>
 												</div>
-												<div class="mb-1" *ngIf="loadProduct">
-													<div class="form-control-solid form-control-load" style="height: 42.92px; width: 100%"></div>
-												</div>
-												<span class="fs-8 text-muted">{{labelHelper.unitOfMeasure}}</span>
+												<span class="fs-8 text-muted text-description-form">{{labelHelper.weightUnit}}</span>
 											</div>
-											<div class="col-md-6">
-												<div class="d-flex justify-content-between align-items-center mb-2">
-													<label class="fw-500 text-gray-800 fs-6 required">
-														Condición
-													</label>
-												</div>
-												<div *ngIf="!loadProduct" [ngClass]="{ 'is-invalid': errorsProduct?.condition }">
+											<div class="col-md-6 mb-4">
+												<label class="fw-500 text-gray-800 fs-6 mb-2" [ngClass]="{'required': categorySelected.isDimensions}">Unidad longitud</label>
+												<div [ngClass]="{ 'is-invalid': errorsProduct?.dimensionUnit }">
 													<ng-select
-														[items]="conditions_"
-														[(ngModel)]="product.condition"
-														placeholder="Condición del producto"
-														[clearable]="false"
-														[closeOnSelect]="true"
-														bindLabel="name"
-														bindValue="name"
-														class="select-element mb-1"
-														appendTo="body"
-													>
+													[items]="dimensiontUnits_"
+													bindLabel="name"
+													[(ngModel)]="physical.dimensionUnit"   
+													placeholder="Unidad de medida"
+													[clearable]="false"
+													[closeOnSelect]="true"
+													class="select-element mb-1"
+													appendTo="body">
 														<!-- Opción en el dropdown -->
 														<ng-template ng-option-tmp let-item="item">
-															<div class="d-flex align-items-center gap-2">
-															<span class="bullet bullet-dot h-10px w-10px" [ngClass]="'bg-' + item.color"></span>
-															<span>{{ item.name }}</span>
-															</div>
-														</ng-template>
-
-														<!-- Opción seleccionada en el input -->
-														<ng-template ng-label-tmp let-item="item">
-															<div class="d-flex align-items-center gap-2">
-															<span class="bullet bullet-dot h-10px w-10px" [ngClass]="'bg-' + item.color"></span>
-															<span>{{ item.name }}</span>
-															</div>
-														</ng-template>
-
-														<ng-template ng-loading-text>
-															<div class="spinner-container">
-															<span class="spinner-border spinner-border-sm"></span>
-															</div>
-														</ng-template>
-													</ng-select>
-												</div>
-												<div class="mb-1" *ngIf="loadProduct">
-													<div class="form-control-solid form-control-load" style="height: 42.92px; width: 100%"></div>
-												</div>
-												<span class="fs-8 text-muted">{{labelHelper.condition}}</span>
-											</div>
-										</div>
-										<div class="row">
-											<div class="col-md-6 mb-6 mb-md-0">
-												<label class="fw-500 text-gray-800 fs-6 mb-2 required">Garantía</label>
-												<div *ngIf="!loadProduct" [ngClass]="{ 'is-invalid': errorsProduct?.warranty}">
-													<ng-select
-														[items]="warranties_"
-														[(ngModel)]="product.warranty"
-														placeholder="Garantía"
-														[clearable]="false"
-														[closeOnSelect]="true"
-														bindLabel="name"
-														bindValue="name"
-														class="select-element mb-1"
-														appendTo="body"
-													>
-														<!-- Opción en el dropdown -->
-														<ng-template ng-option-tmp let-item="item">
-															<div class="d-flex flex-column">
-																<span>{{ item.name }}</span>
-																<div
-																	class="me-2"
-																	[ngStyle]="{
-																		'background-color': 'var(--bs-' + item.color + ')',
-																		'height.px': 4,
-																		'width.%': 
-																			item.value === 'none' ? 5 :
-																			item.value.includes('15_days') ? 15 :
-																			item.value.includes('30_days') ? 25 :
-																			item.value.includes('3_months') ? 40 :
-																			item.value.includes('6_months') ? 60 :
-																			item.value.includes('1_year') ? 80 :
-																			item.value.includes('2_years') ? 90 :
-																			item.value.includes('manufacturer') ? 95 :
-																			item.value.includes('lifetime') ? 100 : 50
-																	}"
-																></div>
-																
+															<div class="option-item d-flex gap-3 align-items-center">
+																<div class="option-name">{{ item.name }}</div>
+																<small class="option-value text-gray-500"> - {{ item.abbr }}</small>
 															</div>
 														</ng-template>
 
@@ -758,805 +927,573 @@
 														</ng-template>
 													</ng-select>
 												</div>
-												<div class="mb-1" *ngIf="loadProduct">
-													<div class="form-control-solid form-control-load" style="height: 42.92px; width: 100%"></div>
-												</div>
-												<span class="fs-8 text-muted">{{labelHelper.warranty}}</span>
+												<span class="fs-8 text-muted text-description-form">{{labelHelper.dimensionUnit}}</span>
 											</div>
-											<div class="col-md-6">
-												<label class="fw-500 text-gray-800 fs-6 mb-2 required">País de fabricación</label>
-												<div *ngIf="!loadProduct" [ngClass]="{ 'is-invalid': errorsProduct?.countryOfOrigin }">
-													<ng-select
-														[items]="countries"
-														bindLabel="country"
-														placeholder="Países"
-														[clearable]="false"
-														[(ngModel)]="product.countryOfOrigin"
-														appendTo="body"
-														class="select-element mb-1"
-													>
-														<!-- Opción en el dropdown -->
-														<ng-template ng-option-tmp let-item="item">
-															<img [src]="item.flag" width="20" height="15" style="margin-right: 8px" />
-															{{ item.name }}
-														</ng-template>
-
-														<!-- Opción seleccionada en el input -->
-														<ng-template ng-label-tmp let-item="item">
-															<img [src]="item.flag" width="20" height="15" style="margin-right: 8px" />
-															{{ item.name }}
-														</ng-template>
-													</ng-select>
-												</div>
-												<div class="mb-1" *ngIf="loadProduct">
-													<div class="form-control-solid form-control-load" style="height: 42.92px; width: 100%"></div>
-												</div>
-												<span class="fs-8 text-muted">{{labelHelper.countryOfOrigin}}</span>
+											<div class="col-md-3 mb-4">
+												<label class="fw-500 text-gray-800 fs-6 mb-2" [ngClass]="{'required': categorySelected.isDimensions}">Ancho</label>
+												<input type="number" class="form-control mb-1" placeholder="Ancho" [(ngModel)]="physical.width"
+												[ngClass]="{ 'is-invalid': errorsProduct?.width }">
+												<span class="fs-8 text-muted text-description-form">{{labelHelper.width}}</span>
+											</div>
+											<div class="col-md-3 mb-4">
+												<label class="fw-500 text-gray-800 fs-6 mb-2" [ngClass]="{'required': categorySelected.isDimensions}">Alto</label>
+												<input type="number" class="form-control mb-1" placeholder="Alto" [(ngModel)]="physical.height"
+												[ngClass]="{ 'is-invalid': errorsProduct?.height }">
+												<span class="fs-8 text-muted text-description-form">{{labelHelper.height}}</span>
+											</div>
+											<div class="col-md-3 mb-4">
+												<label class="fw-500 text-gray-800 fs-6 mb-2" [ngClass]="{'required': categorySelected.isDimensions}">Largo</label>
+												<input type="number" class="form-control mb-1" placeholder="Largo" [(ngModel)]="physical.length"
+												[ngClass]="{ 'is-invalid': errorsProduct?.length }">
+												<span class="fs-8 text-muted text-description-form">{{labelHelper.length}}</span>
+											</div>
+											<div class="col-md-3 mb-4">
+												<label class="fw-500 text-gray-800 fs-6 mb-2" [ngClass]="{'required': categorySelected.isDimensions}">Peso</label>
+												<input type="number" class="form-control mb-1" placeholder="Peso" [(ngModel)]="physical.weight"
+												[ngClass]="{ 'is-invalid': errorsProduct?.weight }">
+												<span class="fs-8 text-muted text-description-form">{{labelHelper.weight}}</span>
 											</div>
 										</div>
-										<div class="row">
-											<div class="col-md-6 mb-6 mb-md-0">
-												<div class="d-flex justify-content-between align-items-center mb-2">
-													<label class="fw-500 text-gray-800 fs-6 required">
-														Precio regular
-													</label>
+										<div class="row" *ngIf="categorySelected.isTemperature">
+											<div class="col-lg-12 mb-5 d-flex">
+												<div>
+													<h4 class="mb-0">Temperatura y conservación</h4>
+													<span class="text-gray-600 mt-1 fw-400 fs-0-9rem">
+														Define las condiciones térmicas necesarias para almacenar, transportar o conservar correctamente el producto.
+													</span>
 												</div>
-												<input
-													*ngIf="!loadProduct"
-													currencyMask
-													type="text"
-													[options]="currencyOptions"
-													class="form-control mb-1"
-													placeholder="Precio Normal"
-													name="priceRegular"
-													[(ngModel)]="product.priceRegular"
-													[ngClass]="{ 'is-invalid': errorsProduct?.priceRegular}"
-												/>
-												<div class="mb-1" *ngIf="loadProduct">
-													<div class="form-control-solid form-control-load" style="height: 42.92px; width: 100%"></div>
-												</div>
-												<span class="fs-8 text-muted">{{labelHelper.priceRegular}}</span>
 											</div>
-											<div class="col-md-6">
-												<div class="d-flex justify-content-between align-items-center mb-2">
-													<label class="fw-500 text-gray-800 fs-6">
-														Precio descuento
-													</label>
-													<div class="cursor-pointer">
-														<i class="bi bi-info-circle" placement="left" 
-														[ngbTooltip]="labelHelper.priceDiscount"
-														tooltipClass="tooltip-dark"></i>
-													</div>
-												</div>
-												<input
-													*ngIf="!loadProduct"
-													currencyMask
-													type="text"
-													[options]="currencyOptions"
-													class="form-control mb-1"
-													placeholder="Precio Descuento"
-													name="priceDiscount"
-													[(ngModel)]="product.priceDiscount"
-													[ngClass]="{ 'is-invalid': errorsProduct?.priceDiscount}"
-												/>
-												<div class="mb-1" *ngIf="loadProduct">
-													<div class="form-control-solid form-control-load" style="height: 42.92px; width: 100%"></div>
-												</div>
-												<span class="fs-8 text-muted">{{labelHelper.priceDiscount}}</span>
-											</div>
-										</div>
-										<div class="row" *ngIf="widthScreen <= 1200">
-											<div class="col-md-6 mb-6 mb-md-0">
-												<label class="fw-500 text-gray-800 fs-6 mb-2 required">Marca</label>
-												<div *ngIf="!loadProduct" [ngClass]="{ 'is-invalid': errorsProduct?.brandId}">
-													<ng-select
-														[items]="brands_"
-														bindLabel="name"
-														bindValue="id"
-														[(ngModel)]="product.brandId"
-														placeholder="Buscar por marca"
-														[clearable]="false"
-														[closeOnSelect]="true"
-														class="select-element mb-1"
-														[loading]="loadingBrands"
-														[disabled]="loadingBrands"
-														appendTo="body"
-													>
-														<!-- 🔹 Opción en el dropdown -->
-														<ng-template ng-option-tmp let-item="item">
-															<div class="option-item">
-																<img *ngIf="item.logoUrl" [src]="item.logoUrl" alt="{{ item.name }}" class="brand-image" />
-																<span>{{ item.name }}</span>
-															</div>
-														</ng-template>
-
-														<!-- 🔹 Opción seleccionada en el input -->
-														<ng-template ng-label-tmp let-item="item">
-															<div class="selected-item">
-																<img *ngIf="item.logoUrl" [src]="item.logoUrl" alt="{{ item.name }}" class="brand-image" />
-																<span>{{ item.name }}</span>
-															</div>
-														</ng-template>
-
-														<ng-template ng-loading-text>
-															<div class="spinner-container">
-																<span class="spinner-border spinner-border-sm"></span>
-															</div>
-														</ng-template>
-													</ng-select>
-												</div>
-												<div class="mb-1" *ngIf="loadProduct">
-													<div class="form-control-solid form-control-load" style="height: 42.92px; width: 100%"></div>
-												</div>
-												<span class="fs-8 text-muted">{{labelHelper.brandId}}</span>
-											</div>
-										</div>
-										<div class="d-flex flex-column">
-											<div class="d-flex justify-content-between align-items-center mb-2">
-												<label class="fw-500 text-gray-800 fs-6">
-													Etiquetas
+											<div class="col-md-4 mb-4">
+												<label class="fw-500 text-gray-800 fs-6 mb-2">
+													Unidad de temperatura
 												</label>
-											</div>
-											<div [ngClass]="{ 'is-invalid': errorsProduct?.tags}" *ngIf="!loadProduct">
-												<app-tagify-input class="mb-1" [whiteList]="whiteListTags" (tagsChange)="onTagsChange($event)"></app-tagify-input>
-											</div>
-											<div class="mb-1" *ngIf="loadProduct">
-												<div class="form-control-solid form-control-load" style="height: 42.92px; width: 100%"></div>
-											</div>
-											<span class="fs-8 text-muted">{{labelHelper.categoryId}}</span>
-										</div>
-										<div class="fv-row">
-											<label class="required fw-500 text-gray-800 fs-6 mb-2">Contenido</label>
-											<div class="mb-1" [ngClass]="{ 'border-danger': errorsProduct?.description}">
-												<div #editor id="editor" style="height: 200px;"></div>
-											</div>
-											<span class="fs-8 text-muted">{{labelHelper.description}}</span>
-										</div>
-										<div class="fv-row">
-											<div class="d-flex justify-content-between align-items-center mb-2">
-												<label class="fw-500 text-gray-800 fs-6 required">
-													Extracto
-												</label>
-												<div class="cursor-pointer">
-													<i class="bi bi-info-circle" placement="left" 
-													[ngbTooltip]="labelHelper.extract"
-													tooltipClass="tooltip-dark"></i>
-												</div>
-											</div>
-											<textarea *ngIf="!loadProduct" class="form-control mb-1" placeholder="Reseña corta del producto" [(ngModel)]="product.extract" [ngClass]="{ 'is-invalid': errorsProduct?.extract}"></textarea>
-											<div class="mb-1" *ngIf="loadProduct">
-												<div class="form-control-solid form-control-load" style="height: 64.35px; width: 100%"></div>
-											</div>
-											<span class="fs-8 text-muted">{{labelHelper.extract}}</span>
-										</div>
-									</div>
-									<div class="card-body d-flex flex-column gap-6 pt-1" [ngClass]="{'d-none': option != 2}">
-										<div class="row">
-											<div class="col-12">
-												<app-alert 
-												[classAlert]="'bg-light-primary border-primary border-dashed mb-3'"
-												[title]="'¿Para que sirve esto?'"
-												[text]="'Ingresa las características del producto que se mostrarán en la tienda en línea (ejemplo: Tela: Algodón, RAM: 32GB, Pantalla: Amoled, Batería: 500 mAh, Talla: S).'"
-												[type]="'information'"
-												[classIcon]="'svg-icon-2hx svg-icon-primary'">
-												</app-alert>
-											</div>
-										</div>
-										<ng-container *ngIf="!loadProperties">
-											<div class="row" *ngFor="let item of arrProperties; let idx = index">
-												<div class="col-lg-5">
-													<input type="text" [(ngModel)]="item.attribute" class="form-control" placeholder="Propiedad">
-												</div>
-												<div class="col-lg-5">
-													<input type="text" [(ngModel)]="item.value" class="form-control" placeholder="Valor">
-												</div>
-												<div class="col-lg-2">
-													<div class="gap-3 d-flex align-items-center h-100"  *ngIf="item.id">
-														<button *ngIf="!loadBtnUpdateProperty" class="btn btn-icon btn-primary w-30px h-30px" (click)="onRemoveAttributeProperty(idx)">
-															<app-icon-check></app-icon-check>
-														</button>
-														<button *ngIf="loadBtnUpdateProperty" class="btn btn-icon btn-muted w-30px h-30px">
-															<span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
-														</button>
-
-														<button *ngIf="!loadBtnRemoveProperty" class="btn btn-icon btn-danger w-30px h-30px" (click)="onRemoveAttributeProperty(idx)">
-															<app-icon-trash></app-icon-trash>
-														</button>
-														<button *ngIf="loadBtnRemoveProperty" class="btn btn-icon btn-muted w-30px h-30px">
-															<span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
-														</button>
-													</div>
-													
-													<div class="gap-3 d-flex align-items-center h-100"  *ngIf="!item.id">
-														<button *ngIf="!loadBtnAddProperty" class="btn btn-icon btn-icon-primary btn-text-primary w-30px h-30px" style="background-color: #f9f9f9;" (click)="onRemoveAttributeProperty(idx)">
-															<app-icon-check></app-icon-check>
-														</button>
-														<button *ngIf="loadBtnAddProperty" class="btn btn-icon btn-icon-muted btn-text-muted w-30px h-30px" style="background-color: #f9f9f9;">
-															<span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
-														</button>
-
-														<button class="btn btn-icon btn-icon-danger btn-text-danger w-30px h-30px" style="background-color: #f9f9f9;" (click)="onRemoveAttributeProperty(idx)">
-															<app-icon-trash></app-icon-trash>
-														</button>
-													</div>
-												</div>
-											</div>
-										</ng-container>
-										<ng-container *ngIf="loadProperties">
-											<div class="row">
-												<div class="col-lg-6">
-													<div class="form-control-solid form-control-load" style="height: 42.92px; width: 100%"></div>
-												</div>
-												<div class="col-lg-5">
-													<div class="form-control-solid form-control-load" style="height: 42.92px; width: 100%"></div>
-												</div>
-												<div class="col-lg-1">
-													<div class="form-control-solid form-control-load" style="height: 42.92px; width: 100%"></div>
-												</div>
-											</div>
-										</ng-container>
-										<div class="row">
-											<ng-container *ngIf="!loadProduct">
-												<a *ngIf="!loadProperties" class="cursor-pointer" (click)="addAttribute()">
-													Nueva caracteristica
-												</a>
-												<a class="text-muted" style="cursor: not-allowed;" *ngIf="loadProperties">
-													Nueva caracteristica
-												</a>
-											</ng-container>
-											<a class="text-muted" style="cursor: not-allowed;" *ngIf="loadProduct">
-												Nueva caracteristica
-											</a>
-										</div>
-									</div>
-									<div class="card-body d-flex flex-column gap-6 pt-1" [ngClass]="{'d-none': option != 3}">
-										<!-- Más vendido -->
-										<label class="form-check form-check-custom form-check-solid align-items-center">
-											<input *ngIf="!loadProduct" class="form-check-input me-3" type="checkbox" [(ngModel)]="product.isBestSeller" />
-											<div *ngIf="loadProduct" class="form-control-solid form-control-load me-3" style="width: 22.75px; height: 22.75px"></div>
-
-											<span class="form-check-label d-flex flex-column align-items-start">
-												<span class="fw-500 text-gray-800 fs-6 mb-0">Más vendido</span>
-												<small>Marca este producto como uno de los más populares o con mayores ventas.</small>
-											</span>
-										</label>
-										<div class="separator separator-dashed"></div>
-
-										<!-- Nuevo -->
-										<label class="form-check form-check-custom form-check-solid align-items-center">
-											<input *ngIf="!loadProduct" class="form-check-input me-3" type="checkbox" [(ngModel)]="product.isNewArrival" />
-											<div *ngIf="loadProduct" class="form-control-solid form-control-load me-3" style="width: 22.75px; height: 22.75px"></div>
-
-											<span class="form-check-label d-flex flex-column align-items-start">
-												<span class="fw-500 text-gray-800 fs-6 mb-0">Nuevo</span>
-												<small>Indica que este producto fue recientemente agregado al catálogo.</small>
-											</span>
-										</label>
-										<div class="separator separator-dashed"></div>
-
-										<!-- Destacado -->
-										<label class="form-check form-check-custom form-check-solid align-items-center">
-											<input *ngIf="!loadProduct" class="form-check-input me-3" type="checkbox" [(ngModel)]="product.isFeatured" />
-											<div *ngIf="loadProduct" class="form-control-solid form-control-load me-3" style="width: 22.75px; height: 22.75px"></div>
-
-											<span class="form-check-label d-flex flex-column align-items-start">
-												<span class="fw-500 text-gray-800 fs-6 mb-0">Destacado</span>
-												<small>Resalta este producto en la página principal o secciones destacadas.</small>
-											</span>
-										</label>
-										<div class="separator separator-dashed"></div>
-
-										<!-- Edición limitada -->
-										<label class="form-check form-check-custom form-check-solid align-items-center">
-											<input *ngIf="!loadProduct" class="form-check-input me-3" type="checkbox" [(ngModel)]="product.isLimitedEdition" />
-											<div *ngIf="loadProduct" class="form-control-solid form-control-load me-3" style="width: 22.75px; height: 22.75px"></div>
-
-											<span class="form-check-label d-flex flex-column align-items-start">
-												<span class="fw-500 text-gray-800 fs-6 mb-0">Edición limitada</span>
-												<small>Marca el producto como una versión exclusiva o de tiraje limitado.</small>
-											</span>
-										</label>
-										<div class="separator separator-dashed"></div>
-
-										<!-- Preventa -->
-										<label class="form-check form-check-custom form-check-solid align-items-center">
-											<input *ngIf="!loadProduct" class="form-check-input me-3" type="checkbox" [(ngModel)]="product.isPreOrder" />
-											<div *ngIf="loadProduct" class="form-control-solid form-control-load me-3" style="width: 22.75px; height: 22.75px"></div>
-
-											<span class="form-check-label d-flex flex-column align-items-start">
-												<span class="fw-500 text-gray-800 fs-6 mb-0">Preventa</span>
-												<small>Permite reservar el producto antes de su lanzamiento o disponibilidad.</small>
-											</span>
-										</label>
-										<div class="separator separator-dashed"></div>
-
-										<!-- Exportable -->
-										<label class="form-check form-check-custom form-check-solid align-items-center">
-											<input *ngIf="!loadProduct" class="form-check-input me-3" type="checkbox" [(ngModel)]="product.isExportable" />
-											<div *ngIf="loadProduct" class="form-control-solid form-control-load me-3" style="width: 22.75px; height: 22.75px"></div>
-
-											<span class="form-check-label d-flex flex-column align-items-start">
-												<span class="fw-500 text-gray-800 fs-6 mb-0">Exportable</span>
-												<small>Indica que este producto puede venderse o enviarse internacionalmente.</small>
-											</span>
-										</label>
-										<div class="separator separator-dashed"></div>
-
-										<!-- Permitir Backorder -->
-										<label class="form-check form-check-custom form-check-solid align-items-center">
-											<input *ngIf="!loadProduct" class="form-check-input me-3" type="checkbox" [(ngModel)]="product.allowBackorder" />
-											<div *ngIf="loadProduct" class="form-control-solid form-control-load me-3" style="width: 22.75px; height: 22.75px"></div>
-
-											<span class="form-check-label d-flex flex-column align-items-start">
-												<span class="fw-500 text-gray-800 fs-6 mb-0">Permitir backorder</span>
-												<small>Permite que el cliente compre el producto aunque esté sin stock disponible.</small>
-											</span>
-										</label>
-
-									</div>
-									<div class="card-body d-flex flex-column gap-6 pt-1" [ngClass]="{'d-none': option != 4}">
-										<div class="row">
-											<div class="col-md-6">
-												<label class="fw-500 text-gray-800 fs-6 mb-2" [ngClass]="{'required': true}">Unidad peso</label>
-												
-												<ng-container *ngIf="!loadProduct">
-													<div [ngClass]="{ 'is-invalid': errorsProduct?.weightUnit }">
-														<ng-select
-															[items]="weightUnits_"
-															bindLabel="name"
-															[(ngModel)]="physical.weightUnit"
-															placeholder="Unidad de medida"
-															[clearable]="false"
-															[closeOnSelect]="true"
-															class="select-element mb-1"
-															appendTo="body"
-														>
-															<!-- Opción en el dropdown -->
-															<ng-template ng-option-tmp let-item="item">
-																<div class="option-item d-flex gap-3 align-items-center">
-																	<div class="option-name">{{ item.name }}</div>
-																	<small class="option-value text-gray-500"> - {{ item.abbr }}</small>
-																</div>
-															</ng-template>
-
-															<!-- Opción seleccionada en el input -->
-															<ng-template ng-label-tmp let-item="item">
-																{{ item.name }}
-															</ng-template>
-
-															<ng-template ng-loading-text>
-																<div class="spinner-container">
-																	<span class="spinner-border spinner-border-sm"></span>
-																</div>
-															</ng-template>
-														</ng-select>
-													</div>
-												</ng-container>
-
-												<div class="mb-1" *ngIf="loadProduct">
-													<div class="form-control-solid form-control-load" style="height: 42.92px; width: 100%"></div>
-												</div>
-												<span class="fs-8 text-muted">{{labelHelper.weightUnit}}</span>
-											</div>
-											<div class="col-md-6">
-												<label class="fw-500 text-gray-800 fs-6 mb-2" [ngClass]="{'required': true}">Unidad longitud</label>
-												<ng-container *ngIf="!loadProduct">
-													<div [ngClass]="{ 'is-invalid': errorsProduct?.dimensionUnit }">
-														<ng-select
-														[items]="dimensiontUnits_"
+												<div [ngClass]="{ 'is-invalid': errorsProduct?.storageTempUnit }">
+													<ng-select
+														[items]="temperatures_"
 														bindLabel="name"
-														[(ngModel)]="physical.dimensionUnit"   
-														placeholder="Unidad de medida"
+														[(ngModel)]="physical.storageTempUnit"
+														placeholder="Selecciona unidad"
 														[clearable]="false"
-														[closeOnSelect]="true"
 														class="select-element mb-1"
 														appendTo="body">
-															<!-- Opción en el dropdown -->
-															<ng-template ng-option-tmp let-item="item">
-																<div class="option-item d-flex gap-3 align-items-center">
-																	<div class="option-name">{{ item.name }}</div>
-																	<small class="option-value text-gray-500"> - {{ item.abbr }}</small>
-																</div>
-															</ng-template>
+													</ng-select>
+												</div>
+												<span class="fs-8 text-muted text-description-form">{{ labelHelper.storageTempUnit }}</span>
+											</div>
+											<div class="col-md-4 mb-4">
+												<label class="fw-500 text-gray-800 fs-6 mb-2">
+													Temperatura mínima
+												</label>
+												<input
+													type="number"
+													class="form-control mb-1"
+													placeholder="Ej: 2"
+													[(ngModel)]="physical.minStorageTemp"
+													[ngClass]="{ 'is-invalid': errorsProduct?.minStorageTemp }">
+												<span class="fs-8 text-muted text-description-form">{{ labelHelper.minStorageTemp }}</span>
+											</div>
+											<div class="col-md-4 mb-4">
+												<label class="fw-500 text-gray-800 fs-6 mb-2">
+													Temperatura máxima
+												</label>
+												<input
+													type="number"
+													class="form-control mb-1"
+													placeholder="Ej: 8"
+													[(ngModel)]="physical.maxStorageTemp"
+													[ngClass]="{ 'is-invalid': errorsProduct?.maxStorageTemp }">
 
-															<!-- Opción seleccionada en el input -->
-															<ng-template ng-label-tmp let-item="item">
-																{{ item.name }}
-															</ng-template>
-
-															<ng-template ng-loading-text>
-																<div class="spinner-container">
-																	<span class="spinner-border spinner-border-sm"></span>
-																</div>
-															</ng-template>
-														</ng-select>
-													</div>
-												</ng-container>
-												<div class="mb-1" *ngIf="loadProduct">
-													<div class="form-control-solid form-control-load" style="height: 42.92px; width: 100%"></div>
-												</div>
-												<span class="fs-8 text-muted">{{labelHelper.dimensionUnit}}</span>
-											</div>
-										</div>
-										<div class="row" *ngIf="true">
-											<div class="col-md-3">
-												<label class="fw-500 text-gray-800 fs-6 mb-2" [ngClass]="{'required': true}">Ancho</label>
-												<input *ngIf="!loadProduct" type="number" class="form-control mb-1" placeholder="Ancho" [(ngModel)]="physical.width"
-												[ngClass]="{ 'is-invalid': errorsProduct?.width }">
-												<div class="mb-1" *ngIf="loadProduct">
-													<div class="form-control-solid form-control-load" style="height: 42.92px; width: 100%"></div>
-												</div>
-												<span class="fs-8 text-muted">{{labelHelper.width}}</span>
-											</div>
-											<div class="col-md-3">
-												<label class="fw-500 text-gray-800 fs-6 mb-2" [ngClass]="{'required': true}">Alto</label>
-												<input *ngIf="!loadProduct" type="number" class="form-control mb-1" placeholder="Alto" [(ngModel)]="physical.height"
-												[ngClass]="{ 'is-invalid': errorsProduct?.height }">
-												<div class="mb-1" *ngIf="loadProduct">
-													<div class="form-control-solid form-control-load" style="height: 42.92px; width: 100%"></div>
-												</div>
-												<span class="fs-8 text-muted">{{labelHelper.height}}</span>
-											</div>
-											<div class="col-md-3">
-												<label class="fw-500 text-gray-800 fs-6 mb-2" [ngClass]="{'required': true}">Largo</label>
-												<input *ngIf="!loadProduct" type="number" class="form-control mb-1" placeholder="Largo" [(ngModel)]="physical.length"
-												[ngClass]="{ 'is-invalid': errorsProduct?.length }">
-												<div class="mb-1" *ngIf="loadProduct">
-													<div class="form-control-solid form-control-load" style="height: 42.92px; width: 100%"></div>
-												</div>
-												<span class="fs-8 text-muted">{{labelHelper.length}}</span>
-											</div>
-											<div class="col-md-3">
-												<label class="fw-500 text-gray-800 fs-6 mb-2" [ngClass]="{'required': true}">Peso</label>
-												<input *ngIf="!loadProduct" type="number" class="form-control mb-1" placeholder="Peso" [(ngModel)]="physical.weight"
-												[ngClass]="{ 'is-invalid': errorsProduct?.weight }">
-												<div class="mb-1" *ngIf="loadProduct">
-													<div class="form-control-solid form-control-load" style="height: 42.92px; width: 100%"></div>
-												</div>
-												<span class="fs-8 text-muted">{{labelHelper.weight}}</span>
+												<span class="fs-8 text-muted text-description-form">{{ labelHelper.maxStorageTemp }}</span>
 											</div>
 										</div>
 										<div class="row">
-											<div class="col-md-6">
-												<label class="fw-500 text-gray-800 fs-6 mb-2 required">Material principal</label>
-												<ng-container *ngIf="!loadProduct">
-													<div [ngClass]="{ 'is-invalid': errorsProduct?.material }">
-														<ng-select
-															[items]="materials_"
-															[(ngModel)]="physical.material"
-															placeholder="Materiales"
-															[clearable]="false"
-															[closeOnSelect]="true"
-															[groupBy]="'group'"
-															bindLabel="name"
-															bindValue="name"
-															class="select-element mb-1"
-															appendTo="body"
-														>
-															<!-- Opción en el dropdown -->
-															<ng-template ng-option-tmp let-item="item">
-																<div class="option-item d-flex gap-3 align-items-center">
-																	<div class="option-name">{{ item.name }}</div>
-																</div>
-															</ng-template>
-
-															<!-- Opción seleccionada en el input -->
-															<ng-template ng-label-tmp let-item="item">
-																{{ item.name }}
-															</ng-template>
-
-															<ng-template ng-loading-text>
-																<div class="spinner-container">
-																<span class="spinner-border spinner-border-sm"></span>
-																</div>
-															</ng-template>
-														</ng-select>
-													</div>
-												</ng-container>
-												<div class="mb-1" *ngIf="loadProduct">
-													<div class="form-control-solid form-control-load" style="height: 42.92px; width: 100%"></div>
-												</div>
-
-												<span class="fs-8 text-muted">{{labelHelper.material}}</span>
+											<div class="col-lg-12 mb-5">
+												<h4 class="mb-0">Inventario</h4>
+												<span class="text-gray-600 mt-1 fw-400 fs-0-9rem">
+													Activa opciones promocionales, visibilidad y reglas de venta del producto.
+												</span>
 											</div>
-											<div class="col-md-6">
-												<label class="fw-500 text-gray-800 fs-6 mb-2">Unidad Temperatura</label>
-												<ng-container *ngIf="!loadProduct">
-													<div [ngClass]="{ 'is-invalid': errorsProduct?.storageTempUnit }">
-														<ng-select
-															[items]="temperatures_"
-															bindLabel="name"
-															[(ngModel)]="physical.storageTempUnit"
-															placeholder="Unidade temperatura"
-															[clearable]="false"
-															[closeOnSelect]="true"
-															class="select-element mb-1"
-															appendTo="body"
-														>
-															<!-- Opción en el dropdown -->
-															<ng-template ng-option-tmp let-item="item">
-																<div class="option-item d-flex gap-3 align-items-center">
-																	<div class="option-name">{{ item.name }}</div>
-																	<small class="option-value text-gray-500"> - {{ item.abbr }}</small>
-																</div>
-															</ng-template>
-
-															<!-- Opción seleccionada en el input -->
-															<ng-template ng-label-tmp let-item="item">
-																{{ item.name }}
-															</ng-template>
-
-															<ng-template ng-loading-text>
-																<div class="spinner-container">
-																	<span class="spinner-border spinner-border-sm"></span>
-																</div>
-															</ng-template>
-														</ng-select>
-													</div>
-												</ng-container>
-												<div class="mb-1" *ngIf="loadProduct">
-													<div class="form-control-solid form-control-load" style="height: 42.92px; width: 100%"></div>
+											<div class="col-md-4 mb-4">
+												<div class="d-flex justify-content-between align-items-center mb-1">
+													<label class="fw-500 text-gray-800 fs-6">
+														Stock Minimo
+													</label>
 												</div>
-												<span class="fs-8 text-muted">{{labelHelper.storageTempUnit}}</span>
+												<div class="mb-1">
+													<div *ngIf="!loadProduct">
+														<input
+															type="text"
+															class="form-control mb-1"
+															placeholder="Stock Minimo"
+															name="minStock"
+															[(ngModel)]="product.minStock"
+															[ngClass]="{ 'is-invalid': errorsProduct?.minStock}"
+														/>
+													</div>
+													<div *ngIf="loadProduct">
+														<div class="form-control-solid form-control-load" style="height: 42.92px; width: 100%"></div>
+													</div>
+												</div>
+												
+												<span class="fs-8 text-muted text-description-form">
+													{{labelHelper.minStock}}
+												</span>
+											</div>
+											<div class="col-md-4 mb-4">
+												<div class="d-flex justify-content-between align-items-center mb-1">
+													<label class="fw-500 text-gray-800 fs-6">
+														Stock Maximo
+													</label>
+												</div>
+												<div class="mb-1">
+													<div *ngIf="!loadProduct">
+														<input
+															type="text"
+															class="form-control mb-1"
+															placeholder="Stock Maximo"
+															name="maxStock"
+															[(ngModel)]="product.maxStock"
+															[ngClass]="{ 'is-invalid': errorsProduct?.maxStock}"
+														/>
+													</div>
+													<div *ngIf="loadProduct">
+														<div class="form-control-solid form-control-load" style="height: 42.92px; width: 100%"></div>
+													</div>
+												</div>
+												
+												<span class="fs-8 text-muted text-description-form">{{labelHelper.maxStock}}</span>
+											</div>
+											<div class="col-md-4 mb-4">
+												<div class="d-flex justify-content-between align-items-center mb-1">
+													<label class="fw-500 text-gray-800 fs-6">
+														Unidades por Pedido
+													</label>
+												</div>
+												<div class="mb-1">
+													<div *ngIf="!loadProduct">
+														<input
+															type="text"
+															class="form-control mb-1"
+															placeholder="Limite maximo"
+															name="maxOrderLimit"
+															[(ngModel)]="product.maxOrderLimit"
+															[ngClass]="{ 'is-invalid': errorsProduct?.maxOrderLimit}"
+														/>
+													</div>
+													<div *ngIf="loadProduct">
+														<div class="form-control-solid form-control-load" style="height: 42.92px; width: 100%"></div>
+													</div>
+												</div>
+												
+												<span class="fs-8 text-muted text-description-form">{{labelHelper.maxOrderLimit}}</span>
+											</div>
+											<div class="col-md-12 mb-4">
+												<label class="form-check form-check-custom form-check-solid align-items-center">
+													<input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="product.allowBackorder" />
+													<span class="form-check-label d-flex flex-column">
+														<span class="fw-600 text-gray-800 fs-6">Permitir backorder</span>
+														<small class="text-muted">{{labelHelper.allowBackorder}}</small>
+													</span>
+												</label>
 											</div>
 										</div>
-										<div class="row mb-2">
-											<div class="col-md-6">
-												<label class="fw-500 text-gray-800 fs-6 mb-2">Temperatura min.</label>
-												<input *ngIf="!loadProduct" type="number" class="form-control mb-1" placeholder="Minima" [(ngModel)]="physical.minStorageTemp"
-												[ngClass]="{ 'is-invalid': errorsProduct?.minStorageTemp }">
-												<div class="mb-1" *ngIf="loadProduct">
-													<div class="form-control-solid form-control-load" style="height: 42.92px; width: 100%"></div>
-												</div>
-												<span class="fs-8 text-muted">{{labelHelper.minStorageTemp}}</span>
+										<div class="row">
+											<div class="col-lg-12 mb-5">
+												<h4 class="mb-0">Marketing</h4>
+												<span class="text-gray-600 mt-1 fw-400 fs-0-9rem">
+													Configura opciones promocionales, destacamiento comercial y reglas especiales de venta para mejorar la exposición del producto.
+												</span>
 											</div>
-											<div class="col-md-6">
-												<label class="fw-500 text-gray-800 fs-6 mb-2">Temperatura max</label>
-												<input *ngIf="!loadProduct" type="number" class="form-control mb-1" placeholder="Maxima" [(ngModel)]="physical.maxStorageTemp"
-												[ngClass]="{ 'is-invalid': errorsProduct?.maxStorageTemp }">
-												<div class="mb-1" *ngIf="loadProduct">
-													<div class="form-control-solid form-control-load" style="height: 42.92px; width: 100%"></div>
-												</div>
-												<span class="fs-8 text-muted">{{labelHelper.maxStorageTemp}}</span>
+											<div class="col-12 col-md-6 my-4">
+												<label class="form-check form-check-custom form-check-solid align-items-center">
+													<input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="product.isBestSeller" />
+													<span class="form-check-label d-flex flex-column">
+														<span class="fw-600 text-gray-800 fs-6">Más vendido</span>
+														<small class="text-muted">
+															Destaca productos con alta demanda o mayor volumen de ventas.
+														</small>
+													</span>
+												</label>
+											</div>
+											<div class="col-12 col-md-6 my-4">
+												<label class="form-check form-check-custom form-check-solid align-items-center">
+													<input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="product.isNewArrival" />
+													<span class="form-check-label d-flex flex-column">
+														<span class="fw-600 text-gray-800 fs-6">Nuevo ingreso</span>
+														<small class="text-muted">
+															Indica que fue agregado recientemente al catálogo.
+														</small>
+													</span>
+												</label>
+											</div>
+											<div class="col-12">
+												<div class="separator separator-dashed"></div>
+											</div>
+											<div class="col-12 col-md-6 my-4">
+												<label class="form-check form-check-custom form-check-solid align-items-center">
+													<input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="product.isFeatured" />
+													<span class="form-check-label d-flex flex-column">
+														<span class="fw-600 text-gray-800 fs-6">Destacado</span>
+														<small class="text-muted">
+															Muestra este producto en banners o zonas preferentes.
+														</small>
+													</span>
+												</label>
+											</div>
+											<div class="col-12 col-md-6 my-4">
+												<label class="form-check form-check-custom form-check-solid align-items-center">
+													<input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="product.isLimitedEdition" />
+													<span class="form-check-label d-flex flex-column">
+														<span class="fw-600 text-gray-800 fs-6">Edición limitada</span>
+														<small class="text-muted">
+															Producto exclusivo con stock reducido o temporal.
+														</small>
+													</span>
+												</label>
+											</div>
+											<div class="col-12">
+												<div class="separator separator-dashed"></div>
+											</div>
+											<div class="col-12 col-md-6 my-4">
+												<label class="form-check form-check-custom form-check-solid align-items-center">
+													<input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="product.isPreOrder" />
+													<span class="form-check-label d-flex flex-column">
+														<span class="fw-600 text-gray-800 fs-6">Preventa</span>
+														<small class="text-muted">
+															Permite reservar antes del lanzamiento oficial.
+														</small>
+													</span>
+												</label>
+											</div>
+											<div class="col-12 col-md-6 my-4">
+												<label class="form-check form-check-custom form-check-solid align-items-center">
+													<input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="product.isExportable" />
+													<span class="form-check-label d-flex flex-column">
+														<span class="fw-600 text-gray-800 fs-6">Exportable</span>
+														<small class="text-muted">
+															Disponible para ventas internacionales o exterior.
+														</small>
+													</span>
+												</label>
 											</div>
 										</div>
-										<!-- ¿Es frágil? -->
-										<label class="form-check form-check-custom form-check-solid align-items-center">
-											<ng-container *ngIf="!loadProduct">
-												<input class="form-check-input me-3" type="checkbox" [(ngModel)]="physical.isFragile" />
-											</ng-container>
-											<div *ngIf="loadProduct" class="form-control-solid form-control-load me-3" style="width: 22.75px; height: 22.75px"></div>
-
-											<span class="form-check-label d-flex flex-column align-items-start">
-												<span class="fw-500 text-gray-800 fs-6 mb-0">Es frágil</span>
-												<small>Marca si el producto requiere un manejo cuidadoso durante el envío.</small>
-											</span>
-										</label>
-										<div class="separator separator-dashed"></div>
-
-										<!-- ¿Es perecible? -->
-										<label class="form-check form-check-custom form-check-solid align-items-center">
-											<input *ngIf="!loadProduct" class="form-check-input me-3" type="checkbox" [(ngModel)]="physical.isPerishable" />
-											<div *ngIf="loadProduct" class="form-control-solid form-control-load me-3" style="width: 22.75px; height: 22.75px"></div>
-											
-											<span class="form-check-label d-flex flex-column align-items-start">
-												<span class="fw-500 text-gray-800 fs-6 mb-0">Es perecible</span>
-												<small>Indica si el producto se deteriora con el tiempo o tiene fecha de vencimiento.</small>
-											</span>
-											</label>
-										<div class="separator separator-dashed"></div>
-
-										<!-- ¿Es ecológico / reciclable? -->
-										<label class="form-check form-check-custom form-check-solid align-items-center">
-											<input *ngIf="!loadProduct" class="form-check-input me-3" type="checkbox" [(ngModel)]="physical.isEcoFriendly" />
-											<div *ngIf="loadProduct" class="form-control-solid form-control-load me-3" style="width: 22.75px; height: 22.75px"></div>
-											
-											<span class="form-check-label d-flex flex-column align-items-start">
-												<span class="fw-500 text-gray-800 fs-6 mb-0">Ecológico / reciclable</span>
-												<small>Marca si el producto o su empaque es reciclable o respetuoso con el medio ambiente.</small>
-											</span>
-										</label>
-										<div class="separator separator-dashed"></div>
-
-										<!-- ¿Es biodegradable? -->
-										<label class="form-check form-check-custom form-check-solid align-items-center">
-											<input *ngIf="!loadProduct" class="form-check-input me-3" type="checkbox" [(ngModel)]="physical.isBiodegradable" />
-											<div *ngIf="loadProduct" class="form-control-solid form-control-load me-3" style="width: 22.75px; height: 22.75px"></div>
-
-											<span class="form-check-label d-flex flex-column align-items-start">
-												<span class="fw-500 text-gray-800 fs-6 mb-0">Biodegradable</span>
-												<small>Marca si el producto puede descomponerse naturalmente sin dañar el ambiente.</small>
-											</span>
-										</label>
-										<div class="separator separator-dashed"></div>
-
-										<!-- ¿Es peligroso? -->
-										<label class="form-check form-check-custom form-check-solid align-items-center">
-											<input *ngIf="!loadProduct" class="form-check-input me-3" type="checkbox" [(ngModel)]="physical.isHazardous" />
-											<div *ngIf="loadProduct" class="form-control-solid form-control-load me-3" style="width: 22.75px; height: 22.75px"></div>
-
-											<span class="form-check-label d-flex flex-column align-items-start">
-												<span class="fw-500 text-gray-800 fs-6 mb-0">Material peligroso</span>
-												<small>Indica si el producto requiere un manejo o transporte regulado por seguridad.</small>
-											</span>
-										</label>
-										<div class="separator separator-dashed"></div>
-
-										<!-- ¿Requiere refrigeración? -->
-										<label class="form-check form-check-custom form-check-solid align-items-center">
-											<input *ngIf="!loadProduct" class="form-check-input me-3" type="checkbox" [(ngModel)]="physical.isRequiresRefrigeration" />
-											<div *ngIf="loadProduct" class="form-control-solid form-control-load me-3" style="width: 22.75px; height: 22.75px"></div>
-
-											<span class="form-check-label d-flex flex-column align-items-start">
-												<span class="fw-500 text-gray-800 fs-6 mb-0">Requiere refrigeración</span>
-												<small>Marca si el producto necesita mantenerse refrigerado o en cadena de frío.</small>
-											</span>
-										</label>
-										<div class="separator separator-dashed"></div>
-
-										<!-- ¿Es inflamable? -->
-										<label class="form-check form-check-custom form-check-solid align-items-center">
-											<input *ngIf="!loadProduct" class="form-check-input me-3" type="checkbox" [(ngModel)]="physical.isFlammable" />
-											<div *ngIf="loadProduct" class="form-control-solid form-control-load me-3" style="width: 22.75px; height: 22.75px"></div>
-											
-											<span class="form-check-label d-flex flex-column align-items-start">
-												<span class="fw-500 text-gray-800 fs-6 mb-0">Es inflamable</span>
-												<small>Indica si el producto puede encenderse fácilmente o requiere precauciones especiales.</small>
-											</span>
-										</label>
-										<div class="separator separator-dashed"></div>
-
-										<!-- ¿Requiere ensamblaje? -->
-										<label class="form-check form-check-custom form-check-solid align-items-center">
-											<input *ngIf="!loadProduct" class="form-check-input me-3" type="checkbox" [(ngModel)]="physical.isRequiresAssembly" />
-											<div *ngIf="loadProduct" class="form-control-solid form-control-load me-3" style="width: 22.75px; height: 22.75px"></div>
-
-											<span class="form-check-label d-flex flex-column align-items-start">
-												<span class="fw-500 text-gray-800 fs-6 mb-0">Requiere ensamblaje</span>
-												<small>Marca si el producto necesita ser armado por el cliente o instalador.</small>
-											</span>
-										</label>
+										<div class="row">
+											<div class="col-lg-12 mb-5">
+												<h4 class="mb-0">Propiedades físicas</h4>
+												<span class="text-gray-600 mt-1 fw-400 fs-0-9rem">
+													Define características especiales del producto que afectan su almacenamiento, manipulación, transporte, instalación o conservación.
+												</span>
+											</div>
+											<div class="col-12 col-md-6 my-4">
+												<label class="form-check form-check-custom form-check-solid align-items-center">
+													<input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="physical.isFragile" />
+													<span class="form-check-label d-flex flex-column align-items-start">
+														<span class="fw-500 text-gray-800 fs-6 mb-1">Es frágil</span>
+														<small class="text-muted">
+															Requiere manejo cuidadoso para evitar golpes o daños.
+														</small>
+													</span>
+												</label>
+											</div>
+											<div class="col-12 col-md-6 my-4">
+												<label class="form-check form-check-custom form-check-solid align-items-center">
+													<input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="physical.isPerishable" />
+													<span class="form-check-label d-flex flex-column align-items-start">
+														<span class="fw-500 text-gray-800 fs-6 mb-1">Es perecible</span>
+														<small class="text-muted">
+															Se deteriora con el tiempo o tiene vencimiento.
+														</small>
+													</span>
+												</label>
+											</div>
+											<div class="col-12">
+												<div class="separator separator-dashed"></div>
+											</div>
+											<div class="col-12 col-md-6 my-4">
+												<label class="form-check form-check-custom form-check-solid align-items-center">
+													<input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="physical.isEcoFriendly" />
+													<span class="form-check-label d-flex flex-column align-items-start">
+														<span class="fw-500 text-gray-800 fs-6 mb-1">Ecológico</span>
+														<small class="text-muted">
+															Producto o empaque reciclable y sostenible.
+														</small>
+													</span>
+												</label>
+											</div>
+											<div class="col-12 col-md-6 my-4">
+												<label class="form-check form-check-custom form-check-solid align-items-center">
+													<input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="physical.isBiodegradable" />
+													<span class="form-check-label d-flex flex-column align-items-start">
+														<span class="fw-500 text-gray-800 fs-6 mb-1">Biodegradable</span>
+														<small class="text-muted">
+															Puede degradarse naturalmente sin contaminar.
+														</small>
+													</span>
+												</label>
+											</div>
+											<div class="col-12">
+												<div class="separator separator-dashed"></div>
+											</div>
+											<div class="col-12 col-md-6 my-4">
+												<label class="form-check form-check-custom form-check-solid align-items-center">
+													<input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="physical.isHazardous" />
+													<span class="form-check-label d-flex flex-column align-items-start">
+														<span class="fw-500 text-gray-800 fs-6 mb-1">Material peligroso</span>
+														<small class="text-muted">
+															Requiere transporte o manejo con precaución.
+														</small>
+													</span>
+												</label>
+											</div>
+											<div class="col-12 col-md-6 my-4">
+												<label class="form-check form-check-custom form-check-solid align-items-center">
+													<input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="physical.isRequiresRefrigeration" />
+													<span class="form-check-label d-flex flex-column align-items-start">
+														<span class="fw-500 text-gray-800 fs-6 mb-1">Refrigeración</span>
+														<small class="text-muted">
+															Necesita cadena de frío o temperatura controlada.
+														</small>
+													</span>
+												</label>
+											</div>
+											<div class="col-12">
+												<div class="separator separator-dashed"></div>
+											</div>
+											<div class="col-12 col-md-6 my-4">
+												<label class="form-check form-check-custom form-check-solid align-items-center">
+													<input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="physical.isFlammable" />
+													<span class="form-check-label d-flex flex-column align-items-start">
+														<span class="fw-500 text-gray-800 fs-6 mb-1">Es inflamable</span>
+														<small class="text-muted">
+															Puede encenderse fácilmente con calor o chispa.
+														</small>
+													</span>
+												</label>
+											</div>
+											<div class="col-12 col-md-6 my-4">
+												<label class="form-check form-check-custom form-check-solid align-items-center">
+													<input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="physical.isRequiresAssembly" />
+													<span class="form-check-label d-flex flex-column align-items-start">
+														<span class="fw-500 text-gray-800 fs-6 mb-1">Requiere ensamblaje</span>
+														<small class="text-muted">
+															Debe armarse por cliente o instalador.
+														</small>
+													</span>
+												</label>
+											</div>
+										</div>
 									</div>
 									<div class="card-body d-flex flex-column gap-6 pt-1" [ngClass]="{'d-none': option != 5}">
 										<div class="row">
-											<div class="col-md-6">
+											<div class="col-lg-12 mb-5">
+												<h4 class="mb-0">Logistica y preparación</h4>
+												<span class="text-gray-600 mt-1 fw-400 fs-0-9rem">
+													Configura cómo se embala el producto, cuánto tiempo toma prepararlo y qué cuidados requiere en el envío.
+												</span>
+											</div>
+											<div class="col-md-6 mb-4">
 												<label class="fw-500 text-gray-800 fs-6 mb-2 required">Empaquetado</label>
-												<ng-container *ngIf="!loadProduct">
-													<div [ngClass]="{ 'is-invalid': errorsProduct?.packageType }">
-														<ng-select
-															[items]="packages_"
-															bindLabel="name"
-															bindValue="name"
-															[(ngModel)]="shipping.packageType"
-															placeholder="Tipo de empaque"
-															[clearable]="false"
-															[closeOnSelect]="true"
-															class="select-element mb-1"
-															appendTo="body"
-														>
-															<!-- Opción en el dropdown -->
-															<ng-template ng-option-tmp let-item="item">
-																<div class="option-item d-flex gap-3 align-items-center">
-																	<div class="option-name">{{ item.name }}</div>
-																</div>
-															</ng-template>
+												<div class="mb-1">
+													<div *ngIf="!loadProduct">
+														<div [ngClass]="{ 'is-invalid': errorsProduct?.packageType }">
+															<ng-select
+																[items]="packages_"
+																bindLabel="name"
+																bindValue="name"
+																[(ngModel)]="shipping.packageType"
+																placeholder="Tipo de empaque"
+																[clearable]="false"
+																[closeOnSelect]="true"
+																class="select-element"
+																appendTo="body"
+															>
+																<!-- Opción en el dropdown -->
+																<ng-template ng-option-tmp let-item="item">
+																	<div class="option-item d-flex gap-3 align-items-center">
+																		<div class="option-name">{{ item.name }}</div>
+																	</div>
+																</ng-template>
 
-															<!-- Opción seleccionada en el input -->
-															<ng-template ng-label-tmp let-item="item">
-																{{ item.name }}
-															</ng-template>
+																<!-- Opción seleccionada en el input -->
+																<ng-template ng-label-tmp let-item="item">
+																	{{ item.name }}
+																</ng-template>
 
-															<ng-template ng-loading-text>
-																<div class="spinner-container">
-																	<span class="spinner-border spinner-border-sm"></span>
-																</div>
-															</ng-template>
-														</ng-select>
+																<ng-template ng-loading-text>
+																	<div class="spinner-container">
+																		<span class="spinner-border spinner-border-sm"></span>
+																	</div>
+																</ng-template>
+															</ng-select>
+														</div>
 													</div>
-												</ng-container>
-												<div class="mb-1" *ngIf="loadProduct">
-													<div class="form-control-solid form-control-load" style="height: 42.92px; width: 100%"></div>
+													<div *ngIf="loadProduct">
+														<div class="form-control-solid form-control-load" style="height: 42.92px; width: 100%"></div>
+													</div>
 												</div>
-												<span class="fs-8 text-muted">{{labelHelper.packageType}}</span>
+												
+												<span class="fs-8 text-muted text-description-form">{{labelHelper.packageType}}</span>
 											</div>
-											<div class="col-md-6">
+											<div class="col-md-6 mb-4">
 												<label class="fw-500 text-gray-800 fs-6 mb-2 required">Días de preparación</label>
-												<input *ngIf="!loadProduct" type="number" class="form-control mb-1" [(ngModel)]="shipping.handlingDays" placeholder="Días para el envío"
-												[ngClass]="{ 'is-invalid': errorsProduct?.handlingDays }">
-												<div class="mb-1" *ngIf="loadProduct">
-													<div class="form-control-solid form-control-load" style="height: 42.92px; width: 100%"></div>
+												<div class="mb-1">
+													<div *ngIf="!loadProduct">
+														<input type="number" class="form-control" [(ngModel)]="shipping.handlingDays" placeholder="Días para el envío"
+														[ngClass]="{ 'is-invalid': errorsProduct?.handlingDays }">
+													</div>
+													<div *ngIf="loadProduct">
+														<div class="form-control-solid form-control-load" style="height: 42.92px; width: 100%"></div>
+													</div>
 												</div>
-												<span class="fs-8 text-muted">{{labelHelper.handlingDays}}</span>
+												
+												<span class="fs-8 text-muted text-description-form">{{labelHelper.handlingDays}}</span>
 											</div>
-										</div>
-										<div class="row">
-											<div class="col-12">
+											<div class="col-12 mb-4">
 												<label class="fw-500 text-gray-800 fs-6 mb-2">
 													Instrucciones de envío
 												</label>
-												<textarea *ngIf="!loadProduct" name="specialInstructions" class="form-control mb-1" placeholder="Especifica algunas instrucciones"
-												[(ngModel)]="shipping.specialInstructions"
-												[ngClass]="{ 'is-invalid': errorsProduct?.specialInstructions }"></textarea>
-												<div class="mb-1" *ngIf="loadProduct">
-													<div class="form-control-solid form-control-load" style="height: 64.35px; width: 100%"></div>
+												<div class="mb-1">
+													<div *ngIf="!loadProduct">
+														<textarea name="specialInstructions" class="form-control" placeholder="Especifica algunas instrucciones"
+														[(ngModel)]="shipping.specialInstructions"
+														[ngClass]="{ 'is-invalid': errorsProduct?.specialInstructions }"></textarea>
+													</div>
+													<div *ngIf="loadProduct">
+														<div class="form-control-solid form-control-load" style="height: 64.38px; width: 100%"></div>
+													</div>
 												</div>
-												<span class="fs-8 text-muted">{{labelHelper.specialInstructions}}</span>
+												
+												<span class="fs-8 text-muted text-description-form">{{labelHelper.specialInstructions}}</span>
 											</div>
 										</div>
+										<div class="row">
+											<div class="col-lg-12 mb-5">
+												<h4 class="mb-0">Opciones de entrega</h4>
+												<span class="text-gray-600 mt-1 fw-400 fs-0-9rem">
+													Configura beneficios y modalidades disponibles para la entrega del producto.
+												</span>
+											</div>
+											<!-- FILA 1 -->
+											<div class="col-12 col-md-6 mb-4">
+												<label class="form-check form-check-custom form-check-solid align-items-start">
+													<input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="shipping.freeShipping" />
+													<span class="form-check-label d-flex flex-column align-items-start">
+														<span class="fw-500 text-gray-800 fs-6 mb-1">Envío gratuito</span>
+														<small class="text-muted">
+															El producto se enviará sin costo adicional para el cliente.
+														</small>
+													</span>
+												</label>
+											</div>
 
-										<label class="form-check form-check-custom form-check-solid align-items-center">
-											<input *ngIf="!loadProduct" class="form-check-input me-3" type="checkbox" [(ngModel)]="shipping.freeShipping" />
-											<div *ngIf="loadProduct" class="form-control-solid form-control-load me-3" style="width: 22.75px; height: 22.75px"></div>
-											<span class="form-check-label d-flex flex-column align-items-start">
-												<span class="fw-500 text-gray-800 fs-6 mb-0">Envío gratuito</span>
-												<small>Activa esta opción si el producto se enviará sin costo adicional para el cliente.</small>
-											</span>
-										</label>
-										<div class="separator separator-dashed my-2"></div>
-										<label class="form-check form-check-custom form-check-solid align-items-center">
-											<input *ngIf="!loadProduct" class="form-check-input me-3" type="checkbox" [(ngModel)]="shipping.pickupInStore" />
-											<div *ngIf="loadProduct" class="form-control-solid form-control-load me-3" style="width: 22.75px; height: 22.75px"></div>
-											<span class="form-check-label d-flex flex-column align-items-start">
-												<span class="fw-500 text-gray-800 fs-6 mb-0">Recojo en tienda</span>
-												<small>Marca esta opción si el cliente puede recoger el producto directamente en una sucursal.</small>
-											</span>
-										</label>
+											<div class="col-12 col-md-6 mb-4">
+												<label class="form-check form-check-custom form-check-solid align-items-start">
+													<input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="shipping.pickupInStore" />
+													<span class="form-check-label d-flex flex-column align-items-start">
+														<span class="fw-500 text-gray-800 fs-6 mb-1">Recojo en tienda</span>
+														<small class="text-muted">
+															Permite recoger el producto directamente en sucursal.
+														</small>
+													</span>
+												</label>
+											</div>
+										</div>
 									</div>
 									<div class="card-body d-flex flex-column gap-6 pt-1" [ngClass]="{'d-none': option != 6}">
-										<div class="row">
-											<div class="col-12">
-												<app-alert [classAlert]="'bg-light-primary border-primary border-dashed mb-3'"
-												[title]="'¿Para que sirve esto?'"
-												[text]="'Agrega al menos 3 imagenes para la galería del producto. Esta será visible para los clientes en la tienda y ayuda a presentar mejor el artículo.'"
-												[type]="'information'"
-												[classIcon]="'svg-icon-2hx svg-icon-primary'">
-												</app-alert>
+										<ng-container *ngIf="errorsProduct.gallery?.length >= 1 || errorsProduct.cover?.length >= 1">
+											<div class="row">
+												<div class="col-12" >
+													<app-alert 
+														[title]="'¡Errores de Validación!'"
+														[classAlert]="'bg-light-danger border-danger border-dashed mb-3'"
+														[text]="
+															(
+																(errorsProduct.gallery || []).join('. ') +
+																(errorsProduct.gallery?.length && errorsProduct.cover?.length ? '<br> ' : '') +
+																(errorsProduct.cover || []).join('. ')
+															)
+														"
+														[type]="'information'"
+														[classIcon]="'svg-icon-2hx svg-icon-danger'">
+													</app-alert>
+												</div>
 											</div>
-											<div class="col-12" *ngIf="errorsProduct.gallery?.length >= 1 || errorsProduct.cover?.length >= 1">
-												<app-alert 
-													[title]="'¡Errores de Validación!'"
-													[classAlert]="'bg-light-danger border-danger border-dashed mb-3'"
-													[text]="
-														(
-															(errorsProduct.gallery || []).join('. ') +
-															(errorsProduct.gallery?.length && errorsProduct.cover?.length ? '<br> ' : '') +
-															(errorsProduct.cover || []).join('. ')
-														)
-													"
-													[type]="'information'"
-													[classIcon]="'svg-icon-2hx svg-icon-danger'">
-												</app-alert>
-											</div>
-										</div>
+										</ng-container>
 
-										<app-upload-images (filesSelected)="onSelectFiles($event)"></app-upload-images>
+										<app-upload-images (filesSelected)="onUploadImagesGallery($event)"></app-upload-images>
 
 										<div class="row g-3" *ngIf="!loadPhotos">
 											<div class="col-6 col-md-4 col-lg-3"
 												*ngFor="let item of images; let idx = index">
-
-												<a class="d-block overlay position-relative"
-												data-fslightbox="lightbox-basic"
-												[href]="item.preview">
-
-													<div class="overlay-wrapper
-																bgi-no-repeat bgi-position-center bgi-size-cover
-																card-rounded min-h-175px"
-														[ngStyle]="{'background-image': 'url(' + item.preview + ')'}">
-													</div>
-													
-													<div class="overlay-layer card-rounded bg-dark bg-opacity-25 shadow">
-														<i class="bi bi-eye-fill text-white fs-3x"></i>
+												<a
+													class="d-block overlay position-relative"
+													data-fslightbox="lightbox-basic"
+													style="border: 1px dashed #c1c4cd !important"
+												>
+													<div
+														class="overlay-wrapper
+														bgi-no-repeat bgi-position-center bgi-size-cover
+													    min-h-175px"
 														
-													</div>
-													<span class="badge badge-dark position-absolute" style="top: 10px;left:10px" *ngIf="cover?.index == item.index">Cover</span>
-												</a>
-												
+														[ngStyle]="{ 'background-image': 'url(' + item.preview + ')' }"
+													></div>
 
-												<div class="d-flex gap-3">
-													<small class="text-danger cursor-pointer" (click)="removeImage(idx)"  *ngIf="cover?.index != item.index">Eliminar</small>
-													<small class="text-primary cursor-pointer" (click)="onSelectedBanner(item)" *ngIf="cover?.index != item.index">Portada</small>
-												</div>
+													<div class="overlay-layer bg-dark bg-opacity-25 shadow">
+
+														<div class="d-flex gap-3" *ngIf="getFileName(coverUrlEdit) != getFileName(item.preview)">
+															<button
+																type="button"
+																class="btn btn-icon bg-white rounded-circle w-30px h-30px"
+																title="Marcar como portada"
+																(click)="onSelectedCover(item.index, item.preview)"
+																placement="top" 
+																[ngbTooltip]="'Establecer cover'"
+																tooltipClass="tooltip-dark"
+															>
+																<ng-container
+																	*ngIf="loadSetCoverGallery && item.index == idSelectCoverGallery; else iconStar">
+
+																	<span class="spinner-border spinner-border-sm"></span>
+
+																</ng-container>
+
+																<ng-template #iconStar>
+																	<i class="bi bi-star-fill fs-5 text-gray-700"></i>
+																</ng-template>
+															</button>
+															<button
+																type="button"
+																class="btn btn-icon bg-white rounded-circle w-30px h-30px"
+																title="Eliminar imagen"
+																(click)="onRemoveCover(item.id)" 
+																placement="top" 
+																[ngbTooltip]="'Eliminar imagen'"
+																tooltipClass="tooltip-dark" 
+															>
+																<ng-container
+																	*ngIf="loadDeleteCoverGallery && item.id == idSelectDeleteCoverGallery; else iconTrash">
+
+																	<span class="spinner-border spinner-border-sm"></span>
+
+																</ng-container>
+
+																<ng-template #iconTrash>
+																	<i class="bi bi-trash-fill fs-5 text-gray-700"></i>
+																</ng-template>
+																
+															</button>
+
+														</div>
+
+													</div>
+													<span
+														class="badge badge-dark position-absolute"
+														style="top:10px; left:10px"
+														*ngIf="getFileName(coverUrlEdit) == getFileName(item.preview)"
+													>
+														Cover
+													</span>
+												</a>
 											</div>
 										</div>
 										<div class="row g-3" *ngIf="loadPhotos">
@@ -1575,91 +1512,61 @@
 										</div>
 									</div>
 									<div class="card-body d-flex flex-column gap-6 pt-1" [ngClass]="{'d-none': option != 7}">
-										<div class="row">
-											<div class="col-12">
-												<app-alert 
-												[classAlert]="'bg-light-primary border-primary border-dashed mb-3'"
-												[title]="'¿Para que sirve esto?'"
-												[text]="'Ingresa las características del producto que se mostrarán en la tienda en línea (ejemplo: Tela: Algodón, RAM: 32GB, Pantalla: Amoled, Batería: 500 mAh, Talla: S).'"
-												[type]="'information'"
-												[classIcon]="'svg-icon-2hx svg-icon-primary'">
-												</app-alert>
-											</div>
-											<div class="col-12" *ngIf="errorsProduct.variations?.length >= 1">
-												<app-alert 
-												[classAlert]="'align-items-center bg-light-danger border-danger border-dashed mb-3'"
-												[title]="'¡Errores de Validación!'"
-												[text]="errorsProduct.variations"
-												[type]="'information'"
-												[classIcon]="'svg-icon-2hx svg-icon-danger'">
-												</app-alert>
-											</div>
-										</div>
-										<div class="row">
-											<div class="col-md-7">
-												<label class="fw-500 text-gray-800 fs-6 mb-2 required">Plantilla SKU</label>
-												
-												<div [ngClass]="{'is-invalid': errorsVariation?.skuPattern}">
-													<ng-select
-														[items]="skuPatterns"
-														bindLabel="name"
-														[(ngModel)]="variation.skuPattern"
-														placeholder="Tipo de empaque"
-														[clearable]="false"
-														[closeOnSelect]="true"
-														class="select-element mb-1"
-														appendTo="body"
-													>
-														<!-- Opción en el dropdown -->
-														<ng-template ng-option-tmp let-item="item">
-															<div class="option-item d-flex flex-column align-items-start">
-																<div class="option-name">{{ item.example }}</div>
-																<small class="text-gray-500">{{item.name}}</small>
-															</div>
-														</ng-template>
-
-														<!-- Opción seleccionada en el input -->
-														<ng-template ng-label-tmp let-item="item">
-															{{ item.example }}
-														</ng-template>
-
-														<ng-template ng-loading-text>
-															<div class="spinner-container">
-																<span class="spinner-border spinner-border-sm"></span>
-															</div>
-														</ng-template>
-													</ng-select>
+										<ng-container *ngIf="errorsProduct.variations?.length >= 1">
+											<div class="row" >
+												<div class="col-12">
+													<app-alert 
+													[classAlert]="'align-items-center bg-light-danger border-danger border-dashed mb-3'"
+													[title]="'¡Errores de Validación!'"
+													[text]="errorsProduct.variations"
+													[type]="'information'"
+													[classIcon]="'svg-icon-2hx svg-icon-danger'">
+													</app-alert>
 												</div>
-												
-												<span class="fs-8 text-muted">Combinacion de campos para SKU.</span>
 											</div>
-											<div class="col-md-5">
-												<label class="fw-500 text-gray-800 fs-6 mb-2 required">Atributo principal</label>
-												<input type="text" class="form-control mb-1" 
-												[(ngModel)]="variation.name" 
-												placeholder="Tallas"
-												[ngClass]="{'is-invalid': errorsVariation?.name}"
-												(keyup.ENTER)="addVariation()"
-												>
-												<span class="fs-8 text-muted">Valor refencial de la pestaña general.</span>
-											</div>
-											
-											
-										</div>
-										<div class="row">
-											<ng-container *ngIf="!loadProduct">
-												<a *ngIf="!loadingVariations" class="cursor-pointer" (click)="addAttribute()">
-													Nueva variación
-												</a>
-												<a class="text-muted" style="cursor: not-allowed;" *ngIf="loadingVariations">
-													Nueva variación
-												</a>
-											</ng-container>
-											<a class="text-muted" style="cursor: not-allowed;" *ngIf="loadProduct">
-												Nueva variación
-											</a>
-										</div>
+										</ng-container>
+										<div class="row g-3">
+											<div class="col-12 col-md">
+												<label class="fw-500 text-gray-800 fs-6 mb-2 required">
+												Atributo principal
+												</label>
 
+												<div class="row g-3 align-items-center">
+												<div class="col">
+													<div class="position-relative">
+													<input
+														type="text"
+														class="form-control pe-15"
+														placeholder="Tallas"
+														name="name"
+														[(ngModel)]="variation.name"
+														[ngClass]="{ 'is-invalid': errorsVariation?.name }"
+														(keyup.enter)="onCreateVariation()"
+													/>
+
+													<span
+														class="text-primary position-absolute top-50 end-0 translate-middle-y me-3 fw-600 fs-8"
+														style="pointer-events:none; background:#fff; padding:1px;">
+														[ENTER]
+													</span>
+													</div>
+												</div>
+
+												<div class="col-12 col-md-auto">
+													<button
+													type="button"
+													class="btn btn-primary w-100"
+													(click)="onCreateVariation()">
+													Enviar
+													</button>
+												</div>
+												</div>
+
+												<span class="fs-8 text-muted d-block mt-2">
+												Valor referencial de la pestaña general.
+												</span>
+											</div>
+										</div>
 										<div class="row">
 											<div class="col-12">
 												<table class="table align-middle table-row-dashed fs-6 gy-3 mb-0"
@@ -1673,15 +1580,14 @@
 													<tbody class="fw-bold text-gray-600"  *ngIf="!loadingVariations">
 														<tr *ngFor="let item of variations; let idx = index">
 															<td>
-																<div class="d-flex align-items-center gap-3">
-																	<div class="d-flex flex-column text-muted">
-																		<a href="#" class="text-gray-800 text-hover-primary fw-bold">
-																			{{item.name}}
-																		</a>
-																		<div class="fs-7">{{item.skuPattern.name}}</div>
-																	</div>
+															<div class="d-flex align-items-center gap-3">
+																<div class="d-flex flex-column text-muted">
+																	<a class="text-gray-800 text-hover-primary fw-bold">
+																		{{item.name}}
+																	</a>
 																</div>
-															</td>
+															</div>
+														</td>
 															<td class="text-end">
 																<a (click)="onRemoveVariation(idx)" class="btn btn-sm btn-icon btn-light-danger btn-active-light-danger toggle h-25px w-25px">
 																	<app-icon-trash></app-icon-trash>

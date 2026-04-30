@@ -173,6 +173,10 @@ export class EditAttributeComponent {
 		this.loadBtn = true;
 		this.attribute.categories = this.categoriesSelected;
 		if (!this.attribute.unit) delete this.attribute.unit;
+		this.errorMsmServer = '';
+		this.msmErrorAttribute = '';
+		this.errorsAtribute = {};
+
 		this.attributeService
 			.update_attribute(this.id, this.attribute)
 			.pipe(
@@ -185,7 +189,6 @@ export class EditAttributeComponent {
 					this.attribute = next;
 					this.categoriesSelected = this.attribute.categories;
 					toastr.success('Atributo actualizado correctamente.');
-					this.errorsAtribute = {};
 				},
 				error: (err) => {
 					const error = err.error;
@@ -195,7 +198,7 @@ export class EditAttributeComponent {
 					if (error.validation) {
 						this.errorsAtribute = error.validation;
 						this.msmErrorAttribute =Object.values(this.errorsAtribute).flat();
-						this.errorMsmServer = '';
+						
 					}
 				},
 			});

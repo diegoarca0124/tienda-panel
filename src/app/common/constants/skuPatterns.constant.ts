@@ -1,7 +1,7 @@
 export const skuPatterns = [
   // ---------- 4 CAMPOS ----------
   {
-    name: 'Título (4) + Categoría (3) + Subcategoría (3) + Marca (3)',
+    name: 'Título + Categoría + Subcategoría + Marca',
     fields: [
       { key: 'title',       chars: 4 },
       { key: 'categoryId',    chars: 3 },
@@ -11,7 +11,7 @@ export const skuPatterns = [
     example: 'POLO-ROP-POL-NIK'
   },
   {
-    name: 'Título (4) + Categoría (3) + Subcategoría (3) + Unidad (2)',
+    name: 'Título + Categoría + Subcategoría + Unidad',
     fields: [
       { key: 'title',       chars: 4 },
       { key: 'categoryId',    chars: 3 },
@@ -21,7 +21,7 @@ export const skuPatterns = [
     example: 'POLO-ROP-POL-UN'
   },
   {
-    name: 'Título (4) + Categoría (3) + Marca (3) + Condición (2)',
+    name: 'Título + Categoría + Marca + Condición',
     fields: [
       { key: 'title',       chars: 4 },
       { key: 'categoryId',    chars: 3 },
@@ -33,7 +33,7 @@ export const skuPatterns = [
 
   // ---------- 5 CAMPOS ----------
   {
-    name: 'Título (4) + Categoría (3) + Subcategoría (3) + Marca (3) + Unidad (2)',
+    name: 'Título + Categoría + Subcategoría + Marca + Unidad',
     fields: [
       { key: 'title',       chars: 4 },
       { key: 'categoryId',    chars: 3 },
@@ -44,7 +44,7 @@ export const skuPatterns = [
     example: 'POLO-ROP-POL-NIK-UN'
   },
   {
-    name: 'Título (4) + Categoría (3) + Subcategoría (3) + Marca (3) + Condición (2)',
+    name: 'Título + Categoría + Subcategoría + Marca + Condición',
     fields: [
       { key: 'title',       chars: 4 },
       { key: 'categoryId',    chars: 3 },
@@ -55,7 +55,7 @@ export const skuPatterns = [
     example: 'POLO-ROP-POL-NIK-NU'
   },
   {
-    name: 'Título (4) + Categoría (3) + Subcategoría (3) + Unidad (2) + Condición (2)',
+    name: 'Título + Categoría + Subcategoría + Unidad + Condición',
     fields: [
       { key: 'title',       chars: 4 },
       { key: 'categoryId',    chars: 3 },
@@ -68,7 +68,7 @@ export const skuPatterns = [
 
   // ---------- 6 CAMPOS (FULL) ----------
   {
-    name: 'Título (4) + Categoría (3) + Subcategoría (3) + Marca (3) + Unidad (2) + Condición (2)',
+    name: 'Título + Categoría + Subcategoría + Marca + Unidad + Condición',
     fields: [
       { key: 'title',       chars: 4 },
       { key: 'categoryId',    chars: 3 },

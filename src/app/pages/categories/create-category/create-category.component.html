@@ -84,18 +84,20 @@
 												name="description"
 												[(ngModel)]="category.description"
 												[ngClass]="{ 'is-invalid': errorsCategory?.description }"
+												cdkTextareaAutosize
+												cdkAutosizeMinRows="2"
 											></textarea>
 
                                             <span class="fs-8 text-muted">Descripción de la categoría.</span>
                                         </div>
                                     </div>
                                 </div>
-								<div class="row">
+								<div class="row mb-5">
                                     <div class="col-lg-12">
                                         <div class="d-flex flex-column fv-row fv-plugins-icon-container">
                                             <!--begin::Label-->
                                             <label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2">
-                                                <span class="required">Icono</span>
+                                                <span>Icono</span>
                                             </label>
                                             <!--end::Label-->
 
@@ -105,6 +107,8 @@
 												class="form-control mb-1"
 												[ngClass]="{ 'is-invalid': errorsCategory?.icon }"
 												placeholder="Código SVG"
+												cdkTextareaAutosize
+												cdkAutosizeMinRows="2"
 											></textarea>
 
                                             <span class="fs-8 text-muted">Icono visible en la tienda.</span>
@@ -112,6 +116,116 @@
                                     </div>
                                 </div>
 								<!--end::Table wrapper-->
+
+								<div class="row">
+									<div class="col-lg-12 my-3">
+										<h4 class="mb-0">Configuraciones</h4>
+										<span class="text-gray-600 mt-1 fw-400 fs-0-9rem">
+											Activa los bloques de información que se mostrarán durante la creación del producto.
+										</span>
+									</div>
+									<div class="col-12 col-md-6 py-4">
+										<label class="form-check form-check-custom form-check-solid align-items-start">
+											<input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="category.isDimensions" />
+											<span class="form-check-label d-flex flex-column align-items-start">
+												<span class="fw-500 text-gray-800 fs-6 mb-1">Dimensiones</span>
+												<small class="d-block lh-sm">
+													Registra alto, ancho, largo, peso y otras medidas físicas
+													importantes del producto.
+												</small>
+											</span>
+										</label>
+									</div>
+
+									<div class="col-12 col-md-6 py-4">
+										<label class="form-check form-check-custom form-check-solid align-items-start">
+											<input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="category.isCharacteristics" />
+											<span class="form-check-label d-flex flex-column align-items-start">
+												<span class="fw-500 text-gray-800 fs-6 mb-1">Características</span>
+												<small class="d-block lh-sm">
+													Agrega funciones, ventajas, detalles técnicos y atributos
+													principales del producto.
+												</small>
+											</span>
+										</label>
+									</div>
+
+									<div class="col-12">
+										<div class="separator separator-dashed"></div>
+									</div>
+
+									<div class="col-12 col-md-6 py-4">
+										<label class="form-check form-check-custom form-check-solid align-items-start">
+											<input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="category.isConditiom" />
+											<span class="form-check-label d-flex flex-column align-items-start">
+												<span class="fw-500 text-gray-800 fs-6 mb-1">Condición</span>
+												<small class="d-block lh-sm">
+													Indica si el producto es nuevo, usado o se encuentra
+													reacondicionado.
+												</small>
+											</span>
+										</label>
+									</div>
+
+									<div class="col-12 col-md-6 py-4">
+										<label class="form-check form-check-custom form-check-solid align-items-start">
+											<input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="category.isWarranty" />
+											<span class="form-check-label d-flex flex-column align-items-start">
+												<span class="fw-500 text-gray-800 fs-6 mb-1">Garantía</span>
+												<small class="d-block lh-sm">
+													Define tiempo de cobertura, tipo de garantía y condiciones
+													aplicables.
+												</small>
+											</span>
+										</label>
+									</div>
+
+									<div class="col-12">
+										<div class="separator separator-dashed"></div>
+									</div>
+
+									<div class="col-12 col-md-6 py-4">
+										<label class="form-check form-check-custom form-check-solid align-items-start">
+											<input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="category.isCountryOfOrigin" />
+											<span class="form-check-label d-flex flex-column align-items-start">
+												<span class="fw-500 text-gray-800 fs-6 mb-1">País de origen</span>
+												<small class="d-block lh-sm">
+													Indica el país donde fue fabricado, producido o ensamblado
+													el producto.
+												</small>
+											</span>
+										</label>
+									</div>
+
+									<div class="col-12 col-md-6 py-4">
+										<label class="form-check form-check-custom form-check-solid align-items-start">
+											<input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="category.isMaterial" />
+											<span class="form-check-label d-flex flex-column align-items-start">
+												<span class="fw-500 text-gray-800 fs-6 mb-1">Material principal</span>
+												<small class="d-block lh-sm">
+													Especifica el material predominante utilizado en su
+													fabricación.
+												</small>
+											</span>
+										</label>
+									</div>
+
+									<div class="col-12">
+										<div class="separator separator-dashed"></div>
+									</div>
+
+									<div class="col-12 col-md-6 py-4">
+										<label class="form-check form-check-custom form-check-solid align-items-start">
+											<input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="category.isTemperature" />
+											<span class="form-check-label d-flex flex-column align-items-start">
+												<span class="fw-500 text-gray-800 fs-6 mb-1">Temperatura</span>
+												<small class="d-block lh-sm">
+													Indica el rango ideal para uso, conservación o almacenaje.
+												</small>
+											</span>
+										</label>
+									</div>
+								</div>
 							</div>
 
 							<!--end::Card body-->

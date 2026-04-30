@@ -62,15 +62,16 @@ export class UploadImagesComponent {
     const result: { file: File, preview: string }[] = [];
 
     const validFiles = Array.from(fileList).filter(f =>
-      f.type.startsWith("image/") && f.size <= maxSize
+      f.type.startsWith('image/') && f.size <= maxSize
     );
 
     if (!validFiles.length) {
+      this.clearInput();
       this.filesSelected.emit([]);
       return;
     }
 
-    this.isLoading = true; // 🔥 ACTIVAR SPINNER
+    this.isLoading = true;
 
     let loaded = 0;
 
@@ -78,27 +79,29 @@ export class UploadImagesComponent {
       const reader = new FileReader();
 
       reader.onload = (e: any) => {
-        result.push({ file, preview: e.target.result });
+        result.push({
+          file,
+          preview: e.target.result
+        });
+
         loaded++;
 
         if (loaded === validFiles.length) {
-
-          // ⭐ DELAY ARTIFICIAL ⭐
           setTimeout(() => {
-            this.isLoading = false;   // 🔥 DESACTIVAR SPINNER DESPUÉS DEL DELAY
-            if (this.fileInput) {
-              this.fileInput.nativeElement.value = '';
-            }
+            this.isLoading = false;
             this.filesSelected.emit(result);
-          }, 1200); // 1.2s de delay
+            this.clearInput(); 
+          }, 1200);
         }
       };
 
-      reader.readAsDataURL(file);
+    reader.readAsDataURL(file);
     });
   }
 
-
-
-
+  private clearInput(): void {
+    if (this.fileInput?.nativeElement) {
+      this.fileInput.nativeElement.value = '';
+    }
+  }
 }

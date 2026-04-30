@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, CUSTOM_ELEMENTS_SCHEMA, ElementRef, HostListener, ViewChild } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, ElementRef, HostListener, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { SidebarComponent } from '@app/shared/sidebar/sidebar.component';
 import { TinymceEditorComponent } from '@app/shared/tinymce-editor/tinymce-editor.component';
@@ -10,7 +10,7 @@ import { environment } from 'environments/environment.dev';
 import { AttributeService } from '@app/services/attribute.service';
 import { withMinLoadingTime } from '@app/common/interface/with-min-loading-time.interface';
 import { GLOBAL } from '@app/services/GLOBAL';
-import { NgSelectModule } from '@ng-select/ng-select';
+import { NgSelectComponent, NgSelectModule } from '@ng-select/ng-select';
 import { FormsModule } from '@angular/forms';
 import { CategoryService } from '@app/services/category.service';
 import { Product } from '@app/common/interface/product.interface';
@@ -47,6 +47,7 @@ import { ShippingMock } from './mocks/shipping.mock';
 import { VariationMock } from './mocks/variation.mock';
 declare const toastr: any;
 import Quill from 'quill';
+import { NotFoundComponent } from '@app/shared/not-found/not-found.component';
 
 @Component({
 	selector: 'app-create-product',
@@ -67,7 +68,8 @@ import Quill from 'quill';
 		AlertComponent,
 		UploadImageComponent,
 		IconTrashComponent,
-		IconCheckComponent
+		IconCheckComponent,
+		NotFoundComponent
 	],
 	schemas: [CUSTOM_ELEMENTS_SCHEMA],
 	templateUrl: './create-product.component.html',
@@ -82,16 +84,17 @@ export class CreateProductComponent {
 		slug: '',
 		description: '',
 		extract: '',
-		cover: undefined as File | undefined,
+		cover: '',
 		miniature: undefined as File | undefined,
-		mainAttribute: undefined,
-		mainAttributeValue: undefined,
 		unitOfMeasure: undefined,
 		condition: undefined,
 		warranty: undefined,
 		countryOfOrigin: undefined,
 		priceRegular: '',
 		priceDiscount: '',
+		minStock: '',
+		maxStock: '',
+		maxOrderLimit: '',
 		tags: [],
 		brandId: undefined,
 		categoryId: undefined,
@@ -189,9 +192,9 @@ export class CreateProductComponent {
 	};
 	public option = 1;
   	public maskRef: any;
-	public arrProperties : Array<{attribute: any, value: string | undefined, data: [], loading: boolean}> = [
+	public arrProperties : Array<{attributeId: any, value: string | undefined, data: [], loading: boolean}> = [
 		{
-			attribute: undefined,
+			attributeId: undefined,
 			value: undefined,
 			data: [],
 			loading: false
@@ -201,19 +204,18 @@ export class CreateProductComponent {
 	public groups : Array<any> = [];
 	public variations : Array<{name: string, skuPattern: any | undefined}> = [];
 	public images : Array<{file: File, preview: string, index: number}> = [];
-	public cover : {file: File, preview: string, index: number} | undefined = undefined;
 	public widthScreen : number = window.innerWidth;
 	public skuPatterns = skuPatterns;
 	public errorsVariation : {name?: string, skuPattern?: string} = {};
 	public errorMsmServer: string = '';
 	public msmErrorProduct: any = [];
-	public boolDimensions = false;
-	public boolCharacteristics = false;
 	public boolLabels = false;
 	private quill!: Quill;
 	public loadImport : boolean = false;
 	public arrDataSkull: Array<any> = Array.from({ length: 5 }, () => ({}));
+	public categorySelected : any = {};
 	@ViewChild('editor') editorRef!: ElementRef;
+	@ViewChildren(NgSelectComponent) selects!: QueryList<NgSelectComponent>;
 	
 	constructor(
 		private attributeService: AttributeService,
@@ -230,7 +232,6 @@ export class CreateProductComponent {
 	) {
 		this.init_categories();
 		this.init_brands();
-		this.init_attributes();
 		this.init_groups();
 		this.visibilities_ = this.visibilities_.map((v:any) => ({
 			...v,
@@ -270,10 +271,6 @@ export class CreateProductComponent {
 	onResize() {
 		this.widthScreen = window.innerWidth;
 		console.log(this.widthScreen);
-	}
-
-	onChangeBoolLabels(){
-		if(this.option == 3) this.option = 4;
 	}
 
 	init_categories() {
@@ -327,7 +324,7 @@ export class CreateProductComponent {
 		this.errorMsmSeverListAttributes = '';
 		this.attributes_ = [];
 		this.attributeService
-			.get_attributes_by_select()
+			.get_attributes_by_category(this.product.categoryId!)
 			.pipe(
 				takeUntil(this.destroy$),
 				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
@@ -335,6 +332,7 @@ export class CreateProductComponent {
 			)
 			.subscribe({
 				next: (next) => {
+					console.log(next);
 					this.attributes_ = next;
 				},
 				error: (err) => {
@@ -436,24 +434,22 @@ export class CreateProductComponent {
 	}
 
 	onSelectedBanner(image : {file: File, preview: string, index: number}){
-		this.cover = image;
-		this.product.cover = this.cover.file;
+		this.product.cover = image.file.name;
 	}
 
 	onSelectCategory() {
+		this.categorySelected = this.categories_.find((item:any)=> item.id == this.product.categoryId);
+		console.log(this.categorySelected);
 		this.product.subcategoryId = undefined;
 		this.init_subcategories(this.product.categoryId);
-	}
-
-	onSelectAttribute() {
-		this.product.mainAttributeValue = undefined;
-		this.init_valuesAttribute(this.product.mainAttribute?.id!);
+		this.init_attributes();
 	}
 
 	onSelectAttributeProperty(idx: number){
-		this.arrProperties[idx].value = undefined;
-		this.get_valuesAttribute(this.arrProperties[idx]?.attribute?.id!,idx);
+		console.log(this.arrProperties[idx]);
 		
+		this.arrProperties[idx].value = undefined;
+		this.get_valuesAttribute(this.arrProperties[idx]?.attributeId!,idx);	
 	}
 
 	onRemoveAttributeProperty(idx: number){
@@ -475,32 +471,7 @@ export class CreateProductComponent {
 		}, 50);
 	}
 
-	setDimensions(){
-		if(this.boolDimensions){
-			this.option = 4;
-			this.physical.weightUnit = undefined;
-			this.physical.dimensionUnit = undefined;
-			this.physical.height = '';
-			this.physical.weight = '';
-			this.physical.width = '';
-			this.physical.length = '';
-		}
-	}
 
-	setCharacteristics(){
-		if(this.boolCharacteristics){
-			this.option = 2;
-			this.arrProperties = [];
-		}else{
-			if(this.option == 2){
-				if(this.boolLabels){
-					this.option = 3;
-				}else{
-					this.option = 4;
-				}
-			}
-		}
-	}
 
 	setOption(value: number) {
 		this.option = value;
@@ -509,13 +480,16 @@ export class CreateProductComponent {
 	onTagsChange = (tags: string[]) => this.product.tags = tags;
 	onContentChange = (content: string) => this.product.description = content;
 
-	addAttribute(){
-		this.arrProperties.push({
-			attribute: undefined,
-			value: undefined,
-			data: [],
-			loading: false
-		});
+	onCreateVariation(){
+		this.errorsVariation = {};
+		
+		if (!this.variation.name)
+		this.errorsVariation.name = 'El nombre de la variación es requerido.';
+
+		if (Object.keys(this.errorsVariation).length > 0) return;
+		
+		this.variations.push({ ...this.variation });
+		this.variation.name = '';
 	}
 
 	removeImage(idx: number){
@@ -537,25 +511,19 @@ export class CreateProductComponent {
 
 	refreshAttributes(){
 		this.init_attributes();
-		if(this.product.mainAttribute) this.init_valuesAttribute(this.product.mainAttribute.id);
 	}
 
-	refreshAttributeValues(){
-		if(this.product.mainAttribute) this.init_valuesAttribute(this.product.mainAttribute.id);
+	closeSelects() {
+		this.selects.forEach(select => select.close());
 	}
 	
-	addVariation(){
-		this.errorsVariation = {};
-		if (!this.variation.skuPattern)
-		this.errorsVariation.skuPattern = 'La plantilla del SKU es requerida.';
-
-		if (!this.variation.name)
-		this.errorsVariation.name = 'El nombre de la variación es requerido.';
-
-		if (Object.keys(this.errorsVariation).length > 0) return;
-		
-		this.variations.push({ ...this.variation });
-		this.variation.name = '';
+	addAttribute(){
+		this.arrProperties.push({
+			attributeId: undefined,
+			value: undefined,
+			data: [],
+			loading: false
+		});
 	}
 
 	onSelectGroup(id: string){
@@ -585,10 +553,6 @@ export class CreateProductComponent {
 						this.quill.root.innerHTML = next.product.description;
 					}
 
-					if(next.physical.weight || next.physical.width || next.physical.height || next.physical.length){
-						this.boolDimensions = true;
-					}
-
 					this.physical = {
 						...this.physical,  
 						...next.physical, 
@@ -601,7 +565,6 @@ export class CreateProductComponent {
 		}
 	}
 
-	filterGroups(){}
 
 	create() {
 		const formData = new FormData();
@@ -611,13 +574,14 @@ export class CreateProductComponent {
 		if(!this.physical.maxStorageTemp) delete this.physical.maxStorageTemp;
 
 		this.attributes = this.arrProperties
-		.filter((p: any) => p?.attribute?.name)  // <-- Filtra los inválidos
+		.filter((p: any) => p?.attributeId)  // <-- Filtra los inválidos
 		.map((p: any) => ({
-			attribute: p.attribute.name,
+			attributeId: p.attributeId,
 			value: p.value?.value ?? null,
 		}));
 		console.log(this.product);
 		console.log(this.physical);
+		console.log(this.attributes);
 
 		if(this.physical.height == null) this.physical.height = ''; 
 		if(this.physical.weight == null) this.physical.weight = ''; 
@@ -626,21 +590,28 @@ export class CreateProductComponent {
 		
 		
 		if(this.product.productGroupId)formData.append('productGroupId',this.product.productGroupId.toString());
-		formData.append('boolDimensions',this.boolDimensions.toString());
+		formData.append('isDimensions',this.categorySelected?.isDimensions!?.toString());
+		formData.append('isMaterial',this.categorySelected?.isMaterial!?.toString());
+		formData.append('isTemperature',this.categorySelected?.isTemperature!?.toString());
+		formData.append('isConditiom',this.categorySelected?.isConditiom!?.toString());
+		formData.append('isWarranty',this.categorySelected?.isWarranty!?.toString());
+		formData.append('isCountryOfOrigin',this.categorySelected?.isCountryOfOrigin!?.toString());
+		
 		formData.append('name',this.product.name);
 		formData.append('type',this.product.type);
 		formData.append('status',this.product.status!);
 		formData.append('visibility',this.product.visibility);
 		formData.append('description',this.product.description);
 		formData.append('extract',this.product.extract);
-		if(this.product.mainAttribute != undefined)formData.append('mainAttribute',JSON.stringify(this.product.mainAttribute));
-		if(this.product.mainAttributeValue)formData.append('mainAttributeValue',this.product.mainAttributeValue);
 		if(this.product.unitOfMeasure != undefined)formData.append('unitOfMeasure',JSON.stringify(this.product.unitOfMeasure));
 		if(this.product.condition != undefined)formData.append('condition',this.product.condition!?.toString());
 		if(this.product.warranty != undefined)formData.append('warranty',this.product.warranty.toString());
 		if(this.product.countryOfOrigin != undefined)formData.append('countryOfOrigin',JSON.stringify(this.product.countryOfOrigin));
 		if(this.product.priceRegular != '')formData.append('priceRegular',this.product.priceRegular.toString());
 		if(this.product.priceDiscount != '')formData.append('priceDiscount',this.product.priceDiscount!?.toString());
+		if(this.product.minStock != '')formData.append('minStock',this.product.minStock!?.toString());
+		if(this.product.maxStock != '')formData.append('maxStock',this.product.maxStock!?.toString());
+		if(this.product.maxOrderLimit != '')formData.append('maxOrderLimit',this.product.maxOrderLimit!?.toString());
 		formData.append('tags',JSON.stringify(this.product.tags));
 		if(this.product.brandId != undefined)formData.append('brandId',this.product.brandId!);
 		if(this.product.categoryId != undefined)formData.append('categoryId',this.product.categoryId!);
@@ -678,7 +649,7 @@ export class CreateProductComponent {
 		if(this.shipping.handlingDays != undefined)formData.append('handlingDays',this.shipping.handlingDays.toString());
 		formData.append('freeShipping',this.shipping.freeShipping.toString());
 		formData.append('pickupInStore',this.shipping.pickupInStore.toString());
-		if(this.shipping.specialInstructions)formData.append('weight',this.shipping.specialInstructions.toString());
+		if(this.shipping.specialInstructions)formData.append('specialInstructions',this.shipping.specialInstructions.toString());
 
 		this.images.forEach((file: {file: File, preview: string, index: number}) => {
 			formData.append('gallery', file.file);

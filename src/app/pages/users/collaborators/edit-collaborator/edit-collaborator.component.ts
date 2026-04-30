@@ -101,7 +101,9 @@ export class EditCollaboratorComponent {
 
 	update() {
 		this.loadBtn = true;
-		console.log(this.collaborator);
+		this.errorMsmServer = '';
+		this.errorsCollaborator = {};
+		this.msmErrorCollaborator = [];
 		
 		this.collaboratorService
 			.update_collaborator(this.id, this.collaborator)
@@ -112,16 +114,10 @@ export class EditCollaboratorComponent {
 			)
 			.subscribe({
 				next: (next: Collaborator) => {
-					this.errorsCollaborator = {};
 					this.collaborator = next;
-					toastr.success('Colaborador actualizado correctamente.', '', {
-						timeOut: 0, // nunca se cierra automáticamente
-						extendedTimeOut: 0,
-					});
+					toastr.success('Colaborador actualizado correctamente.');
 				},
 				error: (err) => {
-					console.log(err);
-
 					const error = err.error;
 					this.errorMsmServer = error.message || '¡Error desconocido!';
 					toastr.error(this.errorMsmServer);
@@ -129,8 +125,8 @@ export class EditCollaboratorComponent {
 					if (error.validation) {
 						this.errorsCollaborator = error.validation;
 						this.msmErrorCollaborator =Object.values(this.errorsCollaborator).flat();
-						this.errorMsmServer = '';
 					}
+					
 				},
 			});
 	}

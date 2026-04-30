@@ -16,7 +16,7 @@ import { CategoryService } from '@app/services/category.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BrandService } from '@app/services/brand.service';
 import { ProductService } from '@app/services/product.service';
-import { finalize, Subject, takeUntil } from 'rxjs';
+import { catchError, EMPTY, finalize, forkJoin, map, of, Subject, switchMap, takeUntil, tap } from 'rxjs';
 import { withMinLoadingTime } from '@app/common/interface/with-min-loading-time.interface';
 import { GLOBAL } from '@app/services/GLOBAL';
 import Quill from 'quill';
@@ -38,9 +38,10 @@ import { skuPatterns } from '@app/common/constants/skuPatterns.constant';
 import { NotFoundComponent } from '@app/shared/not-found/not-found.component';
 import { IconCheckComponent } from '@app/icons/icon-check/icon-check.component';
 declare var refreshFsLightbox: any;
+declare const toastr: any;
 
 @Component({
-  selector: 'app-edit-product',
+  selector: 'aCreate-product',
   imports: [
     CommonModule,
     RouterModule,
@@ -77,9 +78,9 @@ export class EditProductComponent {
 	public loadBtnUpdateProperty : boolean = false;
 	public loadBtnAddProperty : boolean = false;
 	public loadBtnRemoveProperty : boolean = false;
-	public arrProperties : Array<{id?: string, attribute: any, value: string | undefined, data: [], loading: boolean}> = [
+	public arrProperties : Array<{id?: string, attributeId: any, value: string | undefined, data: [], loading: boolean}> = [
 		{
-			attribute: undefined,
+			attributeId: undefined,
 			value: undefined,
 			data: [],
 			loading: false
@@ -98,10 +99,8 @@ export class EditProductComponent {
 		slug: '',
 		description: '',
 		extract: '',
-		cover: undefined as File | undefined,
+		cover: '',
 		miniature: undefined as File | undefined,
-		mainAttribute: undefined,
-		mainAttributeValue: undefined,
 		unitOfMeasure: undefined,
 		condition: undefined,
 		warranty: undefined,
@@ -198,14 +197,11 @@ export class EditProductComponent {
 	public temperatures_ : any = temperatures;
 	public packages_ : any = packages;
 	public cover : {file: File, preview: string, index: number} | undefined = undefined;
-	public images : Array<{file?: File, preview: string, index: number}> = [];
+	public images : Array<{file: File, preview: string, index: number, id: string}> = [];
 	public errorsVariation : {name?: string, skuPattern?: string} = {};
 	public skuPatterns = skuPatterns;
 	public variations : Array<{name: string, skuPattern: any | undefined}> = [];
-	public variation = {
-		skuPattern: undefined,
-		name: ''
-	}
+	public variation : any = {};
 	public loadingVariations : boolean = true;
 	public filterGroup : string = '';
 	public loadingGroups: boolean = true;
@@ -213,8 +209,34 @@ export class EditProductComponent {
 
 	public loadPhotos : boolean = true;
 	public errorMsmSeverListPhotos : string = '';
+	public categorySelected : any = {};
 
-  
+	public loadBtnEditOrCreateProductDescripcion : boolean = false;
+	public msmErrorUpdateProductDescripcion: any = [];
+	public errorsUpdateProductDescripcion:any = {};
+	public idSelectProductDescripcion : string = '';
+
+	public msmErrorCreateProductDescripcion: any = [];
+	public errorsCreateProductDescripcion:any = {};
+
+	public loadBtnDeleteProductDescripcion : boolean = false;
+	public idSelectToDeleteProductDescripcion : string = '';
+
+	public loadUploadImagesGallery : boolean = false;
+
+	public loadSetCoverGallery : boolean = false;
+	public idSelectCoverGallery : string | number = '';
+
+	public loadDeleteCoverGallery : boolean = false;
+	public idSelectDeleteCoverGallery : string | number = '';
+
+	public errorMsmSeverListVariations : string = '';
+
+	public loadCreateVariation : boolean = false;
+	public errorsCreateVariation : any = {};
+	public msmErrorCreateVariation : any = [];
+	
+	public errorMsmServer: string = '';
   	constructor(
 		private attributeService: AttributeService,
 		private categoryService: CategoryService,
@@ -227,104 +249,103 @@ export class EditProductComponent {
 	) {}
 
 
-	ngOnInit(){
-		this.initRouteParams();
-		this.loadProductData();
-	}
+	ngOnInit() {
+		this._route.paramMap.pipe(
+			map(params => {
+				const qpOption = this._route.snapshot.queryParamMap.get('option');
+				return {
+					id: params.get('id')!,
+					option: qpOption ? Number(qpOption) : 1
+				};
+			}),
 
-	private initRouteParams(): void {
-		this.id = this._route.snapshot.paramMap.get('id')!;
+			tap(({ id, option }) => {
+				this.id = id;
+				this.option = option;
+				if (!this._route.snapshot.queryParamMap.get('option')) {
+					this.router.navigate([], {
+					relativeTo: this._route,
+					queryParams: { option: 1 },
+					queryParamsHandling: 'merge',
+					replaceUrl: true
+					});
+				}
+			}),
 
-		const optionParam = this._route.snapshot.queryParamMap.get('option');
-		this.option = optionParam ? Number(optionParam) : 1;
+			switchMap(({ id, option }) =>
+				this.loadProductData$(id).pipe(
+					map(data => ({ ...data, option }))
+				)
+			),
 
-		if (!optionParam) {
-			this.router.navigate([], {
-				relativeTo: this._route,
-				queryParams: { option: this.option },
-				queryParamsHandling: 'merge',
-				replaceUrl: true,
-			});
+			tap(product => {
+				this.assignBaseData(product);
+			}),
+
+			switchMap(data =>
+				forkJoin({
+					categories: this.init_categories$(),
+					subcategories: this.init_subcategories$(data.product.categoryId),
+					brands: this.init_brands$(),
+					arrProperties: this.init_characteristics$(),
+					photos: this.init_photos$(),
+					variations: this.init_variations$(),
+				}).pipe(
+					map(() => data)
+				)
+			),
+			takeUntil(this.destroy$)
+		).subscribe();
 		}
-	}
 
-	private loadProductData(): void {
+
+
+	loadProductData$(id: string) {
 		this.loadProduct = true;
 		this.errorMsmServerGetProduct = '';
-		
-		this.productService
-		.get_product(this.id)
-		.pipe(
-			withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
-			takeUntil(this.destroy$),
-			finalize(() => (this.loadProduct = false))
-		)
-		.subscribe({
-			next: (response) => this.handleProductResponse(response),
-			error: ({ error }) => (this.errorMsmServerGetProduct = error),
-		});
-	}
+		return this.productService.get_product(id).pipe(
+			withMinLoadingTime(400),
+			catchError(err => {
+				this.errorMsmServerGetProduct =
+					err?.error?.message || 'Error cargando el producto';
 
-	private handleProductResponse(response: any): void {
-		console.log(response);
-		
-		this.assignBaseData(response);
-		this.prepareMedia();
-		this.initializeStaticData();
-		this.initializeConditionalData();
+				return EMPTY;
+			}),
+			finalize(() => {
+			this.loadProduct = false;
+			})
+		);
 	}
 
 	private assignBaseData({ product, physical, shipping }: any): void {
 		this.product = product;
 		this.physical = physical;
 		this.shipping = shipping;
-	}
-
-	private prepareMedia(): void {
 		this.coverUrlEdit = this.product.cover;
 		this.miniatureUrlEdit = this.product.miniature;
-
-		this.product.cover = undefined;
 		this.product.miniature = undefined;
+		if (this.quill) {
+			this.quill.root.innerHTML = this.product.description || '';
+		}
+		this.init_attributes$().pipe(takeUntil(this.destroy$))
+		.subscribe();;
 	}
 
-	private initializeStaticData(): void {
-		this.init_categories();
-		this.init_brands();
-		this.init_attributes();
-		this.init_groups();
-		this.init_characteristics();
-		this.init_photos();
-		this.init_variations();
-	}
-
-	private initializeConditionalData(): void {
-		if (this.product.categoryId) {
-			this.init_subcategories(this.product.categoryId);
-		}
-
-		if (this.product.mainAttribute?.id) {
-			this.init_valuesAttribute(this.product.mainAttribute.id);
-		}else{
-			this.loadingValuesAttribute = false;
-		}
-
-		if (this.product.description) {
-			this.setQuillContent(this.product.description);
-		}
-	}
-
-	private setQuillContent(description: string): void {
-		setTimeout(() => {
-			this.quill?.root && (this.quill.root.innerHTML = description);
-		}, 50);
+	getFileName(url: string): string {
+		const cleanUrl = url.split('?')[0].split('#')[0];
+		return cleanUrl.split('/').pop() || '';
 	}
 
 	ngAfterViewInit(): void {
+		this.initQuill();
+	}
+
+	initQuill() {
 		if (!this.editorRef) return;
+		if (this.quill) return; // evita duplicado
 
 		this.quill = new Quill(this.editorRef.nativeElement, {
-			theme: 'snow',
+			theme: 'snow'
 		});
 
 		this.quill.on('text-change', () => {
@@ -338,74 +359,9 @@ export class EditProductComponent {
 		console.log(this.widthScreen);
 	}
 
-	init_variations(){
-		this.loadingVariations = true;
-		this.productService.get_variations_product(this.id)
-		.pipe(
-			takeUntil(this.destroy$),
-			withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
-			finalize(() => (this.loadingVariations = false))
-		)
-		.subscribe({
-			next : (next) => {
-				this.variations = next;
-			}
-		});
-	}
-
 	ngOnDestroy(): void {
 		this.destroy$.next();
 		this.destroy$.complete();
-	}
-
-	init_characteristics() {
-		this.loadProperties = true;
-		this.errorMsmSeverListProperties = '';
-		this.arrProperties = [];
-		this.productService
-		.get_characteristics_product(this.id)
-		.pipe(
-			takeUntil(this.destroy$),
-			withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
-			finalize(() => (this.loadProperties = false))
-		)
-		.subscribe({
-			next: (next) => {
-				this.arrProperties = next;
-			},
-			error: (err) => {
-				const error = err.error;
-				this.errorMsmSeverListProperties = error.message;
-			},
-		});
-	}
-
-	init_photos(){
-		this.loadPhotos = true;
-		this.errorMsmSeverListPhotos = '';
-		this.images = [];
-		this.productService
-		.get_photos_product(this.id)
-		.pipe(
-			takeUntil(this.destroy$),
-			withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
-			finalize(() => (this.loadPhotos = false))
-		)
-		.subscribe({
-			next: (next: any) => {
-				this.images = next.map((photo: any, index: any) => ({
-					preview: photo.url,
-					index,
-				}));
-				setTimeout(() => {
-					refreshFsLightbox();
-				}, 50);
-			},
-			error: (err) => {
-				const error = err.error;
-				this.errorMsmSeverListPhotos = error.message;
-			},
-		});
 	}
 
 	onChangeBoolLabels(){
@@ -413,70 +369,187 @@ export class EditProductComponent {
 	}
 
 	refreshCategories(){
-		this.init_categories();
-		if(this.product.categoryId) this.init_subcategories(this.product.categoryId);
+		this.init_categories$().pipe(
+			switchMap(() => {
+				if (!this.product.categoryId) return of([]);
+				return this.init_subcategories$(this.product.categoryId);
+			}),
+			takeUntil(this.destroy$)
+		).subscribe();
 	}
 
-	init_categories() {
+	init_categories$() {
 		this.loadingCategories = true;
 		this.errorMsmSeverListCategories = '';
 		this.categories_ = [];
-		this.categoryService
-		.get_categories_by_select()
-		.pipe(
-			takeUntil(this.destroy$),
-			withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
-			finalize(() => (this.loadingCategories = false))
-		)
-		.subscribe({
-			next: (next) => {
-			this.categories_ = next;
-			this.categories_ = this.categories_.map((v:any) => ({
-				...v,
-				icon: this.sanitizer.bypassSecurityTrustHtml(v.icon)
-			}));
-			},
-			error: (err) => {
-			const error = err.error;
-			this.errorMsmSeverListCategories = error.message;
-			},
-		});
+
+		return this.categoryService.get_categories_by_select().pipe(
+			tap(data => {
+				this.categories_ = data.map((v:any) => ({
+					...v,
+					icon: this.sanitizer.bypassSecurityTrustHtml(v.icon)
+				}));
+				this.categorySelected = this.categories_.find((item:any)=> item.id == this.product.categoryId);	
+			}),
+			catchError(err => {
+				this.errorMsmSeverListCategories =
+					err?.error?.message || 'Error cargando categorías';
+
+				return of([]);
+			}),
+			finalize(() => this.loadingCategories = false)
+		);
 	}
 
-  	init_subcategories(id: string | undefined) {
+	init_subcategories$(id: string) {
 		this.loadingSubcategories = true;
 		this.errorMsmSeverListSubcategories = '';
 		this.subcategories_ = [];
-		this.categoryService
-		.get_subcategories_by_select(id!)
-		.pipe(
-			takeUntil(this.destroy$),
-			withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
-			finalize(() => (this.loadingSubcategories = false))
-		)
-		.subscribe({
-			next: (next) => {
-				console.log(next);
-				this.subcategories_ = next;
+		return this.categoryService.get_subcategories_by_select(id).pipe(
+			tap(data => {
+				this.subcategories_ = data;
 				this.subcategories_ = this.subcategories_.map((v:any) => ({
 					...v,
 					icon: this.sanitizer.bypassSecurityTrustHtml(v.icon)
 				}));
-			},
-			error: (err) => {
-				const error = err.error;
-				this.errorMsmSeverListSubcategories = error.message;
-			},
-		});
+			}),
+
+			catchError(err => {
+				this.errorMsmSeverListSubcategories =
+					err?.error?.message || 'Error cargando caracteristicas';
+
+				return of([]);
+			}),
+
+			finalize(() => this.loadingSubcategories = false)
+		);
+	}
+
+	init_brands$() {
+		this.loadingBrands = true;
+		this.errorMsmSeverListBrands = '';
+		this.brands_ = [];
+		return this.brandService.get_brands_by_select().pipe(
+			tap(data => {
+				this.brands_ = data;
+			}),
+
+			catchError(err => {
+				this.errorMsmSeverListBrands =
+					err?.error?.message || 'Error cargando subcategorías';
+
+				return of([]);
+			}),
+
+			finalize(() => this.loadingBrands = false)
+		);
+	}
+
+	init_characteristics$() {
+		this.loadProperties = true;
+		this.errorMsmSeverListProperties = '';
+		this.arrProperties = [];
+		return this.productService.get_characteristics_product(this.id).pipe(
+			tap(data => {
+				this.arrProperties = data;
+				console.log(this.arrProperties);
+				
+			}),
+
+			catchError(err => {
+				this.errorMsmSeverListProperties =
+					err?.error?.message || 'Error cargando subcategorías';
+
+				return of([]);
+			}),
+
+			finalize(() => this.loadProperties = false)
+		);
+	}
+
+	init_attributes$() {
+		this.loadingAttributes = true;
+		this.errorMsmSeverListAttributes = '';
+		this.attributes_ = [];
+		return this.attributeService.get_attributes_by_category(this.product.categoryId!).pipe(
+			tap(data => {
+				this.attributes_ = data;
+			}),
+
+			catchError(err => {
+				this.errorMsmSeverListAttributes =
+					err?.error?.message || 'Error cargando atributos';
+
+				return of([]);
+			}),
+
+			finalize(() => this.loadingAttributes = false)
+		);
+	}
+
+	init_photos$(){
+		this.loadPhotos = true;
+		this.errorMsmSeverListPhotos = '';
+		this.images = [];
+		return this.productService.get_photos_product(this.id).pipe(
+			tap(data => {
+				this.images = data.map((photo: any, index: any) => ({
+					id: photo.id,
+					preview: photo.url,
+					index,
+				}));
+				console.log(this.images);
+				
+				setTimeout(() => {
+					refreshFsLightbox();
+				}, 50);
+			}),
+
+			catchError(err => {
+				this.errorMsmSeverListPhotos =
+					err?.error?.message || 'Error cargando fotos';
+
+				return of([]);
+			}),
+
+			finalize(() => this.loadPhotos = false)
+		);
 	}
 
  	onSelectCategory() {
+		this.categorySelected = this.categories_.find((item:any)=> item.id == this.product.categoryId);
 		this.product.subcategoryId = undefined;
-		this.init_subcategories(this.product.categoryId);
+		this.init_subcategories$(this.product.categoryId!)
+			.pipe(takeUntil(this.destroy$))
+			.subscribe();
 	}
 
   	refreshSubcategories(){
-		if(this.product.categoryId) this.init_subcategories(this.product.categoryId);
+		if(this.product.categoryId){
+			this.init_subcategories$(this.product.categoryId!)
+			.pipe(takeUntil(this.destroy$))
+			.subscribe();
+		} 
+	}
+
+	init_variations$(){
+		this.loadingVariations = true;
+		this.errorMsmSeverListVariations = '';
+		this.variations = [];
+		return this.productService.get_variations_product(this.id).pipe(
+			tap(data => {
+				this.variations = data;
+			}),
+
+			catchError(err => {
+				this.errorMsmSeverListPhotos =
+					err?.error?.message || 'Error cargando variaciones';
+
+				return of([]);
+			}),
+
+			finalize(() => this.loadingVariations = false)
+		);
 	}
 
   	setOption(value: number) {
@@ -488,7 +561,7 @@ export class EditProductComponent {
 		});
 	}
 
-  importProduct(){
+	importProduct(){
 		if(this.product.productGroupId){
 			this.loadImport = true;
 			this.productService.import_product_for_group(this.product.productGroupId)
@@ -500,7 +573,7 @@ export class EditProductComponent {
 			.subscribe({
 				next: (next)=>{
 					console.log(next);
-					this.init_subcategories(next.product.categoryId);
+					this.init_subcategories$(next.product.categoryId);
 					this.init_valuesAttribute(next.product.mainAttribute?.id!);
 					this.product = {
 						...this.product,  
@@ -523,93 +596,158 @@ export class EditProductComponent {
 		}
 	}
 
-  init_brands() {
-		this.loadingBrands = true;
-		this.errorMsmSeverListBrands = '';
-		this.brands_ = [];
-		this.brandService
-			.get_brands_by_select()
-			.pipe(
-				takeUntil(this.destroy$),
-				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
-				finalize(() => (this.loadingBrands = false))
-			)
-			.subscribe({
-				next: (next) => {
-					this.brands_ = next;
-				},
-				error: (err) => {
-					const error = err.error;
-					this.errorMsmSeverListBrands = error.message;
-				},
-			});
-	}
-
-  init_attributes() {
-		this.loadingAttributes = true;
-		this.errorMsmSeverListAttributes = '';
-		this.attributes_ = [];
-		this.attributeService
-			.get_attributes_by_select()
-			.pipe(
-				takeUntil(this.destroy$),
-				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
-				finalize(() => (this.loadingAttributes = false))
-			)
-			.subscribe({
-				next: (next) => {
-					this.attributes_ = next;
-				},
-				error: (err) => {
-					const error = err.error;
-					this.errorMsmSeverListAttributes = error.message;
-				},
-			});
-	}
-
-  init_valuesAttribute(id: string) {
+  
+  	init_valuesAttribute(id: string) {
 		this.loadingValuesAttribute = true;
 		this.errorMsmSeverListValuesAttribute = '';
 		this.valuesAttribute_ = [];
+		this.attributeService
+		.get_attributeValues_by_select(id)
+		.pipe(
+			takeUntil(this.destroy$),
+			withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
+			finalize(() => (this.loadingValuesAttribute = false))
+		)
+		.subscribe({
+			next: (next) => {
+				console.log(next);
+				this.valuesAttribute_ = next;
+			},
+			error: (err) => {
+				const error = err.error;
+				this.errorMsmSeverListValuesAttribute = error.message;
+			},
+		});
+	}
+
+	onSelectAttributeProperty(idx: number){
+		this.arrProperties[idx].value = undefined;
+		this.get_valuesAttribute(this.arrProperties[idx]?.attributeId!,idx);
+	}
+
+	get_valuesAttribute(id: any,idx: number) {
+		this.arrProperties[idx].loading = true;
 		this.attributeService
 			.get_attributeValues_by_select(id)
 			.pipe(
 				takeUntil(this.destroy$),
 				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
-				finalize(() => (this.loadingValuesAttribute = false))
+				finalize(() => (this.arrProperties[idx].loading = false))
 			)
 			.subscribe({
 				next: (next) => {
 					console.log(next);
-					this.valuesAttribute_ = next;
+					this.arrProperties[idx].data = next;
+					console.log(this.arrProperties);
+					
+				}
+			});
+	}
+
+	refreshBrands(): void {
+		this.init_brands$()
+			.pipe(takeUntil(this.destroy$))
+			.subscribe();
+	}
+
+	refreshAttributes(): void {
+		this.init_attributes$()
+			.pipe(takeUntil(this.destroy$))
+			.subscribe();
+	}
+
+	onUpdateAttributeProperty(idx: number){
+		let data = this.arrProperties[idx];
+		this.idSelectProductDescripcion = data.id!;
+		this.loadBtnEditOrCreateProductDescripcion = true;
+		this.msmErrorUpdateProductDescripcion = [];
+		this.errorMsmServer = '';
+		this.errorsUpdateProductDescripcion = {};
+		
+		this.productService
+			.update_product_description(data.id!, data!)
+			.pipe(
+				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
+				takeUntil(this.destroy$),
+				finalize(() => (this.loadBtnEditOrCreateProductDescripcion = false))
+			)
+			.subscribe({
+				next: (next) => {
+					toastr.success('Caracteristica actualizada correctamente.');
 				},
 				error: (err) => {
 					const error = err.error;
-					this.errorMsmSeverListValuesAttribute = error.message;
+					this.errorMsmServer = error.message || '¡Error desconocido!';
+					toastr.error(this.errorMsmServer);
+
+					if (error.validation) {
+						this.errorsUpdateProductDescripcion = error.validation;
+						this.msmErrorUpdateProductDescripcion = Object.values(this.errorsUpdateProductDescripcion).flat();
+					}
 				},
 			});
 	}
 
-	refreshBrands(){
-		this.init_brands();
+	onCreateAttributeProperty(idx: number){
+		let data : any = this.arrProperties[idx];
+		this.idSelectProductDescripcion = data.id!;
+		data.productId = this.id;
+		
+		this.loadBtnEditOrCreateProductDescripcion = true;
+		this.msmErrorCreateProductDescripcion = [];
+		this.errorMsmServer = '';
+		this.errorsCreateProductDescripcion = {};
+		
+		this.productService
+		.create_product_description(data!)
+		.pipe(
+			withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
+			takeUntil(this.destroy$),
+			finalize(() => (this.loadBtnEditOrCreateProductDescripcion = false))
+		)
+		.subscribe({
+			next: (next) => {
+				this.arrProperties[idx].id = next.id;
+				toastr.success('Caracteristica creada correctamente.');
+			},
+			error: (err) => {
+				const error = err.error;
+				this.errorMsmServer = error.message || '¡Error desconocido!';
+				toastr.error(this.errorMsmServer);
+
+				if (error.validation) {
+					this.errorsCreateProductDescripcion = error.validation;
+					this.msmErrorCreateProductDescripcion = Object.values(this.errorsCreateProductDescripcion).flat();
+				}
+			},
+		});
 	}
 
-	refreshAttributes(){
-		this.init_attributes();
-		if(this.product.mainAttribute) this.init_valuesAttribute(this.product.mainAttribute.id);
-	}
-
-	refreshAttributeValues(){
-		if(this.product.mainAttribute) this.init_valuesAttribute(this.product.mainAttribute.id);
-	}
-
-	onSelectAttribute() {
-		this.product.mainAttributeValue = undefined;
-		this.init_valuesAttribute(this.product.mainAttribute?.id!);
-	}
-
-	onRemoveAttributeProperty(idx: number){
-		this.arrProperties.splice(idx,1)
+	onDeleteAttributeProperty(idx: number){
+		let data = this.arrProperties[idx];
+		this.loadBtnDeleteProductDescripcion = true;
+		this.idSelectToDeleteProductDescripcion = data.id!;
+		this.productService
+			.delete_product_description(data.id!)
+			.pipe(
+				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
+				takeUntil(this.destroy$),
+				finalize(() => (this.loadBtnDeleteProductDescripcion = false))
+			)
+			.subscribe({
+				next: (next) => {
+					console.log(next);
+					this.arrProperties = this.arrProperties.filter(
+						item => item.id !== next.id
+					);
+					toastr.success('Caracteristica eliminada correctamente.');
+				},
+				error: (err) => {
+					console.log(err);
+					
+					toastr.error(err.error.message);
+				},
+			});
 	}
 
 	removeImage(idx: number){
@@ -618,41 +756,129 @@ export class EditProductComponent {
 
 	addAttribute(){
 		this.arrProperties.push({
-			attribute: undefined,
+			attributeId: undefined,
 			value: undefined,
 			data: [],
 			loading: false
 		});
 	}
 
-	onSelectedBanner(image : {file?: File, preview: string, index: number}){
-		/* this.cover = image;
-		this.product.cover = this.cover.file; */
+	onSelectedCover(idx: number,cover: string){
+		this.loadSetCoverGallery = true;
+		this.idSelectCoverGallery = idx;
+		this.errorMsmServer = '';
+		this.productService
+			.set_cover_product(this.id, {cover})
+			.pipe(
+				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
+				takeUntil(this.destroy$),
+				finalize(() => (this.loadSetCoverGallery = false))
+			)
+			.subscribe({
+				next: (next) => {
+					this.coverUrlEdit = next.cover;
+					toastr.success('Cover actualizado correctamente.');
+				},
+				error: (err) => {
+					console.log(err);
+					const error = err.error;
+					this.errorMsmServer = error.message || '¡Error desconocido!';
+					toastr.error(this.errorMsmServer);
+				},
+			});
 	}
 
-	onSelectFiles(event: any){
-		this.images.push(...event);
-		this.images.forEach((element, index) => {
-			element.index = index;
+	onRemoveCover(idx: string){
+		this.loadDeleteCoverGallery = true;
+		this.idSelectDeleteCoverGallery = idx;
+		this.productService
+			.delete_image_product(this.idSelectDeleteCoverGallery)
+			.pipe(
+				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
+				takeUntil(this.destroy$),
+				finalize(() => (this.loadDeleteCoverGallery = false))
+			)
+			.subscribe({
+				next: (next) => {
+					console.log(next);
+					this.images = this.images.filter(
+						item => item.id !== next.id
+					);
+					toastr.success('Imagen eliminada correctamente.');
+				},
+				error: (err) => {
+					console.log(err);
+					toastr.error(err.error.message);
+				},
+			});
+	}
+
+	onUploadImagesGallery(images: any){
+		const formData = new FormData();
+		formData.append('productId',this.id);
+		images.forEach((file: {file: File, preview: string, index: number}) => {
+			formData.append('gallery', file.file);
 		});
-
-		setTimeout(() => {
-			refreshFsLightbox();
-		}, 50);
+		
+		this.loadUploadImagesGallery = true;
+		this.productService
+		.upload_images_product(formData)
+		.pipe(
+			takeUntil(this.destroy$),
+			finalize(() => (this.loadUploadImagesGallery = false))
+		)
+		.subscribe({
+			next: (next) => {
+				console.log(next);
+				
+				const lastIndex = this.images.length
+				? Math.max(...this.images.map(x => x.index))
+				: 0;
+				const news = next.map((item:any, i: any) => ({
+					preview: item.url,
+					index: lastIndex + i + 1,
+					id: item.id
+				}));
+				this.images.push(...news);
+				toastr.success('Caracteristica eliminada correctamente.');
+			},
+			error: (err) => {
+				console.log(err);
+				
+				toastr.error(err.error.message);
+			},
+		});
 	}
 
-	addVariation(){
-		this.errorsVariation = {};
-		if (!this.variation.skuPattern)
-		this.errorsVariation.skuPattern = 'La plantilla del SKU es requerida.';
+	onCreateVariation(){
+		console.log(this.variation);
+		this.loadCreateVariation = true;
+		this.variation.productId = this.id;
+		this.productService
+		.create_variation_product(this.variation)
+		.pipe(
+			withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
+			takeUntil(this.destroy$),
+			finalize(() => (this.loadCreateVariation = false))
+		)
+		.subscribe({
+			next: (next) => {
+				console.log();
+				this.variations.push(next);
+				this.variation = {};
+				toastr.success('Variación creada correctamente.');
+			},
+			error: (err) => {
+				const error = err.error;
+				this.errorMsmServer = error.message || '¡Error desconocido!';
+				toastr.error(this.errorMsmServer);
 
-		if (!this.variation.name)
-		this.errorsVariation.name = 'El nombre de la variación es requerido.';
-
-		if (Object.keys(this.errorsVariation).length > 0) return;
-		
-		this.variations.push({ ...this.variation });
-		this.variation.name = '';
+				if (error.validation) {
+					this.errorsCreateVariation = error.validation;
+					this.msmErrorCreateVariation = Object.values(this.errorsCreateVariation).flat();
+				}
+			},
+		});
 	}
 
 	init_groups(){

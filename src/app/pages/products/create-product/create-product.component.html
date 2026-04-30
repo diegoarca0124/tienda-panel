@@ -29,16 +29,23 @@
 					[type]="'errors'"
 					[classIcon]="'svg-icon-danger'">
 					</app-alert>
-					<div class="d-flex mb-10">
 
+					<div class="d-flex justify-content-end mb-5">
+						<div>
+							<a *ngIf="!loadBtn" class="btn btn-primary btn-sm flex-fill" (click)="create()">
+								Publicar
+							</a>
+							<button *ngIf="loadBtn" class="btn btn-primary btn-sm flex-fill" type="button" disabled>
+								<span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
+								<span role="status">Procesando...</span>
+							</button>
+						</div>
+					</div>
+
+					<div class="d-flex mb-10">
 						<div class="sidebar d-none d-xl-block">
-							<div class="card card-flush py-4 mb-7">
-								<div class="card-header">
-									<div class="card-title">
-										<h2>Visibilidad</h2>
-									</div>
-								</div>
-								<div class="card-body d-flex flex-column gap-6 pt-0">
+							<div class="card card-flush py-2 mb-7">
+								<div class="card-body d-flex flex-column gap-6 p-7">
 									<div class="fv-row">
 										<div class="d-flex justify-content-between align-items-center mb-2">
 											<label class="fw-500 text-gray-800 fs-6 required">
@@ -115,54 +122,62 @@
 										
 										<span class="fs-8 text-muted">{{labelHelper.status}}</span>
 									</div>
-									<div class="fv-row">
-										<div class="d-flex flex-stack">
-											<div class="me-5">
-												<div class="mb-1">
-													<label class="fs-6 fw-semibold">Dimensiones</label>
-												</div>
-												<span class="fs-8 text-muted">Propiedades fisicas para envío</span>
-											</div>
-											<label class="form-check form-switch form-check-custom form-check-solid">
-												<input class="form-check-input" type="checkbox" value="1" [(ngModel)]="boolDimensions" (change)="setDimensions()">
-											</label>
-										</div>
-									</div>
-									<div class="fv-row">
-										<div class="d-flex flex-stack">
-											<div class="me-5">
-												<div class="mb-1">
-													<label class="fs-6 fw-semibold">Caracteristica</label>
-												</div>
-												<span class="fs-8 text-muted">Tabla de propiedades del producto</span>
-											</div>
-											<label class="form-check form-switch form-check-custom form-check-solid">
-												<input class="form-check-input" type="checkbox" value="1" [(ngModel)]="boolCharacteristics" (change)="setCharacteristics()">
-											</label>
-										</div>
-									</div>
-									<div class="fv-row">
-										<div class="d-flex flex-stack">
-											<div class="me-5">
-												<div class="mb-1">
-													<label class="fs-6 fw-semibold">Etiquetas</label>
-												</div>
-												<span class="fs-8 text-muted">Lista de etiquetas de clasificación</span>
-											</div>
-											<label class="form-check form-switch form-check-custom form-check-solid">
-												<input class="form-check-input" type="checkbox" value="1" [(ngModel)]="boolLabels" (change)="onChangeBoolLabels()">
-											</label>
-										</div>
-									</div>
+									
 								</div>
 							</div>
-							<div class="card card-flush py-4">
-								<div class="card-header">
-									<div class="card-title">
-										<h2>Caracteristicas</h2>
+							<div class="card card-flush py-2">
+								<div class="card-body d-flex flex-column gap-6 p-7">
+									<div class="fv-row">
+										<div class="d-flex justify-content-between align-items-center">
+											<label class="fw-500 text-gray-800 fs-6 mb-2 required">Marca</label>
+											<small class="text-primary cursor-pointer" (click)="refreshBrands()">Recargar</small>
+										</div>
+										
+										<div [ngClass]="{ 'is-invalid': errorsProduct?.brandId}">
+												<ng-select
+													[items]="brands_"
+													bindLabel="name"
+													bindValue="id"
+													[(ngModel)]="product.brandId"
+													placeholder="Buscar por marca"
+													[clearable]="false"
+													[closeOnSelect]="true"
+													class="select-element mb-1"
+													[loading]="loadingBrands"
+													[disabled]="loadingBrands"
+													appendTo="body"
+												>
+													<!-- 🔹 Opción en el dropdown -->
+													<ng-template ng-option-tmp let-item="item">
+														<div class="option-item">
+															<img *ngIf="item.logoUrl" [src]="item.logoUrl" alt="{{ item.name }}" class="brand-image" />
+															<span>{{ item.name }}</span>
+														</div>
+													</ng-template>
+
+													<!-- 🔹 Opción seleccionada en el input -->
+													<ng-template ng-label-tmp let-item="item">
+														<div class="selected-item">
+															<img *ngIf="item.logoUrl" [src]="item.logoUrl" alt="{{ item.name }}" class="brand-image" />
+															<span>{{ item.name }}</span>
+														</div>
+													</ng-template>
+
+													<ng-template ng-loading-text>
+														<div class="spinner-container">
+															<span class="spinner-border spinner-border-sm"></span>
+														</div>
+													</ng-template>
+												</ng-select>
+										</div>
+										
+										<span
+											class="fs-8"
+											[ngClass]="errorMsmSeverListBrands ? 'text-danger' : 'text-muted'"
+										>
+										{{ (errorMsmSeverListBrands) ? errorMsmSeverListBrands : labelHelper.brandId }}
+										</span>
 									</div>
-								</div>
-								<div class="card-body d-flex flex-column gap-6 pt-0">
 									<div class="fv-row">
 										<div class="d-flex justify-content-between align-items-center">
 											<label class="fw-500 text-gray-800 fs-6 mb-2 required">Categoría</label>
@@ -269,46 +284,19 @@
 										{{ (errorMsmSeverListSubcategories) ? errorMsmSeverListSubcategories : labelHelper.subcategoryId }}
 										</span>
 									</div>
-									
 								</div>
 							</div>
 						</div>
 						<!--end::Table wrapper-->
 						<div class="flex-fill content">
-							<div class="card card-flush pt-4">
-								<div class="card-header">
-									<div class="card-title">
-										<h2 *ngIf="option == 1">General</h2>
-										<h2 *ngIf="option == 2">Descripción</h2>
-										<h2 *ngIf="option == 3">Etiquetas</h2>
-										<h2 *ngIf="option == 4">Propiedades</h2>
-										<h2 *ngIf="option == 5">Envío</h2>
-										<h2 *ngIf="option == 6">Galería</h2>
-										<h2 *ngIf="option == 7">Variaciones</h2>
-										<h2 *ngIf="option == 8">Grupo</h2>
-									</div>
-									<div class="card-toolbar">
-										<div class="d-flex">
-											<a *ngIf="!loadBtn" class="btn btn-primary btn-sm flex-fill" (click)="create()">
-												Publicar
-											</a>
-											<button *ngIf="loadBtn" class="btn btn-primary btn-sm flex-fill" type="button" disabled>
-												<span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
-												<span role="status">Procesando...</span>
-											</button>
-										</div>
-									</div>
-								</div>
+							<div class="card card-flush pt-7">
 								<div class="card-body pt-1">
 									<ul class="nav nav-pills nav-scroll">
 										<li class="nav-item">
 											<a class="nav-link cursor-pointer bg-light" [ngClass]="{ 'active': option == 1 }" (click)="setOption(1)">General</a>
 										</li>
-										<li class="nav-item" *ngIf="boolCharacteristics">
+										<li class="nav-item" *ngIf="categorySelected.isCharacteristics">
 											<a class="nav-link cursor-pointer bg-light" [ngClass]="{ 'active': option == 2 }" (click)="setOption(2)">Caracteristicas</a>
-										</li>
-										<li class="nav-item" *ngIf="boolLabels">
-											<a class="nav-link cursor-pointer bg-light" [ngClass]="{ 'active': option == 3 }" (click)="setOption(3)">Etiquetas</a>
 										</li>
 										<li class="nav-item">
 											<a class="nav-link cursor-pointer bg-light" [ngClass]="{ 'active': option == 4 }" (click)="setOption(4)">Propiedades</a>
@@ -326,7 +314,6 @@
 											<a class="nav-link cursor-pointer bg-light" [ngClass]="{ 'active': option == 8 }" (click)="setOption(8)">Grupo</a>
 										</li>
 									</ul>
-
 								</div>
 								<div class="card-body mb-5" *ngIf="product.productGroupId" style="border-left: 5px solid #50cd89;border-top: 1px solid #f1f1f1; border-bottom: 1px solid #f1f1f1; background-color: #effff6;">
 									<div class="d-flex justify-content-between">
@@ -355,17 +342,17 @@
 									</div>
 								</div>
 								<div class="card-body d-flex flex-column gap-6 pt-1" [ngClass]="{'d-none': option != 1}">
-									<div class="fv-row">
-										<label class="required fw-500 text-gray-800 fs-6 mb-1">Título</label>
-										<input type="text" name="name" class="form-control" placeholder="Product name" [(ngModel)]="product.name" 
-										[ngClass]="{ 'is-invalid': errorsProduct?.name }"/>
-										<span class="fs-8 text-muted">{{labelHelper.name}}</span>
-									</div>
 									<div class="row">
-										<div class="col-6">
+										<div class="col-12 mb-4">
+											<label class="required fw-500 text-gray-800 fs-6 mb-1">Título</label>
+											<input type="text" name="name" class="form-control" placeholder="Product name" [(ngModel)]="product.name" 
+											[ngClass]="{ 'is-invalid': errorsProduct?.name }"/>
+											<span class="fs-8 text-muted">{{labelHelper.name}}</span>
+										</div>
+										<div class="col-6 mb-4">
 											<div class="d-flex flex-column fv-row fv-plugins-icon-container">
 												<!--begin::Label-->
-												<label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2">
+												<label class="d-flex align-items-center fs-6 fw-semibold form-label mb-1">
 													<span class="required">Miniatura</span>
 												</label>
 												<!--end::Label-->
@@ -383,238 +370,8 @@
 												<span class="fs-8 text-muted">Miniatura representativa del producto en 1:1.</span>
 											</div>
 										</div>
-										<div class="col-6">
-											<div class="d-flex flex-column fv-row fv-plugins-icon-container">
-												<div class="d-flex justify-content-between align-items-center">
-													<label class="fw-500 text-gray-800 fs-6 mb-2 required">Marca</label>
-													<small class="text-primary cursor-pointer" (click)="refreshBrands()">Recargar</small>
-												</div>
-												<div [ngClass]="{ 'is-invalid': errorsProduct?.brandId}">
-													<ng-select
-														[items]="brands_"
-														bindLabel="name"
-														bindValue="id"
-														[(ngModel)]="product.brandId"
-														placeholder="Buscar por marca"
-														[clearable]="false"
-														[closeOnSelect]="true"
-														class="select-element mb-1"
-														[loading]="loadingBrands"
-														[disabled]="loadingBrands"
-														appendTo="body"
-													>
-														<!-- 🔹 Opción en el dropdown -->
-														<ng-template ng-option-tmp let-item="item">
-															<div class="option-item">
-																<img *ngIf="item.logoUrl" [src]="item.logoUrl" alt="{{ item.name }}" class="brand-image" />
-																<span>{{ item.name }}</span>
-															</div>
-														</ng-template>
-
-														<!-- 🔹 Opción seleccionada en el input -->
-														<ng-template ng-label-tmp let-item="item">
-															<div class="selected-item">
-																<img *ngIf="item.logoUrl" [src]="item.logoUrl" alt="{{ item.name }}" class="brand-image" />
-																<span>{{ item.name }}</span>
-															</div>
-														</ng-template>
-
-														<ng-template ng-loading-text>
-															<div class="spinner-container">
-																<span class="spinner-border spinner-border-sm"></span>
-															</div>
-														</ng-template>
-													</ng-select>
-												</div>
-												
-												<span
-													class="fs-8"
-													[ngClass]="errorMsmSeverListBrands ? 'text-danger' : 'text-muted'"
-												>
-												{{ (errorMsmSeverListBrands) ? errorMsmSeverListBrands : labelHelper.brandId }}
-												</span>
-											</div>
-										</div>
-									</div>
-									<div class="row" *ngIf="widthScreen <= 1200">
-										<div class="col-md-6 mb-6 mb-md-0">
-											<label class="fw-500 text-gray-800 fs-6 mb-2 required">Categoría</label>
-											<div [ngClass]="{ 'is-invalid': errorsProduct?.categoryId }">
-												<ng-select
-													[items]="categories_"
-													bindLabel="name"
-													bindValue="value"
-													[(ngModel)]="product.categoryId"
-													placeholder="Categorías"
-													[clearable]="false"
-													[closeOnSelect]="true"
-													class="select-element mb-1"
-													(change)="onSelectCategory()"
-													[loading]="loadingCategories"
-													[disabled]="loadingCategories"
-													appendTo="body"
-												>
-													<!-- Opción en el dropdown -->
-													<ng-template ng-option-tmp let-item="item">
-														<div class="option-item d-flex gap-3 align-items-center">
-															<div class="d-flex align-items-center svg-icon svg-icon-3" [class]="item.class" [innerHTML]="item.icon" style="color: #9da1bc;font-size: 1.4rem;"></div>
-															<span class="text-ellipsis">{{ item.name }}</span>
-														</div>
-													</ng-template>
-													
-
-													<!-- Opción seleccionada en el input -->
-													<ng-template ng-label-tmp let-item="item">
-														<div class="option-item d-flex gap-3 align-items-center">
-															<div class="d-flex align-items-center svg-icon svg-icon-3" [class]="item.class" [innerHTML]="item.icon" style="color: #9da1bc;font-size: 1.4rem;"></div>
-															<span>{{ item.name }}</span>
-														</div>
-													</ng-template>
-
-													<ng-template ng-loading-text>
-														<div class="spinner-container">
-															<span class="spinner-border spinner-border-sm"></span>
-														</div>
-													</ng-template>
-												</ng-select>
-											</div>
-											<span class="fs-8 text-muted">{{labelHelper.categoryId}}</span>
-										</div>
-										<div class="col-md-6">
-											<label class="fw-500 text-gray-800 fs-6 mb-2 required">Subcategoría</label>
-											<div [ngClass]="{ 'is-invalid': errorsProduct?.subcategoryId }">
-												<ng-select
-													[items]="subcategories_"
-													bindLabel="name"
-													bindValue="id"
-													[(ngModel)]="product.subcategoryId"
-													placeholder="Subcategorías"
-													[clearable]="false"
-													[closeOnSelect]="true"
-													class="select-element mb-1"
-													[loading]="loadingSubcategories"
-													[disabled]="loadingSubcategories"
-													appendTo="body"
-												>
-													<!-- Opción en el dropdown -->
-													<ng-template ng-option-tmp let-item="item">
-														<div class="option-item d-flex gap-3 align-items-center">
-															<div class="d-flex align-items-center svg-icon svg-icon-3" [class]="item.class" [innerHTML]="item.icon" style="color: #9da1bc;font-size: 1.4rem;"></div>
-															<span class="text-ellipsis">{{ item.name }}</span>
-														</div>
-													</ng-template>
-													
-
-													<!-- Opción seleccionada en el input -->
-													<ng-template ng-label-tmp let-item="item">
-														<div class="option-item d-flex gap-3 align-items-center">
-															<div class="d-flex align-items-center svg-icon svg-icon-3" [class]="item.class" [innerHTML]="item.icon" style="color: #9da1bc;font-size: 1.4rem;"></div>
-															<span>{{ item.name }}</span>
-														</div>
-													</ng-template>
-
-													<ng-template ng-loading-text>
-														<div class="spinner-container">
-															<span class="spinner-border spinner-border-sm"></span>
-														</div>
-													</ng-template>
-												</ng-select>
-											</div>
-											<span class="fs-8 text-muted">{{labelHelper.subcategoryId}}</span>
-										</div>
-									</div>
-									<div class="row">
-										<div class="col-md-6 mb-6 mb-md-0">
-											<div class="d-flex justify-content-between align-items-center">
-												<label class="fw-500 text-gray-800 fs-6 mb-2 required">Atributo principal</label>
-												<small class="text-primary cursor-pointer" (click)="refreshAttributes()">Recargar</small>
-											</div>
-											<div [ngClass]="{ 'is-invalid': errorsProduct?.mainAttribute }">
-												<ng-select
-													[items]="attributes_"
-													bindLabel="name"
-													[(ngModel)]="product.mainAttribute"
-													placeholder="Atributos"
-													[clearable]="false"
-													[closeOnSelect]="true"
-													class="select-element mb-1"
-													(change)="onSelectAttribute()"
-													[loading]="loadingAttributes"
-													[disabled]="loadingAttributes"
-													appendTo="body"
-												>
-													<!-- Opción en el dropdown -->
-													<ng-template ng-option-tmp let-item="item">
-														<span class="text-ellipsis">{{ item.name }}</span>
-													</ng-template>
-
-													<!-- Opción seleccionada en el input -->
-													<ng-template ng-label-tmp let-item="item">
-														<span class="text-ellipsis">{{ item.name }}</span>
-													</ng-template>
-
-													<ng-template ng-loading-text>
-														<div class="spinner-container">
-															<span class="spinner-border spinner-border-sm"></span>
-														</div>
-													</ng-template>
-												</ng-select>
-											</div>
-											<span
-												class="fs-8"
-												[ngClass]="errorMsmSeverListAttributes ? 'text-danger' : 'text-muted'"
-											>
-											{{ (errorMsmSeverListAttributes) ? errorMsmSeverListAttributes : labelHelper.mainAttribute }}
-											</span>
-										</div>
-										<div class="col-md-6">
-											<div class="d-flex justify-content-between align-items-center">
-													<label class="fw-500 text-gray-800 fs-6 mb-2 required">Valores Atributo</label>
-													<small *ngIf="product.mainAttribute" class="text-primary cursor-pointer" (click)="refreshAttributeValues()">Recargar</small>
-													<small *ngIf="!product.mainAttribute" class="text-muted" style="cursor: not-allowed;">Recargar</small>
-												</div>
-											<div  [ngClass]="{ 'is-invalid': errorsProduct?.mainAttributeValue }">
-												<ng-select
-													[items]="valuesAttribute_"
-													bindLabel="value"
-													bindValue="value"
-													[(ngModel)]="product.mainAttributeValue"
-													placeholder="Valores"
-													[clearable]="false"
-													[closeOnSelect]="true"
-													class="select-element mb-1"
-													[loading]="loadingValuesAttribute"
-													[disabled]="loadingValuesAttribute"
-													appendTo="body"
-												>
-													<!-- Opción en el dropdown -->
-													<ng-template ng-option-tmp let-item="item">
-														<span class="text-ellipsis">{{ item.value }}</span>
-													</ng-template>
-
-													<!-- Opción seleccionada en el input -->
-													<ng-template ng-label-tmp let-item="item">
-														<span class="text-ellipsis">{{ item.value }}</span>
-													</ng-template>
-
-													<ng-template ng-loading-text>
-														<div class="spinner-container">
-															<span class="spinner-border spinner-border-sm"></span>
-														</div>
-													</ng-template>
-												</ng-select>
-											</div>
-											<span
-												class="fs-8"
-												[ngClass]="errorMsmSeverListValuesAttribute ? 'text-danger' : 'text-muted'"
-											>
-											{{ (errorMsmSeverListValuesAttribute) ? errorMsmSeverListValuesAttribute : labelHelper.mainAttributeValue }}
-											</span>
-										</div>
-									</div>
-									<div class="row">
-										<div class="col-md-6 mb-6 mb-md-0">
-											<div class="d-flex justify-content-between align-items-center mb-2">
+										<div class="col-md-6 mb-4">
+											<div class="d-flex justify-content-between align-items-center mb-1">
 												<label class="fw-500 text-gray-800 fs-6 required">
 													Unidad medida
 												</label>
@@ -653,8 +410,29 @@
 											</div>
 											<span class="fs-8 text-muted">{{labelHelper.unitOfMeasure}}</span>
 										</div>
-										<div class="col-md-6">
-											<div class="d-flex justify-content-between align-items-center mb-2">
+										<div class="col-md-6 mb-4" *ngIf="categorySelected.isMaterial">
+											<div class="d-flex justify-content-between align-items-center mb-1">
+												<label class="fw-500 text-gray-800 fs-6 required">
+													Material principal
+												</label>
+											</div>
+											<div [ngClass]="{ 'is-invalid': errorsProduct?.material }">
+												<ng-select
+													[items]="materials_"
+													[(ngModel)]="physical.material"
+													placeholder="Selecciona material"
+													[clearable]="false"
+													[groupBy]="'group'"
+													bindLabel="name"
+													bindValue="name"
+													class="select-element mb-1"
+													appendTo="body">
+												</ng-select>
+											</div>
+											<span class="fs-8 text-muted">{{ labelHelper.material }}</span>
+										</div>
+										<div class="col-md-6 mb-4" *ngIf="categorySelected.isConditiom">
+											<div class="d-flex justify-content-between align-items-center mb-1">
 												<label class="fw-500 text-gray-800 fs-6 required">
 													Condición
 												</label>
@@ -696,10 +474,8 @@
 											</div>
 											<span class="fs-8 text-muted">{{labelHelper.condition}}</span>
 										</div>
-									</div>
-									<div class="row">
-										<div class="col-md-6 mb-6 mb-md-0">
-											<label class="fw-500 text-gray-800 fs-6 mb-2 required">Garantía</label>
+										<div class="col-md-6 mb-4" *ngIf="categorySelected.isWarranti">
+											<label class="fw-500 text-gray-800 fs-6 mb-1 required">Garantía</label>
 											<div [ngClass]="{ 'is-invalid': errorsProduct?.warranty}">
 												<ng-select
 													[items]="warranties_"
@@ -751,8 +527,8 @@
 											</div>
 											<span class="fs-8 text-muted">{{labelHelper.warranty}}</span>
 										</div>
-										<div class="col-md-6">
-											<label class="fw-500 text-gray-800 fs-6 mb-2 required">País de fabricación</label>
+										<div class="col-md-6 mb-4" *ngIf="categorySelected.isCountryOfOrigin">
+											<label class="fw-500 text-gray-800 fs-6 mb-1 required">País de fabricación</label>
 											<div [ngClass]="{ 'is-invalid': false }">
 												<div [ngClass]="{ 'is-invalid': errorsProduct?.countryOfOrigin }">
 													<ng-select
@@ -781,10 +557,50 @@
 												<span class="fs-8 text-muted">{{labelHelper.countryOfOrigin}}</span>
 											</div>
 										</div>
+										<div class="col-md-12 mb-4">
+											<label class="required fw-500 text-gray-800 fs-6 mb-2">Contenido</label>
+											<div class="mb-1" [ngClass]="{ 'border-danger': errorsProduct?.description}">
+												<div #editor id="editor" style="height: 100px;"></div>
+											</div>
+											<span class="fs-8 text-muted">{{labelHelper.description}}</span>
+										</div>
+										<div class="col-md-12 mb-4">
+											<div class="d-flex flex-column">
+												<div class="d-flex justify-content-between align-items-center mb-2">
+													<label class="fw-500 text-gray-800 fs-6">
+														Etiquetas
+													</label>
+												</div>
+												<div class="mb-2" [ngClass]="{ 'is-invalid': errorsProduct?.tags}">
+													<app-tagify-input [whiteList]="whiteListTags" (tagsChange)="onTagsChange($event)"></app-tagify-input>
+												</div>
+												<span class="fs-8 text-muted">{{labelHelper.categoryId}}</span>
+											</div>
+										</div>
+										<div class="col-md-12 mb-4">
+											<div class="d-flex justify-content-between align-items-center mb-2">
+												<label class="fw-500 text-gray-800 fs-6 required">
+													Extracto
+												</label>
+												<div class="cursor-pointer">
+													<i class="bi bi-info-circle" placement="left" 
+													[ngbTooltip]="labelHelper.extract"
+													tooltipClass="tooltip-dark"></i>
+												</div>
+											</div>
+											<textarea class="form-control mb-1" placeholder="Reseña corta del producto" [(ngModel)]="product.extract" [ngClass]="{ 'is-invalid': errorsProduct?.extract}"></textarea>
+											<span class="fs-8 text-muted">{{labelHelper.extract}}</span>
+										</div>
 									</div>
 									<div class="row">
-										<div class="col-md-6 mb-6 mb-md-0">
-											<div class="d-flex justify-content-between align-items-center mb-2">
+										<div class="col-lg-12 my-3">
+											<h4 class="mb-0">Precios</h4>
+											<span class="text-gray-600 mt-1 fw-400 fs-0-9rem">
+												Activa opciones promocionales, visibilidad y reglas de venta del producto.
+											</span>
+										</div>
+										<div class="col-md-6 mb-4">
+											<div class="d-flex justify-content-between align-items-center mb-1">
 												<label class="fw-500 text-gray-800 fs-6 required">
 													Precio regular
 												</label>
@@ -802,7 +618,7 @@
 											<span class="fs-8 text-muted">{{labelHelper.priceRegular}}</span>
 										</div>
 										<div class="col-md-6">
-											<div class="d-flex justify-content-between align-items-center mb-2">
+											<div class="d-flex justify-content-between align-items-center mb-1">
 												<label class="fw-500 text-gray-800 fs-6">
 													Precio descuento
 												</label>
@@ -825,83 +641,8 @@
 											<span class="fs-8 text-muted">{{labelHelper.priceDiscount}}</span>
 										</div>
 									</div>
-									<div class="row" *ngIf="widthScreen <= 1200">
-										<div class="col-md-6 mb-6 mb-md-0">
-											<label class="fw-500 text-gray-800 fs-6 mb-2 required">Marca</label>
-											<div [ngClass]="{ 'is-invalid': errorsProduct?.brandId}">
-												<ng-select
-													[items]="brands_"
-													bindLabel="name"
-													bindValue="id"
-													[(ngModel)]="product.brandId"
-													placeholder="Buscar por marca"
-													[clearable]="false"
-													[closeOnSelect]="true"
-													class="select-element mb-1"
-													[loading]="loadingBrands"
-													[disabled]="loadingBrands"
-													appendTo="body"
-												>
-													<!-- 🔹 Opción en el dropdown -->
-													<ng-template ng-option-tmp let-item="item">
-														<div class="option-item">
-															<img *ngIf="item.logoUrl" [src]="item.logoUrl" alt="{{ item.name }}" class="brand-image" />
-															<span>{{ item.name }}</span>
-														</div>
-													</ng-template>
-
-													<!-- 🔹 Opción seleccionada en el input -->
-													<ng-template ng-label-tmp let-item="item">
-														<div class="selected-item">
-															<img *ngIf="item.logoUrl" [src]="item.logoUrl" alt="{{ item.name }}" class="brand-image" />
-															<span>{{ item.name }}</span>
-														</div>
-													</ng-template>
-
-													<ng-template ng-loading-text>
-														<div class="spinner-container">
-															<span class="spinner-border spinner-border-sm"></span>
-														</div>
-													</ng-template>
-												</ng-select>
-											</div>
-											<span class="fs-8 text-muted">{{labelHelper.brandId}}</span>
-										</div>
-									</div>
-									<div class="d-flex flex-column">
-										<div class="d-flex justify-content-between align-items-center mb-2">
-											<label class="fw-500 text-gray-800 fs-6">
-												Etiquetas
-											</label>
-										</div>
-										<div [ngClass]="{ 'is-invalid': errorsProduct?.tags}">
-											<app-tagify-input class="mb-1" [whiteList]="whiteListTags" (tagsChange)="onTagsChange($event)"></app-tagify-input>
-										</div>
-										<span class="fs-8 text-muted">{{labelHelper.categoryId}}</span>
-									</div>
-									<div class="fv-row">
-										<label class="required fw-500 text-gray-800 fs-6 mb-2">Contenido</label>
-										<div class="mb-1" [ngClass]="{ 'border-danger': errorsProduct?.description}">
-											<div #editor id="editor" style="height: 200px;"></div>
-										</div>
-										<span class="fs-8 text-muted">{{labelHelper.description}}</span>
-									</div>
-									<div class="fv-row">
-										<div class="d-flex justify-content-between align-items-center mb-2">
-											<label class="fw-500 text-gray-800 fs-6 required">
-												Extracto
-											</label>
-											<div class="cursor-pointer">
-												<i class="bi bi-info-circle" placement="left" 
-												[ngbTooltip]="labelHelper.extract"
-												tooltipClass="tooltip-dark"></i>
-											</div>
-										</div>
-										<textarea class="form-control mb-1" placeholder="Reseña corta del producto" [(ngModel)]="product.extract" [ngClass]="{ 'is-invalid': errorsProduct?.extract}"></textarea>
-										<span class="fs-8 text-muted">{{labelHelper.extract}}</span>
-									</div>
 								</div>
-								<div  *ngIf="boolCharacteristics" class="card-body d-flex flex-column gap-6 pt-1" [ngClass]="{'d-none': option != 2}">
+								<div *ngIf="categorySelected.isCharacteristics" class="card-body d-flex flex-column gap-4 pt-1" [ngClass]="{'d-none': option != 2}">
 									<div class="row">
 										<div class="col-12">
 											<app-alert 
@@ -914,15 +655,16 @@
 										</div>
 									</div>
 									<div class="row" *ngFor="let item of arrProperties; let idx = index">
-										<div class="col-lg-6">
+										<div class="col-md">
 											<ng-select
 												[items]="attributes_"
 												bindLabel="name"
-												[(ngModel)]="item.attribute"
+												bindValue="id"
+												[(ngModel)]="item.attributeId"
 												placeholder="Atributos"
 												[clearable]="false"
 												[closeOnSelect]="true"
-												class="select-element"
+												class="select-element-sm mb-1"
 												(change)="onSelectAttributeProperty(idx)"
 												[loading]="loadingAttributes"
 												[disabled]="loadingAttributes"
@@ -945,7 +687,7 @@
 												</ng-template>
 											</ng-select>
 										</div>
-										<div class="col-lg-5">
+										<div class="col-md">
 											<ng-select
 												[items]="item.data"
 												bindLabel="value"
@@ -953,7 +695,7 @@
 												placeholder="Valores"
 												[clearable]="false"
 												[closeOnSelect]="true"
-												class="select-element"
+												class="select-element-sm mb-1"
 												[loading]="item.loading"
 												[disabled]="item.loading"
 												appendTo="body"
@@ -975,8 +717,8 @@
 												</ng-template>
 											</ng-select>
 										</div>
-										<div class="col-lg-1">
-											<button class="btn btn-icon btn-icon-danger btn-text-danger" style="background-color: #f9f9f9;" (click)="onRemoveAttributeProperty(idx)">
+										<div class="col-auto">
+											<button class="btn btn-icon btn-icon btn-sm btn-icon-danger btn-text-danger" style="background-color: #f9f9f9;" (click)="onRemoveAttributeProperty(idx)">
 												<app-icon-trash></app-icon-trash>
 											</button>
 										</div>
@@ -985,81 +727,16 @@
 										<a class="cursor-pointer" (click)="addAttribute()">Nueva caracteristica</a>
 									</div>
 								</div>
-								<div *ngIf="boolLabels" class="card-body d-flex flex-column gap-6 pt-1" [ngClass]="{'d-none': option != 3}">
-									<!-- Más vendido -->
-									<label class="form-check form-check-custom form-check-solid align-items-center">
-										<input class="form-check-input me-3" type="checkbox" [(ngModel)]="product.isBestSeller" />
-										<span class="form-check-label d-flex flex-column align-items-start">
-											<span class="fw-500 text-gray-800 fs-6 mb-0">Más vendido</span>
-											<small>Marca este producto como uno de los más populares o con mayores ventas.</small>
-										</span>
-									</label>
-									<div class="separator separator-dashed"></div>
-
-									<!-- Nuevo -->
-									<label class="form-check form-check-custom form-check-solid align-items-center">
-										<input class="form-check-input me-3" type="checkbox" [(ngModel)]="product.isNewArrival" />
-										<span class="form-check-label d-flex flex-column align-items-start">
-											<span class="fw-500 text-gray-800 fs-6 mb-0">Nuevo</span>
-											<small>Indica que este producto fue recientemente agregado al catálogo.</small>
-										</span>
-									</label>
-									<div class="separator separator-dashed"></div>
-
-									<!-- Destacado -->
-									<label class="form-check form-check-custom form-check-solid align-items-center">
-										<input class="form-check-input me-3" type="checkbox" [(ngModel)]="product.isFeatured" />
-										<span class="form-check-label d-flex flex-column align-items-start">
-											<span class="fw-500 text-gray-800 fs-6 mb-0">Destacado</span>
-											<small>Resalta este producto en la página principal o secciones destacadas.</small>
-										</span>
-									</label>
-									<div class="separator separator-dashed"></div>
-
-									<!-- Edición limitada -->
-									<label class="form-check form-check-custom form-check-solid align-items-center">
-										<input class="form-check-input me-3" type="checkbox" [(ngModel)]="product.isLimitedEdition" />
-										<span class="form-check-label d-flex flex-column align-items-start">
-											<span class="fw-500 text-gray-800 fs-6 mb-0">Edición limitada</span>
-											<small>Marca el producto como una versión exclusiva o de tiraje limitado.</small>
-										</span>
-									</label>
-									<div class="separator separator-dashed"></div>
-
-									<!-- Preventa -->
-									<label class="form-check form-check-custom form-check-solid align-items-center">
-										<input class="form-check-input me-3" type="checkbox" [(ngModel)]="product.isPreOrder" />
-										<span class="form-check-label d-flex flex-column align-items-start">
-											<span class="fw-500 text-gray-800 fs-6 mb-0">Preventa</span>
-											<small>Permite reservar el producto antes de su lanzamiento o disponibilidad.</small>
-										</span>
-									</label>
-									<div class="separator separator-dashed"></div>
-
-									<!-- Exportable -->
-									<label class="form-check form-check-custom form-check-solid align-items-center">
-										<input class="form-check-input me-3" type="checkbox" [(ngModel)]="product.isExportable" />
-										<span class="form-check-label d-flex flex-column align-items-start">
-											<span class="fw-500 text-gray-800 fs-6 mb-0">Exportable</span>
-											<small>Indica que este producto puede venderse o enviarse internacionalmente.</small>
-										</span>
-									</label>
-									<div class="separator separator-dashed"></div>
-
-									<!-- Permitir Backorder -->
-									<label class="form-check form-check-custom form-check-solid align-items-center">
-										<input class="form-check-input me-3" type="checkbox" [(ngModel)]="product.allowBackorder" />
-										<span class="form-check-label d-flex flex-column align-items-start">
-											<span class="fw-500 text-gray-800 fs-6 mb-0">Permitir backorder</span>
-											<small>Permite que el cliente compre el producto aunque esté sin stock disponible.</small>
-										</span>
-									</label>
-
-								</div>
 								<div class="card-body d-flex flex-column gap-6 pt-1" [ngClass]="{'d-none': option != 4}">
-									<div class="row" *ngIf="boolDimensions">
-										<div class="col-md-6">
-											<label class="fw-500 text-gray-800 fs-6 mb-2" [ngClass]="{'required': boolDimensions}">Unidad peso</label>
+									<div class="row" *ngIf="categorySelected.isDimensions">
+										<div class="col-lg-12 mb-5">
+											<h4 class="mb-0">Medidas Fisicas</h4>
+											<span class="text-gray-600 mt-1 fw-400 fs-0-9rem">
+												Ingresa las medidas y peso reales del producto para mejorar costos de envío y gestión logística.
+											</span>
+										</div>
+										<div class="col-md-6 mb-4">
+											<label class="fw-500 text-gray-800 fs-6 mb-2" [ngClass]="{'required': categorySelected.isDimensions}">Unidad peso</label>
 											<div [ngClass]="{ 'is-invalid': errorsProduct?.weightUnit }">
 												<ng-select
 													[items]="weightUnits_"
@@ -1093,8 +770,8 @@
 											</div>
 											<span class="fs-8 text-muted">{{labelHelper.weightUnit}}</span>
 										</div>
-										<div class="col-md-6">
-											<label class="fw-500 text-gray-800 fs-6 mb-2" [ngClass]="{'required': boolDimensions}">Unidad longitud</label>
+										<div class="col-md-6 mb-4">
+											<label class="fw-500 text-gray-800 fs-6 mb-2" [ngClass]="{'required': categorySelected.isDimensions}">Unidad longitud</label>
 											<div [ngClass]="{ 'is-invalid': errorsProduct?.dimensionUnit }">
 												<ng-select
 												[items]="dimensiontUnits_"
@@ -1127,203 +804,343 @@
 											</div>
 											<span class="fs-8 text-muted">{{labelHelper.dimensionUnit}}</span>
 										</div>
-									</div>
-									<div class="row" *ngIf="boolDimensions">
-										<div class="col-md-3">
-											<label class="fw-500 text-gray-800 fs-6 mb-2" [ngClass]="{'required': boolDimensions}">Ancho</label>
+										<div class="col-md-3 mb-4">
+											<label class="fw-500 text-gray-800 fs-6 mb-2" [ngClass]="{'required': categorySelected.isDimensions}">Ancho</label>
 											<input type="number" class="form-control mb-1" placeholder="Ancho" [(ngModel)]="physical.width"
 											[ngClass]="{ 'is-invalid': errorsProduct?.width }">
-											<span class="fs-8 text-muted">{{labelHelper.width}}</span>
+											<span class="fs-8 text-muted text-description-form">{{labelHelper.width}}</span>
 										</div>
-										<div class="col-md-3">
-											<label class="fw-500 text-gray-800 fs-6 mb-2" [ngClass]="{'required': boolDimensions}">Alto</label>
+										<div class="col-md-3 mb-4">
+											<label class="fw-500 text-gray-800 fs-6 mb-2" [ngClass]="{'required': categorySelected.isDimensions}">Alto</label>
 											<input type="number" class="form-control mb-1" placeholder="Alto" [(ngModel)]="physical.height"
 											[ngClass]="{ 'is-invalid': errorsProduct?.height }">
-											<span class="fs-8 text-muted">{{labelHelper.height}}</span>
+											<span class="fs-8 text-muted text-description-form">{{labelHelper.height}}</span>
 										</div>
-										<div class="col-md-3">
-											<label class="fw-500 text-gray-800 fs-6 mb-2" [ngClass]="{'required': boolDimensions}">Largo</label>
+										<div class="col-md-3 mb-4">
+											<label class="fw-500 text-gray-800 fs-6 mb-2" [ngClass]="{'required': categorySelected.isDimensions}">Largo</label>
 											<input type="number" class="form-control mb-1" placeholder="Largo" [(ngModel)]="physical.length"
 											[ngClass]="{ 'is-invalid': errorsProduct?.length }">
-											<span class="fs-8 text-muted">{{labelHelper.length}}</span>
+											<span class="fs-8 text-muted text-description-form">{{labelHelper.length}}</span>
 										</div>
-										<div class="col-md-3">
-											<label class="fw-500 text-gray-800 fs-6 mb-2" [ngClass]="{'required': boolDimensions}">Peso</label>
+										<div class="col-md-3 mb-4">
+											<label class="fw-500 text-gray-800 fs-6 mb-2" [ngClass]="{'required': categorySelected.isDimensions}">Peso</label>
 											<input type="number" class="form-control mb-1" placeholder="Peso" [(ngModel)]="physical.weight"
 											[ngClass]="{ 'is-invalid': errorsProduct?.weight }">
-											<span class="fs-8 text-muted">{{labelHelper.weight}}</span>
+											<span class="fs-8 text-muted text-description-form">{{labelHelper.weight}}</span>
 										</div>
 									</div>
-									<div class="row">
-										<div class="col-md-6">
-											<label class="fw-500 text-gray-800 fs-6 mb-2 required">Material principal</label>
-											<div [ngClass]="{ 'is-invalid': errorsProduct?.material }">
-												<ng-select
-													[items]="materials_"
-													[(ngModel)]="physical.material"
-													placeholder="Materiales"
-													[clearable]="false"
-													[closeOnSelect]="true"
-													[groupBy]="'group'"
-													bindLabel="name"
-													bindValue="name"
-													class="select-element mb-1"
-													appendTo="body"
-												>
-													<!-- Opción en el dropdown -->
-													<ng-template ng-option-tmp let-item="item">
-														<div class="option-item d-flex gap-3 align-items-center">
-															<div class="option-name">{{ item.name }}</div>
-														</div>
-													</ng-template>
-
-													<!-- Opción seleccionada en el input -->
-													<ng-template ng-label-tmp let-item="item">
-														{{ item.name }}
-													</ng-template>
-
-													<ng-template ng-loading-text>
-														<div class="spinner-container">
-														<span class="spinner-border spinner-border-sm"></span>
-														</div>
-													</ng-template>
-												</ng-select>
-											</div>
-
-											<span class="fs-8 text-muted">{{labelHelper.material}}</span>
+									<div class="row" *ngIf="categorySelected.isTemperature">
+										<div class="col-lg-12 mb-5">
+											<h4 class="mb-0">Temperatura y conversación</h4>
+											<span class="text-gray-600 mt-1 fw-400 fs-0-9rem">
+												Define las condiciones térmicas necesarias para almacenar, transportar o conservar correctamente el producto.
+											</span>
 										</div>
-										<div class="col-md-6">
-											<label class="fw-500 text-gray-800 fs-6 mb-2">Unidad Temperatura</label>
+										<div class="col-md-4 mb-4">
+											<label class="fw-500 text-gray-800 fs-6 mb-2">
+												Unidad de temperatura
+											</label>
 											<div [ngClass]="{ 'is-invalid': errorsProduct?.storageTempUnit }">
 												<ng-select
 													[items]="temperatures_"
 													bindLabel="name"
 													[(ngModel)]="physical.storageTempUnit"
-													placeholder="Unidade temperatura"
+													placeholder="Selecciona unidad"
 													[clearable]="false"
-													[closeOnSelect]="true"
 													class="select-element mb-1"
-													appendTo="body"
-												>
-													<!-- Opción en el dropdown -->
-													<ng-template ng-option-tmp let-item="item">
-														<div class="option-item d-flex gap-3 align-items-center">
-															<div class="option-name">{{ item.name }}</div>
-															<small class="option-value text-gray-500"> - {{ item.abbr }}</small>
-														</div>
-													</ng-template>
-
-													<!-- Opción seleccionada en el input -->
-													<ng-template ng-label-tmp let-item="item">
-														{{ item.name }}
-													</ng-template>
-
-													<ng-template ng-loading-text>
-														<div class="spinner-container">
-															<span class="spinner-border spinner-border-sm"></span>
-														</div>
-													</ng-template>
+													appendTo="body">
 												</ng-select>
 											</div>
-											<span class="fs-8 text-muted">{{labelHelper.storageTempUnit}}</span>
+											<span class="fs-8 text-muted">{{ labelHelper.storageTempUnit }}</span>
+										</div>
+										<div class="col-md-4 mb-4">
+											<label class="fw-500 text-gray-800 fs-6 mb-2">
+												Temperatura mínima
+											</label>
+											<input
+												type="number"
+												class="form-control mb-1"
+												placeholder="Ej: 2"
+												[(ngModel)]="physical.minStorageTemp"
+												[ngClass]="{ 'is-invalid': errorsProduct?.minStorageTemp }">
+											<span class="fs-8 text-muted">{{ labelHelper.minStorageTemp }}</span>
+										</div>
+										<div class="col-md-4 mb-4">
+											<label class="fw-500 text-gray-800 fs-6 mb-2">
+												Temperatura máxima
+											</label>
+											<input
+												type="number"
+												class="form-control mb-1"
+												placeholder="Ej: 8"
+												[(ngModel)]="physical.maxStorageTemp"
+												[ngClass]="{ 'is-invalid': errorsProduct?.maxStorageTemp }">
+
+											<span class="fs-8 text-muted">{{ labelHelper.maxStorageTemp }}</span>
 										</div>
 									</div>
-									<div class="row mb-2">
-										<div class="col-md-6">
-											<label class="fw-500 text-gray-800 fs-6 mb-2">Temperatura min.</label>
-											<input type="number" class="form-control mb-1" placeholder="Minima" [(ngModel)]="physical.minStorageTemp"
-											[ngClass]="{ 'is-invalid': errorsProduct?.minStorageTemp }">
-											<span class="fs-8 text-muted">{{labelHelper.minStorageTemp}}</span>
+									<div class="row">
+										<div class="col-lg-12 mb-5">
+											<h4 class="mb-0">Inventario</h4>
+											<span class="text-gray-600 mt-1 fw-400 fs-0-9rem">
+												Activa opciones promocionales, visibilidad y reglas de venta del producto.
+											</span>
 										</div>
-										<div class="col-md-6">
-											<label class="fw-500 text-gray-800 fs-6 mb-2">Temperatura max</label>
-											<input type="number" class="form-control mb-1" placeholder="Maxima" [(ngModel)]="physical.maxStorageTemp"
-											[ngClass]="{ 'is-invalid': errorsProduct?.maxStorageTemp }">
-											<span class="fs-8 text-muted">{{labelHelper.maxStorageTemp}}</span>
+										<div class="col-md-4 mb-4">
+											<div class="d-flex justify-content-between align-items-center mb-1">
+												<label class="fw-500 text-gray-800 fs-6">
+													Stock Minimo
+												</label>
+											</div>
+											<input
+												type="text"
+												class="form-control mb-1"
+												placeholder="Stock Minimo"
+												name="minStock"
+												[(ngModel)]="product.minStock"
+												[ngClass]="{ 'is-invalid': errorsProduct?.minStock}"
+											/>
+											<span class="fs-8 text-muted text-description-form">
+												{{labelHelper.minStock}}
+											</span>
+										</div>
+										<div class="col-md-4 mb-4">
+											<div class="d-flex justify-content-between align-items-center mb-1">
+												<label class="fw-500 text-gray-800 fs-6">
+													Stock Maximo
+												</label>
+											</div>
+											<input
+												type="text"
+												class="form-control mb-1"
+												placeholder="Stock Maximo"
+												name="maxStock"
+												[(ngModel)]="product.maxStock"
+												[ngClass]="{ 'is-invalid': errorsProduct?.maxStock}"
+											/>
+											<span class="fs-8 text-muted text-description-form">{{labelHelper.maxStock}}</span>
+										</div>
+										<div class="col-md-4 mb-4">
+											<div class="d-flex justify-content-between align-items-center mb-1">
+												<label class="fw-500 text-gray-800 fs-6">
+													Unidades por Pedido
+												</label>
+											</div>
+											<input
+												type="text"
+												class="form-control mb-1"
+												placeholder="Limite maximo"
+												name="maxOrderLimit"
+												[(ngModel)]="product.maxOrderLimit"
+												[ngClass]="{ 'is-invalid': errorsProduct?.maxOrderLimit}"
+											/>
+											<span class="fs-8 text-muted text-description-form">{{labelHelper.maxOrderLimit}}</span>
+										</div>
+										<div class="col-md-12 mb-4">
+											<label class="form-check form-check-custom form-check-solid align-items-center">
+												<input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="product.allowBackorder" />
+												<span class="form-check-label d-flex flex-column">
+													<span class="fw-600 text-gray-800 fs-6">Permitir backorder</span>
+													<small class="text-muted">{{labelHelper.allowBackorder}}</small>
+												</span>
+											</label>
 										</div>
 									</div>
-									<!-- ¿Es frágil? -->
-									<label class="form-check form-check-custom form-check-solid align-items-center">
-										<input class="form-check-input me-3" type="checkbox" [(ngModel)]="physical.isFragile" />
-										<span class="form-check-label d-flex flex-column align-items-start">
-											<span class="fw-500 text-gray-800 fs-6 mb-0">Es frágil</span>
-											<small>Marca si el producto requiere un manejo cuidadoso durante el envío.</small>
-										</span>
-									</label>
-									<div class="separator separator-dashed"></div>
-
-									<!-- ¿Es perecible? -->
-									<label class="form-check form-check-custom form-check-solid align-items-center">
-										<input class="form-check-input me-3" type="checkbox" [(ngModel)]="physical.isPerishable" />
-										<span class="form-check-label d-flex flex-column align-items-start">
-											<span class="fw-500 text-gray-800 fs-6 mb-0">Es perecible</span>
-											<small>Indica si el producto se deteriora con el tiempo o tiene fecha de vencimiento.</small>
-										</span>
-										</label>
-									<div class="separator separator-dashed"></div>
-
-									<!-- ¿Es ecológico / reciclable? -->
-									<label class="form-check form-check-custom form-check-solid align-items-center">
-										<input class="form-check-input me-3" type="checkbox" [(ngModel)]="physical.isEcoFriendly" />
-										<span class="form-check-label d-flex flex-column align-items-start">
-											<span class="fw-500 text-gray-800 fs-6 mb-0">Ecológico / reciclable</span>
-											<small>Marca si el producto o su empaque es reciclable o respetuoso con el medio ambiente.</small>
-										</span>
-									</label>
-									<div class="separator separator-dashed"></div>
-
-									<!-- ¿Es biodegradable? -->
-									<label class="form-check form-check-custom form-check-solid align-items-center">
-										<input class="form-check-input me-3" type="checkbox" [(ngModel)]="physical.isBiodegradable" />
-										<span class="form-check-label d-flex flex-column align-items-start">
-											<span class="fw-500 text-gray-800 fs-6 mb-0">Biodegradable</span>
-											<small>Marca si el producto puede descomponerse naturalmente sin dañar el ambiente.</small>
-										</span>
-									</label>
-									<div class="separator separator-dashed"></div>
-
-									<!-- ¿Es peligroso? -->
-									<label class="form-check form-check-custom form-check-solid align-items-center">
-										<input class="form-check-input me-3" type="checkbox" [(ngModel)]="physical.isHazardous" />
-										<span class="form-check-label d-flex flex-column align-items-start">
-											<span class="fw-500 text-gray-800 fs-6 mb-0">Material peligroso</span>
-											<small>Indica si el producto requiere un manejo o transporte regulado por seguridad.</small>
-										</span>
-									</label>
-									<div class="separator separator-dashed"></div>
-
-									<!-- ¿Requiere refrigeración? -->
-									<label class="form-check form-check-custom form-check-solid align-items-center">
-										<input class="form-check-input me-3" type="checkbox" [(ngModel)]="physical.isRequiresRefrigeration" />
-										<span class="form-check-label d-flex flex-column align-items-start">
-											<span class="fw-500 text-gray-800 fs-6 mb-0">Requiere refrigeración</span>
-											<small>Marca si el producto necesita mantenerse refrigerado o en cadena de frío.</small>
-										</span>
-									</label>
-									<div class="separator separator-dashed"></div>
-
-									<!-- ¿Es inflamable? -->
-									<label class="form-check form-check-custom form-check-solid align-items-center">
-										<input class="form-check-input me-3" type="checkbox" [(ngModel)]="physical.isFlammable" />
-										<span class="form-check-label d-flex flex-column align-items-start">
-											<span class="fw-500 text-gray-800 fs-6 mb-0">Es inflamable</span>
-											<small>Indica si el producto puede encenderse fácilmente o requiere precauciones especiales.</small>
-										</span>
-									</label>
-									<div class="separator separator-dashed"></div>
-
-									<!-- ¿Requiere ensamblaje? -->
-									<label class="form-check form-check-custom form-check-solid align-items-center">
-										<input class="form-check-input me-3" type="checkbox" [(ngModel)]="physical.isRequiresAssembly" />
-										<span class="form-check-label d-flex flex-column align-items-start">
-											<span class="fw-500 text-gray-800 fs-6 mb-0">Requiere ensamblaje</span>
-											<small>Marca si el producto necesita ser armado por el cliente o instalador.</small>
-										</span>
-									</label>
+									<div class="row">
+										<div class="col-lg-12 mb-5">
+											<h4 class="mb-0">Marketing</h4>
+											<span class="text-gray-600 mt-1 fw-400 fs-0-9rem">
+												Configura opciones promocionales, destacamiento comercial y reglas especiales de venta para mejorar la exposición del producto.
+											</span>
+										</div>
+										<div class="col-12 col-md-6 my-4">
+											<label class="form-check form-check-custom form-check-solid align-items-center">
+												<input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="product.isBestSeller" />
+												<span class="form-check-label d-flex flex-column">
+													<span class="fw-600 text-gray-800 fs-6">Más vendido</span>
+													<small class="text-muted">
+														Destaca productos con alta demanda o mayor volumen de ventas.
+													</small>
+												</span>
+											</label>
+										</div>
+										<div class="col-12 col-md-6 my-4">
+											<label class="form-check form-check-custom form-check-solid align-items-center">
+												<input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="product.isNewArrival" />
+												<span class="form-check-label d-flex flex-column">
+													<span class="fw-600 text-gray-800 fs-6">Nuevo ingreso</span>
+													<small class="text-muted">
+														Indica que fue agregado recientemente al catálogo.
+													</small>
+												</span>
+											</label>
+										</div>
+										<div class="col-12">
+											<div class="separator separator-dashed"></div>
+										</div>
+										<div class="col-12 col-md-6 my-4">
+											<label class="form-check form-check-custom form-check-solid align-items-center">
+												<input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="product.isFeatured" />
+												<span class="form-check-label d-flex flex-column">
+													<span class="fw-600 text-gray-800 fs-6">Destacado</span>
+													<small class="text-muted">
+														Muestra este producto en banners o zonas preferentes.
+													</small>
+												</span>
+											</label>
+										</div>
+										<div class="col-12 col-md-6 my-4">
+											<label class="form-check form-check-custom form-check-solid align-items-center">
+												<input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="product.isLimitedEdition" />
+												<span class="form-check-label d-flex flex-column">
+													<span class="fw-600 text-gray-800 fs-6">Edición limitada</span>
+													<small class="text-muted">
+														Producto exclusivo con stock reducido o temporal.
+													</small>
+												</span>
+											</label>
+										</div>
+										<div class="col-12">
+											<div class="separator separator-dashed"></div>
+										</div>
+										<div class="col-12 col-md-6 my-4">
+											<label class="form-check form-check-custom form-check-solid align-items-center">
+												<input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="product.isPreOrder" />
+												<span class="form-check-label d-flex flex-column">
+													<span class="fw-600 text-gray-800 fs-6">Preventa</span>
+													<small class="text-muted">
+														Permite reservar antes del lanzamiento oficial.
+													</small>
+												</span>
+											</label>
+										</div>
+										<div class="col-12 col-md-6 my-4">
+											<label class="form-check form-check-custom form-check-solid align-items-center">
+												<input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="product.isExportable" />
+												<span class="form-check-label d-flex flex-column">
+													<span class="fw-600 text-gray-800 fs-6">Exportable</span>
+													<small class="text-muted">
+														Disponible para ventas internacionales o exterior.
+													</small>
+												</span>
+											</label>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-lg-12 mb-5">
+											<h4 class="mb-0">Propiedades físicas</h4>
+											<span class="text-gray-600 mt-1 fw-400 fs-0-9rem">
+												Define características especiales del producto que afectan su almacenamiento, manipulación, transporte, instalación o conservación.
+											</span>
+										</div>
+										<div class="col-12 col-md-6 my-4">
+											<label class="form-check form-check-custom form-check-solid align-items-center">
+												<input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="physical.isFragile" />
+												<span class="form-check-label d-flex flex-column align-items-start">
+													<span class="fw-500 text-gray-800 fs-6 mb-1">Es frágil</span>
+													<small class="text-muted">
+														Requiere manejo cuidadoso para evitar golpes o daños.
+													</small>
+												</span>
+											</label>
+										</div>
+										<div class="col-12 col-md-6 my-4">
+											<label class="form-check form-check-custom form-check-solid align-items-center">
+												<input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="physical.isPerishable" />
+												<span class="form-check-label d-flex flex-column align-items-start">
+													<span class="fw-500 text-gray-800 fs-6 mb-1">Es perecible</span>
+													<small class="text-muted">
+														Se deteriora con el tiempo o tiene vencimiento.
+													</small>
+												</span>
+											</label>
+										</div>
+										<div class="col-12">
+											<div class="separator separator-dashed"></div>
+										</div>
+										<div class="col-12 col-md-6 my-4">
+											<label class="form-check form-check-custom form-check-solid align-items-center">
+												<input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="physical.isEcoFriendly" />
+												<span class="form-check-label d-flex flex-column align-items-start">
+													<span class="fw-500 text-gray-800 fs-6 mb-1">Ecológico</span>
+													<small class="text-muted">
+														Producto o empaque reciclable y sostenible.
+													</small>
+												</span>
+											</label>
+										</div>
+										<div class="col-12 col-md-6 my-4">
+											<label class="form-check form-check-custom form-check-solid align-items-center">
+												<input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="physical.isBiodegradable" />
+												<span class="form-check-label d-flex flex-column align-items-start">
+													<span class="fw-500 text-gray-800 fs-6 mb-1">Biodegradable</span>
+													<small class="text-muted">
+														Puede degradarse naturalmente sin contaminar.
+													</small>
+												</span>
+											</label>
+										</div>
+										<div class="col-12">
+											<div class="separator separator-dashed"></div>
+										</div>
+										<div class="col-12 col-md-6 my-4">
+											<label class="form-check form-check-custom form-check-solid align-items-center">
+												<input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="physical.isHazardous" />
+												<span class="form-check-label d-flex flex-column align-items-start">
+													<span class="fw-500 text-gray-800 fs-6 mb-1">Material peligroso</span>
+													<small class="text-muted">
+														Requiere transporte o manejo con precaución.
+													</small>
+												</span>
+											</label>
+										</div>
+										<div class="col-12 col-md-6 my-4">
+											<label class="form-check form-check-custom form-check-solid align-items-center">
+												<input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="physical.isRequiresRefrigeration" />
+												<span class="form-check-label d-flex flex-column align-items-start">
+													<span class="fw-500 text-gray-800 fs-6 mb-1">Refrigeración</span>
+													<small class="text-muted">
+														Necesita cadena de frío o temperatura controlada.
+													</small>
+												</span>
+											</label>
+										</div>
+										<div class="col-12">
+											<div class="separator separator-dashed"></div>
+										</div>
+										<div class="col-12 col-md-6 my-4">
+											<label class="form-check form-check-custom form-check-solid align-items-center">
+												<input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="physical.isFlammable" />
+												<span class="form-check-label d-flex flex-column align-items-start">
+													<span class="fw-500 text-gray-800 fs-6 mb-1">Es inflamable</span>
+													<small class="text-muted">
+														Puede encenderse fácilmente con calor o chispa.
+													</small>
+												</span>
+											</label>
+										</div>
+										<div class="col-12 col-md-6 my-4">
+											<label class="form-check form-check-custom form-check-solid align-items-center">
+												<input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="physical.isRequiresAssembly" />
+												<span class="form-check-label d-flex flex-column align-items-start">
+													<span class="fw-500 text-gray-800 fs-6 mb-1">Requiere ensamblaje</span>
+													<small class="text-muted">
+														Debe armarse por cliente o instalador.
+													</small>
+												</span>
+											</label>
+										</div>
+									</div>
 								</div>
 								<div class="card-body d-flex flex-column gap-6 pt-1" [ngClass]="{'d-none': option != 5}">
 									<div class="row">
-										<div class="col-md-6">
+										<div class="col-lg-12 mb-5">
+											<h4 class="mb-0">Logistica y preparación</h4>
+											<span class="text-gray-600 mt-1 fw-400 fs-0-9rem">
+												Configura cómo se embala el producto, cuánto tiempo toma prepararlo y qué cuidados requiere en el envío.
+											</span>
+										</div>
+										<div class="col-md-6 mb-4">
 											<label class="fw-500 text-gray-800 fs-6 mb-2 required">Empaquetado</label>
 											<div [ngClass]="{ 'is-invalid': errorsProduct?.packageType }">
 												<ng-select
@@ -1358,15 +1175,13 @@
 											</div>
 											<span class="fs-8 text-muted">{{labelHelper.packageType}}</span>
 										</div>
-										<div class="col-md-6">
+										<div class="col-md-6 mb-4">
 											<label class="fw-500 text-gray-800 fs-6 mb-2 required">Días de preparación</label>
 											<input type="number" class="form-control mb-1" [(ngModel)]="shipping.handlingDays" placeholder="Días para el envío"
 											[ngClass]="{ 'is-invalid': errorsProduct?.handlingDays }">
 											<span class="fs-8 text-muted">{{labelHelper.handlingDays}}</span>
 										</div>
-									</div>
-									<div class="row">
-										<div class="col-12">
+										<div class="col-12 mb-4">
 											<label class="fw-500 text-gray-800 fs-6 mb-2">
 												Instrucciones de envío
 											</label>
@@ -1376,78 +1191,109 @@
 											<span class="fs-8 text-muted">{{labelHelper.specialInstructions}}</span>
 										</div>
 									</div>
-
-									<label class="form-check form-check-custom form-check-solid align-items-center">
-										<input class="form-check-input me-3" type="checkbox" [(ngModel)]="shipping.freeShipping" />
-										<span class="form-check-label d-flex flex-column align-items-start">
-											<span class="fw-500 text-gray-800 fs-6 mb-0">Envío gratuito</span>
-											<small>Activa esta opción si el producto se enviará sin costo adicional para el cliente.</small>
-										</span>
-									</label>
-									<div class="separator separator-dashed my-2"></div>
-									<label class="form-check form-check-custom form-check-solid align-items-center">
-										<input class="form-check-input me-3" type="checkbox" [(ngModel)]="shipping.pickupInStore" />
-										<span class="form-check-label d-flex flex-column align-items-start">
-											<span class="fw-500 text-gray-800 fs-6 mb-0">Recojo en tienda</span>
-											<small>Marca esta opción si el cliente puede recoger el producto directamente en una sucursal.</small>
-										</span>
-									</label>
-								</div>
-								<div class="card-body d-flex flex-column gap-6 pt-1" [ngClass]="{'d-none': option != 6}">
 									<div class="row">
-										<div class="col-12">
-											<app-alert [classAlert]="'bg-light-primary border-primary border-dashed mb-3'"
-											[title]="'¿Para que sirve esto?'"
-											[text]="'Agrega al menos 3 imagenes para la galería del producto. Esta será visible para los clientes en la tienda y ayuda a presentar mejor el artículo.'"
-											[type]="'information'"
-											[classIcon]="'svg-icon-2hx svg-icon-primary'">
-											</app-alert>
+										<div class="col-lg-12 mb-5">
+											<h4 class="mb-0">Opciones de entrega</h4>
+											<span class="text-gray-600 mt-1 fw-400 fs-0-9rem">
+												Configura beneficios y modalidades disponibles para la entrega del producto.
+											</span>
 										</div>
-										<div class="col-12" *ngIf="errorsProduct.gallery?.length >= 1 || errorsProduct.cover?.length >= 1">
-											<app-alert 
-												[title]="'¡Errores de Validación!'"
-												[classAlert]="'bg-light-danger border-danger border-dashed mb-3'"
-												[text]="
-													(
-														(errorsProduct.gallery || []).join('. ') +
-														(errorsProduct.gallery?.length && errorsProduct.cover?.length ? '<br> ' : '') +
-														(errorsProduct.cover || []).join('. ')
-													)
-												"
-												[type]="'information'"
-												[classIcon]="'svg-icon-2hx svg-icon-danger'">
-											</app-alert>
+										<!-- FILA 1 -->
+										<div class="col-12 col-md-6 mb-4">
+											<label class="form-check form-check-custom form-check-solid align-items-start">
+												<input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="shipping.freeShipping" />
+												<span class="form-check-label d-flex flex-column align-items-start">
+													<span class="fw-500 text-gray-800 fs-6 mb-1">Envío gratuito</span>
+													<small class="text-muted">
+														El producto se enviará sin costo adicional para el cliente.
+													</small>
+												</span>
+											</label>
+										</div>
+
+										<div class="col-12 col-md-6 mb-4">
+											<label class="form-check form-check-custom form-check-solid align-items-start">
+												<input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="shipping.pickupInStore" />
+												<span class="form-check-label d-flex flex-column align-items-start">
+													<span class="fw-500 text-gray-800 fs-6 mb-1">Recojo en tienda</span>
+													<small class="text-muted">
+														Permite recoger el producto directamente en sucursal.
+													</small>
+												</span>
+											</label>
 										</div>
 									</div>
+								</div>
+								<div class="card-body d-flex flex-column gap-6 pt-1" [ngClass]="{'d-none': option != 6}">
+									<ng-container *ngIf="errorsProduct.gallery?.length >= 1 || errorsProduct.cover?.length >= 1">
+										<div class="row">
+											<div class="col-12">
+												<app-alert 
+													[title]="'¡Errores de Validación!'"
+													[classAlert]="'bg-light-danger border-danger border-dashed mb-3'"
+													[text]="
+														(
+															(errorsProduct.gallery || []).join('. ') +
+															(errorsProduct.gallery?.length && errorsProduct.cover?.length ? '<br> ' : '') +
+															(errorsProduct.cover || []).join('. ')
+														)
+													"
+													[type]="'information'"
+													[classIcon]="'svg-icon-2hx svg-icon-danger'">
+												</app-alert>
+											</div>
+										</div>
+									</ng-container>
+									
 
 									<app-upload-images (filesSelected)="onSelectFiles($event)"></app-upload-images>
 
 									<div class="row g-3">
 										<div class="col-6 col-md-4 col-lg-3"
 											*ngFor="let item of images; let idx = index">
-
-											<a class="d-block overlay position-relative"
-											data-fslightbox="lightbox-basic"
-											[href]="item.preview">
-
-												<div class="overlay-wrapper
-															bgi-no-repeat bgi-position-center bgi-size-cover
-															card-rounded min-h-175px"
-													[ngStyle]="{'background-image': 'url(' + item.preview + ')'}">
-												</div>
+											<a
+												class="d-block overlay position-relative"
+												data-fslightbox="lightbox-basic"
 												
-												<div class="overlay-layer card-rounded bg-dark bg-opacity-25 shadow">
-													<i class="bi bi-eye-fill text-white fs-3x"></i>
-													
-												</div>
-												<span class="badge badge-dark position-absolute" style="top: 10px;left:10px" *ngIf="cover?.index == item.index">Cover</span>
-											</a>
-											
+											>
+												<div
+													class="overlay-wrapper
+														bgi-no-repeat bgi-position-center bgi-size-cover
+														card-rounded min-h-175px"
+													[ngStyle]="{ 'background-image': 'url(' + item.preview + ')' }"
+												></div>
 
-											<div class="d-flex gap-3">
-												<small class="text-danger cursor-pointer" (click)="removeImage(idx)"  *ngIf="cover?.index != item.index">Eliminar</small>
-												<small class="text-primary cursor-pointer" (click)="onSelectedBanner(item)" *ngIf="cover?.index != item.index">Establecer portada</small>
-											</div>
+												<div class="overlay-layer card-rounded bg-dark bg-opacity-25 shadow">
+
+													<div class="d-flex gap-3">
+														<button
+															type="button"
+															class="btn btn-icon bg-white rounded-circle w-30px h-30px"
+															title="Marcar como portada"
+															(click)="onSelectedBanner(item)" *ngIf="product.cover != item.file.name"
+														>
+															<i class="bi bi-star-fill fs-5 text-gray-700"></i>
+														</button>
+														<button
+															type="button"
+															class="btn btn-icon bg-white rounded-circle w-30px h-30px"
+															title="Eliminar imagen"
+															(click)="removeImage(idx)"  *ngIf="product.cover != item.file.name"
+														>
+															<i class="bi bi-trash-fill fs-5 text-gray-700"></i>
+														</button>
+
+													</div>
+
+												</div>
+												<span
+													class="badge badge-dark position-absolute"
+													style="top:10px; left:10px"
+													*ngIf="product.cover == item.file.name!"
+												>
+													Cover
+												</span>
+											</a>
 										</div>
 									</div>
 								</div>
@@ -1472,61 +1318,48 @@
 											</app-alert>
 										</div>
 									</div>
-									<div class="row">
-										<div class="col-md-7">
-											<label class="fw-500 text-gray-800 fs-6 mb-2 required">Plantilla SKU</label>
-											
-											<div [ngClass]="{'is-invalid': errorsVariation?.skuPattern}">
-												<ng-select
-													[items]="skuPatterns"
-													bindLabel="name"
-													[(ngModel)]="variation.skuPattern"
-													placeholder="Tipo de empaque"
-													[clearable]="false"
-													[closeOnSelect]="true"
-													class="select-element mb-1"
-													appendTo="body"
-												>
-													<!-- Opción en el dropdown -->
-													<ng-template ng-option-tmp let-item="item">
-														<div class="option-item d-flex flex-column align-items-start">
-															<div class="option-name">{{ item.example }}</div>
-															<small class="text-gray-500">{{item.name}}</small>
-														</div>
-													</ng-template>
+									<div class="row g-3">
+										<div class="col-12 col-md">
+											<label class="fw-500 text-gray-800 fs-6 mb-2 required">
+											Atributo principal
+											</label>
 
-													<!-- Opción seleccionada en el input -->
-													<ng-template ng-label-tmp let-item="item">
-														{{ item.example }}
-													</ng-template>
+											<div class="row g-3 align-items-center">
+											<div class="col">
+												<div class="position-relative">
+												<input
+													type="text"
+													class="form-control pe-15"
+													placeholder="Tallas"
+													name="name"
+													[(ngModel)]="variation.name"
+													[ngClass]="{ 'is-invalid': errorsVariation?.name }"
+													(keyup.ENTER)="onCreateVariation()"
+												/>
 
-													<ng-template ng-loading-text>
-														<div class="spinner-container">
-															<span class="spinner-border spinner-border-sm"></span>
-														</div>
-													</ng-template>
-												</ng-select>
+												<span
+													class="text-primary position-absolute top-50 end-0 translate-middle-y me-3 fw-600 fs-8"
+													style="pointer-events:none; background:#fff; padding:1px;">
+													[ENTER]
+												</span>
+												</div>
 											</div>
-											
-											<span class="fs-8 text-muted">Combinacion de campos para SKU.</span>
-										</div>
-										<div class="col-md-5">
-											<label class="fw-500 text-gray-800 fs-6 mb-2 required">Atributo principal</label>
-											<input type="text" class="form-control mb-1" 
-											[(ngModel)]="variation.name" 
-											placeholder="Tallas"
-											[ngClass]="{'is-invalid': errorsVariation?.name}"
-											(keyup.ENTER)="addVariation()"
-											>
-											<span class="fs-8 text-muted">Valor refencial de la pestaña general.</span>
-										</div>
-										
-										
-									</div>
-									<div class="row">
-										<a class="cursor-pointer" (click)="addVariation()">Agregar variación</a>
-									</div>
 
+											<div class="col-12 col-md-auto">
+												<button
+												type="button"
+												class="btn btn-primary w-100"
+												(click)="onCreateVariation()">
+												Enviar
+												</button>
+											</div>
+											</div>
+
+											<span class="fs-8 text-muted d-block mt-2">
+											Valor referencial de la pestaña general.
+											</span>
+										</div>
+									</div>
 									<div class="row" *ngIf="variations.length >= 1">
 										<div class="col-12">
 											<table class="table align-middle table-row-dashed fs-6 gy-3 mb-0"
@@ -1542,10 +1375,9 @@
 														<td>
 															<div class="d-flex align-items-center gap-3">
 																<div class="d-flex flex-column text-muted">
-																	<a href="#" class="text-gray-800 text-hover-primary fw-bold">
+																	<a class="text-gray-800 text-hover-primary fw-bold">
 																		{{item.name}}
 																	</a>
-																	<div class="fs-7">{{item.skuPattern.name}}</div>
 																</div>
 															</div>
 														</td>
@@ -1560,57 +1392,77 @@
 										</div>
 									</div>
 								</div>
-								<div class="card-body d-flex flex-column pt-1" [ngClass]="{'d-none': option != 8}">
-									
-									<div class="d-flex align-items-center mb-7">
-										<div class="position-relative w-md-400px me-md-2">
-											<i class="bi bi-search fs-4 text-gray-500 position-absolute top-50 translate-middle ms-6"></i>
-											<input type="text" class="form-control form-control-sm ps-12"
-											placeholder="Buscar codigo"
-											name="filterGroup" [(ngModel)]="filterGroup"
-											(keyup.ENTER)="init_groups()">
+								<div class="card-body d-flex flex-column pt-1" [ngClass]="{'d-none': option != 8}">	
+									<div class="d-flex align-items-end gap-3 mb-7 flex-wrap">
+										<div class="position-relative flex-grow-1">
+											<input
+												type="text"
+												class="form-control pe-20"
+												placeholder="Buscar código"
+												name="name"
+												[(ngModel)]="filterGroup"
+												(keyup.enter)="init_groups()"
+											/>
+
+											<span
+												class="position-absolute top-50 end-0 translate-middle-y me-3 text-primary fw-700 fs-8 bg-white px-2 rounded"
+												style="pointer-events: none;"
+											>
+												[ENTER]
+											</span>
 										</div>
-										<div class="d-flex align-items-center">               
-											<button type="button" class="btn btn-sm btn-primary me-5" (click)="init_groups()">Buscar</button>
-										</div>
+
+										<button
+											type="button"
+											class="btn btn-primary px-6"
+											(click)="init_groups()"
+										>
+											Buscar
+										</button>
+
 									</div>
 
 									<ng-container *ngIf="!loadingGroups">
-										<ng-container *ngFor="let item of groups; let lst = last">
-											<div class="d-flex flex-stack">
-												<div class="me-5">
-													<div class="symbol-group symbol-hover mb-1">
-														<!--begin::Member-->
-														<div class="symbol symbol-circle symbol-25px" *ngFor="let subitem of item.productGroupItems" placement="left" 
-														[ngbTooltip]="subitem.product.name"
-														tooltipClass="tooltip-dark">
-															<img [src]="subitem.product.cover" [alt]="subitem.product.name" style="object-fit: cover;">
-														</div>
-														<!--end::Member-->
-														<!--begin::More members-->
-														<div class="symbol symbol-circle symbol-25px" *ngIf="item.productGroupItems.length >= 5">
-															<div class="symbol-label bg-dark">
-																<span class="fs-8 text-inverse-dark">+
-																	{{item.productGroupItems.length-5}}</span>
+										<ng-container *ngIf="groups.length >= 1">
+											<div *ngFor="let item of groups; let lst = last">
+												<div class="d-flex flex-stack">
+													<div class="me-5">
+														<div class="symbol-group symbol-hover mb-1">
+															<!--begin::Member-->
+															<div class="symbol symbol-circle symbol-25px" *ngFor="let subitem of item.productGroupItems" placement="left" 
+															[ngbTooltip]="subitem.product.name"
+															tooltipClass="tooltip-dark">
+																<img [src]="subitem.product.cover" [alt]="subitem.product.name" style="object-fit: cover;">
 															</div>
+															<!--end::Member-->
+															<!--begin::More members-->
+															<div class="symbol symbol-circle symbol-25px" *ngIf="item.productGroupItems.length >= 5">
+																<div class="symbol-label bg-dark">
+																	<span class="fs-8 text-inverse-dark">+
+																		{{item.productGroupItems.length-5}}</span>
+																</div>
+															</div>
+															<!--end::More members-->
 														</div>
-														<!--end::More members-->
+														<!--end::Team members-->
+														<div class="fs-7">Grupo 
+															<span class="text-primary">#{{item.code}}</span>
+														</div>                                
 													</div>
-													<!--end::Team members-->
-													<div class="fs-7">Grupo 
-														<span class="text-primary">#{{item.code}}</span>
-													</div>                                
-												</div>
-												<div>
-													<button class="btn btn-sm btn-icon btn-dark btn-active-light-dark toggle h-25px w-25px" *ngIf="product.productGroupId != item.id"
-													(click)="onSelectGroup(item.id)">
-													<i class="bi bi-check2"></i>
-													</button>	
-													
-													<span class="badge badge-success text-uppercase" *ngIf="product.productGroupId == item.id">Seleccionado</span>
-												</div>
-											</div>  
-											<div class="separator separator-dashed my-3" *ngIf="!lst"></div>
+													<div>
+														<button class="btn btn-sm btn-icon btn-dark btn-active-light-dark toggle h-25px w-25px" *ngIf="product.productGroupId != item.id"
+														(click)="onSelectGroup(item.id)">
+														<i class="bi bi-check2"></i>
+														</button>	
+														
+														<span class="badge badge-success text-uppercase" *ngIf="product.productGroupId == item.id">Seleccionado</span>
+													</div>
+												</div>  
+												<div class="separator separator-dashed my-3" *ngIf="!lst"></div>
+											</div>
+										</ng-container>
+										<ng-container *ngIf="groups.length == 0">
+											<app-not-found [error]="{ message: 'No se encontraron registros que coincidan.', statusCode: 404 }"></app-not-found>
 										</ng-container>
 									</ng-container>
 									<ng-container *ngIf="loadingGroups">

@@ -2,7 +2,7 @@ export interface AttributeList {
 	id?: string;
 	name: string;
 	code?: string;
-	unit: string;
+	unit?: string;
 	categories: Array<string>;
 	values: Array<{ value: string }>;
 	status?: boolean;

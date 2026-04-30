@@ -7,16 +7,17 @@ export interface Product {
 	slug?: string;
 	description: string;
 	extract: string;
-	cover: File | undefined | null;
+	cover: string;
 	miniature: File | undefined | null;
-	mainAttribute: string | any;
-	mainAttributeValue: string | undefined;
 	unitOfMeasure: string | undefined;
 	condition: string | undefined;
 	warranty: string | undefined;
 	countryOfOrigin?: any;
 	priceRegular: number | string;
 	priceDiscount?: number | string;
+	minStock?: number | string,
+	maxStock?: number | string,
+	maxOrderLimit?: number | string,
 	tags: string[];
 	brandId: string | undefined;
 	categoryId: string | undefined;

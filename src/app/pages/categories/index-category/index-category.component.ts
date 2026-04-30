@@ -33,6 +33,7 @@ declare const $: any;
 })
 export class IndexCategoryComponent {
 	public loadBtnDelete: WritableSignal<boolean> = signal(false);
+	public loadBtnMultipleStatus: WritableSignal<boolean> = signal(false);
 	public filter: string = '';
 	public status: string = 'Todos';
 	public currentPage: number = 1;
@@ -54,6 +55,7 @@ export class IndexCategoryComponent {
 	public pageLimit = pageLimit;
 	public statusTable = statusTable;
 	public sortColumns = sortColumnsCategories
+	public selectedIds = new Set<string>();
 
 	constructor(
 		private _router: Router,
@@ -82,19 +84,6 @@ export class IndexCategoryComponent {
 		this.redirect();
 	}
 
-	sortData(column: string) {
-		const result = sortColumnsTable(this.categories, column, this.sortColumn, this.sortDirection);
-
-		this.categories = result.sortedData;
-		this.sortColumn = result.sortColumn;
-		this.sortDirection = result.sortDirection;
-	}
-
-	getSortIcon(column: string): string {
-		if (this.sortColumn !== column) return 'bi-arrow-down-up'; // Icono neutro
-		return this.sortDirection === 'asc' ? 'bi-arrow-up' : 'bi-arrow-down';
-	}
-
 	ngOnDestroy(): void {
 		this.destroy$.next();
 		this.destroy$.complete();
@@ -116,6 +105,7 @@ export class IndexCategoryComponent {
 						...i,
 						safeIcon: this.sanitizer.bypassSecurityTrustHtml(i.icon),
 					}));
+					this.currentPage = next.currentPage;
 					this.totalPages = next.totalPages;
 				},
 				error: (err) => {
@@ -194,6 +184,53 @@ export class IndexCategoryComponent {
 				sort: null,
 			},
 			queryParamsHandling: 'merge',
+		});
+	}
+
+	toggleItem(id: string, event: Event) {
+		const checked = (event.target as HTMLInputElement).checked;
+
+		if (checked) {
+			this.selectedIds.add(id);
+		} else {
+			this.selectedIds.delete(id);
+		}
+	}
+
+	getSelectedIds(): string[] {
+		return [...this.selectedIds];
+	}
+
+	onUpdateStatusMultiple(status: boolean){
+		this.loadBtnMultipleStatus.set(true);
+		this.categoryService
+		.update_status_categories({
+			ids: this.getSelectedIds(),
+			status
+		})
+		.pipe(
+			takeUntil(this.destroy$),
+			withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
+			finalize(() => this.loadBtnMultipleStatus.set(false))
+		)
+		.subscribe({
+			next: (next: any) => {
+				console.log(next);
+				
+				this.categories = this.categories.map((prev: Category) => {
+					if (next.includes(prev.id)) {
+						return { ...prev, status: status };
+					}
+					return prev;
+				});
+
+				toastr.success('Se actualizó el estado correctamente.');
+				closeModal(status ? 'modalMultipleActive' : 'modalMultipleDisabled');
+				this.selectedIds.clear();
+			},
+			error: (error: any) => {
+				toastr.error(error.error.message);
+			},
 		});
 	}
 }

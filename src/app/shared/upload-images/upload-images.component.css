@@ -1,11 +1,11 @@
 .upload-container {
   border: 1px solid #ebebeb;
-  padding: 30px;
+  padding: 20px;
   text-align: center;
+  justify-content: center;
   cursor: pointer;
   background-color: #f9fafc;
   transition: all 0.25s ease;
-  width: 100%;
   margin: auto;
 }
 
@@ -16,7 +16,6 @@
 
 .upload-label {
   display: flex;
-  flex-direction: column;
   align-items: center;
   gap: 1rem;
 }
@@ -50,8 +49,7 @@
 .loading-overlay {
   position: absolute;
   inset: 0;
-  background: rgb(255 255 255 / 0%);
-  backdrop-filter: blur(1.5px);
+  background: #f9fafc;
   border-radius: 12px;
   z-index: 15;
   display: flex;

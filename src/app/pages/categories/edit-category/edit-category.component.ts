@@ -21,15 +21,17 @@ import { closeModal } from '@app/common/utils/close-modal.util';
 import { AlertComponent } from '@app/shared/alert/alert.component';
 declare const toastr: any;
 declare const $: any;
+import { TextFieldModule } from '@angular/cdk/text-field';
 
 @Component({
 	selector: 'app-edit-category',
-	imports: [TopbarComponent, SidebarComponent, FormsModule, CommonModule, RouterModule, NotFoundComponent, ModalDeleteComponent, SafeHtmlPipe, AlertComponent],
+	imports: [TopbarComponent, SidebarComponent, FormsModule, CommonModule, RouterModule, NotFoundComponent, ModalDeleteComponent, SafeHtmlPipe, AlertComponent, TextFieldModule],
 	templateUrl: './edit-category.component.html',
 	styleUrl: './edit-category.component.css',
 })
 export class EditCategoryComponent {
 	@ViewChild('editorContainer', { static: true }) editorContainer!: ElementRef;
+	public loadBtnMultipleStatus: WritableSignal<boolean> = signal(false);
 	editorView!: EditorView;
 	private destroy$ = new Subject<void>();
 	public loadBtn = false;
@@ -41,6 +43,13 @@ export class EditCategoryComponent {
 		slug: '',
 		icon: '',
 		description: '',
+		isDimensions: false,
+		isCharacteristics: false,
+		isConditiom: false,
+		isWarranty: false,
+		isCountryOfOrigin: false,
+		isMaterial: false,
+		isTemperature: false,	
 	};
 	public subcategory: Subcategory = {
 		name: '',
@@ -51,8 +60,9 @@ export class EditCategoryComponent {
 	public loading = true;
 	public loadingSubcategories = true;
 	public subcategories: any = [];
-	public msmErrorCreateCategory : any= [];
+	public msmErrorUpdateCategory : any= [];
 	public msmErrorCreateSubcategory : any= [];
+	public msmErrorUpdateSubcategory : any= [];
 	public errorMsmServerGetCategory: string = '';
 	public errorMsmServerGetSubcategory: string = '';
 	public arrDataSkull: Array<any> = Array.from({ length: 5 }, () => ({}));
@@ -60,6 +70,11 @@ export class EditCategoryComponent {
 	public typeForm: 'create' | 'edit' = 'create';
 	public errorMsmServer: string = '';
 	public option = 1;
+	public selectedIds = new Set<string>();
+	public columns = [
+		{ key: 'name', label: 'Subcategoría', classCol: 'col-w-xs-200 col-w-md-250' },
+		{ key: 'status', label: 'Estado', classCol: 'col-w-xs-200 col-w-md-250' },
+	];
 
 	constructor(
 		private categoryService: CategoryService,
@@ -74,7 +89,6 @@ export class EditCategoryComponent {
 				takeUntil(this.destroy$),
 				switchMap((params) => {
 					this.id = params['id'];
-					console.log(this.id);
 					return this.init_data(this.id); // devolvemos el observable
 				}),
 				switchMap(() => this.init_subcategories(this.id))
@@ -107,14 +121,10 @@ export class EditCategoryComponent {
 			finalize(() => (this.loading = false)),
 			tap({
 				next: (next) => {
-					console.log(next);
-
 					this.category = next;
 					this.subcategory.categoryId = id;
 				},
 				error: (err) => {
-					console.log(err);
-
 					const error = err.error;
 					this.errorMsmServerGetCategory = error;
 				},
@@ -142,7 +152,9 @@ export class EditCategoryComponent {
 
 	update() {
 		this.loadBtn = true;
-		this.msmErrorCreateCategory = [];
+		this.errorsCategory = {};
+		this.errorMsmServer = '';
+		this.msmErrorUpdateCategory = [];
 		this.categoryService
 			.update_category(this.id, this.category)
 			.pipe(
@@ -163,8 +175,7 @@ export class EditCategoryComponent {
 
 					if (error.validation) {
 						this.errorsCategory = error.validation;
-						this.msmErrorCreateCategory = Object.values(this.errorsCategory).flat();
-						this.errorMsmServer = '';
+						this.msmErrorUpdateCategory = Object.values(this.errorsCategory).flat();
 					}
 				},
 			});
@@ -177,7 +188,9 @@ export class EditCategoryComponent {
 
 	create_subcategory() {
 		this.loadBtnSubcat = true;
+		this.errorMsmServer = '';
 		this.msmErrorCreateSubcategory = [];
+		this.errorsSubcategory = {};
 		this.categoryService
 			.create_subcategory(this.subcategory)
 			.pipe(
@@ -187,7 +200,6 @@ export class EditCategoryComponent {
 			)
 			.subscribe({
 				next: (next: Subcategory) => {
-					this.errorsSubcategory = {};
 					this.subcategory = {
 						name: '',
 						icon: '',
@@ -212,7 +224,9 @@ export class EditCategoryComponent {
 
 	update_subcategory() {
 		this.loadBtnSubcat = true;
-		this.msmErrorCreateSubcategory = [];
+		this.msmErrorUpdateSubcategory = [];
+		this.errorMsmServer = '';
+		this.errorsSubcategory = {};
 		this.categoryService
 			.update_subcategory(this.subcategory?.id, this.subcategory)
 			.pipe(
@@ -222,7 +236,6 @@ export class EditCategoryComponent {
 			)
 			.subscribe({
 				next: (next) => {
-					this.errorsSubcategory = {};
 					this.subcategories = this.subcategories.map((subcat: any) => (subcat.id === this.subcategory.id ? next : subcat));
 					toastr.success('Subcategoría actualizado correctamente.');
 					this.cancelEdit();
@@ -234,8 +247,7 @@ export class EditCategoryComponent {
 
 					if (error.validation) {
 						this.errorsSubcategory = error.validation;
-						this.msmErrorCreateSubcategory = Object.values(this.errorsSubcategory).flat();
-						this.errorMsmServer = '';
+						this.msmErrorUpdateSubcategory = Object.values(this.errorsSubcategory).flat();
 					}
 				},
 			});
@@ -280,5 +292,52 @@ export class EditCategoryComponent {
 	editSubcategory(subcategory: Subcategory) {
 		this.typeForm = 'edit';
 		this.subcategory = { ...subcategory };
+	}
+
+	toggleItem(id: string, event: Event) {
+		const checked = (event.target as HTMLInputElement).checked;
+
+		if (checked) {
+			this.selectedIds.add(id);
+		} else {
+			this.selectedIds.delete(id);
+		}
+	}
+
+	getSelectedIds(): string[] {
+		return [...this.selectedIds];
+	}
+
+	onUpdateStatusMultiple(status: boolean){
+		this.loadBtnMultipleStatus.set(true);
+		this.categoryService
+		.update_status_subcategories({
+			ids: this.getSelectedIds(),
+			status
+		})
+		.pipe(
+			takeUntil(this.destroy$),
+			withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
+			finalize(() => this.loadBtnMultipleStatus.set(false))
+		)
+		.subscribe({
+			next: (next: any) => {
+				console.log(next);
+				
+				this.subcategories = this.subcategories.map((prev: Subcategory) => {
+					if (next.includes(prev.id)) {
+						return { ...prev, status: status };
+					}
+					return prev;
+				});
+
+				toastr.success('Se actualizó el estado correctamente.');
+				closeModal(status ? 'modalMultipleActive' : 'modalMultipleDisabled');
+				this.selectedIds.clear();
+			},
+			error: (error: any) => {
+				toastr.error(error.error.message);
+			},
+		});
 	}
 }

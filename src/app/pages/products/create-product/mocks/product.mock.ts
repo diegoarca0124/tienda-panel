@@ -14,7 +14,7 @@ export const productMock: Product = {
   priceRegular: 129.90,
   priceDiscount: 99.90,
 
-  cover: undefined as File | undefined,
+  cover: '',
   miniature: undefined as File | undefined,
 
  /*  mainAttribute: {
@@ -22,8 +22,6 @@ export const productMock: Product = {
     name: "Almacenamiento",
     status: true
   }, */
-  mainAttribute: undefined,
-  mainAttributeValue: undefined,
   unitOfMeasure: "Unidad",
   condition: "Nuevo",
   warranty: "Sin garantía",

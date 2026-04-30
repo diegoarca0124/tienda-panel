@@ -97,6 +97,12 @@ export class EditBrandComponent {
 
 	update() {
 		this.loadBtn = true;
+		this.errorMsmServer = '';
+		this.msmErrorBrand = [];
+		this.errorsBrand = {
+			logoUrl: [],
+			bannerUrl: [],
+		};
 		this.brandService
 			.update_brand(this.id, this.brand)
 			.pipe(
@@ -119,7 +125,6 @@ export class EditBrandComponent {
 					};
 				},
 				error: (err) => {
-					console.log(err);
 					this.errorsBrand = {
 						logoUrl: [],
 						bannerUrl: [],
@@ -135,10 +140,7 @@ export class EditBrandComponent {
 						};
 						this.msmErrorBrand = Object.values(this.errorsBrand).flat();
 						this.errorMsmServer = '';
-					}
-
-					console.log(this.errorsBrand);
-					
+					}	
 				},
 			});
 	}

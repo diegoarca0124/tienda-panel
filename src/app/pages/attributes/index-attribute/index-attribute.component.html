@@ -26,16 +26,22 @@
 							<div class="d-flex gap-2">
 								<div>
 									<label class="fs-7 text-gray-600 fw-500">Busqueda</label>
-									<div class="d-flex align-items-center position-relative">
+									<div class="position-relative mb-1">
 										<input
 											type="text"
-											class="form-control form-control-sm w-200px"
-											placeholder="Buscar atributo"
+											class="form-control form-control-sm pe-15"
+											placeholder="Buscar categoría"
 											name="filter"
 											[(ngModel)]="filter"
 											(keyup.ENTER)="onFilterOrStatusChange()"
 										/>
-										<i class="bi bi-search position-absolute cursor-pointer" style="right: 20px" (click)="onFilterOrStatusChange()"></i>
+
+										<span
+											class="text-primary position-absolute top-50 end-0 translate-middle-y me-3 fw-600 fs-8"
+											style="pointer-events: none;background: #fff;padding: 1px;"
+										>
+											[ENTER]
+										</span>
 									</div>
 								</div>
 								<div>
@@ -132,10 +138,18 @@
 										</a>
 									</li>
 									<li>
-										<hr class="dropdown-divider" />
-									</li>
-									<li>
 										<a class="dropdown-item" href="#"> <i class="bi bi-folder-symlink me-2"></i> Importar </a>
+									</li>
+									<li *ngIf="selectedIds.size > 0">
+										<a class="dropdown-item cursor-pointer" data-bs-toggle="modal" [attr.data-bs-target]="'#modalMultipleActive'">
+											<i class="bi bi-check-circle me-2 text-primary"></i> Activar
+										</a>
+									</li>
+
+									<li *ngIf="selectedIds.size > 0">
+										<a class="dropdown-item cursor-pointer" data-bs-toggle="modal" [attr.data-bs-target]="'#modalMultipleDisabled'">
+											<i class="bi bi-x-circle me-2 text-danger"></i> Desactivar
+										</a>
 									</li>
 								</ul>
 							</div>
@@ -151,11 +165,13 @@
 							'table-hover': attributes.length >= 1,
 							}">
 								<colgroup>
+									<col style="width: 20px;">
 									<col *ngFor="let col of columns" [ngClass]="col.classCol">
 									<col style="width: 38px">
 								</colgroup>
 								<thead style="background-color: #f8f8f8;">
 									<tr>
+										<th></th>
 										<th
 											*ngFor="let col of columns">
 											<div class="d-flex justify-content-between align-items-center">
@@ -171,6 +187,9 @@
 									<!-- ======================= LOADING (SKELETON) ======================= -->
 									<ng-container *ngIf="loading">
 										<tr *ngFor="let s of arrDataSkull">
+											<td>
+												<div class="form-control-solid form-control-load" style="height:20px; width: 20px; border-radius: 3px"></div>
+											</td>
 											<td class="col-w-xs-200 col-w-md-250" style="height: 47.63px !important;">
 												<div class="d-flex align-items-center gap-2">
 													<div class="form-control-solid form-control-load" style="width: 32px; height: 32px; border-radius: 5px"></div>
@@ -195,11 +214,20 @@
 									<!-- ======================= DATOS ======================= -->
 									<ng-container *ngIf="!loading && attributes.length >= 1">
 										<tr *ngFor="let item of attributes">
-
+											<td>
+												<label class="form-check form-check-custom form-check-solid form-check-sm m-0 d-flex justify-content-center">
+													<input
+														class="form-check-input cursor-pointer"
+														type="checkbox"
+														[checked]="selectedIds.has(item.id!)"
+														(change)="toggleItem(item.id!, $event)"
+													/>
+												</label>
+											</td>
 											<td class="col-w-xs-200 col-w-md-250">
 												<div class="d-flex align-items-center">
 													<div class="d-flex flex-column">
-														<a class="text-decoration-none text-gray-700"> {{ item.name }} ({{ item.valuesCount }}) </a>
+														<a class="text-decoration-none text-gray-700 fw-600"> {{ item.name }} ({{ item.valuesCount }}) </a>
 														<small class="text-muted">
 															{{ item.categories.join(', ') }}
 														</small>
@@ -294,3 +322,23 @@
 		</div>
 	</div>
 </div>
+
+<app-modal-delete
+	[id]="'modalMultipleActive'"
+	[title]="'Activación Multiple'"
+	[description]="'El estado de los atributos seleccionados será actualizado. Verifica tu selección antes de continuar, ya que este cambio se aplicará a todos.'"
+	[textButton]="'Activar'"
+	(actionConfirmed)="onUpdateStatusMultiple(true)"
+	[loadBtnDelete]="loadBtnMultipleStatus"
+>
+</app-modal-delete>
+
+<app-modal-delete
+	[id]="'modalMultipleDisabled'"
+	[title]="'Desactivación Multiple'"
+	[description]="'El estado de los atributos seleccionados será actualizado. Verifica tu selección antes de continuar, ya que este cambio se aplicará a todos.'"
+	[textButton]="'Desactivar'"
+	(actionConfirmed)="onUpdateStatusMultiple(false)"
+	[loadBtnDelete]="loadBtnMultipleStatus"
+>
+</app-modal-delete>

@@ -69,6 +69,10 @@ export class CreateCollaboratorComponent {
 	}
 
 	create() {
+		this.errorMsmServer = '';
+		this.errorsCollaborator = {};
+		this.msmErrorCollaborator = [];
+
 		this.loadBtn = true;
 		this.collaboratorService
 			.create_collaborator(this.collaborator)
@@ -79,7 +83,6 @@ export class CreateCollaboratorComponent {
 			)
 			.subscribe({
 				next: (next) => {
-					this.errorsCollaborator = {};
 					toastr.success('Colaborador creado correctamente.');
 					this._router.navigate(['/users/collaborators']);
 				},
@@ -87,11 +90,10 @@ export class CreateCollaboratorComponent {
 					const error = err.error;
 					this.errorMsmServer = error.message || '¡Error desconocido!';
 					toastr.error(this.errorMsmServer);
+					
 					if (error.validation) {
 						this.errorsCollaborator = error.validation;
-						this.msmErrorCollaborator =Object.values(this.errorsCollaborator).flat();
-						this.errorMsmServer = '';
-						console.log(this.msmErrorCollaborator);
+						this.msmErrorCollaborator = Object.values(this.errorsCollaborator).flat();
 					}
 				},
 			});

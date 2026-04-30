@@ -66,7 +66,6 @@ export class CreateAttributeComponent {
 			)
 			.subscribe({
 				next: (next) => {
-					console.log(next);
 					this.categories = next;
 				},
 				error: (err) => {
@@ -98,7 +97,9 @@ export class CreateAttributeComponent {
 		this.attribute.categories = this.categoriesSelected;
 		this.attribute.values = this.values;
 		if (!this.attribute.unit) delete this.attribute.unit;
-		console.log(this.attribute);
+		this.errorMsmServer = '';
+		this.msmErrorAttribute = '';
+		this.errorsAtribute = {};
 
 		this.attributeService
 			.create_attribute(this.attribute)
@@ -109,8 +110,6 @@ export class CreateAttributeComponent {
 			)
 			.subscribe({
 				next: (next) => {
-					console.log(next);
-					this.errorsAtribute = {};
 					toastr.success('Atributo creado correctamente.');
 					this._router.navigate(['/products/attributes']);
 				},
@@ -122,7 +121,6 @@ export class CreateAttributeComponent {
 					if (error.validation) {
 						this.errorsAtribute = error.validation;
 						this.msmErrorAttribute =Object.values(this.errorsAtribute).flat();
-						this.errorMsmServer = '';
 					}
 				},
 			});

@@ -128,7 +128,18 @@
 												<hr class="dropdown-divider" />
 											</li>
 											<li>
-												<a class="dropdown-item" href="#"> <i class="bi bi-folder-symlink me-2"></i> Importar </a>
+												<a class="dropdown-item" href="#"> <i class="bi bi-folder-symlink me-2"></i> Importar</a>
+											</li>
+											<li *ngIf="selectedIds.size > 0">
+												<a class="dropdown-item cursor-pointer" data-bs-toggle="modal" [attr.data-bs-target]="'#modalMultipleActive'">
+													<i class="bi bi-check-circle me-2 text-primary"></i> Activar
+												</a>
+											</li>
+
+											<li *ngIf="selectedIds.size > 0">
+												<a class="dropdown-item cursor-pointer" data-bs-toggle="modal" [attr.data-bs-target]="'#modalMultipleDisabled'">
+													<i class="bi bi-x-circle me-2 text-danger"></i> Desactivar
+												</a>
 											</li>
 										</ul>
 									</div>
@@ -143,11 +154,13 @@
 									'table-hover': collaborators.length >= 1,
 									}">
 										<colgroup>
+											<col style="width: 20px;">
 											<col *ngFor="let col of columns" [ngClass]="col.classCol">
 											<col style="width: 38px">
 										</colgroup>
 										<thead style="background-color: #f8f8f8;">
 											<tr>
+												<th></th>
 												<th
 													*ngFor="let col of columns">
 													<div class="d-flex justify-content-between align-items-center">
@@ -163,6 +176,9 @@
 											<!-- ======================= LOADING (SKELETON) ======================= -->
 											<ng-container *ngIf="loading">
 												<tr *ngFor="let s of arrDataSkull">
+													<td>
+														<div class="form-control-solid form-control-load" style="height:20px; width: 20px; border-radius: 3px"></div>
+													</td>
 													<td class="col-w-xs-200 col-w-md-250 h-45px">
 														<div class="d-flex align-items-center gap-2">
 															<div class="form-control-solid form-control-load" style="width: 32px; height: 32px; border-radius: 5px"></div>
@@ -195,7 +211,16 @@
 											<!-- ======================= DATOS ======================= -->
 											<ng-container *ngIf="!loading && collaborators.length >= 1">
 												<tr *ngFor="let item of collaborators">
-
+													<td>
+														<label class="form-check form-check-custom form-check-solid form-check-sm m-0 d-flex justify-content-center">
+															<input
+																class="form-check-input cursor-pointer"
+																type="checkbox"
+																[checked]="selectedIds.has(item.id!)"
+																(change)="toggleItem(item.id!, $event)"
+															/>
+														</label>
+													</td>
 													<td class="col-w-xs-200 col-w-md-250 h-45px">
 														<div class="d-flex align-items-center gap-2">
 														<div class="symbol me-3">
@@ -286,14 +311,14 @@
 
 											<!-- ======================= SIN RESULTADOS ======================= -->
 											<tr *ngIf="!loading && collaborators.length == 0">
-												<td colspan="5">
+												<td colspan="6">
 													<app-not-found [error]="{ message: 'No se encontraron registros que coincidan.', statusCode: 404 }"></app-not-found>
 												</td>
 											</tr>
 
 											<!-- ======================= ERROR ======================= -->
 											<tr *ngIf="!loading && errorMsmServerListCollaborators">
-												<td colspan="5">
+												<td colspan="6">
 													<app-not-found [error]="errorMsmServerListCollaborators"></app-not-found>
 												</td>
 											</tr>
@@ -345,3 +370,24 @@
 		</div>
 	</div>
 </div>
+
+
+<app-modal-delete
+	[id]="'modalMultipleActive'"
+	[title]="'Activación Multiple'"
+	[description]="'El estado de los usuarios seleccionados será actualizado. Verifica tu selección antes de continuar, ya que este cambio se aplicará a todos.'"
+	[textButton]="'Activar'"
+	(actionConfirmed)="onUpdateStatusMultiple(true)"
+	[loadBtnDelete]="loadBtnMultipleStatus"
+>
+</app-modal-delete>
+
+<app-modal-delete
+	[id]="'modalMultipleDisabled'"
+	[title]="'Desactivación Multiple'"
+	[description]="'El estado de los usuarios seleccionados será actualizado. Verifica tu selección antes de continuar, ya que este cambio se aplicará a todos.'"
+	[textButton]="'Desactivar'"
+	(actionConfirmed)="onUpdateStatusMultiple(false)"
+	[loadBtnDelete]="loadBtnMultipleStatus"
+>
+</app-modal-delete>

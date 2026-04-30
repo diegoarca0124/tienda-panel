@@ -24,21 +24,71 @@
 					<div class="app-container container-fluid">
 						<div class="row g-3 g-lg-4">
 							<div class="col-12">
-								<div class="d-flex align-items-center">
-									<div class="position-relative w-md-400px me-md-2">
-										<i class="bi bi-search fs-4 text-gray-500 position-absolute top-50 translate-middle ms-6"></i>
-										<input type="text" class="form-control ps-12"
-										placeholder="Buscar producto"
-										name="filter"
-										[(ngModel)]="filter"
-										(keyup.ENTER)="redirect()">
-									</div>
-									<div class="d-flex align-items-center">               
-										<button type="button" class="btn btn-primary me-5" (click)="redirect()">Buscar</button>
+								<div class="d-flex justify-content-between align-items-center flex-nowrap gap-2 mt-5">
+									<div class="d-flex align-items-end gap-2">
+										<div>
+											<label class="fs-7 text-gray-600 fw-500">Busqueda</label>
+											<div class="position-relative mb-1">
+												<input
+													type="text"
+													class="form-control form-control-sm pe-15"
+													placeholder="Buscar categoría"
+													name="filter"
+													[(ngModel)]="filter"
+													(keyup.ENTER)="redirect()"
+												/>
 
-										<button type="button" class="btn btn-secondary me-5" (click)="resetFilters()">Restablecer</button>
-										
-										<a href="#" id="kt_horizontal_search_advanced_link" class="btn btn-link" data-bs-toggle="collapse" data-bs-target="#kt_advanced_search_form" aria-expanded="true">Filtros Avanzados</a>
+												<span
+													class="text-primary position-absolute top-50 end-0 translate-middle-y me-3 fw-600 fs-8"
+													style="pointer-events: none;background: #fff;padding: 1px;"
+												>
+													[ENTER]
+												</span>
+											</div>
+										</div>
+										<div>
+											<button
+												class="btn btn-primary btn-sm dropdown-toggle my-1"
+												type="button"
+												id="dropdownMenuButton"
+												(click)="resetFilters()"
+											>
+												<i class="bi bi-arrow-clockwise"></i> Restablecer
+											</button>
+										</div>
+										<div>
+											<a
+												class="btn btn-primary btn-sm dropdown-toggle my-1"
+												type="button"
+												data-bs-toggle="collapse" data-bs-target="#kt_advanced_search_form" aria-expanded="true"
+											>
+												<i class="bi bi-funnel-fill"></i> Filtro Avanzado
+											</a>
+										</div>
+									</div>
+									<div class="dropdown">
+										<button
+											class="btn btn-primary btn-sm dropdown-toggle my-1"
+											type="button"
+											id="dropdownMenuButton"
+											data-bs-toggle="dropdown"
+											aria-expanded="false"
+										>
+											<i class="bi bi-sliders"></i> Opciones
+										</button>
+										<ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+											<li>
+												<a class="dropdown-item cursor-pointer" data-bs-toggle="modal" [attr.data-bs-target]="'#modalExport'">
+													<i class="bi bi-filetype-xls me-2"></i> Exportar XLS
+												</a>
+											</li>
+											<li>
+												<hr class="dropdown-divider" />
+											</li>
+											<li>
+												<a class="dropdown-item" href="#"> <i class="bi bi-folder-symlink me-2"></i> Importar </a>
+											</li>
+										</ul>
 									</div>
 								</div>
 
@@ -53,7 +103,7 @@
 											[selectedCategories]="categories"
 											[title]="'Categorías'"
 											[placeholder]="'Filtrar por categoría'"
-											[sizeClass]="'lg'">
+											[sizeClass]="'sm'">
 											</app-menu-select-categories>
 										</div>	
 										<div class="col-lg-3">
@@ -62,7 +112,7 @@
 											[selectedBrands]="brands"
 											[title]="'Marcas'"
 											[placeholder]="'Filtrar por marca'"
-											[sizeClass]="'lg'">
+											[sizeClass]="'sm'">
 											</app-menu-select-brands>
 										</div>
 										<div class="col-lg-3">
@@ -71,7 +121,7 @@
 											[selectedCountries]="countries"
 											[title]="'Paises'"
 											[placeholder]="'Filtrar por paises'"
-											[sizeClass]="'lg'">
+											[sizeClass]="'sm'">
 											</app-menu-select-countries>
 										</div>
 										<div class="col-lg-3">
@@ -84,7 +134,7 @@
 												placeholder="Visibilidad"
 												[clearable]="false"
 												[closeOnSelect]="true"
-												class="select-element mb-1"
+												class="select-element select-element-sm mb-1"
 												appendTo="body"
 											>
 												<!-- 🔹 Opción en el dropdown -->
@@ -107,11 +157,11 @@
 										
 									</div>
 									<div class="row mb-5">
-										<div class="col-lg-4">
+										<div class="col-auto">
 											<div class="nav-group nav-group-fluid"  style="border: 1px solid #dbdfe9">            
 												<label *ngFor="let item of statusTable">     
 													<input type="radio" class="btn-check" name="type" value="has" [checked]="status == item.value">
-													<span class="btn btn-sm btn-color-muted btn-active btn-active-primary fw-bold px-4" (click)="onFilterStatusChange(item.value)">
+													<span class="btn btn-sm btn-color-muted btn-active btn-active-primary fw-bold px-4" (click)="onFilterStatusChange(item.value)" style="padding: calc(.1495rem + 1px) calc(1.25rem + 1px) !important;">
 														<div class="d-flex align-items-center gap-2">
 														<span class="bullet bullet-dot h-10px w-10px" [ngClass]="'bg-' + item.color"></span>
 														<span>{{ item.name }}</span>
@@ -148,12 +198,6 @@
 									</div>
 								</div>
 
-								<div class="d-flex mt-7">
-									<a href="#" class="btn btn-sm fw-bold btn-secondary" data-bs-toggle="modal" data-bs-target="#kt_modal_create_app">
-										Importar
-									</a>
-								</div>
-
 								<div class="table-responsive my-7">
 									<table class="table table-bordered table-fixed modern-table mb-0" 
 									[ngClass]="{
@@ -168,15 +212,9 @@
 											<tr>
 												<th
 													*ngFor="let col of columns"
-													
-													[ngClass]="[
-														col.classCol,
-														!loading ? 'cursor-pointer' : 'cursor-disabled'
-													]"
 												>
 													<div class="d-flex justify-content-between align-items-center">
-														<span class="fw-500 fs-7">{{ col.label }}</span>
-														<i class="bi bi-arrow-down-up"></i>
+														<span class="text-dark fw-600 fs-7 text-uppercase">{{ col.label }}</span>
 													</div>
 												</th>
 												<th>
@@ -215,17 +253,17 @@
 
 													<td class="col-w-xs-200 col-w-md-250 h-45px">
 														<div class="d-flex align-items-center gap-2 text-ellipsis">
-															<div class="symbol me-3" style="height: 45px; width: 45px; border: 1px dashed #e3e3e3">
+															<div class="symbol me-3" style="height: 35px; width: 35px; border: 1px dashed #e3e3e3">
 																<img [src]="item.cover" class="h-100 w-100" style="object-fit: cover;" />
 															</div>
 
 															<div class="d-flex flex-column">
-																<a class="text-decoration-none text-dark fs-7 fw-600 ">{{ item.name }}</a>
+																<a class="text-decoration-none text-gray-700 fs-7 fw-600 ">{{ item.name }}</a>
 																<ul class="list-inline d-flex mb-0">
 																	<li class="text-primary">
 																		<small>{{ item.category.name }}</small>
 																	</li>
-																	<li class="text-gray-600 px-2">
+																	<li class="text-gray-700 px-2">
 																		<small>-</small>
 																	</li>
 																	<li class="text-primary">
@@ -243,20 +281,20 @@
 															</div>
 
 															<div class="d-flex flex-column">
-																<a class="text-decoration-none text-dark fs-8 fw-600">{{ item.brand.name }}</a>
-																<small class="text-gray-800">{{ item.brand.slug }}</small>
+																<a class="text-decoration-none text-gray-700 fs-8 fw-700">{{ item.brand.name }}</a>
+																<small class="text-gray-700">{{ item.brand.slug }}</small>
 															</div>
 														</div>
 													</td>
 
 													<td class="col-w-xs-100 h-45px">
 														<div class="d-flex" *ngIf="!item.priceDiscount">
-															<span class="fs-6 text-gray-800 me-2">
+															<span class="fs-6 text-gray-700 me-2">
 																{{item.priceRegular|currency: 'PEN'}}
 															</span>                
 														</div>
 														<div class="d-flex" *ngIf="item.priceDiscount">
-															<span class="fs-6 me-2">
+															<span class="fs-6 me-2 text-gray-700">
 																{{ item.priceDiscount | currency: 'PEN' }}
 															</span>
 															<span class="text-danger" style="font-size: 1rem; position: relative; top: -0.3rem;">
@@ -268,7 +306,7 @@
 													</td>
 
 													<td class="col-w-xs-100 h-45px">
-														<span class="badge rounded-pill text-dark fw-800"
+														<span class="badge rounded-pill text-gray-700 fw-800"
 															[ngClass]="{ 'bg-outline-warning': item.status == 'draft', 'bg-outline-success': item.status == 'published' }">
 														<span class="d-inline-block rounded-circle me-1"
 																style="width: 8px; height: 8px"

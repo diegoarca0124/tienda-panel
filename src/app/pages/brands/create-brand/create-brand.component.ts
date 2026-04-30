@@ -57,6 +57,12 @@ export class CreateBrandComponent {
 
 	create() {
 		this.loadBtn = true;
+		this.errorMsmServer = '';
+		this.errorsBrand = {
+			logoUrl: [],
+			bannerUrl: [],
+		};
+		this.msmErrorBrand = [];
 		this.brandService
 			.create_brand(this.brand)
 			.pipe(
@@ -81,11 +87,10 @@ export class CreateBrandComponent {
 
 					if (error.validation) {
 						this.errorsBrand = {
-							...this.errorsBrand, // mantiene las claves existentes
-							...error.validation, // sobrescribe solo los campos que traen error
+							...this.errorsBrand, 
+							...error.validation, 
 						};
 						this.msmErrorBrand = Object.values(this.errorsBrand).flat();
-						this.errorMsmServer = '';
 					}
 
 					console.log(this.errorsBrand);

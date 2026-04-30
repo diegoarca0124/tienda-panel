@@ -95,6 +95,7 @@ export class IndexBrandComponent {
 			.subscribe({
 				next: (next: { brands: BrandList[]; currentPage: number; totalCollaborators: number; totalPages: number }) => {
 					this.brands = next.brands;
+					this.currentPage = next.currentPage;
 					this.totalPages = next.totalPages;
 				},
 				error: (err) => {

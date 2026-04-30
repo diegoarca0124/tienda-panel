@@ -28,16 +28,22 @@
 									<div class="d-flex gap-2">
 										<div>
 											<label class="fs-7 text-gray-600 fw-500">Busqueda</label>
-											<div class="d-flex align-items-center position-relative">
+											<div class="position-relative mb-1">
 												<input
 													type="text"
-													class="form-control form-control-sm w-200px"
+													class="form-control form-control-sm pe-15"
 													placeholder="Buscar categoría"
 													name="filter"
 													[(ngModel)]="filter"
 													(keyup.ENTER)="onFilterOrStatusChange()"
 												/>
-												<i class="bi bi-search position-absolute cursor-pointer" style="right: 20px" (click)="onFilterOrStatusChange()"></i>
+
+												<span
+													class="text-primary position-absolute top-50 end-0 translate-middle-y me-3 fw-600 fs-8"
+													style="pointer-events: none;background: #fff;padding: 1px;"
+												>
+													[ENTER]
+												</span>
 											</div>
 										</div>
 										<div>
@@ -131,6 +137,17 @@
 											<li>
 												<a class="dropdown-item" href="#"> <i class="bi bi-folder-symlink me-2"></i> Importar </a>
 											</li>
+											<li *ngIf="selectedIds.size > 0">
+												<a class="dropdown-item cursor-pointer" data-bs-toggle="modal" [attr.data-bs-target]="'#modalMultipleActive'">
+													<i class="bi bi-check-circle me-2 text-primary"></i> Activar
+												</a>
+											</li>
+
+											<li *ngIf="selectedIds.size > 0">
+												<a class="dropdown-item cursor-pointer" data-bs-toggle="modal" [attr.data-bs-target]="'#modalMultipleDisabled'">
+													<i class="bi bi-x-circle me-2 text-danger"></i> Desactivar
+												</a>
+											</li>
 										</ul>
 									</div>
 								</div>
@@ -144,11 +161,13 @@
 									'table-hover': categories.length >= 1,
 									}">
 										<colgroup>
+											<col style="width: 20px;">
 											<col *ngFor="let col of columns" [ngClass]="col.classCol">
 											<col style="width: 38px">
 										</colgroup>
 										<thead style="background-color: #f8f8f8;">
 											<tr>
+												<th></th>
 												<th
 													*ngFor="let col of columns">
 													<div class="d-flex justify-content-between align-items-center">
@@ -164,6 +183,9 @@
 											<!-- ======================= LOADING (SKELETON) ======================= -->
 											<ng-container *ngIf="loading">
 												<tr *ngFor="let s of arrDataSkull">
+													<td>
+														<div class="form-control-solid form-control-load" style="height:20px; width: 20px; border-radius: 3px"></div>
+													</td>
 													<td class="col-w-xs-200 col-w-md-250 h-45px">
 														<div class="d-flex align-items-center gap-2">
 															<div class="form-control-solid form-control-load" style="width: 32px; height: 32px; border-radius: 5px"></div>
@@ -188,15 +210,31 @@
 											<!-- ======================= DATOS ======================= -->
 											<ng-container *ngIf="!loading && categories.length >= 1">
 												<tr *ngFor="let item of categories">
-
+													<td>
+														<label class="form-check form-check-custom form-check-solid form-check-sm m-0 d-flex justify-content-center">
+															<input
+																class="form-check-input cursor-pointer"
+																type="checkbox"
+																[checked]="selectedIds.has(item.id!)"
+																(change)="toggleItem(item.id!, $event)"
+															/>
+														</label>
+													</td>
 													<td class="col-w-xs-200 col-w-md-250 h-45px">
 														<div class="d-flex align-items-center gap-2">
 															<div class="symbol me-3">
-																<span
+																<span *ngIf="item.icon"
 																	class="symbol-label fw-bold"
 																	style="height: 30px; width: 30px; border: 1px dashed #e3e3e3"
 																	[innerHTML]="item.safeIcon"
 																>
+																</span>
+																<span *ngIf="!item.icon" class="symbol-label fw-bold"
+																	style="height: 30px; width: 30px; border: 1px dashed #e3e3e3">
+																	<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+																	<rect opacity="0.3" x="2" y="2" width="20" height="20" rx="10" fill="currentColor"/>
+																	<path d="M11.276 13.654C11.276 13.2713 11.3367 12.9447 11.458 12.674C11.5887 12.394 11.738 12.1653 11.906 11.988C12.0833 11.8107 12.3167 11.61 12.606 11.386C12.942 11.1247 13.1893 10.896 13.348 10.7C13.5067 10.4947 13.586 10.2427 13.586 9.944C13.586 9.636 13.4833 9.356 13.278 9.104C13.082 8.84267 12.69 8.712 12.102 8.712C11.486 8.712 11.066 8.866 10.842 9.174C10.6273 9.482 10.52 9.82267 10.52 10.196L10.534 10.574H8.826C8.78867 10.3967 8.77 10.2333 8.77 10.084C8.77 9.552 8.90067 9.07133 9.162 8.642C9.42333 8.20333 9.81067 7.858 10.324 7.606C10.8467 7.354 11.4813 7.228 12.228 7.228C13.1987 7.228 13.9687 7.44733 14.538 7.886C15.1073 8.31533 15.392 8.92667 15.392 9.72C15.392 10.168 15.322 10.5507 15.182 10.868C15.042 11.1853 14.874 11.442 14.678 11.638C14.482 11.834 14.2253 12.0533 13.908 12.296C13.544 12.576 13.2733 12.8233 13.096 13.038C12.928 13.2527 12.844 13.528 12.844 13.864V14.326H11.276V13.654ZM11.192 15.222H12.928V17H11.192V15.222Z" fill="currentColor"/>
+																	</svg>
 																</span>
 															</div>
 
@@ -257,14 +295,14 @@
 
 											<!-- ======================= SIN RESULTADOS ======================= -->
 											<tr *ngIf="!loading && categories.length == 0">
-												<td colspan="5">
+												<td colspan="4">
 													<app-not-found [error]="{ message: 'No se encontraron registros que coincidan.', statusCode: 404 }"></app-not-found>
 												</td>
 											</tr>
 
 											<!-- ======================= ERROR ======================= -->
 											<tr *ngIf="!loading && errorMsmServerListCategories">
-												<td colspan="5">
+												<td colspan="4">
 													<app-not-found [error]="errorMsmServerListCategories"></app-not-found>
 												</td>
 											</tr>
@@ -316,3 +354,24 @@
 		</div>
 	</div>
 </div>
+
+
+<app-modal-delete
+	[id]="'modalMultipleActive'"
+	[title]="'Activación Multiple'"
+	[description]="'El estado de las categorias serán actualizadas. Verifica tu selección antes de continuar, ya que este cambio se aplicará a todos.'"
+	[textButton]="'Activar'"
+	(actionConfirmed)="onUpdateStatusMultiple(true)"
+	[loadBtnDelete]="loadBtnMultipleStatus"
+>
+</app-modal-delete>
+
+<app-modal-delete
+	[id]="'modalMultipleDisabled'"
+	[title]="'Desactivación Multiple'"
+	[description]="'El estado de las categorias serán actualizadas. Verifica tu selección antes de continuar, ya que este cambio se aplicará a todos.'"
+	[textButton]="'Desactivar'"
+	(actionConfirmed)="onUpdateStatusMultiple(false)"
+	[loadBtnDelete]="loadBtnMultipleStatus"
+>
+</app-modal-delete>

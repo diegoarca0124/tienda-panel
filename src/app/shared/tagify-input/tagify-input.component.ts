@@ -1,5 +1,16 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  Output,
+  ViewChild,
+  AfterViewInit,
+  OnChanges,
+  OnDestroy,
+  SimpleChanges
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import Tagify from '@yaireo/tagify';
 
@@ -10,20 +21,45 @@ import Tagify from '@yaireo/tagify';
   templateUrl: './tagify-input.component.html',
   styleUrl: './tagify-input.component.css',
 })
-export class TagifyInputComponent {
-  @Input() whiteList: string[] = [];
+export class TagifyInputComponent
+  implements AfterViewInit, OnChanges, OnDestroy {
 
-  // 🔹 Nuevo Output para emitir los cambios
+  @Input() whiteList: string[] = [];
+  @Input() selectedTags: string[] = [];
+
   @Output() tagsChange = new EventEmitter<string[]>();
 
-  @ViewChild('tagInput', { static: true }) tagInput!: ElementRef<HTMLInputElement>;
+  @ViewChild('tagInput', { static: true })
+  tagInput!: ElementRef<HTMLInputElement>;
+
   private tagify?: Tagify;
 
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     this.initTagify();
   }
 
-  private initTagify() {
+  ngOnChanges(changes: SimpleChanges): void {
+    if (!this.tagify) return;
+
+    if (changes['selectedTags']) {
+      const prev = changes['selectedTags'].previousValue || [];
+      const curr = changes['selectedTags'].currentValue || [];
+
+      if (JSON.stringify(prev) !== JSON.stringify(curr)) {
+        this.tagify.removeAllTags();
+
+        if (curr.length) {
+          this.tagify.addTags(curr);
+        }
+      }
+    }
+
+    if (changes['whiteList']) {
+      this.tagify.settings.whitelist = this.whiteList;
+    }
+  }
+
+  private initTagify(): void {
     if (this.tagify) {
       this.tagify.destroy();
     }
@@ -33,24 +69,32 @@ export class TagifyInputComponent {
       maxTags: 20,
       dropdown: {
         enabled: 1,
-        position: 'text',
-      },
+        position: 'text'
+      }
     });
 
     const tagifyEl = this.tagInput.nativeElement.closest('.tagify');
-    if (tagifyEl) tagifyEl.classList.add('form-control', 'py-2');
+    if (tagifyEl) {
+      tagifyEl.classList.add('form-control', 'py-2');
+    }
 
-    // 🔹 Emitir cuando se agrega o elimina una etiqueta
+    // cargar tags iniciales
+    if (this.selectedTags?.length) {
+      this.tagify.addTags(this.selectedTags);
+    }
+
     this.tagify.on('add', () => this.emitTags());
     this.tagify.on('remove', () => this.emitTags());
   }
 
-  private emitTags() {
-    const tags = this.tagify?.value.map((t: any) => t.value) || [];
+  private emitTags(): void {
+    const tags =
+      this.tagify?.value.map((item: any) => item.value) || [];
+
     this.tagsChange.emit(tags);
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     if (this.tagify) {
       this.tagify.destroy();
       this.tagify = undefined;

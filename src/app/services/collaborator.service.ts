@@ -42,4 +42,8 @@ export class CollaboratorService {
 	update_status_collaborator(id: string, data: { status: boolean }): Observable<any> {
 		return this.http.put(`${this.apiUrl}/collaborator/update_status_collaborator/${id}`, data, { headers: this.getHeaders() });
 	}
+
+	update_status_collaborators(data: {ids: Array<string>, status: boolean}): Observable<any> {
+		return this.http.post(`${this.apiUrl}/collaborator/update_status_collaborators`, data, { headers: this.getHeaders() });
+	}
 }
