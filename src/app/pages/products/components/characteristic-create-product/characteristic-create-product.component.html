@@ -1,0 +1,271 @@
+<div class="d-flex flex-column gap-6">
+
+    @if (errorsProduct?.attributes) {
+        <div class="alert alert-dismissible bg-light-danger d-flex flex-column flex-sm-row w-100 px-5 py-3 gap-3 mt-5 mb-0" style="border: 1px dashed #ccc;border-radius: 0px !important;">
+            <app-icon-alert [classIcon]="'svg-icon-1 svg-icon-danger'"></app-icon-alert>                  
+
+            <div class="d-flex align-items-center pe-0 pe-sm-10">
+                <span class="text-gray-700">{{errorsProduct.attributes}}</span>
+            </div>
+        </div>
+    }
+
+    <div class="d-flex align-items-center w-100 gap-2">
+        <div class="flex-grow-1">
+            <div class="position-relative">
+                <input
+                    type="text"
+                    class="form-control form-control-sm pe-15"
+                    placeholder="Buscar atributo"
+                    name="filter"
+                    [(ngModel)]="filter"
+                    (keyup.ENTER)="onSearchAttribute()"
+                />
+
+                <span
+                    class="text-primary position-absolute top-50 end-0 translate-middle-y me-3 fw-600 fs-8"
+                    style="pointer-events: none;background: #fff;padding: 1px;"
+                >
+                    [ENTER]
+                </span>
+            </div>
+        </div>
+
+        <button
+            type="button"
+            class="btn btn-icon bg-light-secondary"
+            (click)="onSearchAttribute()">
+            <ion-icon name="search-outline" class="fs-5 text-gray-800"></ion-icon>
+        </button>
+
+        @if (!id) {
+            <button
+                type="button"
+                class="btn btn-icon bg-light-secondary"
+                data-bs-toggle="modal"
+                data-bs-target="#modalProducts"
+                (click)="init_products()"
+                placement="top"
+                [ngbTooltip]="'Copiar atributos'"
+                tooltipClass="tooltip-dark">
+                <ion-icon name="copy-outline" class="fs-5 text-gray-800"></ion-icon>
+            </button>
+        }
+
+        <button
+            type="button"
+            class="btn btn-icon bg-light-secondary"
+            (click)="id ? init_characteristics(this.id) : init_attributes()"
+            [disabled]="loadingAttributes"
+            placement="top"
+            [ngbTooltip]="'Recargar atributos'"
+            tooltipClass="tooltip-dark">
+
+            <span
+                *ngIf="loadingAttributes"
+                class="spinner-border spinner-border-sm text-gray-800">
+            </span>
+
+            <ion-icon
+                *ngIf="!loadingAttributes"
+                name="refresh-outline"
+                class="fs-5 text-gray-700">
+            </ion-icon>
+
+        </button>
+    </div>
+
+    <ng-container *ngIf="!loadingAttributes">
+        <div *ngIf="attributes.length >= 1" class="accordion" style="box-shadow: rgb(0 0 0 / 6%) 0.5rem 0.5rem 1.5rem 0.5rem !important;" 
+        >
+            <div class="accordion-item" *ngFor="let item of attributes; let idx = index">
+                <h2 class="accordion-header" id="kt_accordion_1_header_1">
+                    <button class="accordion-button fs-7 fw-semibold collapsed text-gray-700" 
+                    style="background-color: #f1f5f9 !important;"
+                    type="button" data-bs-toggle="collapse" 
+                    [attr.data-bs-target]="`#attribute-${idx}`" 
+                    aria-expanded="false" 
+                    [attr.aria-controls]="`attribute-${idx}`">
+                        <span class="me-2">{{item.name}}</span>
+                        @if (item.totalAttributeValueIds >= 1) {
+                            <div class="badge-number">{{item.totalAttributeValueIds}}</div>
+                        }
+                    </button>
+                </h2>
+                <div [id]="`attribute-${idx}`" class="accordion-collapse collapse" 
+                aria-labelledby="kt_accordion_1_header_1" data-bs-parent="#kt_accordion_1" 
+                [ngClass]="{'show': idx == 0}">
+                    <div class="accordion-body p-0">
+                    <table class="table table-row-bordered align-middle mb-0 table-custom-bordered">
+                            <tbody>
+                                <tr *ngFor="let attr of item.attributes">
+                                    <td style="width: 50%; padding-left: 25px !important;">
+                                        <div class="fw-semibold text-gray-600 fs-8">
+                                            {{ attr.name }}
+                                        </div>
+                                    </td>
+
+                                    <td style="width: 50%;">
+                                        <div class="d-flex align-items-center gap-2 w-100">
+                                            <ng-select
+                                                class="flex-grow-1 select-element-sm select-element-multiple-sm"
+                                                [items]="attr.attributeValues"
+                                                bindLabel="value"
+                                                bindValue="id"
+                                                placeholder="Seleccionar"
+                                                [(ngModel)]="attr.attributeValueId"
+                                                [multiple]="true"
+                                                [clearable]="true"
+                                                [closeOnSelect]="false"
+                                                [searchable]="false"
+                                                [loading]="charEdit.group == item.id && charEdit.attribute == attr.id && loadBtnProductDescripcion"
+                                                (change)="id && onAttributeChange(item, attr, $event)"
+                                                style="flex: 1;min-width: 0;">
+                                            </ng-select>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <ng-container *ngIf="attributes.length == 0">
+            <div class="card" style="box-shadow: none !important;border-color: #dce0ea !important;">
+                <div class="card-body p-0">
+                    <app-not-found [error]="{ message: 'No hay caracteristicas que mostrar.', statusCode: 404 }"></app-not-found>
+                </div>
+            </div>
+        </ng-container>
+    </ng-container>
+    <div class="accordion" 
+    style="box-shadow: rgb(0 0 0 / 6%) 0.5rem 0.5rem 1.5rem 0.5rem !important;" 
+    *ngIf="loadingAttributes">
+        <div class="accordion-item" *ngFor="let item of [1,2,3,4]">
+            <h2 class="accordion-header">
+                <button class="accordion-button fs-7 fw-semibold accordion-button-skeleton bg-primary-light" 
+                type="button">
+                    <div class="skeleton skeleton-text" style="width:60%;"></div>
+                </button>
+            </h2>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalProducts" tabindex="-1" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog mw-650px modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header pb-0 border-0 justify-content-end">
+				<span class="svg-icon svg-icon-muted svg-icon-1 cursor-pointer" data-bs-dismiss="modal">
+					<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<rect opacity="0.5" x="6" y="17.3137" width="16" height="2" rx="1" transform="rotate(-45 6 17.3137)" fill="currentColor" />
+						<rect x="7.41422" y="6" width="16" height="2" rx="1" transform="rotate(45 7.41422 6)" fill="currentColor" />
+					</svg>
+				</span>
+			</div>
+            <div class="modal-body mx-5 mx-xl-18 pt-0 pb-15">
+                <div class="text-center mb-10">
+                    <h2 class="mb-5 fw-700">Copiar Atributos</h2>
+                    <div class="text-gray-600 fs-7 fw-400 my-1">
+                        Selecciona un producto existente y copia sus atributos al producto actual con un solo clic.
+                    </div>
+                </div>
+
+                <div class="d-flex align-items-center w-100 mb-5">
+                    <div class="flex-grow-1 me-2">
+                        <div class="position-relative">
+                            <input
+                                type="text"
+                                class="form-control form-control-sm pe-15"
+                                placeholder="Buscar producto"
+                                name="filterProducts"
+                                [(ngModel)]="filterProducts"
+                                (keyup.ENTER)="init_products()"
+                            />
+
+                            <span
+                                class="text-primary position-absolute top-50 end-0 translate-middle-y me-3 fw-600 fs-8"
+                                style="pointer-events: none;background: #fff;padding: 1px;"
+                            >
+                                [ENTER]
+                            </span>
+                        </div>
+                    </div>
+
+                    <button
+                        type="button"
+                        class="btn btn-sm bg-primary-light d-flex align-items-center justify-content-center p-0 btn-refresh"
+                        (click)="init_products()"
+                        [disabled]="loadProducts">
+
+                        <span
+                            *ngIf="loadProducts"
+                            class="spinner-border spinner-border-sm text-primary">
+                        </span>
+
+                        <i
+                            *ngIf="!loadProducts"
+                            class="bi bi-arrow-clockwise fs-5 text-primary">
+                        </i>
+
+                    </button>
+                </div>
+
+                <div class="h-375px scroll-y">
+                    @if (loadProducts) {
+                        <div class="d-flex justify-content-between align-items-center py-3"
+                        *ngFor="let item of [1,2,3,4]; let lst = last" 
+                        [ngClass]="{'border-bottom-dashed border-bottom border-gray-300':!lst}">
+                            <div class="d-flex align-items-center" style="width:250px;">
+                                <div class="skeleton me-3" style="width:40px !important; height:40px;min-width: 40px !important;"></div>
+                                <div class="d-flex flex-column gap-2" style="width:100%;">
+                                    <div class="skeleton skeleton-text" style="width:60%;"></div>
+                                    <div class="skeleton skeleton-text" style="width:40%;"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="skeleton skeleton-text" style="width:90.18px;height:28.01px;"></div>
+                            </div>
+                        </div>
+                    }
+                    @if (!loadProducts && products.length >= 1) {
+                        <div class="d-flex flex-stack py-3"
+                        *ngFor="let item of products; let lst = last" 
+                        [ngClass]="{'border-bottom-dashed border-bottom border-gray-300':!lst}">
+                            <!--begin::Details-->
+                            <div class="d-flex align-items-center">
+                                <div class="symbol me-3" 
+                                    style="height:40px; width:40px; border:1px dashed #e3e3e3; flex-shrink:0;">
+                                    <img [src]="item.miniature" 
+                                    class="h-100 w-100"  
+                                    fallbackImage/>
+                                </div>
+                                <div class="d-flex flex-column">
+                                    <a class="text-decoration-none text-gray-700 fs-8 fw-600">
+                                        {{item.name}}
+                                    </a>
+                                    <small class="text-primary"
+                                        style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+                                        {{ item.subcategory.name }}
+                                    </small>
+                                </div>
+                            </div>
+                            <div class="d-flex">
+                                <button class="btn btn-xs btn-light btn-active-light-dark" (click)="onCopyAttributes(item.id!)" data-bs-dismiss="modal">
+                                    Seleccionar
+                                </button>
+                            </div>
+                        </div>
+                    }
+                    @if (!loadProducts && products.length == 0 && !errorMsmServerListProducts) {
+                        <app-not-found [error]="{ message: 'No se encontraron registros.', statusCode: 404 }"></app-not-found>
+                    }
+                    @if (!loadProducts && errorMsmServerListProducts){
+                        <app-not-found [error]="errorMsmServerListProducts"></app-not-found>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

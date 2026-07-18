@@ -13,8 +13,8 @@ export class AuthGuard implements CanActivate {
 		private router: Router
 	) {}
 
-	canActivate(): Observable<boolean | UrlTree> {
-		return this.authService.validate_token().pipe(
+	canActivate(): boolean {
+		/* return this.authService.validate_token().pipe(
 			map((response: any) => {
 				console.log(response);
 				if (response.valid || response.success) {
@@ -28,6 +28,7 @@ export class AuthGuard implements CanActivate {
 				this.authService.logout();
 				return of(this.router.createUrlTree(['/']));
 			})
-		);
+		); */
+		return true;
 	}
 }

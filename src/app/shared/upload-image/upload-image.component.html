@@ -9,10 +9,10 @@
 	>
 		<ng-container *ngIf="imagePreview; else emptyState">
 			<div class="d-flex align-items-center gap-3 flex-content">
-				<img [src]="imagePreview" alt="Preview" class="preview-img" />
+				<img [src]="imagePreview" alt="Preview" class="preview-img" fallbackImage/>
 				<span class="file-name">{{ fileName }}</span>
 			</div>
-			<button type="button" class="btn-clear" (click)="clearImage(); $event.stopPropagation()">✕</button>
+			<button type="button" class="btn-clear fs-7 fw-700" (click)="clearImage(); $event.stopPropagation()">✕</button>
 		</ng-container>
 
 		<ng-template #emptyState>

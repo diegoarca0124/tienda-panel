@@ -1,0 +1,127 @@
+<div class="d-flex flex-column gap-6">
+
+    @if (errorsProduct?.productGroupId) {
+        <div class="alert alert-dismissible bg-light-danger d-flex flex-column flex-sm-row w-100 px-5 py-3 gap-3 mt-5 mb-0" style="border: 1px dashed #ccc;border-radius: 0px !important;">
+            <app-icon-alert [classIcon]="'svg-icon-1 svg-icon-danger'"></app-icon-alert>                  
+
+            <div class="d-flex align-items-center pe-0 pe-sm-10">
+                <span class="text-gray-700">{{errorsProduct?.productGroupId}}</span>
+            </div>
+        </div>
+    }
+
+    <div class="d-flex align-items-center w-100">
+        <div class="flex-grow-1 me-2">
+            <div class="position-relative">
+                <input
+                    type="text"
+                    class="form-control form-control-sm pe-15"
+                    placeholder="ID de grupo"
+                    name="filterGroup"
+                    [(ngModel)]="filterGroup"
+                    (keyup.enter)="init_groups()"
+                />
+                <span
+                    class="text-primary position-absolute top-50 end-0 translate-middle-y me-3 fw-600 fs-8"
+                    style="pointer-events: none;background: #fff;padding: 1px;"
+                >
+                    [ENTER]
+                </span>
+            </div>
+        </div>
+        <button
+            type="button"
+            class="btn btn-icon bg-light-secondary"
+            (click)="init_groups()"
+            [disabled]="loadingGroups"
+        >
+            <span
+                *ngIf="loadingGroups"
+                class="spinner-border spinner-border-sm me-2"
+                aria-hidden="true">
+            </span>
+
+            <span *ngIf="!loadingGroups">
+                <ion-icon name="search-outline" class="fs-5 text-gray-800"></ion-icon>
+            </span>
+        </button>
+       
+    </div>
+    
+    <ng-container *ngIf="!loadingGroups">
+        <div *ngIf="groups.length >= 1">
+            <div *ngFor="let item of groups; let lst = last">
+                <div class="d-flex flex-stack">
+                    <div class="d-flex align-items-center gap-5">
+                        <div class="fs-7">Grupo 
+                            <span class="text-primary fw-600">#{{item.code}}</span>
+                        </div>    
+                        <div class="symbol-group symbol-hover mb-1">
+                            <div class="symbol symbol-circle symbol-25px" *ngFor="let subitem of item.productGroupItems" placement="right" 
+                            [ngbTooltip]="subitem.product.name"
+                            tooltipClass="tooltip-dark"
+                            style="border: 1px dashed #ccc;">
+                                <img [src]="subitem.product.cover" [alt]="subitem.product.name" style="object-fit: cover;">
+                            </div>
+                            <div class="symbol symbol-circle symbol-25px" *ngIf="item.productGroupItems.length >= 5">
+                                <div class="symbol-label bg-dark">
+                                    <span class="fs-8 text-inverse-dark">+{{item.productGroupItems.length-5}}</span>
+                                </div>
+                            </div>
+                        </div>
+                                                    
+                    </div>
+                    <div>
+                        <button class="btn btn-xs btn-light btn-active-light-dark toggle" *ngIf="product.productGroupId != item.id"
+                        (click)="onSelectGroup(item.id)">
+                            Seleccionar
+                        </button>	
+                        <span class="badge badge-success text-uppercase" *ngIf="product.productGroupId == item.id">Seleccionado</span>
+                    </div>
+                </div>  
+                <div class="separator separator-dashed my-3" *ngIf="!lst"></div>
+            </div>
+        </div>
+        <ng-container *ngIf="groups.length == 0">
+            <div class="card" style="box-shadow: none !important;border-color: #dce0ea !important;">
+                <div class="card-body p-0">
+                    <app-not-found [error]="{ message: 'No se encontraron registros que coincidan.', statusCode: 404 }"></app-not-found>
+                </div>
+            </div>
+        </ng-container>
+    </ng-container>
+    <ng-container *ngIf="loadingGroups">
+        <div  *ngFor="let s of [1,2,3,4,5]">
+            <div class="d-flex flex-stack">
+                <div class="me-5">
+                    <div class="symbol-group symbol-hover mb-1">
+                        <!--begin::Member-->
+                        <div class="symbol symbol-circle symbol-25px"
+                        placement="left">
+                            <div class="symbol-label" style="background: #e7e7e7; border: 1px solid #ccc">
+                            </div>
+                        </div>
+                        <div class="symbol symbol-circle symbol-25px"
+                        placement="left">
+                            <div class="symbol-label" style="background: #e7e7e7; border: 1px solid #ccc">
+                            </div>
+                        </div>
+                        <!--end::Member-->
+                        <!--begin::More members-->
+                        <div class="symbol symbol-circle symbol-25px">
+                            <div class="symbol-label" style="background: #e7e7e7; border: 1px solid #ccc">
+                            </div>
+                        </div>
+                        <!--end::More members-->
+                    </div>
+                   
+                </div>
+                <div>
+                    <div class="skeleton skeleton-text" style="width: 90.18px; height: 28.01px; border-radius: 2px"></div>
+                </div>
+            </div>  
+            <div class="separator separator-dashed my-3"></div>
+        </div>
+    </ng-container>
+</div>
+

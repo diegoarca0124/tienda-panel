@@ -1,0 +1,173 @@
+<div class="app-page flex-column flex-column-fluid" id="kt_app_page">
+    <app-topbar></app-topbar>
+    <div class="app-wrapper flex-column flex-row-fluid" id="kt_app_wrapper">
+        <app-sidebar></app-sidebar>
+        <div class="app-main flex-column flex-row-fluid ">
+            <div class="d-flex flex-column flex-column-fluid">
+                <div id="kt_app_toolbar" class="app-toolbar py-5 py-lg-6" >
+                    <div id="kt_app_toolbar_container" class="app-container container-fluid d-flex flex-stack">
+                        <div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
+                            <h1 class="page-heading d-flex text-gray-700 fs-3 flex justify-content-start my-0 align-items-center text-uppercase ls-1px fw-700">
+                                Colaboradores
+                            </h1>
+     
+                            <ul class="breadcrumb breadcrumb-separatorless fs-7 my-0 pt-1">
+                                <li class="breadcrumb-item text-muted">
+                                    <a [routerLink]="['/users/collaborators']" class="text-muted text-hover-primary">
+                                        Colaboradores
+                                    </a>
+                                </li>
+                                <li class="breadcrumb-item">
+                                    <span class="bullet bg-gray-400 w-5px h-2px"></span>
+                                </li>
+                                <li class="breadcrumb-item text-primary fw-600">Exportación Masiva</li>
+                            </ul>
+                        </div>
+                        <div class="d-flex align-items-center gap-2 gap-lg-3">
+                            
+                        </div>
+                    </div>
+                </div>
+                <div class="app-content  flex-column-fluid">
+                    <div class="app-container container">
+
+                        <div class="card mb-10">
+                            <!--begin::Card header-->
+                            <div class="card-header" style="background-color: #f1f5f9;">
+                                <!--begin::Heading-->
+                                <h4 class="card-title m-0 d-flex flex-column">
+                                    <span class="fs-5 fw-600">Exportación Masiva</span>
+                                    <span class="text-gray-600 mt-1 fw-400 fs-0-9rem">
+                                      Exportar múltiples colaboradores mediante un archivo Excel o CSV.
+                                    </span>
+                                </h4>
+                                <!--end::Heading-->
+                                <div class="card-toolbar">
+                                </div>
+                            </div>
+                            <!--end::Card header-->
+                            <!--begin::Card body-->
+                            <div class="card-body">
+
+                                <div class="row g-5 mb-5">
+                                    <div class="col-md-6 fv-row fv-plugins-icon-container">
+                                        <label class="required fw-500 text-gray-700 fs-6 mb-1">Formato de archivo</label>
+                                        <select class="form-select form-select-sm"
+                                            [ngClass]="{ 'is-invalid': errorsExportCollaborators?.format }"
+                                            [(ngModel)]="exportOptions.format"
+                                            name="format">
+                                            <option value="xlsx">Excel (.xlsx)</option>
+                                            <option value="csv">CSV (.csv)</option>
+                                        </select>
+                                        <div class="fs-8 mt-1"
+                                        [ngClass]="errorsExportCollaborators?.format ? 'text-danger' : 'text-muted'">
+                                            {{ errorsExportCollaborators?.format?.[0] || 'Selecciona el tipo de archivo que se generará.' }}
+                                        </div>
+                                    </div>
+
+                                    <!-- ======================= ENMASCARAR ======================= -->
+                                    <div class="col-md-6">
+                                        <label class="required fw-500 text-gray-700 fs-6 mb-1">Enmascarar datos</label>
+                                        <select class="form-select form-select-sm"
+                                            [(ngModel)]="exportOptions.maskData"
+                                            [ngClass]="{ 'is-invalid': errorsExportCollaborators?.maskData }"
+                                            name="maskData">
+                                                <option [ngValue]="false">No</option>
+                                                <option [ngValue]="true">Sí</option>
+                                        </select>
+                                        <div class="fs-8 mt-1"
+                                        [ngClass]="errorsExportCollaborators?.maskData ? 'text-danger' : 'text-muted'">
+                                            {{ errorsExportCollaborators?.maskData?.[0] || 'Oculta parcialmente datos sensibles.' }}
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="required fw-500 text-gray-700 fs-6 mb-1">Alcance de exportación</label>
+                                        <select class="form-select form-select-sm"
+                                        [(ngModel)]="exportOptions.scope"
+                                        name="scope"
+                                        [ngClass]="{ 'is-invalid': errorsExportCollaborators?.scope }"
+                                        >
+                                            <option value="all">Todos los registros</option>
+                                            <option value="selected">Seleccionados</option>
+                                            <option value="page">Página actual</option>
+
+                                        </select>
+                                        <div class="fs-8 mt-1"
+                                        [ngClass]="errorsExportCollaborators?.scope ? 'text-danger' : 'text-muted'">
+                                            {{ errorsExportCollaborators?.scope?.[0] || 'Alcance de registros exportados.' }}
+                                        </div>
+                                    </div>
+
+                                    <!-- ======================= ORDEN ======================= -->
+                                    <div class="col-md-6">
+                                        <label class="required fw-500 text-gray-700 fs-6 mb-1">Orden de columnas</label>
+                                        <select class="form-select form-select-sm"
+                                        [(ngModel)]="exportOptions.sort"
+                                        name="sort"
+                                        [ngClass]="{ 'is-invalid': errorsExportCollaborators?.sort }">
+                                            <option *ngFor="let option of sortColumns"
+                                                    [value]="option.value">
+                                                {{ option.name }}
+                                            </option>
+                                        </select>
+                                        <div class="fs-8 mt-1"
+                                        [ngClass]="errorsExportCollaborators?.sort ? 'text-danger' : 'text-muted'">
+                                            {{ errorsExportCollaborators?.sort?.[0] || 'Selecciona el orden de organización.' }}
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="row">
+                                    <div class="col-6 col-lg-6 mb-2" *ngFor="let field of fieldsExport">
+                                        <label class="form-check form-check-customs form-check-sm m-0 ">
+
+                                            <input class="form-check-input me-2 mt-1"
+                                                type="checkbox"
+                                                [(ngModel)]="field.checked"
+                                                [name]="field.key"/>
+
+                                            <span class="form-check-label d-flex flex-column">
+                                                <span class="fw-semibold text-gray-700 fs-7">
+                                                    {{ field.label }}
+                                                </span>
+                                                <small class="text-muted fs-8">
+                                                    {{ field.description }}
+                                                </small>
+                                            </span>
+
+                                        </label>
+
+                                    </div>
+                                </div>
+
+                                
+                            </div>
+                            <!--end::Card body-->
+                            <div class="card-footer"  style="background-color: #f1f5f9;">
+                                <div class="d-flex gap-3">
+                                    <button
+                                        type="button"
+                                        class="btn btn-sm btn-dark my-1"
+                                        [disabled]="loadBtnExportCollaborators"
+                                        (click)="onExport()"
+                                    >
+                                        <span *ngIf="!loadBtnExportCollaborators" class="d-flex align-items-center gap-2">
+                                            <i class="bi bi-filetype-xls"></i>
+                                            Exportar
+                                        </span>
+                                        <span *ngIf="loadBtnExportCollaborators" class="d-flex align-items-center gap-2">
+                                            <span class="spinner-border spinner-border-sm"></span>
+                                            Procesando...
+                                        </span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,362 @@
+<div class="d-flex flex-column gap-6">
+    <div class="row">
+        <div class="col-12 mb-4">
+            <div class="d-flex align-items-center justify-content-between mb-1">
+                <label class="required fw-500 text-gray-700 fs-6 mb-1">Título</label>
+                <small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="errorsProduct?.name" (click)="showErrors.name = !showErrors.name">
+                    <ion-icon name="information-circle-outline" class="validation-icon"> </ion-icon>
+                     {{ showErrors.name ? 'Ocultar errores' : 'Ver errores' }}
+                </small>
+            </div>
+            @if (!loadProduct  || !id || !id) {
+                <input type="text" 
+                name="name" 
+                class="form-control mb-1" 
+                placeholder="Product name" 
+                [(ngModel)]="product.name" 
+                [ngClass]="{ 'is-invalid': errorsProduct?.name }"/>
+            }@else {
+                <div class="skeleton skeleton-input mb-1"></div>
+            }
+            
+            <span class="fs-8 text-muted">{{labelHelper.name}}</span>
+
+            <div class="validation-wrapper" [class.open]="showErrors.name">
+                <app-validation-popover 
+                [errors]="errorsProduct?.name"></app-validation-popover>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="d-flex align-items-center justify-content-between mb-1">
+                <label class="required fw-500 text-gray-700 fs-6 mb-1">Unidad medida</label>
+                <small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="errorsProduct?.unitOfMeasure" (click)="showErrors.unitOfMeasure = !showErrors.unitOfMeasure">
+                    <ion-icon name="information-circle-outline" class="validation-icon"> </ion-icon>
+                     {{ showErrors.unitOfMeasure ? 'Ocultar errores' : 'Ver errores' }}
+                </small>
+            </div>
+            @if(!loadProduct  || !id){
+                <div [ngClass]="{ 'is-invalid': errorsProduct?.unitOfMeasure }">
+                    <ng-select
+                        [items]="units_"
+                        [(ngModel)]="product.unitOfMeasure"
+                        placeholder="Unidad"
+                        [clearable]="false"
+                        [closeOnSelect]="true"
+                        [groupBy]="'group'"
+                        bindLabel="name"
+                        class="select-element mb-1"
+                        appendTo="body"
+                    >
+                        <ng-template ng-option-tmp let-item="item">
+                            <div class="option-item d-flex gap-3 align-items-center">
+                                <div class="option-name">{{ item.name }}</div>
+                                <small class="option-value text-gray-500"> - {{ item.abbr }}</small>
+                            </div>
+                        </ng-template>
+                        <ng-template ng-label-tmp let-item="item">
+                            {{ item.name }}
+                        </ng-template>
+                        <ng-template ng-loading-text>
+                            <div class="spinner-container">
+                            <span class="spinner-border spinner-border-sm"></span>
+                            </div>
+                        </ng-template>
+                    </ng-select>
+                </div>
+            }@else {
+                <div class="skeleton skeleton-input mb-1"></div>
+            }
+
+            <span class="fs-8 text-muted">{{labelHelper.unitOfMeasure}}</span>
+            <div class="validation-wrapper" [class.open]="showErrors.unitOfMeasure">
+                <app-validation-popover 
+                [errors]="errorsProduct?.unitOfMeasure"></app-validation-popover>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4" *ngIf="categorySelected!.isConditiom">
+            <div class="d-flex align-items-center justify-content-between mb-1">
+                <label class="fw-500 text-gray-700 fs-6 mb-1">Condición</label>
+                <small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="errorsProduct?.condition" (click)="showErrors.condition = !showErrors.condition">
+                    <ion-icon name="information-circle-outline" class="validation-icon"> </ion-icon>
+                     {{ showErrors.condition ? 'Ocultar errores' : 'Ver errores' }}
+                </small>
+            </div>
+            <div [ngClass]="{ 'is-invalid': errorsProduct?.condition }">
+                <ng-select
+                    [items]="conditions_"
+                    [(ngModel)]="product.condition"
+                    placeholder="Condición del producto"
+                    [clearable]="false"
+                    [closeOnSelect]="true"
+                    bindLabel="name"
+                    bindValue="name"
+                    class="select-element mb-1"
+                    appendTo="body"
+                >
+                    <!-- Opción en el dropdown -->
+                    <ng-template ng-option-tmp let-item="item">
+                        <div class="d-flex align-items-center gap-2">
+                        <span class="bullet bullet-dot h-10px w-10px" [ngClass]="'bg-' + item.color"></span>
+                        <span>{{ item.name }}</span>
+                        </div>
+                    </ng-template>
+
+                    <!-- Opción seleccionada en el input -->
+                    <ng-template ng-label-tmp let-item="item">
+                        <div class="d-flex align-items-center gap-2">
+                        <span class="bullet bullet-dot h-10px w-10px" [ngClass]="'bg-' + item.color"></span>
+                        <span>{{ item.name }}</span>
+                        </div>
+                    </ng-template>
+
+                    <ng-template ng-loading-text>
+                        <div class="spinner-container">
+                        <span class="spinner-border spinner-border-sm"></span>
+                        </div>
+                    </ng-template>
+                </ng-select>
+            </div>
+
+            
+            <span class="fs-8 text-muted">{{labelHelper.condition}}</span>
+            <div class="validation-wrapper" [class.open]="showErrors.condition">
+                <app-validation-popover 
+                [errors]="errorsProduct?.condition"></app-validation-popover>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4" *ngIf="categorySelected!.isWarranty">
+            <div class="d-flex align-items-center justify-content-between mb-1">
+                <label class="fw-500 text-gray-700 fs-6 mb-1">Garantía</label>
+                <small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="errorsProduct?.warranty" (click)="showErrors.warranty = !showErrors.warranty">
+                    <ion-icon name="information-circle-outline" class="validation-icon"> </ion-icon>
+                     {{ showErrors.warranty ? 'Ocultar errores' : 'Ver errores' }}
+                </small>
+            </div>
+            <div [ngClass]="{ 'is-invalid': errorsProduct?.warranty}">
+                <ng-select
+                    [items]="warranties_"
+                    [(ngModel)]="product.warranty"
+                    placeholder="Garantía"
+                    [clearable]="false"
+                    [closeOnSelect]="true"
+                    bindLabel="name"
+                    bindValue="name"
+                    class="select-element mb-1"
+                    appendTo="body"
+                >
+                    <!-- Opción en el dropdown -->
+                    <ng-template ng-option-tmp let-item="item">
+                        <div class="d-flex flex-column">
+                            <span>{{ item.name }}</span>
+                            <div
+                                class="me-2"
+                                [ngStyle]="{
+                                    'background-color': 'var(--bs-' + item.color + ')',
+                                    'height.px': 4,
+                                    'width.%': 
+                                        item.value === 'none' ? 5 :
+                                        item.value.includes('15_days') ? 15 :
+                                        item.value.includes('30_days') ? 25 :
+                                        item.value.includes('3_months') ? 40 :
+                                        item.value.includes('6_months') ? 60 :
+                                        item.value.includes('1_year') ? 80 :
+                                        item.value.includes('2_years') ? 90 :
+                                        item.value.includes('manufacturer') ? 95 :
+                                        item.value.includes('lifetime') ? 100 : 50
+                                }"
+                            ></div>
+                            
+                        </div>
+                    </ng-template>
+
+                    <!-- Opción seleccionada en el input -->
+                    <ng-template ng-label-tmp let-item="item">
+                        {{ item.name }}
+                    </ng-template>
+
+                    <ng-template ng-loading-text>
+                        <div class="spinner-container">
+                            <span class="spinner-border spinner-border-sm"></span>
+                        </div>
+                    </ng-template>
+                </ng-select>
+            </div>
+            <span class="fs-8 text-muted">{{labelHelper.warranty}}</span>
+            <div class="validation-wrapper" [class.open]="showErrors.warranty">
+                <app-validation-popover 
+                [errors]="errorsProduct?.warranty"></app-validation-popover>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4" *ngIf="categorySelected!.isCountryOfOrigin">
+            <div class="d-flex align-items-center justify-content-between mb-1">
+                <label class="fw-500 text-gray-700 fs-6 mb-1">País de fabricación</label>
+                <small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="errorsProduct?.countryOfOrigin" (click)="showErrors.countryOfOrigin = !showErrors.countryOfOrigin">
+                    <ion-icon name="information-circle-outline" class="validation-icon"> </ion-icon>
+                     {{ showErrors.countryOfOrigin ? 'Ocultar errores' : 'Ver errores' }}
+                </small>
+            </div>
+            <div [ngClass]="{ 'is-invalid': errorsProduct?.countryOfOrigin }">
+                <ng-select
+                    [items]="countries"
+                    bindLabel="country"
+                    placeholder="Países"
+                    [clearable]="false"
+                    [(ngModel)]="product.countryOfOrigin"
+                    appendTo="body"
+                    class="select-element mb-1"
+                >
+                    <!-- Opción en el dropdown -->
+                    <ng-template ng-option-tmp let-item="item">
+                        <img [src]="item.flag" width="20" height="15" style="margin-right: 8px" />
+                        {{ item.name }}
+                    </ng-template>
+
+                    <!-- Opción seleccionada en el input -->
+                    <ng-template ng-label-tmp let-item="item">
+                        <img [src]="item.flag" width="20" height="15" style="margin-right: 8px" />
+                        {{ item.name }}
+                    </ng-template>
+                </ng-select>
+            </div>
+            
+            <span class="fs-8 text-muted">{{labelHelper.countryOfOrigin}}</span>
+
+            <div class="validation-wrapper" [class.open]="showErrors.countryOfOrigin">
+                <app-validation-popover 
+                [errors]="errorsProduct?.countryOfOrigin"></app-validation-popover>
+            </div>
+        </div>
+        <div class="col-md-12 mb-4">
+            <div class="d-flex align-items-center justify-content-between mb-1">
+                <label class="required fw-500 text-gray-700 fs-6 mb-1">Contenido</label>
+                <small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="errorsProduct?.description" (click)="showErrors.description = !showErrors.description">
+                    <ion-icon name="information-circle-outline" class="validation-icon"> </ion-icon>
+                     {{ showErrors.description ? 'Ocultar errores' : 'Ver errores' }}
+                </small>
+            </div>
+            <div [hidden]="loadProduct && id">
+                <div class="mb-1" [ngClass]="{ 'border-danger': errorsProduct?.description }">
+                    <div #editor style="height: 200px;"></div>
+                </div>
+            </div>
+
+            @if (loadProduct && id) {
+                <div class="skeleton skeleton-input mb-1" style="height: 241.33px !important;"></div>
+            }
+            <span class="fs-8 text-muted">{{labelHelper.description}}</span>
+            <div class="validation-wrapper" [class.open]="showErrors.description">
+                <app-validation-popover 
+                [errors]="errorsProduct?.description"></app-validation-popover>
+            </div>
+        </div>
+        <div class="col-md-12 mb-4">
+            <div class="d-flex align-items-center justify-content-between mb-1">
+                <label class="required fw-500 text-gray-700 fs-6 mb-1">Extracto</label>
+                <small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="errorsProduct?.extract" (click)="showErrors.extract = !showErrors.extract">
+                    <ion-icon name="information-circle-outline" class="validation-icon"> </ion-icon>
+                    {{ showErrors.extract ? 'Ocultar errores' : 'Ver errores' }}
+                </small>
+            </div>
+            @if (!loadProduct  || !id) {
+                <textarea class="form-control mb-1" 
+                placeholder="Reseña corta del producto" 
+                [(ngModel)]="product.extract" 
+                [ngClass]="{ 'is-invalid': errorsProduct?.extract}"
+                textAreaAutoResize
+                rows="3">
+                </textarea>
+            }@else {
+                 <div class="skeleton skeleton-input mb-1" style="height: 79px !important;"></div>
+            }
+            <span class="fs-8 text-muted">{{labelHelper.extract}}</span>
+            <div class="validation-wrapper" [class.open]="showErrors.extract">
+                <app-validation-popover 
+                [errors]="errorsProduct?.extract"></app-validation-popover>
+            </div>
+        </div>
+        <div class="col-md-12 mb-4">
+            <div class="d-flex flex-column">
+                <div class="d-flex align-items-center justify-content-between mb-1">
+                    <label class="fw-500 text-gray-700 fs-6 mb-1">Etiquetas</label>
+                    <small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="errorsProduct?.tags" (click)="showErrors.tags = !showErrors.tags">
+                        <ion-icon name="information-circle-outline" class="validation-icon"> </ion-icon>
+                        {{ showErrors.tags ? 'Ocultar errores' : 'Ver errores' }}
+                    </small>
+                </div>
+                @if (!loadProduct  || !id) {
+                    <div class="mb-1" [ngClass]="{ 'is-invalid': errorsProduct?.tags}">
+                        <app-tagify-input 
+                        [whiteList]="whiteListTags" 
+                        (tagsChange)="onTagsChange($event)"
+                        [selectedTags]="product.tags"
+                        ></app-tagify-input>
+                    </div>
+                }@else {
+                    <div class="skeleton skeleton-input mb-1"></div>
+                }
+                <span class="fs-8 text-muted">{{labelHelper.categoryId}}</span>
+                <div class="validation-wrapper" [class.open]="showErrors.tags">
+                    <app-validation-popover 
+                    [errors]="errorsProduct?.tags"></app-validation-popover>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="d-flex align-items-center justify-content-between mb-1">
+                <label class="required fw-500 text-gray-700 fs-6 mb-1">Precio regular</label>
+                <small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="errorsProduct?.priceRegular" (click)="showErrors.priceRegular = !showErrors.priceRegular">
+                    <ion-icon name="information-circle-outline" class="validation-icon"> </ion-icon>
+                    {{ showErrors.priceRegular ? 'Ocultar errores' : 'Ver errores' }}
+                </small>
+            </div>
+            @if (!loadProduct  || !id) {
+                <input
+                    currencyMask
+                    type="text"
+                    [options]="currencyOptions"
+                    class="form-control mb-1"
+                    placeholder="Precio Normal"
+                    name="priceRegular"
+                    [(ngModel)]="product.priceRegular"
+                    [ngClass]="{ 'is-invalid': errorsProduct?.priceRegular}"
+                />
+            }@else {
+                <div class="skeleton skeleton-input mb-1"></div>
+            }
+            <span class="fs-8 text-muted">{{labelHelper.priceRegular}}</span>
+            <div class="validation-wrapper" [class.open]="showErrors.priceRegular">
+                <app-validation-popover 
+                [errors]="errorsProduct?.priceRegular"></app-validation-popover>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="d-flex align-items-center justify-content-between mb-1">
+                <label class="fw-500 text-gray-700 fs-6 mb-1">Precio descuento</label>
+                <small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="errorsProduct?.priceDiscount" (click)="showErrors.priceDiscount = !showErrors.priceDiscount">
+                    <ion-icon name="information-circle-outline" class="validation-icon"> </ion-icon>
+                    {{ showErrors.priceDiscount ? 'Ocultar errores' : 'Ver errores' }}
+                </small>
+            </div>
+            @if (!loadProduct  || !id) {
+                <input
+                    currencyMask
+                    type="text"
+                    [options]="currencyOptions"
+                    class="form-control mb-1"
+                    placeholder="Precio Descuento"
+                    name="priceDiscount"
+                    [(ngModel)]="product.priceDiscount"
+                    [ngClass]="{ 'is-invalid': errorsProduct?.priceDiscount}"
+                />
+            }@else {
+                <div class="skeleton skeleton-input mb-1"></div>
+            }
+            <span class="fs-8 text-muted">{{labelHelper.priceDiscount}}</span>
+            <div class="validation-wrapper" [class.open]="showErrors.priceDiscount">
+                <app-validation-popover 
+                [errors]="errorsProduct?.priceDiscount"></app-validation-popover>
+            </div>
+        </div>
+    </div>
+</div>

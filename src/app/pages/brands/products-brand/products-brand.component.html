@@ -1,0 +1,449 @@
+<div class="app-page flex-column flex-column-fluid" id="kt_app_page">
+	<app-topbar></app-topbar>
+	<div class="app-wrapper flex-column flex-row-fluid" id="kt_app_wrapper">
+		<app-sidebar></app-sidebar>
+		<div class="app-main flex-column flex-row-fluid">
+			<div class="d-flex flex-column flex-column-fluid">
+				<div id="kt_app_toolbar" class="app-toolbar py-3 py-lg-6">
+					<div id="kt_app_toolbar_container" class="app-container container-fluid d-flex flex-stack">
+						<div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
+							<h1 class="page-heading d-flex text-gray-700 fs-3 flex justify-content-start my-0 align-items-center text-uppercase ls-1px fw-700">
+								Marcas 
+							</h1>
+
+							<ul class="breadcrumb breadcrumb-separatorless fs-7 my-0 pt-1">
+								<li class="breadcrumb-item text-muted">
+									<a [routerLink]="['/products/brands']" class="text-muted text-hover-primary">
+										Marcas
+									</a>
+								</li>
+								<li class="breadcrumb-item">
+									<span class="bullet bg-gray-400 w-5px h-2px"></span>
+								</li>
+								<li class="breadcrumb-item text-primary fw-600">Productos por marca</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+				<div class="app-content flex-column-fluid">
+					<div class="app-container container-fluid">
+
+						@if (loadBrand || (!errorMsmServerBrand && brand)) {
+							<div class="d-flex">
+								@if (loadBrand) {
+									<div class="skeleton skeleton-text mb-1 me-3" style="width: 50px; height: 50px"></div>
+									<div class="d-flex flex-column">
+										<div class="skeleton skeleton-text mb-2" style="width: 200px; height: 24px"></div>
+										<div class="skeleton skeleton-text" style="width: 50px; height: 15px"></div>
+									</div>
+								} @else {
+									<img [src]="brand.logoUrl" fallbackImage class="w-100 w-50px h-50px me-3" style="object-fit: cover; border: 1px dashed #ccc;" />
+									<div class="d-flex flex-column">
+										<h2 class="text-gray-800 mb-0"><span>{{brand.name}}</span></h2>
+										<span class="fs-8 py-2 fw-500 text-gray-600">
+											<img [src]="brand.country?.flag" fallbackImage class="w-15px h-15px rounded-1 me-2">
+											{{brand.country?.name}}
+										</span>
+									</div>
+								}
+							</div>
+						}
+
+						<div class="row g-3 g-lg-4">
+							<div class="col-12">
+								<div class="d-flex justify-content-between align-items-center flex-nowrap gap-2 mt-5">
+									<div class="d-flex gap-2">
+										<div>
+											<div class="d-flex align-items-center gap-2">
+												
+												<!-- Input Search -->
+												<div class="position-relative">
+													<input
+														type="text"
+														class="form-control form-control-sm w-300px pe-10"
+														placeholder="Buscar producto"
+														name="filter"
+														[(ngModel)]="filter"
+														(keyup.enter)="onFilterOrStatusChange()"
+													/>
+
+													<i
+														class="bi bi-search position-absolute cursor-pointer"
+														style="right: 15px; top: 50%; transform: translateY(-50%)"
+														(click)="onFilterOrStatusChange()"
+													></i>
+												</div>
+
+												<button
+													type="button"
+													class="btn btn-sm btn-icon btn-light-primary d-flex align-items-center justify-content-center"
+													(click)="resetFilters()"
+													[disabled]="loading"
+												>
+													<span
+														*ngIf="loading"
+														class="spinner-border spinner-border-sm"
+														role="status"
+														aria-hidden="true"
+													></span>
+													<i
+														*ngIf="!loading"
+														class="bi bi-arrow-clockwise fs-5"
+													></i>
+												</button>
+											</div>
+										</div>
+									</div>
+									<div class="dropdown">
+										<button
+											disabled
+											class="btn btn-dark btn-sm d-flex align-items-center gap-2 my-1"
+											type="button"
+											id="dropdownMenuButton"
+											data-bs-toggle="dropdown"
+											aria-expanded="false"
+										>
+											<ion-icon name="settings-outline" class="fs-5"></ion-icon>
+											<span>Opciones</span>
+											<ion-icon name="chevron-down-outline" class="fs-6"></ion-icon>
+										</button>
+										<ul class="dropdown-menu menu-state-bg-light-primary" aria-labelledby="dropdownMenuButton">
+									
+											
+										</ul>
+									</div>
+								</div>
+
+								<div class="my-7">
+									<div class="filters-container">
+										<div class="filter-item">
+											<div class="d-flex flex-column mb-1 gap-1">
+												<div class="d-flex align-items-center">
+													<span class="text-gray-700 ls-1px" style="font-size: .7rem;">ESTADO</span>
+												</div>
+												<ng-select
+													[items]="statusTable"
+													bindLabel="name"
+													bindValue="value"
+													name="status"
+													(change)="onFilterOrStatusChange()"
+													[(ngModel)]="status"
+													placeholder="Estado"
+													[clearable]="false"
+													[closeOnSelect]="true"
+													class="select-label-sm mb-1"
+													appendTo="body"
+													[searchable]="false"
+												>
+													<!-- Opción en el dropdown -->
+													<ng-template ng-option-tmp let-item="item">
+														<div class="d-flex align-items-center gap-2">
+															<span class="bullet bullet-dot h-10px w-10px" [ngClass]="'bg-' + item.color"></span>
+															<span>{{ item.name }}</span>
+														</div>
+													</ng-template>
+
+													<!-- Opción seleccionada en el input -->
+													<ng-template ng-label-tmp let-item="item">
+														<div class="d-flex align-items-center gap-2">
+															<span class="bullet bullet-dot h-10px w-10px" [ngClass]="'bg-' + item.color"></span>
+															<span>{{ item.name }}</span>
+														</div>
+													</ng-template>
+												</ng-select>
+											</div>
+										</div>
+										<div class="filter-item">
+											<div class="d-flex flex-column mb-1 gap-1">
+												<div class="d-flex align-items-center">
+													<span class="text-gray-700 ls-1px" style="font-size: .7rem;">ORDEN</span>
+												</div>
+												<ng-select
+													[items]="sortColumns"
+													bindLabel="name"
+													bindValue="value"
+													name="sort"
+													[(ngModel)]="sort"
+													placeholder="Orden"
+													[clearable]="false"
+													[closeOnSelect]="true"
+													class="select-label-sm select-l70px mb-1"
+													appendTo="body"
+													[searchable]="false"
+												>
+													<!-- Opción en el dropdown -->
+													<ng-template ng-option-tmp let-item="item">
+														<div class="d-flex align-items-center gap-2">
+															<ion-icon [name]="item.icon"></ion-icon>
+															<span>{{ item.name }}</span>
+														</div>
+													</ng-template>
+
+													<!-- Opción seleccionada en el input -->
+													<ng-template ng-label-tmp let-item="item">
+														<div class="d-flex align-items-center gap-2">
+															<ion-icon [name]="item.icon"></ion-icon>
+															<span>{{ item.name }}</span>
+														</div>
+													</ng-template>
+												</ng-select>
+											</div>
+										</div>
+										<div class="filter-item">
+											<app-menu-select-subcat 
+											(applyData)="getSubategories($event)"
+											[selectedData]="subcategoryIds"
+											[title]="'Subcategorías'"
+											[placeholder]="'Filtrar por subcategorías'"
+											[sizeClass]="'sm'"
+											[categoryId]="id">
+											</app-menu-select-subcat>
+										</div>
+									</div>
+									<button
+										class="btn btn-xs bg-light-primary my-3 d-inline-flex align-items-center gap-2"
+										(click)="redirect()"
+										[disabled]="loading"
+									>
+										<ng-container *ngIf="!loading; else loadingTpl">
+											<ion-icon name="search-outline" class="fs-6 text-primary"></ion-icon>
+											<span class="text-primary">Buscar</span>
+										</ng-container>
+
+										<ng-template #loadingTpl>
+											<span class="spinner-border spinner-border-sm text-primary" aria-hidden="true"></span>
+											<span class="text-primary">Buscando...</span>
+										</ng-template>
+									</button>
+								</div>
+
+								<div class="table-wrapper mb-7">
+									<table class="table custom-table align-middle mb-0">
+										<thead>
+											<tr>
+												<th class="fixed-xs text-center p-0">
+													<label class="form-check form-check-customs form-check-sm m-0 d-flex align-items-center justify-content-center h-100">
+													<input
+														class="form-check-input cursor-pointer"
+														type="checkbox"
+														disabled
+													/>
+													</label>
+												</th>
+												<th class="flex-column">
+													Producto
+												</th>
+												<th class="fixed-sm">
+													Calidad
+												</th>
+												<th class="fixed-md">
+													Precio
+												</th>
+												<th class="fixed-md">
+													Categoría
+												</th>
+												<th class="fixed-sm">
+													Stock
+												</th>
+												<th class="fixed-sm">
+													Estado
+												</th>
+												<th class="fixed-xs text-center text-center">
+													
+												</th>
+											</tr>
+										</thead>
+										<tbody>
+											<ng-container *ngIf="loading">
+												<tr *ngFor="let item of [1,2,3,4,5,6]">
+													<td class="fixed-xs text-center p-0">
+														<div class="skeleton skeleton-check"></div>
+													</td>
+													<td class="flex-column fw-medium">
+														<div class="d-flex align-items-center gap-4">
+															<div class="skeleton" style="max-width:33.67px !important; height:33.67px;min-width:33.67px !important"></div>
+
+															<div class="d-flex flex-column gap-2" style="width:100%; max-width:250px">
+																<div class="skeleton skeleton-text" style="width:60%;"></div>
+																<div class="skeleton skeleton-text" style="width:40%;"></div>
+															</div>
+														</div>
+													</td>
+													
+													<td class="fixed-sm">
+														<div class="skeleton skeleton-badge"></div>
+													</td>
+													<td class="fixed-md">
+														<div class="skeleton skeleton-badge"></div>
+													</td>
+													<td class="fixed-md">
+														<div class="d-flex flex-column gap-1">
+															<div class="skeleton skeleton-text" style="width:60%;"></div>
+															<div class="skeleton skeleton-text" style="width:40%;"></div>
+														</div>
+													</td>
+													<td class="fixed-sm">
+														<div class="skeleton skeleton-badge"></div>
+													</td>
+													<td class="fixed-sm">
+														<div class="skeleton skeleton-badge"></div>
+													</td>
+													<td class="fixed-xs text-center p-0">
+														<div class="skeleton skeleton-btn"></div>
+													</td>
+												</tr>
+											</ng-container>
+											<ng-container *ngIf="!loading && products.length >= 1">
+												<tr *ngFor="let item of products">
+													<td class="fixed-xs text-center p-0">
+														<label class="form-check form-check-customs form-check-sm m-0 d-flex align-items-center justify-content-center h-100">
+														<input
+															class="form-check-input cursor-pointer"
+															type="checkbox"
+															[checked]="selectedProductsIds.has(item.id!)"
+															(change)="toggleItem(item.id!, $event)"
+														/>
+														</label>
+													</td>
+													<td class="flex-column fw-medium">
+														<div class="d-flex align-items-center gap-4" style="min-width:0;">		
+															<div>
+																<div class="symbol" style="height: 35px !important; width: 35px !important; border: 1px dashed #e3e3e3">
+																	<img [src]="item.cover" 
+																	class="h-100 w-100" 
+																	style="object-fit: cover;" 
+																	fallbackImage/>
+																</div>
+															</div>
+															<div class="d-flex flex-column" style="min-width:0;">
+																<a class="text-gray-700 fs-8 fw-500 text-truncate-1">
+																	{{ item.name }}
+																</a>
+
+																<small class="text-primary fw-400 text-truncate-1 fs-8">
+																	<span class="text-gray-600">SKU: </span>
+																	<span class="text-primary">5FDS65E9W98WE9</span>
+																</small>
+															</div>
+														</div>
+													</td>
+													<td class="fixed-sm">
+														<div class="d-flex align-items-center">
+															<span
+																class="d-inline-block rounded-circle me-2"
+																style="width: 8px; height: 8px"
+																[ngClass]="{
+																	'bg-danger': item.quality_label == 'low',
+																	'bg-warning': item.quality_label == 'medium',
+																	'bg-success': item.quality_label == 'high'
+																}">
+															</span>
+
+															<span class="text-gray-700 fs-8 fw-500 text-truncate-1">
+																{{ qualityLabels[item.quality_label!] }}
+															</span>
+														</div>
+													</td>
+													<td class="fixed-md">
+														<div class="d-flex gap-2 align-items-center">
+															<span class="fs-7 fw-500 text-truncate-1"
+																[ngClass]="{
+																	'text-danger': item.priceDiscount > 0,
+																	'text-gray-700': !(item.priceDiscount > 0)
+																}">
+																{{ 'PE' | currencySymbol }}
+																{{ (item.priceDiscount > 0 ? item.priceDiscount : item.priceRegular) | number:'1.2-2' }}
+															</span>
+
+															@if (item.priceDiscount > 0) {
+																<span class="text-decoration-line-through text-muted fs-9">
+																	{{ 'PE' | currencySymbol }}
+																	{{ item.priceRegular | number:'1.2-2' }}
+																</span>
+															}
+														</div>
+													</td>
+													<td class="fixed-md">
+														<div class="d-flex flex-column">
+															<span class="text-gray-600 fw-400 fs-8 text-truncate-1">
+																{{ item.category.name }} -
+																{{ item.subcategory.name }}
+															</span>
+															<small class="text-primary fs-8 fw-500 text-truncate-1">
+																{{ item.category.prefix}}-{{ item.category.code| padCode : 6}}
+																/
+																{{ item.subcategory.prefix}}-{{ item.subcategory.code| padCode : 6}}
+															</small>
+														</div>
+													</td>
+													<td class="fixed-sm">
+														<span class="text-gray-700 fs-8 fw-500 text-truncate-1">
+															0
+														</span>
+													</td>
+													<td class="fixed-sm">
+														<span class="badge rounded-pill text-gray-700 fw-800"
+															[ngClass]="{ 'bg-outline-warning': item.status == 'draft', 'bg-outline-success': item.status == 'published' }">
+															<span class="d-inline-block rounded-circle me-1"
+																	style="width: 8px; height: 8px"
+																	[ngClass]="{ 'bg-warning': item.status == 'draft', 'bg-success': item.status == 'published' }"></span>
+																{{ item.status == 'published' ? 'Publicado' : 'Borrador' }}
+														</span>
+													</td>
+													<td class="fixed-xs text-center p-0">
+														<div class="dropdown">
+															<button 
+																disabled
+																class="icon-btn btn-action dropdown-toggle d-flex align-items-center justify-content-center mx-auto"
+																data-bs-toggle="dropdown">
+																<i class="bi bi-three-dots"></i>
+															</button>
+															<div class="dropdown-menu menu-state-bg-light-primary" data-bs-display="static">
+															
+															</div>
+														</div>
+													</td>
+												</tr>
+											</ng-container>
+											<ng-container *ngIf="!loading && products.length == 0 && !errorMsmServerListProducts">
+												<tr>
+													<td colspan="5">
+														<app-not-found [error]="{ message: 'No se encontraron registros.', statusCode: 404 }"></app-not-found>
+													</td>
+												</tr>
+											</ng-container>
+											<ng-container *ngIf="!loading && products.length == 0 && errorMsmServerListProducts">
+												<tr>
+													<td colspan="5">
+														<app-not-found [error]="errorMsmServerListProducts"></app-not-found>
+													</td>
+												</tr>
+											</ng-container>
+										</tbody>
+
+									</table>
+
+								</div>
+
+								<div class="d-flex justify-content-between pb-10" *ngIf="products.length >= 1">
+									<div class="d-flex align-items-center gap-2 text-gray-600 fs-8 text-uppercase ls-1px">
+										Ver
+										<select class="form-select form-select-sm w-auto" name="limit" [(ngModel)]="limit" (change)="setLimit()">
+											<option value="10">10</option>
+											<option value="20">20</option>
+											<option value="25">25</option>
+										</select>
+										Por pagina
+									</div>
+									<div class="d-flex align-items-center gap-3">
+										<app-pagination [currentPage]="currentPage" [totalPages]="totalPages" (pageChanged)="onPageChange($event)"> </app-pagination>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

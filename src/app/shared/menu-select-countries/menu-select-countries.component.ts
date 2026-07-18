@@ -6,6 +6,13 @@ import { countries } from '@app/common/constants/countries.constant';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { Subject } from 'rxjs';
 
+interface CountryOption {
+  code: string;
+  name: string;
+  flag: string;
+  checked: boolean;
+}
+
 @Component({
   selector: 'app-menu-select-countries',
   imports: [
@@ -20,91 +27,82 @@ import { Subject } from 'rxjs';
 export class MenuSelectCountriesComponent {
 
   @ViewChild('trigger') trigger!: ElementRef;
-  private destroy$ = new Subject<void>();
-  public filter: string = '';
-  public countries: any[] = [];
-  @Output() applyCountries = new EventEmitter();
-  @Input() title : string = '';
-  @Input() placeholder : string = '';
-  public displayCountries: any[] = [];   // ← lo que se muestra
-  private constCountries: any[] = [];    // ← copia original
-  public errorMsmSeverListCountries: string = '';
-  public loadingCountries: boolean = false;
-	@Input() selectedCountries: any = '';
-  @Input() sizeClass : 'sm' | 'lg' = 'sm';
 
-  ngOnInit(){
-    this.init_countries();
+  @Input() title = '';
+  @Input() placeholder = '';
+  @Input() sizeClass: 'sm' | 'lg' = 'sm';
+  @Input() selectedCountries: string[] = [];
+
+  @Output() applyCountries = new EventEmitter<string[]>();
+
+  public filter = '';
+  public loadingCountries = false;
+  public errorMsmSeverListCountries = '';
+
+  private countries: CountryOption[] = [];
+  public displayCountries: CountryOption[] = [];
+
+  get selectedItems(): CountryOption[] {
+    return this.countries.filter(country => country.checked);
   }
 
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes['selectedCountries']) {
-      this.applySelectedCountries();
-    }
+  ngOnInit(): void {
+    this.loadCountries();
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['selectedCountries']) this.syncSelectedCountries();
+  }
 
-  init_countries(){
-    this.countries = countries;
-    const transformed = this.countries.map(item => ({
-      code: item.code,           // OJO: antes usabas item.icon.id
-      name: item.name,       // OJO: antes usabas item.icon.name
-      flag: item.flag,
-      checked: false,
+  private loadCountries(): void {
+    this.countries = countries.map(country => ({
+      code: country.code,
+      name: country.name,
+      flag: country.flag,
+      checked: false
     }));
 
-    this.constCountries = [...transformed];
-    this.displayCountries = [...transformed];
-
-    this.applySelectedCountries();
+    this.displayCountries = [...this.countries];
+    this.syncSelectedCountries();
   }
 
-  onFilterOrStatusChange() {
-    const value = this.filter.trim().toLowerCase();
-
-    if (value) {
-      this.displayCountries = this.constCountries.filter(item =>
-        item.name.toLowerCase().includes(value)
-      );
-    } else {
-      this.displayCountries = [...this.constCountries];
-    }
+  private syncSelectedCountries(): void {
+    this.countries.forEach(country => country.checked = this.selectedCountries.includes(country.code));
+    this.onFilterCountries();
   }
 
-  onRemoveCountries(){
-    this.displayCountries = this.displayCountries.map((prev)=>({
-      ...prev,
-      checked: false,
-    }));
-    this.applyCountries.emit(this.displayCountries); 
+  onFilterCountries(): void {
+    const search = this.filter.trim().toLowerCase();
+
+    this.displayCountries = this.countries.filter(country =>
+      !search ||
+      country.name.toLowerCase().includes(search) ||
+      country.code.toLowerCase().includes(search)
+    );
   }
 
-  onApplyCountries(): void {
-    this.applyCountries.emit(this.displayCountries); 
+  clearSelection(): void {
+    this.countries.forEach(country => country.checked = false);
   }
 
-  closeMenu(){
-    const triggerEl = this.trigger.nativeElement;
-    const dropdown = (window as any).bootstrap.Dropdown.getInstance(triggerEl)
-      || new (window as any).bootstrap.Dropdown(triggerEl);
+  confirmSelection(): void {
+    const selectedCodes = this.selectedItems.map(item => item.code);
+    this.selectedCountries = selectedCodes;
+    
+    this.applyCountries.emit(selectedCodes);
+    this.closeMenu();
+  }
+
+  getSelectedNames(): string {
+    return this.selectedItems.map(item => item.code).join(', ');
+  }
+
+  private closeMenu(): void {
+    const element = this.trigger.nativeElement;
+    const dropdown = (window as any).bootstrap.Dropdown.getInstance(element)
+      ?? new (window as any).bootstrap.Dropdown(element);
+
     dropdown.hide();
   }
 
-  private applySelectedCountries() {
-   /*  if (!this.selectedCountries || this.selectedCountries.length === 0) return; */
-
-    this.displayCountries = this.displayCountries.map(item => ({
-      ...item,
-      checked: this.selectedCountries.includes(item.code)
-    }));
-    console.log(this.displayCountries);
-    
-  }
-
-  get selectedNames(): string {
-      return this.displayCountries
-      .filter(item => item.checked)
-      .map(item => item.code)
-      .join(', ');
-  }
 }

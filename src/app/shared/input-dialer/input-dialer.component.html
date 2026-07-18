@@ -1,16 +1,21 @@
 <div class="position-relative">
-    <button type="button" class="btn btn-icon btn-active-color-gray-700 position-absolute translate-middle-y top-50 start-0" (click)="decrement()">
-        <i class="bi bi-dash fs-1 icon-round"></i>
+    <button type="button" 
+    class="btn btn-icon btn-active-color-gray-700 position-absolute translate-middle-y top-50 start-0" 
+    (click)="decrement()">
+        <i class="bi bi-dash fs-1 icon-round" style="font-size: 1.3rem !important;"></i>
     </button>
 
-    <input type="text" 
-    type="number"
-    class="form-control form-control-sm ps-17"
+    <input 
+    type="text"
+    class="form-control form-control-sm"
+    style="text-align: center;"
     [placeholder]="placeholder"
     [ngModel]="inputValue"
     (ngModelChange)="onInput($event)"/>
 
-    <button type="button" class="btn btn-icon btn-active-color-gray-700 position-absolute translate-middle-y top-50 end-0" (click)="increment()">
+    <button type="button" 
+    class="btn btn-icon btn-active-color-gray-700 position-absolute translate-middle-y top-50 end-0" 
+    (click)="increment()">
         <i class="bi bi-plus icon-round" style="font-size: 1.3rem !important;"></i>
     </button>
 </div>

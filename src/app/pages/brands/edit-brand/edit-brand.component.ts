@@ -1,9 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { countries } from '@app/common/constants/countries.constant';
-import { Brand } from '@app/common/interface/brand.interface';
 import { withMinLoadingTime } from '@app/common/interface/with-min-loading-time.interface';
 import { BrandService } from '@app/services/brand.service';
 import { GLOBAL } from '@app/services/GLOBAL';
@@ -13,19 +12,29 @@ import { SidebarComponent } from '@app/shared/sidebar/sidebar.component';
 import { TopbarComponent } from '@app/shared/topbar/topbar.component';
 import { UploadImageComponent } from '@app/shared/upload-image/upload-image.component';
 import { NgSelectModule } from '@ng-select/ng-select';
+import { IMaskModule } from 'angular-imask';
 import { finalize, Subject, takeUntil } from 'rxjs';
+import { BrandInterface } from '../interfaces/brand.interface';
+import { ValidationPopoverComponent } from '@app/shared/validation-popover/validation-popover.component';
+import { showErrorsBrand } from '../constants/show-errors-brand.constant';
+import { environment } from 'environments/environment.dev';
+import { TextFieldModule } from '@angular/cdk/text-field';
+import { TextareaAutoresizeDirective } from '@app/common/directives/textarea-autoresize.directive';
+import { HttpErrorResponse } from '@angular/common/http';
 declare const toastr: any;
 declare const $: any;
 
 @Component({
 	selector: 'app-edit-brand',
-	imports: [TopbarComponent, SidebarComponent, CommonModule, FormsModule, RouterModule, NgSelectModule, UploadImageComponent, NotFoundComponent, AlertComponent],
+	imports: [TopbarComponent, SidebarComponent, CommonModule, FormsModule, RouterModule, NgSelectModule, UploadImageComponent, NotFoundComponent, AlertComponent, IMaskModule, ValidationPopoverComponent, TextareaAutoresizeDirective],
 	templateUrl: './edit-brand.component.html',
 	styleUrl: './edit-brand.component.css',
+	schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class EditBrandComponent {
-	public brand: Brand = {
+	public brand: BrandInterface = {
 		name: '',
+		prefix: '',
 		description: '',
 		country: null,
 		websiteUrl: '',
@@ -42,11 +51,15 @@ export class EditBrandComponent {
 	public errorMsmServerGetBrand: string = '';
 	public logoUrlEdit: any = '';
 	public bannerUrlEdit: any = '';
-	public errorMsmServer: string = '';
 	public errorsBrand: any = {
 		logoUrl: [],
 		bannerUrl: [],
 	};
+	public prefixMask = {
+		mask: /^[A-Z]{0,3}$/,
+		prepare: (str: string) => str.toUpperCase()
+	};
+	public showErrors = showErrorsBrand;
 
 	constructor(
 		private brandService: BrandService,
@@ -79,16 +92,14 @@ export class EditBrandComponent {
 				finalize(() => (this.loading = false))
 			)
 			.subscribe({
-				next: (next: Brand) => {
-					console.log(next);
-
-					this.brand = next;
-					this.logoUrlEdit = this.brand.logoUrl;
-					this.bannerUrlEdit = this.brand.bannerUrl;
+				next: (next: {data: BrandInterface, message: string}) => {
+					this.brand = next.data;
+					this.logoUrlEdit = `${environment.s3_public_url}/brands/small/${this.brand.logoUrl}`;
+					this.bannerUrlEdit = `${environment.s3_public_url}/brands/small/${this.brand.bannerUrl}`;
 					this.brand.bannerUrl = undefined;
 					this.brand.logoUrl = undefined;
 				},
-				error: (err) => {
+				error: (err: HttpErrorResponse) => {
 					const error = err.error;
 					this.errorMsmServerGetBrand = error;
 				},
@@ -97,12 +108,13 @@ export class EditBrandComponent {
 
 	update() {
 		this.loadBtn = true;
-		this.errorMsmServer = '';
 		this.msmErrorBrand = [];
 		this.errorsBrand = {
 			logoUrl: [],
 			bannerUrl: [],
 		};
+		console.log(this.brand);
+		
 		this.brandService
 			.update_brand(this.id, this.brand)
 			.pipe(
@@ -111,27 +123,28 @@ export class EditBrandComponent {
 				finalize(() => (this.loadBtn = false))
 			)
 			.subscribe({
-				next: (next: Brand) => {
-					this.brand = next;
-					this.logoUrlEdit = next.logoUrl;
-					this.bannerUrlEdit = next.bannerUrl;
+				next: (next: { data: BrandInterface, message: string}) => {
+					this.brand = next.data;
+					this.logoUrlEdit = `${environment.s3_public_url}/brands/small/${next.data.logoUrl}`;
+					this.bannerUrlEdit = `${environment.s3_public_url}/brands/small/${next.data.bannerUrl}`;
 					this.brand.bannerUrl = undefined;
 					this.brand.logoUrl = undefined;
 					this.loadBtn = false;
-					toastr.success('Marca actualizada correctamente.');
+					toastr.success(next.message);
 					this.errorsBrand = {
 						logoUrl: [],
 						bannerUrl: [],
 					};
 				},
-				error: (err) => {
+				error: (err: HttpErrorResponse) => {
+					console.log(err);
+					
 					this.errorsBrand = {
 						logoUrl: [],
 						bannerUrl: [],
 					};
 					const error = err.error;
-					this.errorMsmServer = error.message || '¡Error desconocido!';
-					toastr.error(this.errorMsmServer);
+					toastr.error(error.message || '¡Error desconocido!');
 
 					if (error.validation) {
 						this.errorsBrand = {
@@ -139,15 +152,16 @@ export class EditBrandComponent {
 							...error.validation,
 						};
 						this.msmErrorBrand = Object.values(this.errorsBrand).flat();
-						this.errorMsmServer = '';
+						for (const key in this.showErrors) {
+							this.showErrors[key as keyof typeof this.showErrors] =
+							!!this.errorsBrand?.[key]?.length;
+						}
 					}	
 				},
 			});
 	}
 
 	handleValidationError(event: any, type: string) {
-		console.log(event);
-
 		if (type == 'banner') {
 			this.errorsBrand.bannerUrl = [];
 			if (event) this.errorsBrand.bannerUrl[0] = event;

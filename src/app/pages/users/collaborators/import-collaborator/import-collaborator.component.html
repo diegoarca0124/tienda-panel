@@ -1,0 +1,443 @@
+<div class="app-page flex-column flex-column-fluid" id="kt_app_page">
+    <app-topbar></app-topbar>
+    <div class="app-wrapper flex-column flex-row-fluid" id="kt_app_wrapper">
+        <app-sidebar></app-sidebar>
+        <div class="app-main flex-column flex-row-fluid ">
+            <div class="d-flex flex-column flex-column-fluid">
+                <div id="kt_app_toolbar" class="app-toolbar py-5 py-lg-6" >
+                    <div id="kt_app_toolbar_container" class="app-container container-fluid d-flex flex-stack">
+                        <div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
+                            <h1 class="page-heading d-flex text-gray-700 fs-3 flex justify-content-start my-0 align-items-center text-uppercase ls-1px fw-700">
+                                Colaboradores
+                            </h1>
+     
+                            <ul class="breadcrumb breadcrumb-separatorless fs-7 my-0 pt-1">
+                                <li class="breadcrumb-item text-muted">
+                                    <a [routerLink]="['/users/collaborators']" class="text-muted text-hover-primary">
+                                        Colaboradores
+                                    </a>
+                                </li>
+                                <li class="breadcrumb-item">
+                                    <span class="bullet bg-gray-400 w-5px h-2px"></span>
+                                </li>
+                                <li class="breadcrumb-item text-primary fw-600">Importación Masiva</li>
+                            </ul>
+                        </div>
+                        <div class="d-flex align-items-center gap-2 gap-lg-3">
+                            
+                        </div>
+                    </div>
+                </div>
+                <div class="app-content  flex-column-fluid">
+                    <div class="app-container container">
+
+                        <div class="card mb-10">
+                            <!--begin::Card header-->
+                            <div class="card-header" style="background-color: #f1f5f9;">
+                                <!--begin::Heading-->
+                                <h4 class="card-title m-0 d-flex flex-column">
+                                    <span class="fs-5 fw-600">Importación Masiva</span>
+                                    <span class="text-gray-600 mt-1 fw-400 fs-0-9rem">
+                                      Carga múltiples colaboradores mediante un archivo Excel o CSV.
+                                    </span>
+                                </h4>
+                                <!--end::Heading-->
+                                <div class="card-toolbar">
+                                    @if (importData.length >= 1) {
+                                        <button class="btn btn-dark btn-sm d-flex align-items-center gap-1" 
+                                        data-bs-toggle="modal" [attr.data-bs-target]="'#modalMapColumns'">
+                                            <ion-icon name="git-compare-outline"></ion-icon> 
+                                            Mapear Columnas
+                                        </button>
+                                    }
+                                    @else {
+                                        <button class="btn btn-dark btn-sm d-flex align-items-center gap-1"
+                                        disabled>
+                                            <ion-icon name="git-compare-outline"></ion-icon> 
+                                            Mapear Columnas
+                                        </button>
+                                    }
+                                    
+                                </div>
+                            </div>
+                            <!--end::Card header-->
+                            <!--begin::Card body-->
+                            <div class="card-body">
+                                <div class="row mb-7">
+                                    <div class="col-lg-4">
+                                        <div class="d-flex flex-column fv-row fv-plugins-icon-container">
+                                            <label class="fw-500 text-gray-700 fs-6 mb-1">
+                                                <span class="required">Archivo</span>
+                                            </label>
+                                            <div class="mb-1">
+												<app-upload-file-import
+													(fileSelected)="onFileSelected($event)"
+													(validationError)="errorsSettings.file[0] = $event ?? ''"
+													[inputId]="'fileImport'"
+													[hasError]="errorsSettings?.file[0]"
+												></app-upload-file-import>
+											</div>
+                                            <span class="fs-8 text-muted">Archivo de de datos.</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
+                                         <label class="fw-500 text-gray-700 fs-6 mb-1">
+                                            <span class="required">Modo de importación</span>
+                                        </label>
+                                        <div class="mb-1">
+                                            <select class="form-select form-select-sm"
+                                                [ngClass]="{ 'is-invalid': errorsSettings?.mode }"
+                                                [(ngModel)]="settings.mode"
+                                                name="format">
+                                                <option value="news">Crear nuevos</option>
+                                                <option value="update">Actualizar existentes</option>
+                                                <option value="upsert">Crear y Actualizar</option>
+                                            </select>
+                                        </div>
+                                        <span class="fs-8 text-muted">Define el modo de propagación de datos.</span>
+                                    </div>
+                                    <div class="col-lg-4">
+                                         <label class="fw-500 text-gray-700 fs-6 mb-1">
+                                            <span class="required">Identificador</span>
+                                        </label>
+                                        <div class="mb-1">
+                                            <select class="form-select form-select-sm"
+                                                [ngClass]="{ 'is-invalid': errorsSettings?.identifyBy }"
+                                                [(ngModel)]="settings.identifyBy"
+                                                name="format">
+                                                <option value="number_document">Número de documento</option>
+                                                <option value="email">Correo</option>
+                                            </select>
+                                        </div>
+                                        <span class="fs-8 text-muted">Campo para identificar registros.</span>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="table-wrapper mt-4">
+                                            <table class="table custom-table align-middle mb-0">
+                                                <thead style="background-color: #f8f8f8;">
+                                                    <tr>
+                                                        <th class="fixed-xs text-center p-0">
+                                                            <button 
+                                                                class="btn btn-icon btn-light-primary h-25px w-25px btn-outline-dashed btn-outline-primary btn-outline"
+                                                                type="button"
+                                                                placement="top" 
+                                                                [ngbTooltip]="'Agregar fila'"
+                                                                tooltipClass="tooltip-dark"
+                                                                container="body"
+                                                                (click)="onAdd()"
+                                                                [disabled]="importKeys.length == 0">
+                                                                <ion-icon name="add-circle-outline"></ion-icon>
+                                                            </button>
+                                                        </th>
+                                                        <th class="fixed-xs text-center p-0">
+                                                            <button 
+                                                                class="btn btn-icon btn-light-danger h-25px w-25px btn-outline-dashed btn-outline-danger btn-outline"
+                                                                type="button"
+                                                                placement="top" 
+                                                                [ngbTooltip]="'Eliminar seleccionados'"
+                                                                tooltipClass="tooltip-dark"
+                                                                container="body"
+                                                                (click)="onRemove()"
+                                                                [disabled]="importKeys.length == 0">
+                                                                <ion-icon name="trash-outline"></ion-icon>
+                                                            </button>
+                                                        </th>
+                                                        <th *ngFor="let item of importKeys; let colIndex = index"
+                                                        (dragover)="onDragOver($event, colIndex)"
+                                                        (drop)="onDrop(colIndex)"
+                                                        style="padding: 0px !important;"
+                                                        class="fixed-lg"
+                                                        [ngClass]="{
+                                                        'column-drag-over': dragOverIndex === colIndex
+                                                        }">
+                                                            <div style="padding: .75rem !important;" [ngClass]="{'border-top-active': item.key}">
+                                                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                                                    <div class="d-flex flex-column align-items-start">
+                                                                        <span class="text-dark fw-600 fs-7 text-uppercase">
+                                                                            {{ item.label }}
+                                                                        </span>
+                                                                    </div>
+                                                                    <div class="d-flex gap-2">
+                                                                        <button 
+                                                                            class="btn btn-icon btn-light-primary h-25px w-25px btn-outline-dashed btn-outline-primary btn-outline"
+                                                                            type="button"
+                                                                            placement="top" 
+                                                                            [ngbTooltip]="'Mover Columna'"
+                                                                            tooltipClass="tooltip-dark"
+                                                                            container="body"
+                                                                            draggable="true"
+                                                                            (dragstart)="onDragStart(colIndex)">
+                                                                            <ion-icon name="move-outline"></ion-icon>
+                                                                        </button>
+
+
+                                                                        <button 
+                                                                            class="btn btn-icon btn-light-danger h-25px w-25px btn-outline-dashed btn-outline-danger btn-outline"
+                                                                            type="button"
+                                                                            placement="top" 
+                                                                            [ngbTooltip]="'Eliminar Columna'"
+                                                                            tooltipClass="tooltip-dark"
+                                                                            container="body"
+                                                                            (click)="onRemoveColumn(item.index)">
+                                                                            <ion-icon name="trash-outline"></ion-icon>
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                                <select 
+                                                                    class="form-select form-select-sm"
+                                                                    (change)="onSelectMapping(item, $event)"
+                                                                    style="padding-top: .3rem !important;padding-bottom: .3rem !important;">
+                                                                    <option value="">Seleccionar...</option>
+
+                                                                    <ng-container *ngFor="let field of importFields">
+                                                                        <option 
+                                                                        [value]="field.key" [selected]="item.key == field.key">
+                                                                            {{ field.label }}
+                                                                        </option>
+                                                                    </ng-container>
+                                                                    
+                                                                </select>
+                                                            </div>
+                                                            
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+
+                                                <tbody>
+
+                                                    <!-- ================= LOADING ================= -->
+                                                    <ng-container *ngIf="loadData">
+                                                        <tr *ngFor="let s of [1,2,3,4,5]">
+                                                            <td><div class="form-control-load" style="height:15px; width:20px;"></div></td>
+                                                            <td *ngFor="let k of importKeys">
+                                                                <div class="form-control-load" style="height:13px; width:80%;"></div>
+                                                            </td>
+                                                        </tr>
+                                                    </ng-container>
+
+                                                    <!-- ================= DATA ================= -->
+                                                    <ng-container *ngIf="!loadData && importData.length > 0">
+                                                        <tr *ngFor="let row of importData; let i = index">
+                                                            
+                                                            <td class="fixed-xs text-center p-0 h-30px">
+                                                                {{ i + 1 }}
+                                                            </td>
+                                                            <td class="fixed-xs text-center p-0 h-30px">
+                                                                <label class="form-check form-check-customs form-check-sm m-0 d-flex align-items-center justify-content-center h-100">
+                                                                <input
+                                                                    class="form-check-input cursor-pointer checkbox-xs"
+                                                                    type="checkbox"
+                                                                    (change)="onCheckboxChange($event, i)"
+                                                                />
+                                                                </label>
+                                                            </td>
+                                                            <td 
+                                                            *ngFor="let key of importKeys; let tdIndex = index" 
+                                                            class="fixed-lg h-30px"
+                                                            [ngClass]="{
+                                                                'bg-error': hasCellError(i, key.key),
+                                                                'column-drag-over': dragOverIndex === tdIndex
+                                                            }">
+                                                                <ng-container *ngIf="!key.key">
+                                                                    <input 
+                                                                        type="text"
+                                                                        class="form-control form-control-sm border-0 p-1"
+                                                                        [ngClass]="{
+                                                                            'bg-error': getCellError(i, key.key).length >= 1
+                                                                        }"
+                                                                        style="cursor: not-allowed;"
+                                                                        [name]="'cell-' + i + '-' + key.label"
+                                                                        style="width: 100% !important;font-size: .85rem !important;"
+                                                                        [value]="row[key.label]"
+                                                                        disabled
+                                                                    />
+                                                                </ng-container>
+                                                                <ng-container *ngIf="key.key">
+                                                                    <input *ngIf="key.inputType == 'input'"
+                                                                        type="text"
+                                                                        class="form-control form-control-sm border-0 p-1 fs-7"
+                                                                        [ngClass]="{
+                                                                            'cursor-pointer': getCellError(i, key.key)?.length,
+                                                                            'bg-error': getCellError(i, key.key).length >= 1
+                                                                        }"
+                                                                        [(ngModel)]="row[key.label]"
+                                                                        style="background-color: transparent !important;font-size: .85rem !important;"
+                                                                        [name]="'cell-' + i + '-' + key.label"
+                                                                        [ngbPopover]="popoverTemplate"
+                                                                        triggers="mouseenter:mouseleave"
+                                                                        placement="bottom"
+                                                                        [disablePopover]="getCellError(i, key.key).length < 1"
+                                                                    />
+                                                                    <select 
+                                                                    *ngIf="key.inputType == 'select'"
+                                                                    [name]="'cell-' + i + '-' + key.label"
+                                                                    [ngClass]="{
+                                                                        'cursor-pointer': getCellError(i, key.key)?.length,
+                                                                        'bg-error': getCellError(i, key.key).length >= 1
+                                                                    }"
+                                                                    class="form-select form-select-sm border-0 p-1 fs-7"
+                                                                    style="width: 100% !important;background-color: transparent !important;font-size: .85rem !important;"
+                                                                    [(ngModel)]="row[key.label]"
+                                                                    [ngbPopover]="popoverTemplate"
+                                                                    [disablePopover]="getCellError(i, key.key).length < 1"
+                                                                    triggers="mouseenter:mouseleave"
+                                                                    placement="bottom"
+                                                                    >
+                                                                        <option value="" selected disabled>Seleccionar</option>
+                                                                        <option [value]="prev.value" *ngFor="let prev of key.inputValues">
+                                                                            {{prev.name}}
+                                                                        </option>
+                                                                    </select>
+                                                                </ng-container>
+
+                                                            
+
+                                                                <ng-template #popoverTemplate>
+                                                                    <div>
+                                                                        <ul class="validation-list mb-0">
+                                                                            <li *ngFor="let err of getCellError(i, key.key)" class="text-gray-700 text-validation mb-1">
+                                                                                {{ err }}
+                                                                            </li>
+                                                                        </ul>
+                                                                    </div>
+                                                                </ng-template>
+                                                            </td>
+                                                            
+                                                        </tr>
+                                                    </ng-container>
+
+                                                    <!-- ================= EMPTY ================= -->
+                                                    <tr *ngIf="!loadData && importData.length == 0">
+                                                        <td colspan="100%">
+                                                            <app-not-found 
+                                                                [error]="{ message: 'No hay datos para mostrar.', statusCode: 404 }">
+                                                            </app-not-found>
+                                                        </td>
+                                                    </tr>
+
+                                                </tbody>
+                                                
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--end::Card body-->
+                            <div class="card-footer"  style="background-color: #f1f5f9;">
+                                <div class="d-flex gap-3">
+                                    <button
+                                        type="button"
+                                        class="btn btn-sm btn-primary my-1"
+                                        [disabled]="loadBtnValidate || importData.length == 0"
+                                        (click)="validate()"
+                                    >
+                                        <span *ngIf="!loadBtnValidate" class="d-flex align-items-center gap-2">
+                                            <ion-icon name="cloud-upload-outline"></ion-icon>
+                                            Importar
+                                        </span>
+                                        <span *ngIf="loadBtnValidate" class="d-flex align-items-center gap-2">
+                                            <span class="spinner-border spinner-border-sm"></span>
+                                            Procesando...
+                                        </span>
+                                    </button>
+
+                                     <button
+                                        type="button"
+                                        class="btn btn-sm btn-dark my-1"
+                                        [disabled]="loadBtnValidate || importData.length == 0"
+                                        (click)="export()"
+                                    >
+                                        <span *ngIf="!loadBtnValidate" class="d-flex align-items-center gap-2">
+                                            <i class="bi bi-filetype-xls"></i>
+                                            Exportar
+                                        </span>
+                                        <span *ngIf="loadBtnValidate" class="d-flex align-items-center gap-2">
+                                            <span class="spinner-border spinner-border-sm"></span>
+                                            Procesando...
+                                        </span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalMapColumns" tabindex="-1" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered mw-650px">
+		<div class="modal-content rounded">
+			
+			<div class="modal-header pb-0 border-0 justify-content-end">
+				<span class="svg-icon svg-icon-muted svg-icon-1 cursor-pointer" data-bs-dismiss="modal">
+					<svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+						<rect opacity="0.5" x="6" y="17.3137" width="16" height="2" rx="1"
+							transform="rotate(-45 6 17.3137)" fill="currentColor" />
+						<rect x="7.41422" y="6" width="16" height="2" rx="1"
+							transform="rotate(45 7.41422 6)" fill="currentColor" />
+					</svg>
+				</span>
+			</div>
+
+			<div class="modal-body scroll-y px-10 px-lg-15 pt-0 pb-15">
+				<form class="form">
+
+					<div class="mb-10 text-center">
+						<h1 class="mb-3">Mapeo de Campos</h1>
+						<div class="text-muted fs-6">
+							Selecciona y vincula los campos que deseas importar desde el archivo para configurar correctamente la estructura de los datos.
+						</div>
+					</div>
+
+					<!-- ======================= CHECKBOX LIST ======================= -->
+					<div class="row g-4 mb-10 scroll-container">
+                        <div class="col-lg-12 d-flex align-items-center gap-3 fw-semibold">
+                            <div class="fs-6 fw-semibold text-uppercase" style="flex: 1;">
+                                Campo del sistema
+                            </div>
+                            <div class="fs-6 fw-semibold text-uppercase" style="flex: 1;">
+                                Campo del archivo
+                            </div>
+                        </div>
+                        <div class="col-lg-12 d-flex align-items-center mb-1 gap-3" *ngFor="let item of importFields; let i = index">
+                            <div style="flex: 1;">
+                                <label class="form-control form-control-sm d-flex align-items-center gap-2 mb-0 justify-content-between"
+                                [ngClass]="{'alert-primary': hasMapping(item.key)}">
+                                    <div>
+                                        <ion-icon 
+                                        [name]="'git-branch-outline'"
+                                        [ngClass]="hasMapping(item.key) ? 'text-primary' : 'text-muted'">
+                                        </ion-icon>
+                                        {{item.key}}
+                                    </div>
+                                    <small class="text-primary cursor-pointer d-flex align-items-center gap-1" 
+                                    *ngIf="!hasColumn(item.key)"
+                                    (click)="onAddColumn(item.key)">
+                                        <ion-icon name="git-merge-outline"></ion-icon>
+                                        Columna
+                                    </small>
+                                </label>
+                            </div>
+                            <div style="flex: 1;">
+                                <select class="form-select form-select-sm w-100"
+                                (change)="onMapSelect($event, item.key)">
+                                    <option value="">Seleccionar...</option>
+                                    <ng-container *ngFor="let k of importKeys">
+                                        <option [value]="k.label" [selected]="k.key == item.key">
+                                            {{ k.label }}
+                                        </option>
+                                    </ng-container>
+                                </select>
+                            </div>
+                        </div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>

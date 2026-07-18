@@ -2,3 +2,12 @@
 	position: fixed !important; /* o absolute, pero usando popper */
 	z-index: 1050; /* mayor que la tabla */
 }
+
+.badge-light-primary {
+    border: 1px dashed #7882b4;
+    padding: 5px 10px;
+}
+
+li::marker{
+    color:#000;
+}

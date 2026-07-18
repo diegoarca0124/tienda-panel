@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { AuthGuard } from './common/guards/auth.guard';
+import { PendingChangesGuard } from './common/guards/pending-changes.guard';
 
 export const routes: Routes = [
 	{
@@ -32,6 +33,18 @@ export const routes: Routes = [
 				loadComponent: () =>
 					import('./pages/users/collaborators/edit-collaborator/edit-collaborator.component').then((m) => m.EditCollaboratorComponent),
 			},
+			{
+				path: 'import',
+				canActivate: [AuthGuard],
+				loadComponent: () =>
+					import('./pages/users/collaborators/import-collaborator/import-collaborator.component').then((m) => m.ImportCollaboratorComponent),
+			},
+			{
+				path: 'export',
+				canActivate: [AuthGuard],
+				loadComponent: () =>
+					import('./pages/users/collaborators/export-collaborator/export-collaborator.component').then((m) => m.ExportCollaboratorComponent),
+			},
 		],
 	},
 	{
@@ -52,6 +65,16 @@ export const routes: Routes = [
 				canActivate: [AuthGuard],
 				loadComponent: () => import('./pages/categories/edit-category/edit-category.component').then((m) => m.EditCategoryComponent),
 			},
+			{
+				path: ':id/products',
+				canActivate: [AuthGuard],
+				loadComponent: () => import('./pages/categories/products-category/products-category.component').then((m) => m.ProductsCategoryComponent),
+			},
+			{
+				path: 'mapping',
+				canActivate: [AuthGuard],
+				loadComponent: () => import('./pages/categories/mapping-category/mapping-category.component').then((m) => m.MappingCategoryComponent),
+			}
 		],
 	},
 	{
@@ -72,26 +95,47 @@ export const routes: Routes = [
 				canActivate: [AuthGuard],
 				loadComponent: () => import('./pages/brands/edit-brand/edit-brand.component').then((m) => m.EditBrandComponent),
 			},
+			{
+				path: ':id/products',
+				canActivate: [AuthGuard],
+				loadComponent: () => import('./pages/brands/products-brand/products-brand.component').then((m) => m.ProductsBrandComponent),
+			},
 		],
 	},
 	{
 		path: 'products/attributes',
 		children: [
 			{
-				path: '',
+				path: 'groups',
+				canActivate: [AuthGuard],
+				loadComponent: () => import('./pages/attributes/index-group-attribute/index-group-attribute.component').then((m) => m.IndexGroupAttributeComponent),
+			},
+			{
+				path: 'groups/create',
+				canActivate: [AuthGuard],
+				loadComponent: () => import('./pages/attributes/create-group-attribute/create-group-attribute.component').then((m) => m.CreateGroupAttributeComponent),
+			},
+			{
+				path: 'groups/:id/edit',
+				canActivate: [AuthGuard],
+				loadComponent: () => import('./pages/attributes/edit-group-attribute/edit-group-attribute.component').then((m) => m.EditGroupAttributeComponent),
+			},
+			{
+				path: 'groups/:id/attributes',
 				canActivate: [AuthGuard],
 				loadComponent: () => import('./pages/attributes/index-attribute/index-attribute.component').then((m) => m.IndexAttributeComponent),
 			},
 			{
-				path: 'create',
+				path: 'groups/:id/attributes/create',
 				canActivate: [AuthGuard],
 				loadComponent: () => import('./pages/attributes/create-attribute/create-attribute.component').then((m) => m.CreateAttributeComponent),
 			},
 			{
-				path: ':id/edit',
+				path: 'groups/:id/attributes/:idAttribute/edit',
 				canActivate: [AuthGuard],
 				loadComponent: () => import('./pages/attributes/edit-attribute/edit-attribute.component').then((m) => m.EditAttributeComponent),
 			},
+			
 		],
 	},
 	{
@@ -105,6 +149,7 @@ export const routes: Routes = [
 			{
 				path: 'create',
 				canActivate: [AuthGuard],
+				canDeactivate: [PendingChangesGuard],
 				loadComponent: () => import('./pages/products/create-product/create-product.component').then((m) => m.CreateProductComponent),
 			},
 			{

@@ -1,10 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { identityDocuments } from '@app/common/constants/identityDocuments .constant';
+import { identityDocuments } from '@app/common/constants/identityDocuments.constant';
 import { rols } from '@app/common/constants/rols.constant';
-import { Collaborator } from '@app/common/interface/collaborator.interface';
 import { withMinLoadingTime } from '@app/common/interface/with-min-loading-time.interface';
 import { CollaboratorService } from '@app/services/collaborator.service';
 import { GLOBAL } from '@app/services/GLOBAL';
@@ -15,35 +14,40 @@ import { TopbarComponent } from '@app/shared/topbar/topbar.component';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { IMaskModule } from 'angular-imask';
 import { finalize, Subject, takeUntil } from 'rxjs';
+import { createEmptyCollaborator } from '../utils/empties.util';
+import { CollaboratorInterface } from '../interfaces/collaborator.interface';
+import { ValidationPopoverComponent } from '@app/shared/validation-popover/validation-popover.component';
+import { buildShowErrors } from '@app/common/utils/build-show.errors.util';
 declare const toastr: any;
 
 @Component({
 	selector: 'app-edit-collaborator',
-	imports: [SidebarComponent, TopbarComponent, CommonModule, RouterModule, FormsModule, IMaskModule, NotFoundComponent, NgSelectModule, AlertComponent],
+	imports: [SidebarComponent, TopbarComponent, CommonModule, RouterModule, FormsModule, IMaskModule, NotFoundComponent, NgSelectModule, AlertComponent, ValidationPopoverComponent],
 	templateUrl: './edit-collaborator.component.html',
 	styleUrl: './edit-collaborator.component.css',
+	schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
 })
 export class EditCollaboratorComponent {
 	private destroy$ = new Subject<void>();
-	public collaborator: Collaborator = {
-		names: '',
-		surname: '',
-		type_document: '',
-		role: '',
-		number_document: '',
-		email: '',
-		password: '',
-		phone: '',
-	};
+	public collaborator: CollaboratorInterface = createEmptyCollaborator();
 	public loadBtn: boolean = false;
 	public loading: boolean = true;
 	public id: string = '';
 	public errorsCollaborator: any = {};
 	public msmErrorCollaborator: any = [];
 	public errorMsmServerGetCollaborator: string = '';
-	public errorMsmServer: string = '';
 	public rols = rols;
 	public identityDocuments = identityDocuments;
+	public showErrors = {
+		names: false,
+		surname: false,
+		role: false,
+		email: false,
+		type_document: false,
+		number_document: false,
+		phone: false,
+		password: false
+	};
 
 	constructor(
 		private collaboratorService: CollaboratorService,
@@ -55,7 +59,7 @@ export class EditCollaboratorComponent {
 		this._route.params.pipe(takeUntil(this.destroy$)).subscribe({
 			next: (next) => {
 				this.id = next['id'];
-				this.init_data();
+				this.initData();
 			},
 			error: (error) => {},
 		});
@@ -78,7 +82,7 @@ export class EditCollaboratorComponent {
 		this.collaborator.password = password;
 	}
 
-	init_data() {
+	initData() {
 		this.loading = true;
 		this.errorMsmServerGetCollaborator = '';
 		this.collaboratorService
@@ -89,8 +93,10 @@ export class EditCollaboratorComponent {
 				finalize(() => (this.loading = false))
 			)
 			.subscribe({
-				next: (next: Collaborator) => {
-					this.collaborator = next;
+				next: (next: { data: CollaboratorInterface, message: string}) => {
+					console.log(next);
+					
+					this.collaborator = next.data;
 				},
 				error: (err) => {
 					const error = err.error;
@@ -101,9 +107,9 @@ export class EditCollaboratorComponent {
 
 	update() {
 		this.loadBtn = true;
-		this.errorMsmServer = '';
-		this.errorsCollaborator = {};
+		
 		this.msmErrorCollaborator = [];
+		console.log(this.collaborator);
 		
 		this.collaboratorService
 			.update_collaborator(this.id, this.collaborator)
@@ -113,20 +119,20 @@ export class EditCollaboratorComponent {
 				finalize(() => (this.loadBtn = false))
 			)
 			.subscribe({
-				next: (next: Collaborator) => {
-					this.collaborator = next;
-					toastr.success('Colaborador actualizado correctamente.');
+				next: (next: {data: CollaboratorInterface, message: string}) => {
+					this.errorsCollaborator = {};
+					this.collaborator = next.data;
+					toastr.success(next.message);
 				},
 				error: (err) => {
 					const error = err.error;
-					this.errorMsmServer = error.message || '¡Error desconocido!';
-					toastr.error(this.errorMsmServer);
+					toastr.error(error.message || '¡Error desconocido!');
 
 					if (error.validation) {
 						this.errorsCollaborator = error.validation;
 						this.msmErrorCollaborator =Object.values(this.errorsCollaborator).flat();
+						this.showErrors = buildShowErrors(this.showErrors,this.errorsCollaborator);
 					}
-					
 				},
 			});
 	}

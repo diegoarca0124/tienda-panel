@@ -1,0 +1,173 @@
+.table-custom-bordered {
+  margin-bottom: 0;
+}
+
+.table-custom-bordered tbody tr {
+  height: 54px;
+}
+
+.table-custom-bordered tbody tr:nth-child(even) {
+  background: #fafbfd;
+}
+
+.table-custom-bordered td {
+  border-color: #e9edf3 !important;
+  padding: 8px 16px !important;
+  vertical-align: middle;
+}
+
+.table-custom-bordered td:first-child {
+  width: 35%;
+  font-size: 13px;
+  font-weight: 600;
+  color: #3f4254;
+}
+
+.table-custom-bordered td:last-child {
+  width: 65%;
+}
+
+.accordion-button::after {
+    content: "";
+
+    width: 24px;
+    height: 24px;
+    margin-left: auto;
+    flex-shrink: 0;
+
+    background-color: #f1f1f2;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M2 5l6 6 6-6' stroke='%23000' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 10px;
+
+    border-radius: 50%;
+    border: 1px dashed #ccc;
+    transition: transform .2s ease;
+}
+
+
+/* Contenedor */
+::ng-deep .attribute-select .ng-select-container {
+    min-height: 32px !important;
+    height: auto !important;
+    align-items: flex-start !important;
+}
+
+/* Hover */
+::ng-deep .attribute-select:hover .ng-select-container {
+    border-color: #B5B5C3 !important;
+}
+
+/* Focus */
+::ng-deep .attribute-select.ng-select-focused .ng-select-container {
+    border-color: #1B84FF !important;
+    box-shadow: 0 0 0 2px rgba(27, 132, 255, .12) !important;
+}
+
+/* Placeholder */
+::ng-deep .attribute-select .ng-placeholder {
+    color: #A1A5B7 !important;
+    font-size: 12px !important;
+}
+
+/* Texto seleccionado */
+::ng-deep .attribute-select .ng-value-label {
+    font-size: 10px !important;
+    font-weight: 500;
+}
+
+/* Tags seleccionados */
+::ng-deep .attribute-select.ng-select-multiple .ng-value {
+    background: #EEF6FF !important;
+    border: 1px solid #D0E4FF !important;
+    border-radius: 3px !important;
+    color: #1B84FF !important;
+    font-size: 10px !important;
+    font-weight: 600;
+    margin-right: 4px !important;
+}
+
+::ng-deep .ng-option-label{
+    font-size: 11px !important;
+}
+
+/* X de eliminación */
+::ng-deep .attribute-select.ng-select-multiple .ng-value-icon {
+    border-right: none !important;
+    color: #1B84FF !important;
+    opacity: .7;
+}
+
+::ng-deep .attribute-select.ng-select-multiple .ng-value-icon:hover {
+    opacity: 1;
+}
+
+/* Flecha */
+::ng-deep .attribute-select .ng-arrow-wrapper {
+    width: 20px !important;
+}
+
+::ng-deep .attribute-select .ng-arrow {
+    border-color: #7E8299 transparent transparent !important;
+}
+
+::ng-deep  .attribute-select .ng-arrow-wrapper {
+    margin-top: 5px !important;
+}
+
+::ng-deep .ng-select-multiple .ng-value{
+    padding: 0px !important;
+}
+
+::ng-deep .attribute-select .ng-select-container .ng-spinner-loader{
+	margin-top: 6.5px !important;
+}
+
+::ng-deep .accordion-button{
+    border-radius: 0px !important;
+    border-left: 5px solid #1B84FF;
+    padding-top: 1rem !important;
+    padding-bottom: 1rem !important;
+}
+
+::ng-deep  .accordion-button:focus{
+    border-color: #1B84FF !important;
+}
+
+.h-34px{
+    height: 34.82px;
+    width: 34.82px;
+}
+
+.accordion-button-skeleton{
+    height: 50px !important;
+}
+.accordion-button-skeleton::after{
+    display: none !important;
+}
+
+.badge-number{
+    padding: 3px;
+    border-radius: 50%;
+    background-color: #50cd89;
+    color: #ffffff;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .7rem;
+    font-weight: 300;
+}
+
+.featured {
+    background:#1B84FF !important;
+    color: white !important;
+}
+
+.featured i {
+    color: #fff !important;
+}
+
+

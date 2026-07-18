@@ -3,6 +3,7 @@ import { Component, ElementRef, EventEmitter, Input, Output, SimpleChanges, View
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { withMinLoadingTime } from '@app/common/interface/with-min-loading-time.interface';
+import { CategoryInterface } from '@app/pages/categories/interfaces/category.interface';
 import { CategoryService } from '@app/services/category.service';
 import { GLOBAL } from '@app/services/GLOBAL';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
@@ -69,12 +70,13 @@ export class MenuSelectCategoriesComponent {
 				finalize(() => (this.loadingCategories = false))
 			)
 			.subscribe({
-				next: (next) => {
+				next: (next: { data: CategoryInterface[], message: string}) => {
 					console.log(next);
-					this.categories = next;
+					this.categories = next.data;
           const transformed = this.categories.map(item => ({
-            id: item.id,           // OJO: antes usabas item.icon.id
-            name: item.name,       // OJO: antes usabas item.icon.name
+            id: item.id,         
+            name: item.name,   
+            prefix: item.prefix,   
             checked: false,
           }));
 
@@ -117,6 +119,7 @@ export class MenuSelectCategoriesComponent {
 
   onApplyCategories(): void {
     this.applyCategories.emit(this.displayCategories); 
+    this.closeMenu();
   }
 
   closeMenu(){

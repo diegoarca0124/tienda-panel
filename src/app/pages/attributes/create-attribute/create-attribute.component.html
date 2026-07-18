@@ -7,16 +7,22 @@
 				<div id="kt_app_toolbar" class="app-toolbar py-5 py-lg-6">
 					<div id="kt_app_toolbar_container" class="app-container container-fluid d-flex flex-stack">
 						<div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
-							<h1 class="page-heading d-flex text-dark fw-bold fs-3 flex-column justify-content-center my-0">Atributos</h1>
+							<h1 class="page-heading d-flex text-gray-700 fs-3 flex justify-content-start my-0 align-items-center text-uppercase ls-1px fw-700">Atributos</h1>
 
-							<ul class="breadcrumb breadcrumb-separatorless fw-semibold fs-7 my-0 pt-1">
+							<ul class="breadcrumb breadcrumb-separatorless fs-7 my-0 pt-1">
 								<li class="breadcrumb-item text-muted">
-									<a [routerLink]="['/products/attributes']" class="text-muted text-hover-primary"> Atributos </a>
+									<a [routerLink]="['/products/attributes/groups']" class="text-muted text-hover-primary"> Grupos </a>
 								</li>
 								<li class="breadcrumb-item">
 									<span class="bullet bg-gray-400 w-5px h-2px"></span>
 								</li>
-								<li class="breadcrumb-item text-primary">Nuevo Atributo</li>
+								<li class="breadcrumb-item text-muted">
+									<a [routerLink]="[`/products/attributes/groups/${id}/attributes`]" class="text-muted text-hover-primary"> Atributos </a>
+								</li>
+								<li class="breadcrumb-item">
+									<span class="bullet bg-gray-400 w-5px h-2px"></span>
+								</li>
+								<li class="breadcrumb-item text-primary fw-600">Nuevo atributo</li>
 							</ul>
 						</div>
 						<div class="d-flex align-items-center gap-2 gap-lg-3"></div>
@@ -25,17 +31,9 @@
 				<div class="app-content flex-column-fluid">
 					<div class="app-container container">
 
-						<app-alert *ngIf="msmErrorAttribute.length >= 1" [classAlert]="'bg-light-danger border-danger border-dashed mb-7'"
-						[title]="'¡Errores de Validación!'"
-						[description]="errorsAtribute"
-						[type]="'errors'"
-						[classIcon]="'svg-icon-danger'">
-						</app-alert>
-
-
 						<div class="card mb-10">
 							<!--begin::Card header-->
-							<div class="card-header" style="background-color: #f8f8f8;">
+							<div class="card-header" style="background-color: #f1f5f9;">
 								<!--begin::Heading-->
 								<h4 class="card-title m-0 d-flex flex-column">
 									<span class="fs-5 fw-600">Nuevo Atributos</span>
@@ -45,19 +43,84 @@
 								</h4>
 								<!--end::Heading-->
 							</div>
-							<!--end::Card header-->
-
-							<!--begin::Card body-->
-							<ng-container>
-								<div class="card-body">
+							<div class="card-body" *ngIf="loading">
+								<div class="row">
+									<div class="col-lg-6">
+										<div class="d-flex flex-column mb-5 fv-row fv-plugins-icon-container">
+											<!--begin::Label-->
+											<label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2">
+												<span class="required">Nombre</span>
+											</label>
+											<div class="skeleton skeleton-input mb-1"></div>
+											<span class="fs-8 text-muted">Nombre de la propiedad.</span>
+										</div>
+									</div>
+									<div class="col-lg-6">
+										<div class="d-flex flex-column mb-5 fv-row fv-plugins-icon-container">
+											<!--begin::Label-->
+											<label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2">
+												<span class="">Unidad</span>
+											</label>
+											<div class="skeleton skeleton-input mb-1"></div>
+											<span class="fs-8 text-muted">Unidad de agrupamiento para atributo.</span>
+										</div>
+									</div>
+									<div class="col-lg-12">
+										<div class="d-flex flex-column mb-5 fv-row fv-plugins-icon-container">
+											<label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2">
+												<span class="|">Descripción</span>
+											</label>
+											<div class="skeleton skeleton-input mb-1" style="height: 79px !important;"></div>
+											<span class="fs-8 text-muted">Descripción de la categoría.</span>
+										</div>
+									</div>
+									<div class="col-12">
+										<div class="d-flex flex-column mb-5 fv-row fv-plugins-icon-container">
+											<label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2">
+												<span>Valores</span>
+											</label>
+											<div class="d-flex align-items-start gap-5">
+												<div class="flex-grow-1">
+													<div class="skeleton skeleton-input mb-1"></div>
+												</div>
+												<button
+													class="btn btn-primary d-inline-flex align-items-center gap-2 px-4"
+													type="button"
+													disabled
+												>
+													<span class="fw-semibold">Agregar</span>
+												</button>
+											</div>
+											<span class="fs-8 text-muted mt-1">
+												Agrega los posibles valores que podrá tener este atributo.
+											</span>
+										</div>
+									</div>
+									<div class="col-12">
+										<div class="d-flex flex-wrap gap-3">
+											<span
+												class="btn badge badge-light-primary fw-bold px-4 py-2 cursor-pointer btn-active-light-danger"
+												*ngFor="let item of values; let index = index"
+												(dblclick)="remove(index)"
+											>
+												{{ item.value }}
+											</span>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="card-body" *ngIf="!loading">
+								<ng-container *ngIf="!errorMsmServerGetGroupAttribute">
 									<div class="row">
 										<div class="col-lg-6">
 											<div class="d-flex flex-column mb-5 fv-row fv-plugins-icon-container">
-												<!--begin::Label-->
-												<label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2">
-													<span class="required">Nombre</span>
-												</label>
-												<!--end::Label-->
+												<div class="d-flex align-items-center justify-content-between mb-1">
+													<label class="required fw-500 text-gray-700 fs-6 mb-1">Nombre</label>
+													<small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="errorsAtribute?.name" (click)="showErrors.name = !showErrors.name">
+														<ion-icon name="information-circle-outline" class="validation-icon"> </ion-icon>
+														{{ showErrors.name ? 'Ocultar errores' : 'Ver errores' }}
+													</small>
+												</div>
 
 												<input type="text" 
 												class="form-control mb-1" 
@@ -66,109 +129,139 @@
 												[(ngModel)]="attribute.name"
 												[ngClass]="{'is-invalid': errorsAtribute?.name}">
 
-												<span class="fs-8 text-muted">Nombre de la propiedad.</span>
+												<span class="fs-8 text-muted">Nombre del atributo.</span>
+
+												<div class="validation-wrapper" [class.open]="showErrors.name">
+													<app-validation-popover 
+													[errors]="errorsAtribute?.name"></app-validation-popover>
+												</div>
 											</div>
 										</div>
 										<div class="col-lg-6">
 											<div class="d-flex flex-column mb-5 fv-row fv-plugins-icon-container">
-												<!--begin::Label-->
-												<label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2">
-													<span class="">Unidad</span>
-												</label>
-												<!--end::Label-->
+												<div class="d-flex align-items-center justify-content-between mb-1">
+													<label class="fw-500 text-gray-700 fs-6 mb-1">Unidad</label>
+													<small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="errorsAtribute?.unit" (click)="showErrors.unit = !showErrors.unit">
+														<ion-icon name="information-circle-outline" class="validation-icon"> </ion-icon>
+														{{ showErrors.unit ? 'Ocultar errores' : 'Ver errores' }}
+													</small>
+												</div>
 
 												<input type="text" 
 												class="form-control mb-1" 
-												placeholder="GB"
+												placeholder="Unidad de agrupamiento"
 												name="unit" 
 												[(ngModel)]="attribute.unit"
 												[ngClass]="{'is-invalid': errorsAtribute?.unit}">
 
 												<span class="fs-8 text-muted">Unidad de agrupamiento para atributo.</span>
+
+												<div class="validation-wrapper" [class.open]="showErrors.unit">
+													<app-validation-popover 
+													[errors]="errorsAtribute?.unit"></app-validation-popover>
+												</div>
 											</div>
 										</div>
-									</div>
-									<div class="row">
 										<div class="col-lg-12">
 											<div class="d-flex flex-column mb-5 fv-row fv-plugins-icon-container">
-												<!--begin::Label-->
-												<label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2 gap-5">
-													<span class="required">Categorías</span>
-													<small class="text-primary cursor-pointer" (click)="init_categories()">Recargar</small>
-												</label>
-												<!--end::Label-->
-
-												<div [ngClass]="{ 'is-invalid': errorsAtribute?.categories }">
-													<ng-select
-														[items]="categories"
-														bindLabel="name"
-														bindValue="id"
-														[(ngModel)]="categoriesSelected"
-														[multiple]="true"
-														placeholder="Selecciona países"
-														[clearable]="false"
-														[closeOnSelect]="false"
-														class="select-element mb-1"
-														appendTo="body"
-														[loading]="loadingCategories"
-														[disabled]="loadingCategories"
-													>
-														<!-- Opción en el dropdown -->
-														<ng-template ng-option-tmp let-item="item">
-															{{ item.name }}
-														</ng-template>
-
-														<!-- Opción seleccionada en el input -->
-														<ng-template ng-label-tmp let-item="item">
-															{{ item.name }}
-														</ng-template>
-
-														<ng-template ng-loading-text>
-															<div class="spinner-container">
-																<span class="spinner-border spinner-border-sm"></span>
-															</div>
-														</ng-template>
-													</ng-select>
+												<div class="d-flex align-items-center justify-content-between mb-1">
+													<label class="fw-500 text-gray-700 fs-6 mb-1">Descripción</label>
+													<small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="errorsAtribute?.description" (click)="showErrors.description = !showErrors.description">
+														<ion-icon name="information-circle-outline" class="validation-icon"> </ion-icon>
+														{{ showErrors.description ? 'Ocultar errores' : 'Ver errores' }}
+													</small>
 												</div>
+												<textarea
+													type="text"
+													class="form-control mb-1"
+													placeholder="Descripción del atributo"
+													name="description"
+													[(ngModel)]="attribute.description"
+													[ngClass]="{ 'is-invalid': errorsAtribute?.description }"
+													textAreaAutoResize
+                									rows="3"
+												></textarea>
 
-												<span class="fs-8 text-muted">Categorías donde esta disponible el atributo.</span>
+												<span class="fs-8 text-muted">Descripción de la categoría.</span>
+
+												<div class="validation-wrapper" [class.open]="showErrors.description">
+													<app-validation-popover 
+													[errors]="errorsAtribute?.description"></app-validation-popover>
+												</div>
 											</div>
 										</div>
-									</div>
-									<div class="row">
 										<div class="col-12">
 											<div class="d-flex flex-column mb-5 fv-row fv-plugins-icon-container">
-												<!--begin::Label-->
-												<label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2 gap-5">
-													<span class="">Valor</span>
-												</label>
-												<!--end::Label-->
-
-												<div class="input-group mb-1">
+												<div class="d-flex align-items-center justify-content-between mb-1">
+													<label class="fw-500 text-gray-700 fs-6 mb-1">Valores</label>
+													<small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="errorsAtribute?.values" (click)="showErrors.value = !showErrors.value">
+														<ion-icon name="information-circle-outline" class="validation-icon"> </ion-icon>
+														{{ showErrors.value ? 'Ocultar errores' : 'Ver errores' }}
+													</small>
+												</div>
+												<div class="d-flex gap-5">
 													<input
 														type="text"
 														class="form-control"
-														placeholder="RAM"
+														placeholder="Ej: Rojo, 256, Algodón..."
 														name="value"
 														[(ngModel)]="value"
 														[ngClass]="{ 'is-invalid': errorsAtribute?.values }"
-														(keyup.ENTER)="add()"
+														(keyup.enter)="add()"
+														style="height: 42.93px !important;"
 													/>
+													<div [ngClass]="{ 'is-invalid': errorsAtribute?.values }">
+														<ng-select
+															[items]="valuesDefault"
+															bindLabel="name"
+															bindValue="value"
+															[(ngModel)]="valuesDefaultSelected"
+															placeholder="Valores por defecto"
+															[clearable]="false"
+															[closeOnSelect]="false"
+															class="select-element mb-1"
+															appendTo="body"
+														>
+															<!-- Opción en el dropdown -->
+															<ng-template ng-option-tmp let-item="item">
+																{{ item.name }}
+															</ng-template>
 
-													<button class="btn btn-primary" type="button" (click)="add()" style="border-radius: 0px !important">
-														<small>Agregar</small>
+															<!-- Opción seleccionada en el input -->
+															<ng-template ng-label-tmp let-item="item">
+																{{ item.name }}
+															</ng-template>
+
+															<ng-template ng-loading-text>
+																<div class="spinner-container">
+																	<span class="spinner-border spinner-border-sm"></span>
+																</div>
+															</ng-template>
+														</ng-select>
+													</div>
+													<button
+														class="btn btn-primary"
+														style="height: 42.93px !important;"
+														type="button"
+														(click)="add()"
+													>
+														Agregar
 													</button>
 												</div>
+												<span class="fs-8 text-muted mt-1">
+													Agrega los posibles valores que podrá tener este atributo.
+												</span>
 
-												<span class="fs-8 text-muted">Nuevo valor del atributo.</span>
+												<div class="validation-wrapper" [class.open]="showErrors.value">
+													<app-validation-popover 
+													[errors]="errorsAtribute?.values"></app-validation-popover>
+												</div>
 											</div>
 										</div>
-									</div>
-									<div class="row">
 										<div class="col-12">
 											<div class="d-flex flex-wrap gap-3">
 												<span
-													class="btn badge badge-light fw-bold px-4 py-2 cursor-pointer btn-active-light-danger"
+													class="btn badge badge-light-primary fw-bold px-4 py-2 cursor-pointer btn-active-light-danger"
 													*ngFor="let item of values; let index = index"
 													(dblclick)="remove(index)"
 												>
@@ -177,17 +270,31 @@
 											</div>
 										</div>
 									</div>
-								</div>
-								<div class="card-footer"  style="background-color: #f8f8f8;">
-									<a *ngIf="!loadBtn" class="btn btn-sm btn-primary my-1 cursor-pointer" (click)="create()">
-										Crear atributo
-									</a>
-									<button *ngIf="loadBtn" class="btn btn-sm btn-primary my-1 cursor-pointer" type="button" disabled>
-										<span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
+								</ng-container>
+								<ng-container *ngIf="errorMsmServerGetGroupAttribute">
+									<app-not-found [error]="errorMsmServerGetGroupAttribute"></app-not-found>
+								</ng-container>
+							</div>
+							<div class="card-footer"  style="background-color: #f1f5f9;">
+								<button
+									class="btn btn-sm btn-primary my-1 cursor-pointer d-flex align-items-center justify-content-center gap-1"
+									[disabled]="loading || loadBtn || errorMsmServerGetGroupAttribute"
+									(click)="!loading && !loadBtn && !errorMsmServerGetGroupAttribute && create()"
+									type="button"
+								>
+									<ng-container *ngIf="loadBtn">
+										<span class="spinner-border spinner-border-sm me-2"
+											aria-hidden="true">
+										</span>
 										<span role="status">Procesando...</span>
-									</button>
-								</div>
-							</ng-container>
+									</ng-container>
+
+									<ng-container *ngIf="!loadBtn">
+										<i class="bi bi-collection"></i>
+										Crear atributo
+									</ng-container>
+								</button>
+							</div>
 						</div>
 
 

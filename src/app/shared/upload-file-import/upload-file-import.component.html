@@ -1,0 +1,36 @@
+<input 
+	type="file"
+	[id]="inputId"
+	class="d-none"
+	accept="
+		.xls,
+		.xlsx,
+		.csv,
+		application/vnd.ms-excel,
+		application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,
+		text/csv
+	"
+	(change)="onFileChange($event)" 
+/>
+
+<div class="w-100">
+	<label
+		[for]="inputId"
+		class="upload-label flex-fill"
+		[ngClass]="{ 'border-danger': hasError }"
+		style="justify-content: space-between"
+		[title]="fileName"
+	>
+		<ng-container *ngIf="imagePreview; else emptyState">
+			<div class="d-flex align-items-center gap-3 flex-content">
+				<img [src]="imagePreview" alt="Preview" class="preview-img" />
+				<span class="file-name">{{ fileName }}</span>
+			</div>
+			<button type="button" class="btn-clear fs-7 fw-700" (click)="clearImage(); $event.stopPropagation()">✕</button>
+		</ng-container>
+
+		<ng-template #emptyState>
+			<span class="placeholder-text">Sube el archivo aquí</span>
+		</ng-template>
+	</label>
+</div>

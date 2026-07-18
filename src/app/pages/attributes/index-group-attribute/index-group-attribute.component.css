@@ -1,0 +1,9 @@
+.dropdown-menu {
+	position: fixed !important; /* o absolute, pero usando popper */
+	z-index: 1050; /* mayor que la tabla */
+}
+
+.underline-dashed-primary{
+	text-transform: uppercase;
+	font-size: .85rem;
+}

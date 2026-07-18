@@ -1,0 +1,33 @@
+.active{
+	background-color: #071437 !important
+}
+
+.nav-scroll {
+    display: flex;
+    flex-wrap: nowrap;       
+    overflow-x: auto;     
+    white-space: nowrap;    
+    gap: 4px;               
+    scrollbar-width: thin; 
+	padding-bottom: 5px;
+}
+
+.nav-scroll::-webkit-scrollbar {
+    height: 6px;           
+}
+
+.nav-scroll::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 3px;
+}
+
+.nav-link{
+	border: 1px solid #ebebeb !important;
+    background-color: #f1f5f9; 
+    color: #585858;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: .8rem
+}
+
+

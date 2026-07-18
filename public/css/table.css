@@ -1,173 +1,189 @@
-/* ============================================================
-   GENERAL
-   ============================================================ */
-.modern-table {
-  width: 100%;
-  border-collapse: collapse !important; /* evita bordes dobles */
+/* =========================================
+   WRAPPER
+========================================= */
+
+.table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    background: #ffffff;
+    border: 1px solid #eaecf0;
 }
 
-/* Bordes uniformes */
-.modern-table th,
-.modern-table td {
-  border: 1px solid #e8eaed !important; /* 1px uniforme */
+/* =========================================
+   TABLA
+========================================= */
+
+.custom-table {
+    width: max-content;
+    min-width: 100%;
+
+    table-layout: fixed;
+
+    border-collapse: collapse;
+
+    margin: 0;
 }
 
-/* Evitar bordes duplicados por Bootstrap */
-.table-bordered > :not(caption) > * {
-  border-width: 0 !important;
+/* =========================================
+   HEADER
+========================================= */
+
+.table-wrapper .custom-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    height: 45px;
+    padding: 0 14px;
+    background: #f1f5f9;
+    color: #545454;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .4px;
+    text-transform: uppercase;
+    vertical-align: middle;
+    white-space: nowrap;
+    border-bottom: 1px solid #eaecf0;
+    border-right: 1px solid #eaecf0;
 }
 
-.table-bordered > :not(caption) > * > * {
-  border-width: 1px !important; /* solo borde de celdas */
+/* =========================================
+   BODY
+========================================= */
+
+.table-wrapper .custom-table tbody td {
+    height: 45px;
+    padding: 0 14px;
+    background: #ffffff;
+    color: #101828;
+    font-size: 13px;
+    font-weight: 500;
+    vertical-align: middle;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    border-bottom: 1px solid #eaecf0;
+    border-right: 1px solid #eaecf0;
+    transition: background .15s ease;
 }
 
-/* Texto truncado */
-.table th,
-.table td {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.custom-table tbody tr:nth-child(even) td {
+    background: #fafafa;
 }
 
-/* Padding y fuente consistente */
-.table > :not(caption) > * > * {
-  padding: 0.4rem 0.75rem !important;
+/* =========================================
+   ÚLTIMA COLUMNA
+========================================= */
+
+.custom-table thead th:last-child,
+.custom-table tbody td:last-child {
+    border-right: none;
 }
 
-/* .table,
-.table * {
-    font-family: "Inter" !important;
-} */
+/* =========================================
+   HOVER
+========================================= */
 
-/* ============================================================
-   ENCABEZADOS
-   ============================================================ */
-.modern-table thead th {
-  background: #f7f8fa;
-  color: #5e6c84;
-  font-size: 12px;
-  font-weight: 600;
-  padding: 10px 12px;
+.custom-table tbody tr:hover td {
+    background: #fafafa;
 }
 
-/* ============================================================
-   CUERPO
-   ============================================================ */
-.modern-table tbody tr td {
-  vertical-align: middle;
+/* =========================================
+   COLUMNAS FIJAS
+========================================= */
+
+.fixed-xs {
+    width: 55px;
+    min-width: 55px;
+    max-width: 55px;
 }
 
-/* ============================================================
-   ÚLTIMA COLUMNA (ACCIONES)
-   ============================================================ */
-.modern-table td:last-child,
-.modern-table th:last-child {
-  width: 1%;
-  white-space: nowrap;
-  text-align: end;
+.fixed-sm {
+    width: 120px;
+    min-width: 120px;
+    max-width: 120px;
 }
 
-/* Acción con ancho exacto */
-.col-actions {
-  width: 58px !important;
-  min-width: 58px !important;
-  max-width: 58px !important;
+.fixed-md {
+    width: 180px;
+    min-width: 180px;
+    max-width: 180px;
 }
 
-/* ============================================================
-   BOTÓN ICONO
-   ============================================================ */
-.icon-btn {
-  background: transparent;
-  border: none;
-  padding: 6px;
-  border-radius: 4px;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+.fixed-lg {
+    width: 260px;
+    min-width: 260px;
+    max-width: 260px;
 }
 
-
-.icon-btn i {
-  font-size: 18px;
-  color: #42526e;
+.fixed-xl {
+    width: 380px;
+    min-width: 380px;
+    max-width: 380px;
 }
 
-/* ============================================================
-   TABLE LAYOUT FIXED (opcional)
-   ============================================================ */
-.table-fixed {
-  table-layout: fixed;
-  width: 100%;
+/* =========================================
+   COLUMNAS FLEXIBLES
+========================================= */
+
+.flex-col {
+    width: auto;
+    min-width: 260px;
 }
 
-.table-fixed .col-actions {
-  width: 48px !important;    /* Ancho mínimo para icon-btn */
-  min-width: 48px !important;
-  white-space: nowrap;       /* Evita que se colapse */
-}
-/* ============================================================
-   SISTEMA DE ANCHOS RESPONSIVE
-   ============================================================ */
+/* =========================================
+   SCROLLBAR
+========================================= */
 
-/* XS (base) */
-.col-w-xs-20   { width: 20px; }
-.col-w-xs-40   { width: 40px; }
-.col-w-xs-50   { width: 50px; }
-.col-w-xs-60   { width: 60px; }
-.col-w-xs-80   { width: 80px; }
-.col-w-xs-100  { width: 100px; }
-.col-w-xs-120  { width: 120px; }
-.col-w-xs-150  { width: 150px; }
-.col-w-xs-180  { width: 180px; }
-.col-w-xs-200  { width: 200px; }
-.col-w-xs-220  { width: 220px; }
-.col-w-xs-250  { width: 250px; }
-.col-w-xs-280  { width: 280px; }
-.col-w-xs-300  { width: 300px; }
-.col-w-xs-350  { width: 350px; }
-.col-w-xs-400  { width: 400px; }
-
-/* MD */
-@media (min-width: 768px) {
-  .col-w-md-200 { width: 200px; }
-  .col-w-md-250 { width: 250px; }
-  .col-w-md-300 { width: 300px; }
-  .col-w-md-350 { width: 350px; }
-  .col-w-md-400 { width: 400px; }
-  .col-w-md-450 { width: 450px; }
+.table-wrapper::-webkit-scrollbar {
+    height: 5px;
 }
 
-/* LG */
-@media (min-width: 992px) {
-  .col-w-lg-200 { width: 200px; }
-  .col-w-lg-250 { width: 250px; }
-  .col-w-lg-300 { width: 300px; }
-  .col-w-lg-350 { width: 350px; }
-  .col-w-lg-400 { width: 400px; }
-  .col-w-lg-450 { width: 450px; }
-  .col-w-lg-500 { width: 500px; }
+.table-wrapper::-webkit-scrollbar-track {
+    background: #f5f5f5;
 }
 
-/* XL */
-@media (min-width: 1200px) {
-  .col-w-xl-250 { width: 250px; }
-  .col-w-xl-300 { width: 300px; }
-  .col-w-xl-350 { width: 350px; }
-  .col-w-xl-400 { width: 400px; }
-  .col-w-xl-450 { width: 450px; }
-  .col-w-xl-500 { width: 500px; }
-  .col-w-xl-600 { width: 600px; }
+.table-wrapper::-webkit-scrollbar-thumb {
+    background: #d0d5dd;
 }
 
-/* XXL */
-@media (min-width: 1400px) {
-  .col-w-xxl-300 { width: 300px; }
-  .col-w-xxl-400 { width: 400px; }
-  .col-w-xxl-500 { width: 500px; }
-  .col-w-xxl-600 { width: 600px; }
-  .col-w-xxl-700 { width: 700px; }
+.table-wrapper::-webkit-scrollbar-thumb:hover {
+    background: #b8c0cc;
 }
 
+/* =========================================
+   BOTÓN ACCIONES
+========================================= */
 
+.btn-action {
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #eaecf0;
+    border-radius: 8px;
+    background: #f8fafc;
+    color: #667085;
+    font-size: 15px;
+    box-shadow: none;
+}
+/*********************************************/
+
+.form-check.form-check-sm .form-check-input {
+    height: 1.35rem !important;
+    width: 1.35rem !important;
+}
+
+.form-control.is-invalid, .was-validated .form-control:invalid{
+    background-image: none !important;
+}
+
+.bg-primary-light{
+    background-color: #eff6ff !important;
+}
+
+.border-dashed-gray{
+    border: 1px dashed #ccc !important;
+}

@@ -1,0 +1,59 @@
+.editor-invalid {
+    border: 1px solid #f1416c;
+    border-radius: .475rem;
+}
+
+.svg-preview-card {
+    position: relative;
+    height: 250px;
+    border: 1px solid #DBDFE9;
+    border-radius: .475rem;
+    overflow: hidden;
+    background-color: #fafafa;
+    background-image:
+        radial-gradient(#cbcbcb 1px, transparent 1px);
+    background-size: 20px 20px;
+}
+
+.svg-placeholder {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: #b5b5c3;
+    pointer-events: none;
+}
+
+.svg-preview-body {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.svg-preview-body svg {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.svg-upload-btn {
+    position: absolute;
+    left: 50%;
+    bottom: 12px;
+    transform: translateX(-50%);
+    border-radius: 999px;
+    padding: .45rem .9rem;
+    z-index: 10;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 12px rgba(0,0,0,.12);
+}

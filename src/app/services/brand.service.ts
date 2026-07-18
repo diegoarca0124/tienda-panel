@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { AuthService } from './auth.service';
 import { environment } from 'environments/environment.dev';
-import { Brand } from '@app/common/interface/brand.interface';
+import { BrandInterface } from '@app/pages/brands/interfaces/brand.interface';
 
 @Injectable({
 	providedIn: 'root',
@@ -39,12 +39,13 @@ export class BrandService {
 		data.append('description', brand.description || '');
 		data.append('websiteUrl', brand.websiteUrl || '');
 		data.append('logoUrl', brand.logoUrl);
+		data.append('prefix', brand.prefix);
 		data.append('bannerUrl', brand.bannerUrl);
 		return this.http.post(`${this.apiUrl}/brand/create_brand`, data, { headers: this.getHeaders(data)});
 	}
 
-	get_brands(filter: string, page: number, limit: number, status: string, sort: string): Observable<any> {
-		return this.http.get(`${this.apiUrl}/brand/get_brands?filter=${filter}&page=${page}&limit=${limit}&status=${status}&sort=${sort}`, {
+	get_brands(filter: string, page: number, limit: number, status: string, countries: string, sort: string): Observable<any> {
+		return this.http.get(`${this.apiUrl}/brand/get_brands?filter=${filter}&page=${page}&limit=${limit}&status=${status}&countries=${countries}&sort=${sort}`, {
 			headers: this.getHeaders(),
 		});
 	}
@@ -57,7 +58,7 @@ export class BrandService {
 		return this.http.get(`${this.apiUrl}/brand/get_brand/${id}`, { headers: this.getHeaders() });
 	}
 
-	update_brand(id: string, brand: Brand): Observable<any> {
+	update_brand(id: string, brand: BrandInterface): Observable<any> {
 		let data;
 		if (brand.logoUrl || brand.bannerUrl) {
 			data = new FormData();
@@ -65,6 +66,7 @@ export class BrandService {
 			data.append('name', brand.name);
 			data.append('country', JSON.stringify(brand.country));
 			data.append('description', brand.description);
+			data.append('prefix', brand.prefix);
 			data.append('websiteUrl', brand.websiteUrl);
 			if (brand.logoUrl) data.append('logoUrl', brand.logoUrl);
 			if (brand.bannerUrl) data.append('bannerUrl', brand.bannerUrl);
@@ -75,7 +77,23 @@ export class BrandService {
 		return this.http.put(`${this.apiUrl}/brand/update_brand/${id}`, data, { headers: this.getHeaders(data) });
 	}
 
+	get_product_by_brand(
+		id: string, 
+		qp: {filter: string,page: number,limit: number,status: string, sort: string,subcategoryIds: string}
+	): Observable<any> {
+		console.log(qp);
+		
+		return this.http.get(`${this.apiUrl}/brand/get_product_by_brand/${id}?filter=${qp.filter}&page=${qp.page}&limit=${qp.limit}&status=${qp.status}&sort=${qp.sort}&subcategoryIds=${qp.subcategoryIds}`, {
+			headers: this.getHeaders(),
+		});
+	}
+
+
 	get_brands_by_select(): Observable<any> {
 		return this.http.get(`${this.apiUrl}/brand/get_brands_by_select`, { headers: this.getHeaders() });
+	}
+
+	update_status_brands(data: {ids: Array<string>, status: boolean}): Observable<any> {
+		return this.http.post(`${this.apiUrl}/brand/update_status_brands`, data, { headers: this.getHeaders() });
 	}
 }

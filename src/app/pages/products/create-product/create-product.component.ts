@@ -1,53 +1,51 @@
 import { CommonModule } from '@angular/common';
-import { Component, CUSTOM_ELEMENTS_SCHEMA, ElementRef, HostListener, QueryList, ViewChild, ViewChildren } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, ElementRef, HostListener, Inject, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { SidebarComponent } from '@app/shared/sidebar/sidebar.component';
-import { TinymceEditorComponent } from '@app/shared/tinymce-editor/tinymce-editor.component';
 import { TopbarComponent } from '@app/shared/topbar/topbar.component';
 import { finalize, Subject, takeUntil } from 'rxjs';
-import { basic_properties, full_properties } from './constants/propertiesTinymce.constant';
-import { environment } from 'environments/environment.dev';
 import { AttributeService } from '@app/services/attribute.service';
 import { withMinLoadingTime } from '@app/common/interface/with-min-loading-time.interface';
 import { GLOBAL } from '@app/services/GLOBAL';
 import { NgSelectComponent, NgSelectModule } from '@ng-select/ng-select';
 import { FormsModule } from '@angular/forms';
 import { CategoryService } from '@app/services/category.service';
-import { Product } from '@app/common/interface/product.interface';
 import { BrandService } from '@app/services/brand.service';
-import { TagifyInputComponent } from '@app/shared/tagify-input/tagify-input.component';
 import { labels } from '@app/common/constants/labels.constant';
-import { countries } from '@app/common/constants/countries.constant';
-import { NgxCurrencyDirective } from 'ngx-currency';
-import { IconCheckComponent } from '@app/icons/icon-check/icon-check.component';
-import { unitsOfMeasure } from '@app/common/constants/units.constan';
-import { conditions } from '@app/common/constants/conditions.constant';
-import { warranties } from '@app/common/constants/warranties.constant';
+
+
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { visibilities } from './constants/visibilities.constant';
-import { statusProduct } from './constants/statusProduct.contant';
-import { materials } from '@app/common/constants/materials.constant';
-import { temperatures } from '@app/common/constants/temperatures.cosntant';
-import { packages } from '@app/common/constants/packages.constant';
-import { IconTrashComponent } from '@app/icons/icon-trash/icon-trash.component';
-import { UploadImagesComponent } from '@app/shared/upload-images/upload-images.component';
-declare var refreshFsLightbox: any;
+import { visibilities } from '../constants/visibilities.constant';
+import { statusProduct } from '../constants/status-product.contant';
+
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
-import { productFormHelp } from './constants/formProductHelper';
-import { IconImageComponent } from '@app/icons/icon-image/icon-image.component';
-import { AlertComponent } from '@app/shared/alert/alert.component';
-import { UploadImageComponent } from '@app/shared/upload-image/upload-image.component';
-import { skuPatterns } from '@app/common/constants/skuPatterns.constant';
+import { productFormHelp } from '../constants/form-product-helper.constant';
 import { PhysicalProduct } from '@app/common/interface/physical-product.interface';
 import { ShippingProduct } from '@app/common/interface/shipping-product.interface';
 import { ProductService } from '@app/services/product.service';
-import { productMock } from './mocks/product.mock';
-import { PhysicalMock } from './mocks/physical.mock';
-import { ShippingMock } from './mocks/shipping.mock';
-import { VariationMock } from './mocks/variation.mock';
 declare const toastr: any;
-import Quill from 'quill';
-import { NotFoundComponent } from '@app/shared/not-found/not-found.component';
+
+import { FallbackImageDirective } from '@app/common/directives/fallback-image.directive';
+import { createEmptyProduct, createEmptyProductPhysical, createEmptyProductShipping } from '../utils/empties.util';
+import { PropertyInterface } from '../interfaces/property.interface';
+import { GeneralCreateProductComponent } from '../components/general-create-product/general-create-product.component';
+import { PropertyCreateProductComponent } from '../components/property-create-product/property-create-product.component';
+import { ShippingCreateProductComponent } from '../components/shipping-create-product/shipping-create-product.component';
+import { GalleryCreateProductComponent } from '../components/gallery-create-product/gallery-create-product.component';
+import { VariationsCreateProductComponent } from '../components/variations-create-product/variations-create-product.component';
+import { GroupCreateProductComponent } from '../components/group-create-product/group-create-product.component';
+import { MenuCreateProductComponent } from '../components/menu-create-product/menu-create-product.component';
+import { CharacteristicCreateProductComponent } from '../components/characteristic-create-product/characteristic-create-product.component';
+import { ValidationPopoverComponent } from '@app/shared/validation-popover/validation-popover.component';
+import { showErrorsProduct } from '../constants/show-errors-product.constant';
+import { environment } from 'environments/environment.dev';
+import { ProductInterface } from '../interfaces/product.interface';
+import isEqual from 'lodash-es/isEqual';
+import { ModalExitComponent } from '@app/shared/modal-exit/modal-exit.component';
+import { ProductTabInterface } from '../interfaces/product-tab.interface';
+import { CategoryInterface } from '../interfaces/category.interface';
+import { SubcategoryInterface } from '../interfaces/subcategory.interface';
+import { TextareaAutoresizeDirective } from '@app/common/directives/textarea-autoresize.directive';
 
 @Component({
 	selector: 'app-create-product',
@@ -56,165 +54,68 @@ import { NotFoundComponent } from '@app/shared/not-found/not-found.component';
 		TopbarComponent,
 		RouterModule,
 		CommonModule,
-		TinymceEditorComponent,
 		NgSelectModule,
 		FormsModule,
-		TagifyInputComponent,
-		NgxCurrencyDirective,
-		IconTrashComponent,
-		UploadImagesComponent,
 		NgbTooltipModule,
-		IconImageComponent,
-		AlertComponent,
-		UploadImageComponent,
-		IconTrashComponent,
-		IconCheckComponent,
-		NotFoundComponent
+		FallbackImageDirective,
+		GeneralCreateProductComponent,
+		PropertyCreateProductComponent,
+		ShippingCreateProductComponent,
+		GalleryCreateProductComponent,
+		VariationsCreateProductComponent,
+		GroupCreateProductComponent,
+		MenuCreateProductComponent,
+		CharacteristicCreateProductComponent,
+		ValidationPopoverComponent,
+		ModalExitComponent,
+		TextareaAutoresizeDirective
 	],
 	schemas: [CUSTOM_ELEMENTS_SCHEMA],
 	templateUrl: './create-product.component.html',
 	styleUrl: './create-product.component.css',
 })
 export class CreateProductComponent {
-	public product: Product = {
-		visibility: visibilities[0].value,
-		status: statusProduct[0].value,
-		name: '',
-		type: 'Fisico',
-		slug: '',
-		description: '',
-		extract: '',
-		cover: '',
-		miniature: undefined as File | undefined,
-		unitOfMeasure: undefined,
-		condition: undefined,
-		warranty: undefined,
-		countryOfOrigin: undefined,
-		priceRegular: '',
-		priceDiscount: '',
-		minStock: '',
-		maxStock: '',
-		maxOrderLimit: '',
-		tags: [],
-		brandId: undefined,
-		categoryId: undefined,
-		subcategoryId: undefined,
-		isBestSeller: false,
-		isNewArrival: true,
-		isFeatured: false,
-		isLimitedEdition: false,
-		isPreOrder: false,
-		isExportable: false,
-		allowBackorder: false,
-		productGroupId: undefined
-	};
-
-	public errorsProduct: any = {
-		cover: [],
-		miniature: [],
-	};
-
-	public physical : PhysicalProduct= {
-		weightUnit: undefined,
-		dimensionUnit: undefined,
-		height: '',
-		width: '',
-		length: '',
-		weight: '',
-		isFragile: false,
-		isPerishable: false,
-		isEcoFriendly: false,
-		isBiodegradable: false,
-		isHazardous: false,
-		isRequiresRefrigeration: false,
-		isFlammable: false,
-		isRequiresAssembly: false,
-		material: undefined,
-		storageTempUnit: undefined,
-		minStorageTemp: '',
-		maxStorageTemp: ''
-	}
-	public shipping : ShippingProduct = {
-		packageType: undefined,
-		freeShipping: false,
-		pickupInStore: false,
-		specialInstructions: '',
-		handlingDays: ''
-	}
-
+	@ViewChild('characteristics') characteristics!: CharacteristicCreateProductComponent;
+	@ViewChild('gallery') gallery!: GalleryCreateProductComponent;
+	@ViewChild('variations') variations!: VariationsCreateProductComponent;
+	
+	public product: ProductInterface = createEmptyProduct();
+	private initialProduct = createEmptyProduct();
+	public physical : PhysicalProduct = createEmptyProductPhysical();
+	public shipping : ShippingProduct = createEmptyProductShipping();
+	public errorsProduct: any = {};
 	public variation = {
 		skuPattern: undefined,
 		name: ''
 	}
-
-	public filterGroup : string = '';
 	public labelHelper = productFormHelp;
 	private destroy$ = new Subject<void>();
 	public loadBtn = false;
-	public properties = environment.tinymceSettings == 'basic' ? basic_properties : full_properties;
-	public categories_ : any = [];
-	public visibilities_ : any = visibilities;
-	public statusProduct_ : any = statusProduct;
-	public packages_ : any = packages;
-	public subcategories_ : any = [];
-	public materials_ : any = materials;
-	public temperatures_ : any = temperatures;
-	public attributes_ = [];
-	public valuesAttribute_ = [];
-	public units_ = unitsOfMeasure;
-	public weightUnits_ = unitsOfMeasure.filter(item=> item.group == 'Peso');
-	public dimensiontUnits_ = unitsOfMeasure.filter(item=> item.group == 'Longitud');
-	public conditions_ = conditions;
-	public brands_: any = [];
-	public warranties_: any = warranties;
-	public categories: string = '';
+	public categories : CategoryInterface[] = [];
+	public visibilities : any = visibilities;
+	public statusProduct : any = statusProduct;
+	
+	public subcategories : any = [];
+	public brands: any = [];
 	public errorMsmSeverListCategories: string = '';
-	public errorMsmSeverListAttributes: string = '';
 	public errorMsmSeverListSubcategories: string = '';
 	public errorMsmSeverListBrands: string = '';
-	public errorMsmSeverListValuesAttribute: string = '';
 	public loadingBrands: boolean = true;
-	public loadingGroups: boolean = false;
-	public loadingAttributes: boolean = true;
 	public loadingCategories: boolean = true;
 	public loadingSubcategories: boolean = false;
-	public loadingValuesAttribute: boolean = false;
 	public whiteListLabels = labels;
 	public whiteListTags = [];
-	public countries = countries;
-	public currencyOptions = {
-		prefix: 'S/ ',
-		thousands: ',',
-		decimal: '.',
-		precision: 2,
-		align: 'left',
-		allowNegative: false,
-	};
-	public option = 1;
-  	public maskRef: any;
-	public arrProperties : Array<{attributeId: any, value: string | undefined, data: [], loading: boolean}> = [
-		{
-			attributeId: undefined,
-			value: undefined,
-			data: [],
-			loading: false
-		}
-	];
+	public tab : ProductTabInterface = 'general';
 	public attributes : any[] = [];
-	public groups : Array<any> = [];
-	public variations : Array<{name: string, skuPattern: any | undefined}> = [];
 	public images : Array<{file: File, preview: string, index: number}> = [];
 	public widthScreen : number = window.innerWidth;
-	public skuPatterns = skuPatterns;
-	public errorsVariation : {name?: string, skuPattern?: string} = {};
 	public errorMsmServer: string = '';
 	public msmErrorProduct: any = [];
-	public boolLabels = false;
-	private quill!: Quill;
 	public loadImport : boolean = false;
-	public arrDataSkull: Array<any> = Array.from({ length: 5 }, () => ({}));
 	public categorySelected : any = {};
-	@ViewChild('editor') editorRef!: ElementRef;
+	public formData = new FormData();
+	public showErrors = showErrorsProduct;
+	
 	@ViewChildren(NgSelectComponent) selects!: QueryList<NgSelectComponent>;
 	
 	constructor(
@@ -223,31 +124,44 @@ export class CreateProductComponent {
 		private brandService: BrandService,
 		private sanitizer: DomSanitizer,
 		private productService: ProductService,
-		private el: ElementRef,
+		private route: ActivatedRoute,
 		private _router: Router
 	) {}
 
 	ngOnInit(
 		
 	) {
+		const tab = this.route.snapshot.queryParamMap.get('tab');
+
+		const validTabs: ProductTabInterface[] = [
+			'general',
+			'characteristics',
+			'properties',
+			'shipping',
+			'images',
+			'variations',
+			'groups'
+		];
+
+		this.tab = validTabs.includes(tab as ProductTabInterface)
+			? (tab as ProductTabInterface)
+			: 'general';
+
 		this.init_categories();
 		this.init_brands();
-		this.init_groups();
-		this.visibilities_ = this.visibilities_.map((v:any) => ({
+		this.visibilities = this.visibilities.map((v:any) => ({
 			...v,
 			icon: this.sanitizer.bypassSecurityTrustHtml(v.icon)
 		}));
-		this.statusProduct_ = this.statusProduct_.map((v:any) => ({
+		this.statusProduct = this.statusProduct.map((v:any) => ({
 			...v,
 			icon: this.sanitizer.bypassSecurityTrustHtml(v.icon)
 		}));
+		
+	}
 
-		/* this.init_subcategories(productMock.categoryId);
-		this.product = productMock;
-		this.physical = PhysicalMock;
-		this.shipping = ShippingMock;
-		this.variations = VariationMock; */
-
+	hasPendingChanges(): boolean {
+		return !isEqual(this.product, this.initialProduct);
 	}
 
 	ngOnDestroy(): void {
@@ -255,16 +169,14 @@ export class CreateProductComponent {
 		this.destroy$.complete();
 	}
 
-	ngAfterViewInit(): void {
-		if (!this.editorRef) return;
+	@HostListener('window:beforeunload', ['$event'])
+	onBeforeUnload(event: BeforeUnloadEvent) {
+		const hasChanges = !isEqual(this.product, this.initialProduct);
+		if (hasChanges) {
+			event.preventDefault();
+			event.returnValue = '';
+		}
 
-		this.quill = new Quill(this.editorRef.nativeElement, {
-			theme: 'snow',
-		});
-
-		this.quill.on('text-change', () => {
-			this.product.description = this.quill.root.innerHTML;
-		});
 	}
 
 	@HostListener('window:resize', [])
@@ -276,7 +188,7 @@ export class CreateProductComponent {
 	init_categories() {
 		this.loadingCategories = true;
 		this.errorMsmSeverListCategories = '';
-		this.categories_ = [];
+		this.categories = [];
 		this.categoryService
 			.get_categories_by_select()
 			.pipe(
@@ -285,11 +197,11 @@ export class CreateProductComponent {
 				finalize(() => (this.loadingCategories = false))
 			)
 			.subscribe({
-				next: (next) => {
-					this.categories_ = next;
-					this.categories_ = this.categories_.map((v:any) => ({
+				next: (next: { data: CategoryInterface[], message: string}) => {
+					this.categories = next.data;
+					this.categories = this.categories.map((v:any) => ({
 						...v,
-						icon: this.sanitizer.bypassSecurityTrustHtml(v.icon)
+						icon: this.sanitizer.bypassSecurityTrustHtml(v.icon ? v.icon : '')
 					}));
 				},
 				error: (err) => {
@@ -299,53 +211,10 @@ export class CreateProductComponent {
 			});
 	}
 
-	init_groups(){
-		this.loadingGroups = true;
-		this.productService.get_groups_for_create_product(this.filterGroup)
-		.pipe(
-			takeUntil(this.destroy$),
-			withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
-			finalize(() => (this.loadingGroups = false))
-		)
-		.subscribe({
-			next: (next)=>{
-				console.log(next);
-				this.groups = next;
-			},
-			error: (error)=>{
-				console.log(error);
-				
-			}
-		});
-	}
-
-	init_attributes() {
-		this.loadingAttributes = true;
-		this.errorMsmSeverListAttributes = '';
-		this.attributes_ = [];
-		this.attributeService
-			.get_attributes_by_category(this.product.categoryId!)
-			.pipe(
-				takeUntil(this.destroy$),
-				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
-				finalize(() => (this.loadingAttributes = false))
-			)
-			.subscribe({
-				next: (next) => {
-					console.log(next);
-					this.attributes_ = next;
-				},
-				error: (err) => {
-					const error = err.error;
-					this.errorMsmSeverListAttributes = error.message;
-				},
-			});
-	}
-
 	init_brands() {
 		this.loadingBrands = true;
 		this.errorMsmSeverListBrands = '';
-		this.brands_ = [];
+		this.brands = [];
 		this.brandService
 			.get_brands_by_select()
 			.pipe(
@@ -355,7 +224,11 @@ export class CreateProductComponent {
 			)
 			.subscribe({
 				next: (next) => {
-					this.brands_ = next;
+					this.brands = next;
+					this.brands = this.brands.map((brand : any) => ({
+						...brand,
+						logoUrl: `${environment.s3_public_url}/brands/small/${brand.logoUrl}`,
+					}));
 				},
 				error: (err) => {
 					const error = err.error;
@@ -367,7 +240,7 @@ export class CreateProductComponent {
 	init_subcategories(id: string | undefined) {
 		this.loadingSubcategories = true;
 		this.errorMsmSeverListSubcategories = '';
-		this.subcategories_ = [];
+		this.subcategories = [];
 		this.categoryService
 			.get_subcategories_by_select(id!)
 			.pipe(
@@ -376,10 +249,9 @@ export class CreateProductComponent {
 				finalize(() => (this.loadingSubcategories = false))
 			)
 			.subscribe({
-				next: (next) => {
-					console.log(next);
-					this.subcategories_ = next;
-					this.subcategories_ = this.subcategories_.map((v:any) => ({
+				next: (next: {data: SubcategoryInterface[], message: string}) => {
+					this.subcategories = next.data;
+					this.subcategories = this.subcategories.map((v:any) => ({
 						...v,
 						icon: this.sanitizer.bypassSecurityTrustHtml(v.icon)
 					}));
@@ -391,109 +263,10 @@ export class CreateProductComponent {
 			});
 	}
 
-	init_valuesAttribute(id: string) {
-		this.loadingValuesAttribute = true;
-		this.errorMsmSeverListValuesAttribute = '';
-		this.valuesAttribute_ = [];
-		this.attributeService
-			.get_attributeValues_by_select(id)
-			.pipe(
-				takeUntil(this.destroy$),
-				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
-				finalize(() => (this.loadingValuesAttribute = false))
-			)
-			.subscribe({
-				next: (next) => {
-					console.log(next);
-					this.valuesAttribute_ = next;
-				},
-				error: (err) => {
-					const error = err.error;
-					this.errorMsmSeverListValuesAttribute = error.message;
-				},
-			});
-	}
-
-	get_valuesAttribute(id: any,idx: number) {
-		this.arrProperties[idx].loading = true;
-		this.attributeService
-			.get_attributeValues_by_select(id)
-			.pipe(
-				takeUntil(this.destroy$),
-				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
-				finalize(() => (this.arrProperties[idx].loading = false))
-			)
-			.subscribe({
-				next: (next) => {
-					console.log(next);
-					this.arrProperties[idx].data = next;
-					console.log(this.arrProperties);
-					
-				}
-			});
-	}
-
-	onSelectedBanner(image : {file: File, preview: string, index: number}){
-		this.product.cover = image.file.name;
-	}
-
 	onSelectCategory() {
-		this.categorySelected = this.categories_.find((item:any)=> item.id == this.product.categoryId);
-		console.log(this.categorySelected);
+		this.categorySelected = this.categories.find((item:any)=> item.id == this.product.categoryId);
 		this.product.subcategoryId = undefined;
 		this.init_subcategories(this.product.categoryId);
-		this.init_attributes();
-	}
-
-	onSelectAttributeProperty(idx: number){
-		console.log(this.arrProperties[idx]);
-		
-		this.arrProperties[idx].value = undefined;
-		this.get_valuesAttribute(this.arrProperties[idx]?.attributeId!,idx);	
-	}
-
-	onRemoveAttributeProperty(idx: number){
-		this.arrProperties.splice(idx,1)
-	}
-	
-	onRemoveVariation(idx: number){
-		this.variations.splice(idx,1)
-	}	
-
-	onSelectFiles(event: any){
-		this.images.push(...event);
-		this.images.forEach((element, index) => {
-			element.index = index;
-		});
-
-		setTimeout(() => {
-			refreshFsLightbox();
-		}, 50);
-	}
-
-
-
-	setOption(value: number) {
-		this.option = value;
-	}
-
-	onTagsChange = (tags: string[]) => this.product.tags = tags;
-	onContentChange = (content: string) => this.product.description = content;
-
-	onCreateVariation(){
-		this.errorsVariation = {};
-		
-		if (!this.variation.name)
-		this.errorsVariation.name = 'El nombre de la variación es requerido.';
-
-		if (Object.keys(this.errorsVariation).length > 0) return;
-		
-		this.variations.push({ ...this.variation });
-		this.variation.name = '';
-	}
-
-	removeImage(idx: number){
-		this.images.splice(idx,1)	
 	}
 
 	refreshCategories(){
@@ -509,27 +282,6 @@ export class CreateProductComponent {
 		this.init_brands();
 	}
 
-	refreshAttributes(){
-		this.init_attributes();
-	}
-
-	closeSelects() {
-		this.selects.forEach(select => select.close());
-	}
-	
-	addAttribute(){
-		this.arrProperties.push({
-			attributeId: undefined,
-			value: undefined,
-			data: [],
-			loading: false
-		});
-	}
-
-	onSelectGroup(id: string){
-		this.product.productGroupId = id;
-	}
-
 	importProduct(){
 		if(this.product.productGroupId){
 			this.loadImport = true;
@@ -543,15 +295,15 @@ export class CreateProductComponent {
 				next: (next)=>{
 					console.log(next);
 					this.init_subcategories(next.product.categoryId);
-					this.init_valuesAttribute(next.product.mainAttribute?.id!);
+					/* loadingValuesAttribute */
 					this.product = {
 						...this.product,  
 						...next.product, 
 					};
 
-					if (next.product.description) {
+					/* if (next.product.description) {
 						this.quill.root.innerHTML = next.product.description;
-					}
+					} */
 
 					this.physical = {
 						...this.physical,  
@@ -565,103 +317,136 @@ export class CreateProductComponent {
 		}
 	}
 
+	private appendIf(formData: FormData, key: string, value: any): void {
+		if (value !== undefined &&value !== null &&value !== '') {
+			formData.append(key, String(value));
+		}
+	}
 
-	create() {
-		const formData = new FormData();
+	private appendJsonIf(formData: FormData, key: string, value: any): void {
+		if (value !== undefined && value !== null) {
+			formData.append(key, JSON.stringify(value));
+		}
+	}
 
+	private appendProductData(formData: FormData): void {
+		
+		this.appendIf(formData, 'status', this.product.status);
+		this.appendIf(formData, 'visibility', this.product.visibility);
+		this.appendIf(formData, 'name', this.product.name);
+		this.appendIf(formData, 'type', this.product.type);
+		this.appendIf(formData, 'description', this.product.description);
+		this.appendIf(formData, 'extract', this.product.extract);
+		this.appendIf(formData, 'cover', this.product.cover);
+		this.appendIf(formData, 'miniature', this.product.miniature);
+		this.appendJsonIf(formData, 'unitOfMeasure', this.product.unitOfMeasure);
+		this.appendIf(formData, 'condition', this.product.condition);
+		this.appendIf(formData, 'warranty', this.product.warranty);
 
-		if(!this.physical.minStorageTemp) delete this.physical.minStorageTemp;
-		if(!this.physical.maxStorageTemp) delete this.physical.maxStorageTemp;
+		this.appendJsonIf(formData, 'countryOfOrigin', this.product.countryOfOrigin);
 
-		this.attributes = this.arrProperties
-		.filter((p: any) => p?.attributeId)  // <-- Filtra los inválidos
-		.map((p: any) => ({
-			attributeId: p.attributeId,
-			value: p.value?.value ?? null,
-		}));
-		console.log(this.product);
+		this.appendIf(formData, 'priceRegular', this.product.priceRegular);
+		this.appendIf(formData, 'priceDiscount', this.product.priceDiscount);
+		this.appendIf(formData, 'minStock', this.product.minStock);
+		this.appendIf(formData, 'maxStock', this.product.maxStock);
+		this.appendIf(formData, 'maxOrderLimit', this.product.maxOrderLimit);
+
+		this.appendJsonIf(formData, 'tags', this.product.tags);
+
+		this.appendIf(formData, 'brandId', this.product.brandId);
+		this.appendIf(formData, 'categoryId', this.product.categoryId);
+		this.appendIf(formData, 'subcategoryId', this.product.subcategoryId);
+		this.appendIf(formData, 'productGroupId', this.product.productGroupId);
+
+		this.appendIf(formData, 'isBestSeller', this.product.isBestSeller);
+		this.appendIf(formData, 'isNewArrival', this.product.isNewArrival);
+		this.appendIf(formData, 'isFeatured', this.product.isFeatured);
+		this.appendIf(formData, 'isLimitedEdition', this.product.isLimitedEdition);
+		this.appendIf(formData, 'isPreOrder', this.product.isPreOrder);
+		this.appendIf(formData, 'isExportable', this.product.isExportable);
+		this.appendIf(formData, 'allowBackorder', this.product.allowBackorder);
+
+		this.appendIf(formData, 'isDimensions', this.categorySelected.isDimensions);
+		this.appendIf(formData, 'isTemperature', this.categorySelected.isTemperature);
+		
+	}
+
+	private appendAttributesData(formData: FormData){
+		const attributes = this.characteristics?.getAttributesSelected()
+		.flatMap(group => group.attributes)
+		.filter(attr =>
+			Array.isArray(attr.attributeValueId) &&
+			attr.attributeValueId.length > 0
+		);
+
+		const data = attributes?.flatMap(attr =>
+		attr.attributeValueId.map((valueId: string) => ({
+			attributeId: attr.id,
+			attributeValueId: valueId,
+			value:
+			attr.attributeValues.find((v: any) => v.id === valueId)?.value ?? null,
+		}))
+		) ?? [];
+
+		formData.append('attributes', JSON.stringify(data));
+	}
+
+	private appendPhysicalData(formData: FormData): void {
 		console.log(this.physical);
-		console.log(this.attributes);
-
-		if(this.physical.height == null) this.physical.height = ''; 
-		if(this.physical.weight == null) this.physical.weight = ''; 
-		if(this.physical.width == null) this.physical.width = ''; 
-		if(this.physical.length == null) this.physical.length = ''; 
 		
-		
-		if(this.product.productGroupId)formData.append('productGroupId',this.product.productGroupId.toString());
-		formData.append('isDimensions',this.categorySelected?.isDimensions!?.toString());
-		formData.append('isMaterial',this.categorySelected?.isMaterial!?.toString());
-		formData.append('isTemperature',this.categorySelected?.isTemperature!?.toString());
-		formData.append('isConditiom',this.categorySelected?.isConditiom!?.toString());
-		formData.append('isWarranty',this.categorySelected?.isWarranty!?.toString());
-		formData.append('isCountryOfOrigin',this.categorySelected?.isCountryOfOrigin!?.toString());
-		
-		formData.append('name',this.product.name);
-		formData.append('type',this.product.type);
-		formData.append('status',this.product.status!);
-		formData.append('visibility',this.product.visibility);
-		formData.append('description',this.product.description);
-		formData.append('extract',this.product.extract);
-		if(this.product.unitOfMeasure != undefined)formData.append('unitOfMeasure',JSON.stringify(this.product.unitOfMeasure));
-		if(this.product.condition != undefined)formData.append('condition',this.product.condition!?.toString());
-		if(this.product.warranty != undefined)formData.append('warranty',this.product.warranty.toString());
-		if(this.product.countryOfOrigin != undefined)formData.append('countryOfOrigin',JSON.stringify(this.product.countryOfOrigin));
-		if(this.product.priceRegular != '')formData.append('priceRegular',this.product.priceRegular.toString());
-		if(this.product.priceDiscount != '')formData.append('priceDiscount',this.product.priceDiscount!?.toString());
-		if(this.product.minStock != '')formData.append('minStock',this.product.minStock!?.toString());
-		if(this.product.maxStock != '')formData.append('maxStock',this.product.maxStock!?.toString());
-		if(this.product.maxOrderLimit != '')formData.append('maxOrderLimit',this.product.maxOrderLimit!?.toString());
-		formData.append('tags',JSON.stringify(this.product.tags));
-		if(this.product.brandId != undefined)formData.append('brandId',this.product.brandId!);
-		if(this.product.categoryId != undefined)formData.append('categoryId',this.product.categoryId!);
-		if(this.product.subcategoryId != undefined)formData.append('subcategoryId',this.product.subcategoryId!);
-		formData.append('isBestSeller',this.product.isBestSeller.toString());
-		formData.append('isNewArrival',this.product.isNewArrival.toString());
-		formData.append('isFeatured',this.product.isFeatured.toString());
-		formData.append('isLimitedEdition',this.product.isLimitedEdition.toString());
-		formData.append('isPreOrder',this.product.isPreOrder.toString());
-		formData.append('isExportable',this.product.isExportable.toString());
-		formData.append('allowBackorder',this.product.allowBackorder.toString());
-		if (this.product.cover != undefined) formData.append('cover', this.product.cover);
-		if (this.product.miniature != undefined) formData.append('miniature', this.product.miniature);
+		this.appendIf(formData, 'weight', this.physical.weight);
+		this.appendIf(formData, 'height', this.physical.height);
+		this.appendIf(formData, 'width', this.physical.width);
+		this.appendIf(formData, 'length', this.physical.length);
+		this.appendJsonIf(formData, 'weightUnit', this.physical.weightUnit);
+		this.appendJsonIf(formData, 'dimensionUnit', this.physical.dimensionUnit);
+		this.appendIf(formData, 'isFragile', this.physical.isFragile);
+		this.appendIf(formData, 'isPerishable', this.physical.isPerishable);
+		this.appendIf(formData, 'isEcoFriendly', this.physical.isEcoFriendly);
+		this.appendIf(formData, 'isBiodegradable', this.physical.isBiodegradable);
+		this.appendIf(formData, 'isHazardous', this.physical.isHazardous);
+		this.appendIf(formData, 'isRequiresRefrigeration', this.physical.isRequiresRefrigeration);
+		this.appendIf(formData, 'isFlammable', this.physical.isFlammable);
+		this.appendIf(formData, 'isRequiresAssembly', this.physical.isRequiresAssembly);
+		this.appendIf(formData, 'minStorageTemp', this.physical.minStorageTemp);
+		this.appendIf(formData, 'maxStorageTemp', this.physical.maxStorageTemp);
+		this.appendJsonIf(formData, 'storageTempUnit', this.physical.storageTempUnit);
+		this.appendIf(formData, 'material', this.physical.material);
+	}
 
-		if(this.physical.weight != '')formData.append('weight',this.physical.weight.toString());
-		if(this.physical.weightUnit != undefined) formData.append('weightUnit',JSON.stringify(this.physical.weightUnit));
-		if(this.physical.height != '')formData.append('height',this.physical.height.toString());
-		if(this.physical.width != '')formData.append('width',this.physical.width.toString());
-		if(this.physical.length != '')formData.append('length',this.physical.length.toString());
-		if(this.physical.dimensionUnit != undefined) formData.append('dimensionUnit',JSON.stringify(this.physical.dimensionUnit));
-		formData.append('isFragile',this.physical.isFragile.toString());
-		formData.append('isPerishable',this.physical.isPerishable.toString());
-		formData.append('isEcoFriendly',this.physical.isEcoFriendly.toString());
-		formData.append('isBiodegradable',this.physical.isBiodegradable.toString());
-		formData.append('isHazardous',this.physical.isHazardous.toString());
-		formData.append('isRequiresRefrigeration',this.physical.isRequiresRefrigeration.toString());
-		formData.append('isFlammable',this.physical.isFlammable.toString());
-		formData.append('isRequiresAssembly',this.physical.isRequiresAssembly.toString());
-		if(this.physical.minStorageTemp)formData.append('minStorageTemp',this.physical.minStorageTemp!.toString());
-		if(this.physical.maxStorageTemp)formData.append('maxStorageTemp',this.physical.maxStorageTemp!.toString());
-		if(this.physical.storageTempUnit != undefined) if(this.physical.storageTempUnit)formData.append('storageTempUnit',JSON.stringify(this.physical.storageTempUnit));
-		if(this.physical.material != undefined) formData.append('material',this.physical.material.toString());
-
-		if(this.shipping.packageType != undefined)formData.append('packageType',this.shipping.packageType.toString());
-		if(this.shipping.handlingDays != undefined)formData.append('handlingDays',this.shipping.handlingDays.toString());
-		formData.append('freeShipping',this.shipping.freeShipping.toString());
-		formData.append('pickupInStore',this.shipping.pickupInStore.toString());
-		if(this.shipping.specialInstructions)formData.append('specialInstructions',this.shipping.specialInstructions.toString());
-
-		this.images.forEach((file: {file: File, preview: string, index: number}) => {
+	private appendGalleryData(formData: FormData){
+		const gallery = this.gallery?.getImagesSelected();
+		gallery.forEach((file: {file: File, preview: string, index: number}) => {
 			formData.append('gallery', file.file);
 		});
+	}
 
-		formData.append('attributes',JSON.stringify(this.attributes));
-		formData.append('variations',JSON.stringify(this.variations));
+	private appendShippingData(formData: FormData): void {
+		this.appendIf(formData, 'packageType', this.shipping.packageType);
+		this.appendIf(formData, 'handlingDays', this.shipping.handlingDays);
+		this.appendIf(formData, 'freeShipping', this.shipping.freeShipping);
+		this.appendIf(formData, 'pickupInStore', this.shipping.pickupInStore);
+		this.appendIf(formData, 'specialInstructions', this.shipping.specialInstructions);
+	}
 
-		const formDataObject = Object.fromEntries(formData.entries());
+	private appendVariationsData(formData: FormData): void {
+		const variations = this.variations?.getVariationsSelected();
+		this.appendJsonIf(formData, 'variations', variations);
+	}
+
+	create() {	
+		this.formData = new FormData();	
+		this.appendAttributesData(this.formData);
+		this.appendProductData(this.formData);
+		this.appendPhysicalData(this.formData);
+		this.appendShippingData(this.formData);
+		this.appendGalleryData(this.formData);
+		this.appendVariationsData(this.formData);
+
+		const formDataObject = Object.fromEntries(this.formData.entries());
 		console.log(formDataObject);
 		this.loadBtn = true;
-		this.productService.create_product(formData)
+		this.productService.create_product(this.formData)
 		.pipe(
 			withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
 			takeUntil(this.destroy$),
@@ -669,13 +454,12 @@ export class CreateProductComponent {
 		)
 		.subscribe({
 			next: (next) =>{
-				console.log(next);
+				this.errorsProduct = {};
+				toastr.success(next.message);
+				this._router.navigate(['/products/articles']);
 			},
 			error: (err) =>{
-				this.errorsProduct = {
-					cover: [],
-					miniature: [],
-				};
+				this.errorsProduct = {};
 				const error = err.error;
 				this.errorMsmServer = error.message || '¡Error desconocido!';
 				toastr.error(this.errorMsmServer);
@@ -688,6 +472,10 @@ export class CreateProductComponent {
 					};
 					this.msmErrorProduct = Object.values(this.errorsProduct).flat();
 					this.errorMsmServer = '';
+					for (const key in this.showErrors) {
+						this.showErrors[key as keyof typeof this.showErrors] =
+						!!this.errorsProduct?.[key]?.length;
+					}
 				}
 			}
 		})

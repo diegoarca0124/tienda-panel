@@ -1,11 +1,40 @@
 export const sortColumnsCollaborators = [
-  { name: "Predeterminado", value: "Predeterminado", icon: "bi bi-arrow-down-up" },
-  { name: "Nombres ASC", value: "name:asc", icon: "bi bi-sort-alpha-down" },
-  { name: "Nombres DES", value: "name:desc", icon: "bi bi-sort-alpha-up" },
+  {
+    name: "Predeterminado",
+    value: "Predeterminado",
+    icon: "swap-vertical-outline",
+  },
 
-  { name: "Email ASC", value: "email:asc", icon: "bi bi-sort-alpha-down" },
-  { name: "Email DES", value: "email:desc", icon: "bi bi-sort-alpha-up" },
+  {
+    name: "Nombres ASC",
+    value: "name:asc",
+    icon: "arrow-up-outline",
+  },
+  {
+    name: "Nombres DES",
+    value: "name:desc",
+    icon: "arrow-down-outline",
+  },
 
-  { name: "Documento ID ASC", value: "number_document:asc", icon: "bi bi-sort-numeric-down" },
-  { name: "Documento ID DES", value: "number_document:desc", icon: "bi bi-sort-numeric-up" },
+  {
+    name: "Email ASC",
+    value: "email:asc",
+    icon: "arrow-up-outline",
+  },
+  {
+    name: "Email DES",
+    value: "email:desc",
+    icon: "arrow-down-outline",
+  },
+
+  {
+    name: "Documento ID ASC",
+    value: "number_document:asc",
+    icon: "arrow-up-outline",
+  },
+  {
+    name: "Documento ID DES",
+    value: "number_document:desc",
+    icon: "arrow-down-outline",
+  },
 ];

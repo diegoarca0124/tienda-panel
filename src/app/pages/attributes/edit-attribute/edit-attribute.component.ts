@@ -1,8 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Attribute, Component, CUSTOM_ELEMENTS_SCHEMA, signal, WritableSignal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterModule } from '@angular/router';
-import { Attribute } from '@app/common/interface/attribute.interface';
 import { withMinLoadingTime } from '@app/common/interface/with-min-loading-time.interface';
 import { IconCheckComponent } from '@app/icons/icon-check/icon-check.component';
 import { AttributeService } from '@app/services/attribute.service';
@@ -13,42 +12,42 @@ import { NotFoundComponent } from '@app/shared/not-found/not-found.component';
 import { SidebarComponent } from '@app/shared/sidebar/sidebar.component';
 import { TopbarComponent } from '@app/shared/topbar/topbar.component';
 import { NgSelectModule } from '@ng-select/ng-select';
-import { catchError, finalize, map, Observable, of, Subject, switchMap, takeUntil, tap } from 'rxjs';
+import { catchError, finalize, forkJoin, map, Observable, of, Subject, switchMap, takeUntil, tap } from 'rxjs';
+import { AttributeInterface } from '../interfaces/attribute.interface';
+import { createEmptyAttribute } from '../utils/empties.util';
+import { ModalDeleteComponent } from '@app/shared/modal-delete/modal-delete.component';
+import { closeModal } from '@app/common/utils/close-modal.util';
+import { showErrorsAttribute } from '../constants/show-errors-attribute.constant';
+import { ValidationPopoverComponent } from '@app/shared/validation-popover/validation-popover.component';
+import { buildShowErrors } from '@app/common/utils/build-show.errors.util';
+import { TextFieldModule } from '@angular/cdk/text-field';
+import { TextareaAutoresizeDirective } from '@app/common/directives/textarea-autoresize.directive';
 declare const toastr: any;
 
 @Component({
 	selector: 'app-edit-attribute',
 	imports: [TopbarComponent, SidebarComponent, CommonModule, FormsModule, RouterModule, NgSelectModule, 
-		IconCheckComponent, NotFoundComponent, AlertComponent],
+		IconCheckComponent, NotFoundComponent, AlertComponent, ModalDeleteComponent, ValidationPopoverComponent, TextareaAutoresizeDirective],
 	templateUrl: './edit-attribute.component.html',
 	styleUrl: './edit-attribute.component.css',
+	schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class EditAttributeComponent {
+	public loadBtnDelete: WritableSignal<boolean> = signal(false);
 	public errorsAtribute: any = {};
 	private destroy$ = new Subject<void>();
 	public loadBtn = false;
 	public loadValueBtn = false;
-	public attribute: Attribute = {
-		name: '',
-		code: '',
-		unit: '',
-		categories: [],
-		values: [],
-	};
+	public attribute: AttributeInterface = createEmptyAttribute();
 	public msmErrorAttribute: any = [];
 	public loading: boolean = true;
 	public loadingValues: boolean = true;
-	public values: Array<{ value: string }> = [];
+	public values: Array<{ id: string, value: string }> = [];
 	public value: string = '';
 	public id: string = '';
-	public categories = [];
-	public categoriesSelected: any = [];
-	public errorMsmServerGetAttribute: string = '';
-	public errorMsmServerGetValues: string = '';
-	public errorMsmSeverListCategories: string = '';
-	public errorMsmSeverListValues: string = '';
-	public loadingCategories: boolean = true;
-	public errorMsmServer: string = '';
+	public idAttribute: string = '';
+	public showErrors = showErrorsAttribute;
+	public errorMsmServerGetAttribute : string = '';
 
 	constructor(
 		private _route: ActivatedRoute,
@@ -57,66 +56,42 @@ export class EditAttributeComponent {
 	) {}
 
 	ngOnInit() {
-		this._route.params.pipe(takeUntil(this.destroy$)).subscribe({
-			next: (next) => {
-				this.id = next['id'];
-				this.init_data();
-				this.init_categories();
-				this.init_values(this.id);
+		this._route.params
+		.pipe(
+			takeUntil(this.destroy$),
+			switchMap((params) => {
+				this.id = params['id'];
+				this.idAttribute = params['idAttribute'];
+				this.loading = true;
+				this.loadingValues = true;
+				return forkJoin({
+					next: this.attributeService.get_attribute(this.idAttribute),
+					values: this.attributeService.get_values_attribute(this.idAttribute)
+				}).pipe(
+					withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
+					finalize(() => {
+						this.loading = false;
+						this.loadingValues = false;
+					})
+				);
+			})
+		)
+		.subscribe({
+			next: ({ next, values }: any) => {
+				this.attribute = next.data;
+				this.values = values.data;
 			},
-			error: (error) => {},
+			error: (err) => {
+				const error = err.error;
+				this.errorMsmServerGetAttribute = error;
+			},
 		});
+
 	}
 
-	init_data() {
-		this.loading = true;
-		this.errorMsmServerGetAttribute = '';
-		this.attributeService
-			.get_attribute(this.id)
-			.pipe(
-				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
-				takeUntil(this.destroy$),
-				finalize(() => (this.loading = false))
-			)
-			.subscribe({
-				next: (next: any) => {
-					console.log(next);
-
-					this.attribute = next;
-					this.categoriesSelected = this.attribute.categories;
-				},
-				error: (err) => {
-					const error = err.error;
-					this.errorMsmServerGetAttribute = error;
-				},
-			});
-	}
-
-	init_categories() {
-		this.loadingCategories = true;
-		this.errorMsmSeverListCategories = '';
-		this.categoryService
-			.get_categories_by_select()
-			.pipe(
-				takeUntil(this.destroy$),
-				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
-				finalize(() => (this.loadingCategories = false))
-			)
-			.subscribe({
-				next: (next) => {
-					console.log(next);
-					this.categories = next;
-				},
-				error: (err) => {
-					const error = err.error;
-					this.errorMsmSeverListCategories = error;
-				},
-			});
-	}
 
 	init_values(id: string) {
 		this.loadingValues = true;
-		this.errorMsmSeverListValues = '';
 		this.attributeService
 			.get_values_attribute(id)
 			.pipe(
@@ -132,7 +107,6 @@ export class EditAttributeComponent {
 				},
 				error: (err) => {
 					const error = err.error;
-					this.errorMsmSeverListValues = error;
 				},
 			});
 	}
@@ -144,7 +118,7 @@ export class EditAttributeComponent {
 		this.attributeService
 			.add_value_attribute({
 				value: val,
-				attributeId: this.id,
+				attributeId: this.idAttribute,
 			})
 			.pipe(
 				takeUntil(this.destroy$),
@@ -152,16 +126,16 @@ export class EditAttributeComponent {
 				finalize(() => (this.loadValueBtn = false))
 			)
 			.subscribe({
-				next: (next) => {
-					this.values.push(next);
+				next: (next: { data: any, message: boolean}) => {
+					console.log(next);
+					
+					this.values.push(next.data);
 					this.value = '';
+					toastr.success(next.message);
 				},
 				error: (err) => {
-					console.log(err);
-
 					const error = err.error;
 					toastr.error(error.message || '¡Error desconocido!');
-
 					if (error.validation) {
 						this.errorsAtribute = error.validation;
 					}
@@ -171,40 +145,55 @@ export class EditAttributeComponent {
 
 	update() {
 		this.loadBtn = true;
-		this.attribute.categories = this.categoriesSelected;
 		if (!this.attribute.unit) delete this.attribute.unit;
-		this.errorMsmServer = '';
 		this.msmErrorAttribute = '';
-		this.errorsAtribute = {};
+		
+		this.attributeService.update_attribute(this.idAttribute, this.attribute)
+		.pipe(
+			withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
+			takeUntil(this.destroy$),
+			finalize(() => (this.loadBtn = false))
+		)
+		.subscribe({
+			next: (next: { data: any, message: boolean}) => {
+				console.log(next.data);
+				
+				this.errorsAtribute = {};
+				this.attribute = next.data;
+				toastr.success(next.message);
+			},
+			error: (err) => {
+				const error = err.error;
+				toastr.error(error.message || '¡Error desconocido!');
 
-		this.attributeService
-			.update_attribute(this.id, this.attribute)
-			.pipe(
-				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
-				takeUntil(this.destroy$),
-				finalize(() => (this.loadBtn = false))
-			)
-			.subscribe({
-				next: (next) => {
-					this.attribute = next;
-					this.categoriesSelected = this.attribute.categories;
-					toastr.success('Atributo actualizado correctamente.');
-				},
-				error: (err) => {
-					const error = err.error;
-					this.errorMsmServer = error.message || '¡Error desconocido!';
-					toastr.error(this.errorMsmServer);
-
-					if (error.validation) {
-						this.errorsAtribute = error.validation;
-						this.msmErrorAttribute =Object.values(this.errorsAtribute).flat();
-						
-					}
-				},
-			});
+				if (error.validation) {
+					this.errorsAtribute = error.validation;
+					this.msmErrorAttribute =Object.values(this.errorsAtribute).flat();
+					this.showErrors = buildShowErrors(this.showErrors,this.errorsAtribute);
+					this.showErrors.value = true;
+				}
+			},
+		});
 	}
 
-	remove(idx: number) {
-		
+	onDeleteValue(id: string) {
+		this.loadBtnDelete.set(true);
+		this.attributeService
+			.delete_value_attribute(id)
+			.pipe(
+				takeUntil(this.destroy$),
+				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
+				finalize(() => this.loadBtnDelete.set(false))
+			)
+			.subscribe({
+				next: (next: {data: any, message: string}) => {
+					this.values = this.values.filter(item=> item.id != id);
+					toastr.success(next.message);
+					closeModal('modalDelete-'+id);
+				},
+				error: (error: any) => {
+					toastr.error(error.error.message);
+				},
+			});
 	}
 }

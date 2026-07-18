@@ -4,5 +4,18 @@
 }
 
 .active{
-	background-color: #1B84FF !important
+	background-color: #151921 !important
+}
+
+.nav-link{
+    text-transform: capitalize !important;
+	border: 1px solid #ebebeb !important;
+}
+
+.nav-link.active{
+	color: #fff !important;
+}
+
+.editor-invalid {
+    border-radius: .475rem;
 }

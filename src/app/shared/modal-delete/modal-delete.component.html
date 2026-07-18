@@ -11,30 +11,39 @@
 			</div>
 			<div class="modal-body mx-5 mx-xl-18 pt-0 pb-15" style="overflow-x: hidden !important">
 				<div class="text-center mb-7 txt-body">
-					<h2 class="mb-5">{{ title }}</h2>
-					<div class="text-gray-600 fs-6" [innerHTML]="description"></div>
+					<h2 class="mb-5 fw-700">{{ title }}</h2>
+					<div class="text-gray-600 fs-6 fw-400 my-1" [innerHTML]="description"></div>
 				</div>
 
 				<div class="d-flex flex-center flex-row-fluid">
-					<button type="reset" class="btn btn-light me-3" data-bs-dismiss="modal">Cancelar</button>
+					<button type="reset" 
+					class="btn btn-sm btn-light-dark me-3 d-flex align-items-center justify-content-center gap-1 w-120px" 
+					data-bs-dismiss="modal"
+					>
+						<span>Cancelar</span>
+					</button>
 
 					<button
 						*ngIf="!loadBtnDelete()"
 						type="submit"
-						class="btn"
-						[ngClass]="{ 'btn-danger': textButton == 'Desactivar', 'btn-primary': textButton == 'Activar' }"
-						(click)="onActionConfirmed()"
-					>
-						{{ textButton }}
+						class="btn d-flex btn-sm align-items-center justify-content-center gap-1 w-120px"
+						[ngClass]="{
+							'btn-danger': textButton == 'Desactivar' || textButton == 'Eliminar',
+							'btn-dark': textButton == 'Activar'
+						}"
+						(click)="onActionConfirmed()">
+						<span>{{ textButton }}</span>
 					</button>
 					<button
-						[ngClass]="{ 'btn-danger': textButton == 'Desactivar', 'btn-primary': textButton == 'Activar' }"
+						[ngClass]="{
+							'btn-danger': textButton == 'Desactivar' || textButton == 'Eliminar',
+							'btn-dark': textButton == 'Activar',
+						}"
 						*ngIf="loadBtnDelete()"
-						class="btn cursor-pointer"
+						class="btn d-flex btn-sm align-items-center justify-content-center gap-1 cursor-pointer w-120px"
 						type="button"
 						disabled
 					>
-						<span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
 						<span role="status">Procesando...</span>
 					</button>
 				</div>

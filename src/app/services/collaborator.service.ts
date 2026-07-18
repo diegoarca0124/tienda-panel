@@ -1,9 +1,9 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Collaborator } from '@app/common/interface/collaborator.interface';
 import { environment } from 'environments/environment.dev';
 import { Observable } from 'rxjs/internal/Observable';
 import { AuthService } from './auth.service';
+import { CollaboratorInterface } from '@app/pages/users/collaborators/interfaces/collaborator.interface';
 
 @Injectable({
 	providedIn: 'root',
@@ -21,7 +21,7 @@ export class CollaboratorService {
 		private authsService: AuthService
 	) {}
 
-	create_collaborator(collaborator: Collaborator): Observable<any> {
+	create_collaborator(collaborator: CollaboratorInterface): Observable<any> {
 		return this.http.post(`${this.apiUrl}/collaborator/create_collaborator`, collaborator, { headers: this.getHeaders() });
 	}
 
@@ -35,7 +35,7 @@ export class CollaboratorService {
 		return this.http.get(`${this.apiUrl}/collaborator/get_collaborator/${id}`, { headers: this.getHeaders() });
 	}
 
-	update_collaborator(id: string, collaborator: Collaborator): Observable<any> {
+	update_collaborator(id: string, collaborator: CollaboratorInterface): Observable<any> {
 		return this.http.put(`${this.apiUrl}/collaborator/update_collaborator/${id}`, collaborator, { headers: this.getHeaders() });
 	}
 
@@ -45,5 +45,13 @@ export class CollaboratorService {
 
 	update_status_collaborators(data: {ids: Array<string>, status: boolean}): Observable<any> {
 		return this.http.post(`${this.apiUrl}/collaborator/update_status_collaborators`, data, { headers: this.getHeaders() });
+	}
+
+	export_collaborators(data: any): Observable<any> {
+		return this.http.post(`${this.apiUrl}/collaborator/export_collaborators`, data, { headers: this.getHeaders() });
+	}
+
+	validate_import_collaborators(data: any): Observable<any> {
+		return this.http.post(`${this.apiUrl}/collaborator/validate_import_collaborators`, data, { headers: this.getHeaders() });
 	}
 }

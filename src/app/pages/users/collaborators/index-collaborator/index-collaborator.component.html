@@ -7,15 +7,20 @@
 				<div id="kt_app_toolbar" class="app-toolbar py-3 py-lg-6">
 					<div id="kt_app_toolbar_container" class="app-container container-fluid d-flex flex-stack">
 						<div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
-							<h1 class="page-heading d-flex text-dark fw-bold fs-3 flex-column justify-content-center my-0">Colaboradores</h1>
+							<h1 class="page-heading d-flex text-gray-700 fs-3 flex justify-content-start my-0 align-items-center text-uppercase ls-1px fw-700">Colaboradores</h1>
 
-							<ul class="breadcrumb breadcrumb-separatorless fw-semibold fs-7 my-0 pt-1">
-								<li class="breadcrumb-item text-primary">Colaboradores</li>
+							<ul class="breadcrumb breadcrumb-separatorless fs-7 my-0 pt-1">
+								<li class="breadcrumb-item text-primary fw-600">Colaboradores</li>
 							</ul>
 						</div>
-						<div class="d-flex align-items-center gap-2 gap-lg-3">
-							<a [routerLink]="['/users/collaborators/create']" routerLinkActive="router-link-active" class="btn btn-sm fw-bold btn-primary">
-								Nuevo Colaborador
+						<div class="d-flex align-items-center gap-1 gap-lg-3">
+							<a
+								[routerLink]="['/users/collaborators/create']"
+								routerLinkActive="router-link-active"
+								class="btn btn-primary btn-sm d-flex align-items-center fw-semibold"
+							>
+								<i class="bi bi-person-plus me-2"></i>
+								<span>Nuevo colaborador</span>
 							</a>
 						</div>
 					</div>
@@ -25,337 +30,406 @@
 						<div class="row g-3 g-lg-4">
 							<div class="col-12">
 								<div class="d-flex justify-content-between align-items-center flex-nowrap gap-2 mt-5">
-									<div class="d-flex gap-2">
+									<div class="d-flex gap-2 align-items-end">
 										<div>
-											<label class="fs-7 text-gray-600 fw-500">Busqueda</label>
-											<div class="d-flex align-items-center position-relative">
-												<input
-													type="text"
-													class="form-control form-control-sm w-200px"
-													placeholder="Buscar colaborador"
-													name="filter"
-													[(ngModel)]="filter"
-													(keyup.ENTER)="onFilterOrStatusChange()"
-												/>
-												<i class="bi bi-search position-absolute cursor-pointer" style="right: 20px" (click)="onFilterOrStatusChange()"></i>
+											<div class="d-flex align-items-center gap-2">
+												<div class="position-relative">
+													<input
+														type="text"
+														class="form-control form-control-sm w-400px pe-10"
+														placeholder="Buscar colaborador"
+														name="filter"
+														[(ngModel)]="filter"
+														(keyup.enter)="redirect()"
+													/>
+
+													<i
+														class="bi bi-search position-absolute cursor-pointer"
+														style="right: 15px; top: 50%; transform: translateY(-50%)"
+														(click)="redirect()"
+													></i>
+												</div>
+
+												<button
+													type="button"
+													class="btn btn-sm btn-icon btn-light-primary d-flex align-items-center justify-content-center"
+													(click)="resetFilters()"
+													[disabled]="loading"
+												>
+													<span
+														*ngIf="loading"
+														class="spinner-border spinner-border-sm"
+														role="status"
+														aria-hidden="true"
+													></span>
+													<i
+														*ngIf="!loading"
+														class="bi bi-arrow-clockwise fs-5"
+													></i>
+												</button>
 											</div>
-										</div>
-										<div>
-											<label class="fs-7 text-gray-600 fw-500">Estado</label>
-											<ng-select
-												[items]="statusTable"
-												bindLabel="name"
-												bindValue="value"
-												name="status"
-												(change)="onFilterOrStatusChange()"
-												[(ngModel)]="status"
-												placeholder="Estado"
-												[clearable]="false"
-												[closeOnSelect]="true"
-												class="select-element-sm mb-1"
-												appendTo="body"
-												[searchable]="false"
-											>
-												<!-- Opción en el dropdown -->
-												<ng-template ng-option-tmp let-item="item">
-													<div class="d-flex align-items-center gap-2">
-													<span class="bullet bullet-dot h-10px w-10px" [ngClass]="'bg-' + item.color"></span>
-													<span>{{ item.name }}</span>
-													</div>
-												</ng-template>
-
-												<!-- Opción seleccionada en el input -->
-												<ng-template ng-label-tmp let-item="item">
-													<div class="d-flex align-items-center gap-2">
-													<span class="bullet bullet-dot h-10px w-10px" [ngClass]="'bg-' + item.color"></span>
-													<span>{{ item.name }}</span>
-													</div>
-												</ng-template>
-											</ng-select>
-										</div>
-										
-										<div>
-											<label class="fs-7 text-gray-600 fw-500">Orden</label>
-											<ng-select
-												[items]="sortColumns"
-												bindLabel="name"
-												bindValue="value"
-												name="sort"
-												(change)="onFilterOrStatusChange()"
-												[(ngModel)]="sort"
-												placeholder="Orden"
-												[clearable]="false"
-												[closeOnSelect]="true"
-												class="select-element-sm mb-1"
-												appendTo="body"
-												[searchable]="false"
-											>
-												<!-- Opción en el dropdown -->
-												<ng-template ng-option-tmp let-item="item">
-													<div class="d-flex align-items-center gap-2">
-														<i [class]="item.icon"></i>
-														<span>{{ item.name }}</span>
-													</div>
-												</ng-template>
-
-												<!-- Opción seleccionada en el input -->
-												<ng-template ng-label-tmp let-item="item">
-													<div class="d-flex align-items-center gap-2">
-													<i [class]="item.icon"></i>
-													<span>{{ item.name }}</span>
-													</div>
-												</ng-template>
-											</ng-select>
 										</div>
 									</div>
 									<div class="dropdown">
 										<button
-											class="btn btn-primary btn-sm dropdown-toggle my-1"
+											class="btn btn-dark btn-sm d-flex align-items-center gap-2 my-1"
 											type="button"
-											id="dropdownMenuButton"
 											data-bs-toggle="dropdown"
 											aria-expanded="false"
 										>
-											<i class="bi bi-sliders"></i> Opciones
+											<ion-icon name="settings-outline" class="fs-5"></ion-icon>
+											<span>Opciones</span>
+											<ion-icon name="chevron-down-outline" class="fs-6"></ion-icon>
 										</button>
-										<ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+										<ul class="dropdown-menu menu-state-bg-light-primary" aria-labelledby="dropdownMenuButton">
 											<li>
-												<a class="dropdown-item cursor-pointer" data-bs-toggle="modal" [attr.data-bs-target]="'#modalExport'">
-													<i class="bi bi-filetype-xls me-2"></i> Exportar XLS
+												<a class="dropdown-item d-flex align-items-center gap-2" 
+												[routerLink]="['/users/collaborators/export']">
+													<ion-icon name="document-outline"></ion-icon>
+													Exportar
 												</a>
 											</li>
 											<li>
-												<hr class="dropdown-divider" />
-											</li>
-											<li>
-												<a class="dropdown-item" href="#"> <i class="bi bi-folder-symlink me-2"></i> Importar</a>
-											</li>
-											<li *ngIf="selectedIds.size > 0">
-												<a class="dropdown-item cursor-pointer" data-bs-toggle="modal" [attr.data-bs-target]="'#modalMultipleActive'">
-													<i class="bi bi-check-circle me-2 text-primary"></i> Activar
-												</a>
-											</li>
-
-											<li *ngIf="selectedIds.size > 0">
-												<a class="dropdown-item cursor-pointer" data-bs-toggle="modal" [attr.data-bs-target]="'#modalMultipleDisabled'">
-													<i class="bi bi-x-circle me-2 text-danger"></i> Desactivar
+												<a class="dropdown-item d-flex align-items-center gap-2" 
+												[routerLink]="['/users/collaborators/import']" >
+													<ion-icon name="folder-open-outline"></ion-icon>
+													Importar
 												</a>
 											</li>
 										</ul>
 									</div>
 								</div>
+								
+								<div class="my-7">
+									<div class="filters-container">
+										<div class="filter-item">
+											<div class="d-flex flex-column mb-1 gap-1">
+												<div class="d-flex align-items-center">
+													<span class="text-gray-700 ls-1px" style="font-size: .7rem;">ESTADO</span>
+												</div>
+												<ng-select
+													[items]="statusTable"
+													bindLabel="name"
+													bindValue="value"
+													name="status"
+													[(ngModel)]="status"
+													placeholder="Estado"
+													[clearable]="false"
+													[closeOnSelect]="true"
+													class="select-label-sm mb-1"
+													appendTo="body"
+													[searchable]="false"
+												>
+													<!-- Opción en el dropdown -->
+													<ng-template ng-option-tmp let-item="item">
+														<div class="d-flex align-items-center gap-2">
+															<span class="bullet bullet-dot h-8px w-8px" [ngClass]="'bg-' + item.color"></span>
+															<span class="select-option">{{ item.name }}</span>
+														</div>
+													</ng-template>
 
-								<small class="text-primary cursor-pointer" (click)="resetFilters()">Restablecer Filtros</small>
+													<!-- Opción seleccionada en el input -->
+													<ng-template ng-label-tmp let-item="item">
+														<div class="d-flex align-items-center gap-2">
+															<span class="bullet bullet-dot h-8px w-8px" [ngClass]="'bg-' + item.color"></span>
+															<span class="select-option">{{ item.name }}</span>
+														</div>
+													</ng-template>
+												</ng-select>
+											</div>
+										</div>
+										<div class="filter-item">
+											<div class="d-flex flex-column mb-1 gap-1">
+												<div class="d-flex align-items-center">
+													<span class="text-gray-700 ls-1px" style="font-size: .7rem;">ORDEN</span>
+												</div>
+												<ng-select
+													[items]="sortColumns"
+													bindLabel="name"
+													bindValue="value"
+													name="sort"
+													[(ngModel)]="sort"
+													placeholder="Orden"
+													[clearable]="false"
+													[closeOnSelect]="true"
+													class="select-label-sm mb-1"
+													appendTo="body"
+													[searchable]="false"
+												>
+													<!-- Opción en el dropdown -->
+													<ng-template ng-option-tmp let-item="item">
+														<div class="d-flex align-items-center gap-2">
+															<ion-icon [name]="item.icon"></ion-icon>
+															<span class="select-option">{{ item.name }}</span>
+														</div>
+													</ng-template>
 
-								<div class="table-responsive my-7">
-									<table class="table table-bordered table-fixed modern-table mb-0" 
-									[ngClass]="{
-									'h-100': collaborators.length == 0 && !loading,
-									'table-hover': collaborators.length >= 1,
-									}">
-										<colgroup>
-											<col style="width: 20px;">
-											<col *ngFor="let col of columns" [ngClass]="col.classCol">
-											<col style="width: 38px">
-										</colgroup>
-										<thead style="background-color: #f8f8f8;">
+													<!-- Opción seleccionada en el input -->
+													<ng-template ng-label-tmp let-item="item">
+														<div class="d-flex align-items-center gap-2">
+															<ion-icon [name]="item.icon"></ion-icon>
+															<span class="select-option">{{ item.name }}</span>
+														</div>
+													</ng-template>
+												</ng-select>
+											</div>
+										</div>
+									</div>
+									<button
+										class="btn btn-xs bg-light-primary my-3 d-inline-flex align-items-center gap-2"
+										(click)="redirect()"
+										[disabled]="loading"
+									>
+										<ng-container *ngIf="!loading; else loadingTpl">
+											<ion-icon name="search-outline" class="fs-6 text-primary"></ion-icon>
+											<span class="text-primary">Buscar</span>
+										</ng-container>
+
+										<ng-template #loadingTpl>
+											<span class="spinner-border spinner-border-sm text-primary" aria-hidden="true"></span>
+											<span class="text-primary">Buscando...</span>
+										</ng-template>
+									</button>
+								</div>
+
+								<div class="table-wrapper  mb-7">
+									<table class="table custom-table align-middle mb-0">
+										<thead>
 											<tr>
-												<th></th>
-												<th
-													*ngFor="let col of columns">
-													<div class="d-flex justify-content-between align-items-center">
-														<span class="text-dark fw-600 fs-7 text-uppercase">{{ col.label }}</span>
+												<th class="fixed-xs text-center p-0" style="position: unset !important;">
+													<div class="dropdown">
+														<button 
+															class="btn btn-icon btn-dark h-25px w-25px"
+															type="button"
+															placement="top" 
+															tooltipClass="tooltip-dark"
+															container="body"
+															[disabled]="!hasSelectedCollaborators"
+															id="dropdownTable"
+															data-bs-toggle="dropdown"
+															aria-expanded="false">
+															<ion-icon name="settings-outline" class="fs-5"></ion-icon>
+														</button>
+														<ul class="dropdown-menu menu-state-bg-light-primary" 
+														aria-labelledby="dropdownTable">
+															<li>
+																<a class="dropdown-item cursor-pointer d-flex align-items-center gap-2 fs-7"
+																[class.disabled]="selectedIds.size === 0"
+																[attr.data-bs-toggle]="selectedIds.size > 0? 'modal': null"
+																[attr.data-bs-target]="selectedIds.size > 0? '#modalMultipleActive': null"
+																style="text-transform: capitalize !important;">
+																	<ion-icon name="checkmark-circle-outline" class="text-primary"></ion-icon>
+																	Activar
+																</a>
+															</li>
+															<li>
+																<a class="dropdown-item cursor-pointer d-flex align-items-center gap-2 fs-7"
+																[class.disabled]="selectedIds.size === 0"
+																[attr.data-bs-toggle]="selectedIds.size > 0? 'modal': null"
+																[attr.data-bs-target]="selectedIds.size > 0? '#modalMultipleDisabled': null"
+																style="text-transform: capitalize !important;">
+																	<ion-icon name="close-circle-outline" class="text-danger"></ion-icon>
+																	Desactivar
+																</a>
+															</li>
+														</ul>
 													</div>
 												</th>
-												<th>
+												<th class="flex-column">
+													Usuario
+												</th>
+												<th class="fixed-md">
+													Telefono
+												</th>
+												<th class="fixed-md">
+													Documento
+												</th>
+												<th class="fixed-sm">
+													Estado
+												</th>
+												<th class="fixed-xs text-center text-center">
+													
 												</th>
 											</tr>
 										</thead>
-
 										<tbody>
-											<!-- ======================= LOADING (SKELETON) ======================= -->
-											<ng-container *ngIf="loading">
-												<tr *ngFor="let s of arrDataSkull">
-													<td>
-														<div class="form-control-solid form-control-load" style="height:20px; width: 20px; border-radius: 3px"></div>
+											@if(loading){
+												<tr *ngFor="let item of [1,2,3,4,5,6]">
+													<td class="fixed-xs text-center p-0">
+														<div class="skeleton skeleton-check"></div>
 													</td>
-													<td class="col-w-xs-200 col-w-md-250 h-45px">
-														<div class="d-flex align-items-center gap-2">
-															<div class="form-control-solid form-control-load" style="width: 32px; height: 32px; border-radius: 5px"></div>
+													<td class="flex-col fw-medium">
+														<div class="d-flex align-items-center">
+															<div class="skeleton me-3" style="width:30px !important; height:30px;"></div>
 
-															<div class="d-flex flex-column gap-2" style="width: 100%; max-width: 250px">
-																<div class="form-control-solid form-control-load" style="height: 10px; width: 60%; border-radius: 3px"></div>
-																<div class="form-control-solid form-control-load" style="height: 9px; width: 40%; border-radius: 3px"></div>
+															<div class="d-flex flex-column gap-2" style="width:100%; max-width:250px">
+																<div class="skeleton skeleton-text" style="width:60%;"></div>
+																<div class="skeleton skeleton-text" style="width:40%;"></div>
 															</div>
 														</div>
 													</td>
-
-													<td class="col-w-xs-100 h-45px">
-														<div class="form-control-solid form-control-load" style="height: 13px; width: 80%; border-radius: 3px"></div>
+													<td class="fixed-md">
+														<div class="skeleton skeleton-badge"></div>
 													</td>
-
-													<td class="col-w-xs-100 h-45px">
-														<div class="form-control-solid form-control-load" style="height: 13px; width: 80%; border-radius: 3px"></div>
+													<td class="fixed-md">
+														<div class="skeleton skeleton-badge"></div>
 													</td>
-
-													<td class="col-w-xs-100 h-45px">
-														<div class="form-control-solid form-control-load" style="height: 20px; width: 70px; border-radius: 50rem"></div>
+													<td class="fixed-sm">
+														<div class="skeleton skeleton-badge"></div>
 													</td>
-
-													<td class="col-actions h-45px">
-														<div class="form-control-solid form-control-load" style="height: 30px; width: 35px; border-radius: 5px"></div>
+													<td class="fixed-xs text-center p-0">
+														<div class="skeleton skeleton-btn"></div>
 													</td>
 												</tr>
-											</ng-container>
-
-											<!-- ======================= DATOS ======================= -->
-											<ng-container *ngIf="!loading && collaborators.length >= 1">
+											}@else if (errorMsmServerListCollaborators) {
+												<tr>
+													<td colspan="6">
+														<app-not-found [error]="errorMsmServerListCollaborators"></app-not-found>
+													</td>
+												</tr>
+											}@else if (collaborators.length >= 1) {
 												<tr *ngFor="let item of collaborators">
-													<td>
-														<label class="form-check form-check-custom form-check-solid form-check-sm m-0 d-flex justify-content-center">
-															<input
-																class="form-check-input cursor-pointer"
-																type="checkbox"
-																[checked]="selectedIds.has(item.id!)"
-																(change)="toggleItem(item.id!, $event)"
-															/>
+													<td class="fixed-xs text-center p-0">
+														<label class="form-check form-check-customs form-check-sm m-0 d-flex align-items-center justify-content-center h-100">
+														<input
+															class="form-check-input cursor-pointer"
+															type="checkbox"
+															[checked]="selectedIds.has(item.id!)"
+															(change)="toggleItem(item.id!, $any($event.target).checked)"
+														/>
 														</label>
 													</td>
-													<td class="col-w-xs-200 col-w-md-250 h-45px">
-														<div class="d-flex align-items-center gap-2">
-														<div class="symbol me-3">
-															<span class="symbol-label fw-bold" style="height: 30px; width: 30px"
+													<td class="flex-col fw-medium">
+														<div class="d-flex align-items-center gap-2" style="min-width:0;">
+															<div class="symbol me-3" style="flex-shrink:0;">
+																<span class="symbol-label fw-bold"
+																style="height:30px; width:30px"
 																[ngClass]="getColorBasedOnLetter(item.names)">
-															{{ item.names.charAt(0).toUpperCase() }}
+																{{ item.names.charAt(0).toUpperCase() }}
+																</span>
+															</div>
+
+															<div class="d-flex flex-column" style="min-width:0;">
+																<a class="text-gray-700 fs-8 fw-500 text-truncate-1">
+																{{ item.fullnames ? item.fullnames : `${item.names} ${item.surname}` }}
+																</a>
+
+																<small class="text-gray-600 fw-400 text-truncate-1 fs-8">
+																{{ item.email }}
+																</small>
+															</div>
+
+														</div>
+													</td>
+													<td class="fixed-md">
+														<div class="d-flex flex-column">
+															<a class="text-gray-600 fw-400 fs-8 text-truncate-1">
+																({{item.prefix}}) {{item.phone}}
+															</a>
+														</div>
+													</td>
+													<td class="fixed-md">
+														<div class="d-flex flex-column">
+															<a class="text-gray-600 fw-400 fs-8 text-truncate-1">
+																{{item.number_document}}
+															</a>
+															<span class="text-gray-700 fs-8 fw-500 text-truncate-1">
+																{{item.type_document}}
 															</span>
 														</div>
-
-														<div class="d-flex flex-column">
-															<a class="text-decoration-none text-gray-700 fs-8 fw-700">{{ item.names }}</a>
-															<small class="text-gray-700">{{ item.email }}</small>
-														</div>
-														</div>
 													</td>
-
-													<td class="col-w-xs-100 h-45px">
-														<span class="fs-7 text-gray-700">{{ item.role ?? 'DEFAULT' }}</span>
-													</td>
-
-													<td class="col-w-xs-100 h-45px">
-														<span class="fs-7 text-gray-700">{{ item.number_document }}</span>
-													</td>
-
-													<td class="col-w-xs-100 h-45px">
+													<td class="fixed-sm">
 														<span class="badge rounded-pill text-gray-700 fw-800"
-															[ngClass]="{ 'bg-outline-danger': !item.status, 'bg-outline-success': item.status }">
+														[ngClass]="{ 'bg-outline-danger': !item.status, 'bg-outline-success': item.status }">
 														<span class="d-inline-block rounded-circle me-1"
-																style="width: 8px; height: 8px"
+																style="width: 6px; height: 6px"
 																[ngClass]="{ 'bg-danger': !item.status, 'bg-success': item.status }"></span>
 														{{ item.status ? 'Activo' : 'Inactivo' }}
 														</span>
 													</td>
-
-													<td class="col-actions h-45px">
+													<td class="fixed-xs text-center p-0">
 														<div class="dropdown">
-															<button class="icon-btn dropdown-toggle"
-															data-bs-toggle="dropdown"
-															aria-expanded="false">
+															<button 
+																class="icon-btn btn-action dropdown-toggle d-flex align-items-center justify-content-center mx-auto"
+																data-bs-toggle="dropdown">
 																<i class="bi bi-three-dots"></i>
 															</button>
-
 															<app-modal-delete
 																[id]="'modalDelete-' + item.id"
-																[title]="item.status ? 'Desactivar el registro' : 'Activar el registro'"
+																[title]="item.status 
+																	? 'Desactivar colaborador' 
+																	: 'Activar colaborador'"
 																[description]="
 																	item.status
-																		? `¿Estás seguro de que deseas desactivar a <b>${item.names} ${item.surname}</b>?`
-																		: `¿Estás seguro de que deseas activar a <b>${item.names} ${item.surname}</b>?`
+																		? `El colaborador <b>${item.names} ${item.surname}</b> dejará de tener acceso y quedará deshabilitado temporalmente.`
+																		: `El colaborador <b>${item.names} ${item.surname}</b> volverá a estar activo y podrá acceder nuevamente al sistema.`
 																"
 																[textButton]="item.status ? 'Desactivar' : 'Activar'"
-																(actionConfirmed)="setStatus(item.id!, item.status!)"
-																[loadBtnDelete]="loadBtnDelete"
-															>
+																(actionConfirmed)="onUpdateStatus(item.id!, item.status!)"
+																[loadBtnDelete]="loadBtnStatusSingle">
 															</app-modal-delete>
+															<div class="dropdown-menu menu-state-bg-light-primary" data-bs-display="static">
+																<a class="dropdown-item d-flex align-items-center gap-2 cursor-pointer"
+																[routerLink]="['/users/collaborators/' + item?.id + '/edit']">
+																	<ion-icon name="create-outline"></ion-icon>
+																	Editar
+																</a>
 
-															<div id="dropdown" class="dropdown-menu" data-bs-display="static">
-																<a class="dropdown-item cursor-pointer" [routerLink]="['/users/collaborators/' + item?.id + '/edit']">
-																	<i class="bi bi-pen me-2"></i>Editar
+																<a class="dropdown-item d-flex align-items-center gap-2 cursor-pointer"
+																(click)="onSendWtpp(item)">
+																	<ion-icon name="logo-whatsapp"></ion-icon>
+																	Enviar a WhatsApp
 																</a>
-																<a class="dropdown-item cursor-pointer" (click)="onSendWtpp(item)">
-																	<i class="bi bi-whatsapp me-2"></i>
-																	Enviar a whatsapp
-																</a>
-																<a class="dropdown-item cursor-pointer" (click)="onCopyClick(item)">
-																	<i class="bi bi-files me-2"></i>
+
+																<a class="dropdown-item d-flex align-items-center gap-2 cursor-pointer"
+																(click)="onCopyClick(item)">
+																	<ion-icon name="copy-outline"></ion-icon>
 																	Copiar
 																</a>
-																<a class="dropdown-item cursor-pointer" [routerLink]="['/users/collaborators/' + item?.id + '/logs']">
-																	<i class="bi bi-code me-2"></i>
+
+																<a class="dropdown-item d-flex align-items-center gap-2 cursor-pointer"
+																[routerLink]="['/users/collaborators/' + item?.id + '/logs']">
+																	<ion-icon name="document-text-outline"></ion-icon>
 																	Logs
 																</a>
-																<a class="dropdown-item cursor-pointer" [routerLink]="['/users/collaborators/' + item?.id + '/rols']">
-																	<i class="bi bi-shield-lock me-2"></i>
+
+																<a class="dropdown-item d-flex align-items-center gap-2 cursor-pointer"
+																[routerLink]="['/users/collaborators/' + item?.id + '/rols']">
+																	<ion-icon name="shield-checkmark-outline"></ion-icon>
 																	Permisos
 																</a>
-																<a class="dropdown-item cursor-pointer" data-bs-toggle="modal" [attr.data-bs-target]="'#modalDelete-' + item?.id">
-																	<i *ngIf="item?.status" class="bi bi-x-lg me-2"></i>
-																	<i *ngIf="!item?.status" class="bi bi-check2 me-2"></i>
+
+																<a class="dropdown-item d-flex align-items-center gap-2 cursor-pointer"
+																data-bs-toggle="modal"
+																[attr.data-bs-target]="'#modalDelete-' + item?.id">
+																	<ion-icon [name]="item?.status ? 'close-circle-outline' : 'checkmark-circle-outline'"></ion-icon>
 																	{{ item?.status ? 'Desactivar' : 'Activar' }}
 																</a>
+
 															</div>
 														</div>
 													</td>
-
 												</tr>
-											</ng-container>
-
-											<!-- ======================= SIN RESULTADOS ======================= -->
-											<tr *ngIf="!loading && collaborators.length == 0">
-												<td colspan="6">
-													<app-not-found [error]="{ message: 'No se encontraron registros que coincidan.', statusCode: 404 }"></app-not-found>
-												</td>
-											</tr>
-
-											<!-- ======================= ERROR ======================= -->
-											<tr *ngIf="!loading && errorMsmServerListCollaborators">
-												<td colspan="6">
-													<app-not-found [error]="errorMsmServerListCollaborators"></app-not-found>
-												</td>
-											</tr>
-
+											}@else {
+												<tr>
+													<td colspan="6">
+														<app-not-found [error]="{ message: 'No se encontraron registros.', statusCode: 404 }"></app-not-found>
+													</td>
+												</tr>
+											}
 										</tbody>
 
 									</table>
 								</div>
 
 								<div class="d-flex justify-content-between pb-10" *ngIf="collaborators.length >= 1">
-									<div class="d-flex align-items-center gap-2 text-gray-600">
+									<div class="d-flex align-items-center gap-2 text-gray-600 fs-8 text-uppercase ls-1px">
 										Ver
-										<ng-select
-											[items]="pageLimit"
-											bindLabel="name"
-											bindValue="value"
-											name="limit"
-											(change)="setLimit()"
-											[(ngModel)]="limit"
-											placeholder="Limite"
-											[clearable]="false"
-											[closeOnSelect]="true"
-											class="select-element-sm mb-1"
-											appendTo="body"
-											[searchable]="false"
-										>
-											<!-- Opción en el dropdown -->
-											<ng-template ng-option-tmp let-item="item">
-												<div class="option-item d-flex gap-3 align-items-center">
-													<div class="option-name">{{ item.name }}</div>
-												</div>
-											</ng-template>
-											<!-- Opción seleccionada en el input -->
-											<ng-template ng-label-tmp let-item="item">
-												{{ item.name }}
-											</ng-template>
-										</ng-select>
+										<select class="form-select form-select-sm w-auto" name="limit" [(ngModel)]="limit" (change)="onLimitChange()">
+											<option value="10">10</option>
+											<option value="20">20</option>
+											<option value="25">25</option>
+										</select>
 										Por pagina
 									</div>
 									<div class="d-flex align-items-center gap-3">
@@ -378,7 +452,7 @@
 	[description]="'El estado de los usuarios seleccionados será actualizado. Verifica tu selección antes de continuar, ya que este cambio se aplicará a todos.'"
 	[textButton]="'Activar'"
 	(actionConfirmed)="onUpdateStatusMultiple(true)"
-	[loadBtnDelete]="loadBtnMultipleStatus"
+	[loadBtnDelete]="loadBtnStatusMultiple"
 >
 </app-modal-delete>
 
@@ -388,6 +462,8 @@
 	[description]="'El estado de los usuarios seleccionados será actualizado. Verifica tu selección antes de continuar, ya que este cambio se aplicará a todos.'"
 	[textButton]="'Desactivar'"
 	(actionConfirmed)="onUpdateStatusMultiple(false)"
-	[loadBtnDelete]="loadBtnMultipleStatus"
+	[loadBtnDelete]="loadBtnStatusMultiple"
 >
 </app-modal-delete>
+
+

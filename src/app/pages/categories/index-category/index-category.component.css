@@ -2,3 +2,7 @@
 	position: fixed !important; /* o absolute, pero usando popper */
 	z-index: 1050; /* mayor que la tabla */
 }
+
+.ml-0{
+	margin-left: 0px !important;
+}

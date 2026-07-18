@@ -1,0 +1,240 @@
+<div class="app-page flex-column flex-column-fluid" id="kt_app_page">
+	<app-topbar></app-topbar>
+	<div class="app-wrapper flex-column flex-row-fluid" id="kt_app_wrapper">
+		<app-sidebar></app-sidebar>
+		<div class="app-main flex-column flex-row-fluid">
+			<div class="d-flex flex-column flex-column-fluid">
+				<div id="kt_app_toolbar" class="app-toolbar py-5 py-lg-6">
+					<div id="kt_app_toolbar_container" class="app-container container-fluid d-flex flex-stack">
+						<div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
+							<h1 class="page-heading d-flex text-gray-700 fs-3 flex justify-content-start my-0 align-items-center text-uppercase ls-1px fw-700">Grupos Atributos</h1>
+
+							<ul class="breadcrumb breadcrumb-separatorless fs-7 my-0 pt-1">
+								<li class="breadcrumb-item text-muted">
+									<a [routerLink]="['/products/attributes/groups']" class="text-muted text-hover-primary"> Grupos </a>
+								</li>
+								<li class="breadcrumb-item">
+									<span class="bullet bg-gray-400 w-5px h-2px"></span>
+								</li>
+								<li class="breadcrumb-item text-primary fw-600">Editar Grupo</li>
+							</ul>
+						</div>
+						<div class="d-flex align-items-center gap-2 gap-lg-3"></div>
+					</div>
+				</div>
+				<div class="app-content flex-column-fluid">
+					<div class="app-container container">
+
+						<div class="card mb-10">
+							<!--begin::Card header-->
+							<div class="card-header" style="background-color: #f1f5f9;">
+								<!--begin::Heading-->
+								<h4 class="card-title m-0 d-flex flex-column">
+									<span class="fs-5 fw-600">Editar Grupo</span>
+									<span class="text-gray-600 mt-1 fw-400 fs-0-9rem">
+										Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eligendi, quaerat..
+									</span>
+								</h4>
+								<!--end::Heading-->
+							</div>
+							<!--end::Card header-->
+
+							<!--begin::Card body-->
+							<ng-container>
+								<div class="card-body">
+									<ng-container *ngIf="loading">
+										<div class="col-lg-6">
+											<div class="d-flex flex-column mb-5 fv-row fv-plugins-icon-container">
+												<!--begin::Label-->
+												<label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2">
+													<span class="required">Nombre</span>
+												</label>
+												<div class="skeleton skeleton-input mb-1"></div>
+												<span class="fs-8 text-muted">Agrupa atributos relacionados.</span>
+											</div>
+										</div>
+										<div class="col-lg-12">
+											<div class="d-flex flex-column mb-5 fv-row fv-plugins-icon-container">
+												<!--begin::Label-->
+												<label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2">
+													<span class="required">Descripción</span>
+												</label>
+												<!--end::Label-->
+												<div class="skeleton skeleton-input mb-1" style="height: 79px !important;"></div>
+												<span class="fs-8 text-muted">Descripción breve del grupo.</span>
+											</div>
+										</div>
+										<div class="col-lg-12">
+											<div class="d-flex flex-column fv-row fv-plugins-icon-container">
+												<!--begin::Label-->
+												<label class="d-flex align-items-center justify-content-between fs-6 fw-semibold form-label mb-2 gap-5">
+													<span class="required">Categorías</span>
+													<small class="text-primary cursor-pointer" (click)="init_categories()">Recargar</small>
+												</label>
+												<div class="skeleton skeleton-input mb-1"></div>
+												<span class="fs-8 text-muted">Categorías donde esta disponible el atributo.</span>
+											</div>
+										</div>
+									</ng-container>
+									<ng-container *ngIf="!loading">
+										<ng-container *ngIf="!errorMsmServerGetGroupAttribute">
+											<div class="col-lg-6">
+												<div class="d-flex flex-column mb-5 fv-row fv-plugins-icon-container">
+													<div class="d-flex align-items-center justify-content-between mb-1">
+														<label class="required fw-500 text-gray-700 fs-6 mb-1">Nombre</label>
+														<small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="errorsGroupAtribute?.name" (click)="showErrors.name = !showErrors.name">
+															<ion-icon name="information-circle-outline" class="validation-icon"> </ion-icon>
+															{{ showErrors.name ? 'Ocultar errores' : 'Ver errores' }}
+														</small>
+													</div>
+													<input type="text" 
+													class="form-control mb-1" 
+													placeholder="Certificaciones Alimenticias"
+													name="name" 
+													[(ngModel)]="groupAttribute.name"
+													[ngClass]="{'is-invalid': errorsGroupAtribute?.name}">
+													<span class="fs-8 text-muted">Agrupa atributos relacionados.</span>
+													
+													<div class="validation-wrapper" [class.open]="showErrors.name">
+														<app-validation-popover 
+														[errors]="errorsGroupAtribute?.name"></app-validation-popover>
+													</div>
+												</div>
+											</div>
+											<div class="col-lg-12">
+												<div class="d-flex flex-column mb-5 fv-row fv-plugins-icon-container">
+													<div class="d-flex align-items-center justify-content-between mb-1">
+														<label class="required fw-500 text-gray-700 fs-6 mb-1">Descripción</label>
+												
+														<small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="errorsGroupAtribute?.description" (click)="showErrors.description = !showErrors.description">
+															<ion-icon name="information-circle-outline" class="validation-icon"> </ion-icon>
+															{{ showErrors.description ? 'Ocultar errores' : 'Ver errores' }}
+														</small>
+													</div>
+													<textarea
+														type="text"
+														class="form-control mb-1"
+														placeholder="Atributos de certificaciones alimenticias"
+														name="description"
+														[(ngModel)]="groupAttribute.description"
+														[ngClass]="{ 'is-invalid': errorsGroupAtribute?.description }"
+														textAreaAutoResize
+                										rows="3"
+													></textarea>										
+													<span class="fs-8 text-muted">Descripción breve del grupo.</span>
+												
+													<div class="validation-wrapper" [class.open]="showErrors.description">
+														<app-validation-popover 
+														[errors]="errorsGroupAtribute?.description"></app-validation-popover>
+													</div>
+												</div>
+											</div>
+											<div class="col-lg-12">
+												<div class="d-flex flex-column fv-row fv-plugins-icon-container">
+													<div class="d-flex align-items-center justify-content-between mb-1">
+														<label class="required fw-500 text-gray-700 fs-6 mb-1">Categoría</label>
+														
+														<div class="d-flex gap-3">
+															<small class="text-primary cursor-pointer" (click)="init_categories()">Recargar</small>
+															<small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="errorsGroupAtribute?.categories" (click)="showErrors.categories = !showErrors.categories">
+																<ion-icon name="information-circle-outline" class="validation-icon"> </ion-icon>
+																{{ showErrors.categories ? 'Ocultar errores' : 'Ver errores' }}
+															</small>
+														</div>
+													</div>
+													<div [ngClass]="{ 'is-invalid': errorsGroupAtribute?.categories }">
+														<ng-select
+															[items]="categories"
+															bindLabel="name"
+															bindValue="id"
+															[(ngModel)]="categoriesSelected"
+															[multiple]="true"
+															placeholder="Selecciona categorías"
+															[clearable]="false"
+															[closeOnSelect]="false"
+															class="select-element mb-1"
+															appendTo="body"
+															[loading]="loadingCategories"
+															[disabled]="loadingCategories"
+														>
+															<!-- Opción en el dropdown -->
+															<ng-template ng-option-tmp let-item="item">
+																{{ item.name }}
+															</ng-template>
+
+															<!-- Opción seleccionada en el input -->
+															<ng-template ng-label-tmp let-item="item">
+																{{ item.name }}
+															</ng-template>
+
+															<ng-template ng-loading-text>
+																<div class="spinner-container">
+																	<span class="spinner-border spinner-border-sm"></span>
+																</div>
+															</ng-template>
+														</ng-select>
+													</div>
+													<span class="fs-8 text-muted">Categorías donde esta disponible el atributo.</span>
+												
+													<div class="validation-wrapper" [class.open]="showErrors.categories">
+														<app-validation-popover 
+														[errors]="errorsGroupAtribute?.categories"></app-validation-popover>
+													</div>
+												</div>
+											</div>
+										</ng-container>
+										<ng-container *ngIf="errorMsmServerGetGroupAttribute">
+											<app-not-found [error]="errorMsmServerGetGroupAttribute"></app-not-found>
+										</ng-container>
+										
+									</ng-container>
+								</div>
+								<div class="card-footer"  style="background-color: #f1f5f9;">
+
+									<button
+										class="btn btn-sm btn-primary my-1 cursor-pointer d-flex align-items-center justify-content-center gap-1"
+										[disabled]="loading || loadBtn || errorMsmServerGetGroupAttribute"
+										(click)="!loading && !loadBtn && !errorMsmServerGetGroupAttribute && update()"
+										type="button"
+									>
+										<ng-container *ngIf="loadBtn">
+											<span class="spinner-border spinner-border-sm me-2"
+												aria-hidden="true">
+											</span>
+											<span role="status">Procesando...</span>
+										</ng-container>
+
+										<ng-container *ngIf="!loadBtn">
+											<i class="bi bi-collection"></i>
+											Actualizar grupo
+										</ng-container>
+									</button>
+								</div>
+							</ng-container>
+						</div>
+
+						<div class="d-flex flex-column w-100 mb-10">
+							<ng-container *ngIf="!loading">
+								<ng-container *ngIf="!errorMsmServerGetGroupAttribute">
+									<div class="d-flex gap-2">
+										<small class="text-gray-700 fw-600 fs-8"> Creación: </small>
+										<small class="text-muted fs-8">{{ groupAttribute.createdAt | date: 'medium' }}</small>
+									</div>
+									<div class="d-flex gap-2">
+										<small class="text-gray-700 fw-600 fs-8"> Actualización: </small>
+										<small class="text-muted fs-8">{{ groupAttribute.updatedAt | date: 'medium' }}</small>
+									</div>
+									<div class="d-flex gap-2">
+										<small class="text-gray-700 fw-600 fs-8"> Estado: </small>
+										<small class="text-muted fs-8">{{ groupAttribute.statusAt | date: 'medium' }}</small>
+									</div>
+								</ng-container>
+							</ng-container>
+						</div>
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

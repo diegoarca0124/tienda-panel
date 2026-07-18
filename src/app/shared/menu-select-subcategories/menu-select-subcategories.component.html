@@ -1,0 +1,168 @@
+<div class="d-flex flex-column justify-content-start mb-1 gap-1">
+  <div class="d-flex align-items-center">
+    <span class="text-gray-700 ls-1px" style="font-size: .7rem;">SUBCATEGORÍA</span>
+  </div>
+  <div class="dropdown">
+    <label
+      #trigger
+      readonly
+      data-bs-toggle="dropdown"
+      aria-expanded="false"
+      [ngClass]="{'form-control-sm': sizeClass === 'sm'}"
+      class="form-control dropdown-toggle cursor-pointer custom-trigger d-flex align-items-center position-relative"
+      placement="top"
+      [ngbTooltip]="getSelectedNames()"
+      tooltipClass="tooltip-dark"
+    >
+
+      <ng-container *ngIf="selectedItems.length > 0; else emptyState">
+        <div class="selected-container">
+          @for (item of selectedItems.slice(0, 4); track item; let last = $last) {
+            <div class="selected-item">
+              <small>
+                {{ item.name }}@if (!last) { - }
+              </small>
+            </div>
+          }
+
+          @if (selectedItems.length > 4) {
+            <span
+              class="badge bg-light text-dark position-absolute"
+              style="background-color: #f1f5f9 !important; right: 10px;"
+            >
+              +{{ selectedItems.length - 4 }}
+            </span>
+          }
+        </div>
+      </ng-container>
+
+      <ng-template #emptyState>
+        <span class="placeholder-text">
+          {{ placeholder }}
+        </span>
+      </ng-template>
+    </label>
+    
+    <div
+      id="dropdown"
+      class="dropdown-menu"
+      data-bs-display="static"
+      data-bs-auto-close="outside"
+      (click)="$event.stopPropagation()"
+    >
+
+      <!-- HEADER -->
+      <div class="dropdown-header-custom p-4">
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+
+          <div class="d-flex flex-column">
+            <span class="text-uppercase fs-6 text-gray-800 fw-700 ls-1px">
+              {{title}}
+            </span>
+            <small class="dropdown-subtitle text-gray-600">
+              Seleccion de subcategoría
+            </small>
+          </div>
+
+          <button
+              type="button"
+              class="btn-refresh"
+              (click)="initSubcategories()"
+              [disabled]="loadingSubcategories">
+
+              @if (loadingSubcategories) {
+                  <span class="spinner-border spinner-border-sm text-primary" role="status"></span>
+              } @else {
+                  <i class="bi bi-arrow-clockwise text-primary"></i>
+              }
+          </button>
+
+        </div>
+
+        <div class="position-relative">
+
+          <input
+            type="text"
+            class="form-control form-control-sm pe-5 dropdown-search custom-placeholder"
+            [placeholder]="placeholder"
+            [(ngModel)]="filter"
+            (keyup)="onFilterSubcategories()"
+          />
+
+          <i
+            class="bi bi-search dropdown-search-icon"
+            (click)="onFilterSubcategories()"
+          ></i>
+
+        </div>
+
+      </div>
+
+      <!-- ITEMS -->
+      <div class="items-container" >
+        <ng-container *ngIf="loadingSubcategories">
+          <div
+          class="dropdown-item-custom d-flex align-items-center"
+          *ngFor="let item of [1,2,3,4,5,6]" style="height: 40px !important;width: 100% !important;">
+              <div class="d-flex justify-content-start align-items-center" style="width: 100% !important">
+                  <div class="me-4">
+                      <div class="skeleton skeleton-check" style="width: 14.29px !important; height: 14.29px !important;"></div>
+                  </div>
+                  <div class="skeleton skeleton-text" style="width: 40% !important;"></div>
+              </div>
+          </div>
+
+        </ng-container>
+        <ng-container *ngIf="!loadingSubcategories">
+          <ng-container *ngIf="displaySubcategories.length >= 1">
+            <div
+              class="dropdown-item-custom d-flex justify-content-between mb-0"
+              *ngFor="let item of displaySubcategories"
+              style="height: 40px !important;"
+            >
+              <label class="form-check form-check-custom form-check-solid m-0 cursor-pointer">
+                <input
+                  class="form-check-input me-2"
+                  type="checkbox"
+                  [(ngModel)]="item.checked"
+                  [checked]="item.checked"
+                  style="border: 1px dashed #ccc;"
+                >
+                <small class="form-check-label text-gray-700">
+                  <strong>{{item.prefix}}</strong> - {{item.name}}
+                </small>
+              </label>
+            </div>
+          </ng-container>
+          <ng-container *ngIf="displaySubcategories.length == 0">
+            <div class="empty-state p-5 text-center">
+              <span class="text-gray-600 fs-7">No se encontraron resultados.</span>
+            </div>
+          </ng-container>
+        </ng-container>
+      </div>
+      <!-- FOOTER -->
+      <div class="dropdown-footer p-4">
+          <div class="d-flex justify-content-end gap-2">
+              <button
+              [disabled]="loadingSubcategories"
+              class="btn btn-sm btn-bg-light btn-icon-secondary text-gray-700 d-flex align-items-center gap-1 px-4 py-2 fs-8"
+              (click)="!loadingSubcategories ? clearSelection() : null"
+              style="border: 1px solid #e2e1e6 !important;background-color: #fff !important;"
+              >
+                  Limpiar
+              </button>
+              <button
+              class="btn btn-sm btn-dark d-flex align-items-center px-4 py-2 fs-8"
+              [disabled]="loadingSubcategories"
+              (click)="!loadingSubcategories ? confirmSelection() : null"
+              >
+                  Confirmar
+              </button>
+          </div>
+      </div>
+
+    </div>
+  </div>
+</div>

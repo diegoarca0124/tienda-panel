@@ -1,0 +1,42 @@
+export interface ProductInterface {
+	id?: string;
+	status?: string;
+	visibility: string;
+	name: string;
+	type: string; //Fisico  | Digital | Servicio
+	slug?: string;
+	quality: number ;
+	description: string;
+	extract: string;
+	cover: string;
+	miniature: any;
+	cover_preview?: string;
+	unitOfMeasure: string | undefined;
+	condition: string | undefined;
+	warranty: string | undefined;
+	countryOfOrigin?: any;
+	priceRegular: any;
+	priceDiscount?: any;
+	minStock?: number | string,
+	maxStock?: number | string,
+	maxOrderLimit?: number | string,
+	tags: string[];
+	quality_label: string,
+	brandId: string | undefined;
+	categoryId: string | undefined;
+	subcategoryId: string | undefined;
+	isBestSeller: boolean,
+	isNewArrival: boolean,
+	isFeatured: boolean,
+	isLimitedEdition: boolean,
+	isPreOrder: boolean,
+	isExportable: boolean,
+	allowBackorder: boolean,
+	productGroupId: string | undefined,
+	subcategory?: any;
+	category?: any;
+	brand?: any;
+	createdAt?: Date;
+	updatedAt?: Date;
+	statusAt?: Date;
+}

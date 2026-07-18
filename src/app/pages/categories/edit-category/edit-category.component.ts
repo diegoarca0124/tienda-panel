@@ -1,11 +1,7 @@
-import { Component, ElementRef, signal, ViewChild, WritableSignal } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, ElementRef, signal, ViewChild, WritableSignal } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { Category } from '@app/common/interface/category.interface';
 import { CategoryService } from '@app/services/category.service';
 import { finalize, Observable, Subject, switchMap, takeUntil, tap } from 'rxjs';
-import { EditorState } from '@codemirror/state';
-import { EditorView, basicSetup } from 'codemirror';
-import { html } from '@codemirror/lang-html';
 import { TopbarComponent } from '@app/shared/topbar/topbar.component';
 import { SidebarComponent } from '@app/shared/sidebar/sidebar.component';
 import { FormsModule } from '@angular/forms';
@@ -14,52 +10,47 @@ import { withMinLoadingTime } from '@app/common/interface/with-min-loading-time.
 import { GLOBAL } from '@app/services/GLOBAL';
 import { NotFoundComponent } from '@app/shared/not-found/not-found.component';
 import { ModalDeleteComponent } from '@app/shared/modal-delete/modal-delete.component';
-import { Subcategory } from '@app/common/interface/subcategory.interface';
 import { DomSanitizer } from '@angular/platform-browser';
 import { SafeHtmlPipe } from '../../../common/pipes/safe-html.pipe';
 import { closeModal } from '@app/common/utils/close-modal.util';
 import { AlertComponent } from '@app/shared/alert/alert.component';
 declare const toastr: any;
-declare const $: any;
-import { TextFieldModule } from '@angular/cdk/text-field';
+import { IMaskModule } from 'angular-imask';
+import { createEmptyCategory, createEmptySubcategory } from '../utils/empties.util';
+import { CategoryInterface } from '../interfaces/category.interface';
+import { SubcategoryInterface } from '../interfaces/subcategory.interface';
+import { showErrorsCategory } from '../constants/show-errors-category.constant';
+import { ValidationPopoverComponent } from '@app/shared/validation-popover/validation-popover.component';
+import { showErrorsSubcategory } from '../constants/show-errors-subcategory.constant';
+import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
+import { MonacoOptions } from '../constants/monaco-options.constant';
+import { InputSvgComponent } from '@app/shared/input-svg/input-svg.component';
+import { PadCodePipe } from "../../../common/pipes/pad-code.pipe";
+import { TextareaAutoresizeDirective } from '@app/common/directives/textarea-autoresize.directive';
+import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
 	selector: 'app-edit-category',
-	imports: [TopbarComponent, SidebarComponent, FormsModule, CommonModule, RouterModule, NotFoundComponent, ModalDeleteComponent, SafeHtmlPipe, AlertComponent, TextFieldModule],
+	imports: [TopbarComponent, SidebarComponent, FormsModule, CommonModule, RouterModule, NotFoundComponent, ModalDeleteComponent, SafeHtmlPipe, AlertComponent, TextareaAutoresizeDirective, IMaskModule, ValidationPopoverComponent, InputSvgComponent, PadCodePipe, NgbTooltipModule],
 	templateUrl: './edit-category.component.html',
 	styleUrl: './edit-category.component.css',
+	schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class EditCategoryComponent {
 	@ViewChild('editorContainer', { static: true }) editorContainer!: ElementRef;
 	public loadBtnMultipleStatus: WritableSignal<boolean> = signal(false);
-	editorView!: EditorView;
 	private destroy$ = new Subject<void>();
 	public loadBtn = false;
 	public loadBtnSubcat = false;
 	public errorsCategory: any = {};
 	public errorsSubcategory: any = {};
-	public category: Category = {
-		name: '',
-		slug: '',
-		icon: '',
-		description: '',
-		isDimensions: false,
-		isCharacteristics: false,
-		isConditiom: false,
-		isWarranty: false,
-		isCountryOfOrigin: false,
-		isMaterial: false,
-		isTemperature: false,	
-	};
-	public subcategory: Subcategory = {
-		name: '',
-		icon: '',
-		categoryId: '',
-	};
+	public category: CategoryInterface = createEmptyCategory();
+	public subcategory: SubcategoryInterface = createEmptySubcategory();
 	public id: string = '';
 	public loading = true;
 	public loadingSubcategories = true;
-	public subcategories: any = [];
+	public subcategories: SubcategoryInterface[] = [];
 	public msmErrorUpdateCategory : any= [];
 	public msmErrorCreateSubcategory : any= [];
 	public msmErrorUpdateSubcategory : any= [];
@@ -68,13 +59,19 @@ export class EditCategoryComponent {
 	public arrDataSkull: Array<any> = Array.from({ length: 5 }, () => ({}));
 	public loadBtnDelete: WritableSignal<boolean> = signal(false);
 	public typeForm: 'create' | 'edit' = 'create';
-	public errorMsmServer: string = '';
 	public option = 1;
 	public selectedIds = new Set<string>();
 	public columns = [
 		{ key: 'name', label: 'Subcategoría', classCol: 'col-w-xs-200 col-w-md-250' },
 		{ key: 'status', label: 'Estado', classCol: 'col-w-xs-200 col-w-md-250' },
 	];
+	public prefixMask = {
+		mask: /^[A-Z]{0,3}$/,
+		prepare: (str: string) => str.toUpperCase()
+	};
+	public showErrorsCategory = showErrorsCategory;
+	public showErrorsSubcategory = showErrorsSubcategory;
+	public editorOptions = MonacoOptions;
 
 	constructor(
 		private categoryService: CategoryService,
@@ -84,23 +81,35 @@ export class EditCategoryComponent {
 	) {}
 
 	ngOnInit() {
-		this._route.params
-			.pipe(
-				takeUntil(this.destroy$),
-				switchMap((params) => {
-					this.id = params['id'];
-					return this.init_data(this.id); // devolvemos el observable
-				}),
-				switchMap(() => this.init_subcategories(this.id))
-			)
-			.subscribe({
-				next: (subcategories) => {
-					console.log('Subcategorías cargadas:', subcategories);
-				},
-				error: (err) => {
-					console.error(err);
-				},
-			});
+		this._route.paramMap
+		.pipe(
+			takeUntil(this.destroy$),
+			switchMap((params) => {
+				this.id = params.get('id')!;
+				const option = this._route.snapshot.queryParamMap.get('option');
+				if (!option) {
+					this.option = 1;
+
+					this._router.navigate([], {
+						relativeTo: this._route,
+						queryParams: { option: 1 },
+						queryParamsHandling: 'merge',
+						replaceUrl: true,
+					});
+				} else {
+					this.option = Number(option);
+				}
+
+				return this.initData(this.id);
+			}),
+			switchMap(() => this.initSubcategories$(this.id))
+		)
+		.subscribe({
+        	error: () => {
+			
+			}
+		});
+
 	}
 
 	ngOnDestroy(): void {
@@ -110,9 +119,14 @@ export class EditCategoryComponent {
 
 	setOption(value: number) {
 		this.option = value;
+		this._router.navigate([], {
+			relativeTo: this._route,
+			queryParams: { option: value },
+			queryParamsHandling: 'merge',
+		});
 	}
 
-	init_data(id: string): Observable<Category> {
+	initData(id: string): Observable<any> {
 		this.loading = true;
 		this.errorMsmServerGetCategory = '';
 
@@ -120,11 +134,11 @@ export class EditCategoryComponent {
 			withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
 			finalize(() => (this.loading = false)),
 			tap({
-				next: (next) => {
-					this.category = next;
+				next: (next: {data: CategoryInterface, message: string}) => {
+					this.category = next.data;
 					this.subcategory.categoryId = id;
 				},
-				error: (err) => {
+				error: (err: HttpErrorResponse) => {
 					const error = err.error;
 					this.errorMsmServerGetCategory = error;
 				},
@@ -132,17 +146,20 @@ export class EditCategoryComponent {
 		);
 	}
 
-	init_subcategories(id: string): Observable<Subcategory[]> {
+	initSubcategories$(id: string): Observable<{ data: SubcategoryInterface[], message: string}> {
 		this.loadingSubcategories = true;
 		this.errorMsmServerGetSubcategory = '';
 		return this.categoryService.get_subcategories(id).pipe(
 			withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
 			finalize(() => (this.loadingSubcategories = false)),
 			tap({
-				next: (next) => {
-					this.subcategories = next;
+				next: (next: { data: SubcategoryInterface[], message: string}) => {
+					this.subcategories = next.data.map((i) => ({
+						...i,
+						safeIcon: this.sanitizer.bypassSecurityTrustHtml(i.icon),
+					}));
 				},
-				error: (err) => {
+				error: (err: HttpErrorResponse) => {
 					const error = err.error;
 					this.errorMsmServerGetSubcategory = error;
 				},
@@ -150,10 +167,15 @@ export class EditCategoryComponent {
 		);
 	}
 
+	initSubcategories(id: string){
+		this.initSubcategories$(id)
+		.pipe(takeUntil(this.destroy$))
+		.subscribe();
+	}
+
 	update() {
 		this.loadBtn = true;
 		this.errorsCategory = {};
-		this.errorMsmServer = '';
 		this.msmErrorUpdateCategory = [];
 		this.categoryService
 			.update_category(this.id, this.category)
@@ -163,19 +185,22 @@ export class EditCategoryComponent {
 				finalize(() => (this.loadBtn = false))
 			)
 			.subscribe({
-				next: (next: Category) => {
+				next: (next: {data: CategoryInterface, message:string}) => {
 					this.errorsCategory = {};
-					this.category = next;
-					toastr.success('Categoría actualizada correctamente.');
+					this.category = next.data
+					toastr.success(next.message);
 				},
-				error: (err) => {
+				error: (err: HttpErrorResponse) => {
 					const error = err.error;
-					this.errorMsmServer = error.message || '¡Error desconocido!';
-					toastr.error(this.errorMsmServer);
+					toastr.error(error.message || '¡Error desconocido!');
 
 					if (error.validation) {
 						this.errorsCategory = error.validation;
 						this.msmErrorUpdateCategory = Object.values(this.errorsCategory).flat();
+						for (const key in this.showErrorsCategory) {
+							this.showErrorsCategory[key as keyof typeof this.showErrorsCategory] =
+							!!this.errorsCategory?.[key]?.length;
+						}	
 					}
 				},
 			});
@@ -188,9 +213,8 @@ export class EditCategoryComponent {
 
 	create_subcategory() {
 		this.loadBtnSubcat = true;
-		this.errorMsmServer = '';
 		this.msmErrorCreateSubcategory = [];
-		this.errorsSubcategory = {};
+		this.subcategory.categoryId = this.id;
 		this.categoryService
 			.create_subcategory(this.subcategory)
 			.pipe(
@@ -199,25 +223,26 @@ export class EditCategoryComponent {
 				finalize(() => (this.loadBtnSubcat = false))
 			)
 			.subscribe({
-				next: (next: Subcategory) => {
-					this.subcategory = {
-						name: '',
-						icon: '',
-						categoryId: this.id,
-					};
-					this.subcategories.push(next);
-					toastr.success('Subcategoría creada correctamente.');
+				next: (next: {data: SubcategoryInterface, message: string}) => {		
+					this.errorsSubcategory = {};
+					this.subcategory = createEmptySubcategory();
+					next.data.safeIcon = this.sanitizer.bypassSecurityTrustHtml(next.data.icon);
+					this.subcategories.push(next.data);
+					toastr.success(next.message);
 				},
-				error: (err) => {
+				error: (err: HttpErrorResponse) => {
 					const error = err.error;
-					this.errorMsmServer = error.message || '¡Error desconocido!';
-					toastr.error(this.errorMsmServer);
+					toastr.error(error.message || '¡Error desconocido!');
 
 					if (error.validation) {
 						this.errorsSubcategory = error.validation;
 						this.msmErrorCreateSubcategory = Object.values(this.errorsSubcategory).flat();
-						this.errorMsmServer = '';
+						for (const key in this.showErrorsSubcategory) {
+							this.showErrorsSubcategory[key as keyof typeof this.showErrorsSubcategory] =
+							!!this.errorsSubcategory?.[key]?.length;
+						}	
 					}
+
 				},
 			});
 	}
@@ -225,7 +250,6 @@ export class EditCategoryComponent {
 	update_subcategory() {
 		this.loadBtnSubcat = true;
 		this.msmErrorUpdateSubcategory = [];
-		this.errorMsmServer = '';
 		this.errorsSubcategory = {};
 		this.categoryService
 			.update_subcategory(this.subcategory?.id, this.subcategory)
@@ -235,15 +259,14 @@ export class EditCategoryComponent {
 				finalize(() => (this.loadBtnSubcat = false))
 			)
 			.subscribe({
-				next: (next) => {
-					this.subcategories = this.subcategories.map((subcat: any) => (subcat.id === this.subcategory.id ? next : subcat));
-					toastr.success('Subcategoría actualizado correctamente.');
+				next: (next: {data: SubcategoryInterface, message:string}) => {
+					this.subcategories = this.subcategories.map((subcat: any) => (subcat.id === this.subcategory.id ? next.data : subcat));
+					toastr.success(next.message);
 					this.cancelEdit();
 				},
-				error: (err) => {
+				error: (err: HttpErrorResponse) => {
 					const error = err.error;
-					this.errorMsmServer = error.message || '¡Error desconocido!';
-					toastr.error(this.errorMsmServer);
+					toastr.error(error.message || '¡Error desconocido!');
 
 					if (error.validation) {
 						this.errorsSubcategory = error.validation;
@@ -263,17 +286,17 @@ export class EditCategoryComponent {
 				finalize(() => this.loadBtnDelete.set(false))
 			)
 			.subscribe({
-				next: (next: Subcategory) => {
-					this.subcategories = this.subcategories.map((prev: Subcategory) => {
-						if (next.id === prev.id) {
-							return { ...prev, status: next.status };
+				next: (next: {data: SubcategoryInterface, message: string}) => {
+					this.subcategories = this.subcategories.map((prev: SubcategoryInterface) => {
+						if (next.data.id === prev.id) {
+							return { ...prev, status: next.data.status };
 						}
 						return prev;
 					});
-					toastr.success('Se actualizó el estado correctamente.');
+					toastr.success(next.message);
 					closeModal(id);
 				},
-				error: (error: any) => {
+				error: (error: HttpErrorResponse) => {
 					toastr.error(error.error.message);
 				},
 			});
@@ -283,14 +306,18 @@ export class EditCategoryComponent {
 		this.subcategory = {
 			name: '',
 			icon: '',
+			prefix: '',
 			categoryId: this.id,
 		};
 		this.errorsSubcategory = {};
 		this.typeForm = 'create';
 	}
 
-	editSubcategory(subcategory: Subcategory) {
+	editSubcategory(subcategory: SubcategoryInterface) {
+		this.errorsSubcategory = {};
+		this.msmErrorUpdateSubcategory = [];
 		this.typeForm = 'edit';
+
 		this.subcategory = { ...subcategory };
 	}
 
@@ -321,21 +348,19 @@ export class EditCategoryComponent {
 			finalize(() => this.loadBtnMultipleStatus.set(false))
 		)
 		.subscribe({
-			next: (next: any) => {
-				console.log(next);
-				
-				this.subcategories = this.subcategories.map((prev: Subcategory) => {
-					if (next.includes(prev.id)) {
+			next: (next: {data: string[], message:string}) => {
+				this.subcategories = this.subcategories.map((prev: SubcategoryInterface) => {
+					if (next.data.includes(prev.id)) {
 						return { ...prev, status: status };
 					}
 					return prev;
 				});
 
-				toastr.success('Se actualizó el estado correctamente.');
+				toastr.success(next.message);
 				closeModal(status ? 'modalMultipleActive' : 'modalMultipleDisabled');
 				this.selectedIds.clear();
 			},
-			error: (error: any) => {
+			error: (error: HttpErrorResponse) => {
 				toastr.error(error.error.message);
 			},
 		});

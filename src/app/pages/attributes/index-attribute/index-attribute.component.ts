@@ -1,15 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output, signal, WritableSignal } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, EventEmitter, Input, Output, signal, WritableSignal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { pageLimit } from '@app/common/constants/pageLimit.constant';
 import { statusTable } from '@app/common/constants/statusTable.contant';
-import { AttributeList } from '@app/common/interface/attribute-list.interface';
-import { Attribute } from '@app/common/interface/attribute.interface';
 import { withMinLoadingTime } from '@app/common/interface/with-min-loading-time.interface';
 import { closeModal } from '@app/common/utils/close-modal.util';
 import { sortColumnsTable } from '@app/common/utils/sort-columns-table.util';
-import { ValidateQueryParams } from '@app/common/utils/validate-query-params.util';
 import { AttributeService } from '@app/services/attribute.service';
 import { CategoryService } from '@app/services/category.service';
 import { GLOBAL } from '@app/services/GLOBAL';
@@ -20,8 +17,13 @@ import { PaginationComponent } from '@app/shared/pagination/pagination.component
 import { SidebarComponent } from '@app/shared/sidebar/sidebar.component';
 import { TopbarComponent } from '@app/shared/topbar/topbar.component';
 import { NgSelectModule } from '@ng-select/ng-select';
-import { filter, finalize, forkJoin, Subject, switchMap, takeUntil } from 'rxjs';
-import { sortColumnsBrands } from '../constants/sortColumnsAttributes.constant';
+import { combineLatest, filter, finalize, forkJoin, of, Subject, switchMap, takeUntil } from 'rxjs';
+import { AttributeInterface } from '../interfaces/attribute.interface';
+import { sortColumnsAttributes } from '../constants/sortColumnsAttributes.constant';
+import { ValidateQPAttributes } from '../utils/validate-qp-attribute.util';
+import { AttributeGroupInterface } from '../interfaces/attribute-group.interface';
+import { createEmptyGroupAttribute } from '../utils/empties.util';
+import { CategoryInterface } from '@app/pages/categories/interfaces/category.interface';
 declare const toastr: any;
 declare const $: any;
 
@@ -41,6 +43,7 @@ declare const $: any;
 	],
 	templateUrl: './index-attribute.component.html',
 	styleUrl: './index-attribute.component.css',
+	schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class IndexAttributeComponent {
 	public loadBtnDelete: WritableSignal<boolean> = signal(false);
@@ -52,22 +55,25 @@ export class IndexAttributeComponent {
 	public sort: string = 'Predeterminado';
 	public totalPages: number = 0;
 	public loading: boolean = true;
+	public loadAttributeGroup : boolean = true;
+	public groupAttribute : AttributeGroupInterface = createEmptyGroupAttribute();
+	public categories : CategoryInterface[] = [];
 	
 	private destroy$ = new Subject<void>();
 	public errorMsmServerListAttributes: string = '';
+	public errorMsmServerGroup: string = '';
 
 	public arrDataSkull: Array<any> = Array.from({ length: 5 }, () => ({}));
-	public attributes: AttributeList[] = [];
-	public categories: any = '';
-	public categoriesSelected: any = [];
+	public attributes: AttributeInterface[] = [];
 	public columns = [
 		{ key: 'name', label: 'Atributo', classCol: 'col-w-xs-200 col-w-md-250' },
 		{ key: 'status', label: 'Estado', classCol: 'col-w-xs-200 col-w-md-250' },
 	];
 	public pageLimit = pageLimit;
 	public statusTable = statusTable;
-	public sortColumns = sortColumnsBrands;
+	public sortColumns = sortColumnsAttributes;
 	public selectedIds = new Set<string>();
+	public id : string = '';
 	
 	constructor(
 		private _router: Router,
@@ -77,52 +83,100 @@ export class IndexAttributeComponent {
 	) {}
 
 	ngOnInit(): void {
+		this.initGroup();
+	}
+
+	initGroup(): void {
+		this._route.params
+		.pipe(
+			takeUntil(this.destroy$),
+			switchMap(params => {
+				this.id = params['id'];
+				this.loadAttributeGroup = true;
+
+				return this.attributeService
+					.get_attribute_and_categories(this.id)
+					.pipe(
+						withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
+						finalize(() => this.loadAttributeGroup = false)
+					);
+			})
+		)
+		.subscribe({
+			next: (resp: any) => {
+				this.groupAttribute = resp.data.attributeGroup;
+				this.categories = resp.data.categories;
+				this.initAttributes();
+			},
+			error: (err) => {
+				this.loading = false;
+				this.errorMsmServerGroup = err.error;
+			}
+		});
+	}
+
+	initAttributes(): void {
 		this._route.queryParams
 			.pipe(
 				takeUntil(this.destroy$),
-
-				filter((params) => {
-					const sortArrStr = sortColumnsBrands.map(item => item.value);
-
-					const isValid = ValidateQueryParams(
+				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
+				filter(queryParams => {
+					const sortArrStr = sortColumnsAttributes.map(item => item.value);
+					return ValidateQPAttributes(
 						this._route,
-						params,
+						queryParams,
 						this._router,
 						sortArrStr
 					);
+				}),
+				switchMap(queryParams => {
+					this.filter = queryParams['filter'] || '';
+					this.currentPage = Number(queryParams['page']) || 1;
+					this.status = queryParams['status'] || 'Todos';
+					this.limit = Number(queryParams['limit']) || 10;
+					this.sort = queryParams['sort'] || 'Predeterminado';
 
-					return isValid;
+					this.loading = true;
+
+					// Reset
+					this.attributes = [];
+					this.currentPage = 1;
+					this.totalPages = 1;
+					this.errorMsmServerListAttributes = '';
+
+					return this.attributeService.get_attributes(
+						this.id,
+						this.filter,
+						this.currentPage,
+						this.status,
+						this.limit,
+						this.sort
+					).pipe(
+						withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
+						finalize(() => this.loading = false)
+					);
 				})
 			)
-			.subscribe((params) => {
-				const queryCategory = params['categories'] ?? 'Todos';
-				this.filter = params['filter'] || '';
-				this.currentPage = Number(params['page']) || 1;
-				this.limit = Number(params['limit']) || 10;
-				this.status = params['status'] ?? '';
-				this.sort = params['sort'] ?? '';
-
-				// ✅ Evita bucle de navegación
-				if (this.categories !== queryCategory) {
-					this.categories = queryCategory;
-					this._router.navigate([], {
-						relativeTo: this._route,
-						queryParams: { ...params, categories: this.categories },
-						queryParamsHandling: 'merge',
-						replaceUrl: true,
-					});
-				} else {
-					this.categories = queryCategory;
+			.subscribe({
+				next: (data: any) => {
+					this.attributes = data.attributes;
+					this.currentPage = data.meta.currentPage;
+					this.totalPages = data.meta.totalPages;
+				},
+				error: (err) => {
+					this.errorMsmServerListAttributes = err.error;
 				}
-
-				// ✅ Cargar datos independientes
-				this.init_attributes(this.filter, this.currentPage, this.status, this.limit, this.categories, this.sort);
 			});
 	}
+
 
 	onFilterOrStatusChange() {
 		this.currentPage = 1;
 		this.redirect();
+	}
+
+	hasSelectedAttributes(): boolean {
+		return this.selectedIds.size > 0;
 	}
 
 	ngOnDestroy(): void {
@@ -131,47 +185,15 @@ export class IndexAttributeComponent {
 	}
 
 	redirect() {
-		this._router.navigate(['/products/attributes'], {
+		this._router.navigate([`/products/attributes/groups/${this.id}/attributes`], {
 			queryParams: {
 				filter: this.filter,
 				page: this.currentPage,
 				limit: this.limit,
 				status: this.status,
-				categories: this.categoriesSelected.join(','),
 				sort: this.sort
 			},
 		});
-	}
-
-	init_attributes(filter: string, page: number, status: string, limit: number, categories: string, sort: string) {
-		this.loading = true;
-		this.errorMsmServerListAttributes = '';
-		this.attributeService
-			.get_attributes(filter, page, limit, status, categories, sort)
-			.pipe(
-				takeUntil(this.destroy$),
-				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
-				finalize(() => (this.loading = false))
-			)
-			.subscribe({
-				next: (next: { attributes: AttributeList[]; currentPage: number; totalCollaborators: number; totalPages: number }) => {
-					this.attributes = next.attributes;
-					this.totalPages = next.totalPages;
-				},
-				error: (err) => {
-					const error = err.error;
-					this.errorMsmServerListAttributes = error;
-				},
-			});
-	}
-
-	
-
-	getCategories(categories: any){
-		this.categoriesSelected = categories
-		.filter((c: any) => c.checked)
-		.map((c: any) => c.id);
-		this.redirect();
 	}
 
 	setLimit() {
@@ -194,15 +216,15 @@ export class IndexAttributeComponent {
 				finalize(() => this.loadBtnDelete.set(false))
 			)
 			.subscribe({
-				next: (next: Attribute) => {
+				next: (next: {data: AttributeInterface, message: string}) => {
 					this.attributes = this.attributes.map((prev: any) => {
-						if (next.id === prev.id) {
-							return { ...prev, status: next.status };
+						if (next.data.id === prev.id) {
+							return { ...prev, status: next.data.status };
 						}
 						return prev;
 					});
 
-					toastr.success('Se actualizó el estado correctamente.');
+					toastr.success(next.message);
 					closeModal(id);
 				},
 				error: (error: any) => {
@@ -214,7 +236,6 @@ export class IndexAttributeComponent {
 	resetFilters(){
 		this.filter = '';
 		this.status = 'Todos';
-		this.categories = 'Todos';
 		this.sort = 'Predeterminado';
 		this.currentPage = 1;
 		this.limit = 10;
@@ -259,17 +280,17 @@ export class IndexAttributeComponent {
 			finalize(() => this.loadBtnMultipleStatus.set(false))
 		)
 		.subscribe({
-			next: (next: any) => {
+			next: (next: {data: any, message: string}) => {
 				console.log(next);
 				
-				this.attributes = this.attributes.map((prev: Attribute) => {
-					if (next.includes(prev.id)) {
+				this.attributes = this.attributes.map((prev: AttributeInterface) => {
+					if (next.data.includes(prev.id)) {
 						return { ...prev, status: status };
 					}
 					return prev;
 				});
 
-				toastr.success('Se actualizó el estado correctamente.');
+				toastr.success(next.message);
 				closeModal(status ? 'modalMultipleActive' : 'modalMultipleDisabled');
 				this.selectedIds.clear();
 			},

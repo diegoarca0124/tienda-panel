@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, signal, ViewChild, WritableSignal } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, ElementRef, signal, ViewChild, WritableSignal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -9,7 +9,6 @@ import { statusTable } from '@app/common/constants/statusTable.contant';
 import { visibilityProducts } from '@app/common/constants/visibilityProducts.constant';
 import { withMinLoadingTime } from '@app/common/interface/with-min-loading-time.interface';
 import { sortColumnsTable } from '@app/common/utils/sort-columns-table.util';
-import { ValidateQueryParams } from '@app/common/utils/validate-query-params.util';
 import { GLOBAL } from '@app/services/GLOBAL';
 import { ProductService } from '@app/services/product.service';
 import { InputDialerComponent } from '@app/shared/input-dialer/input-dialer.component';
@@ -24,13 +23,19 @@ import { SidebarComponent } from '@app/shared/sidebar/sidebar.component';
 import { TopbarComponent } from '@app/shared/topbar/topbar.component';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { filter, finalize, Subject, takeUntil } from 'rxjs';
+import { ValidateQPProducts } from '../utils/validate-qp-products.util';
+import { FallbackImageDirective } from '@app/common/directives/fallback-image.directive';
+import { environment } from 'environments/environment.dev';
+import { CurrencySymbolPipe } from "../../../common/pipes/currency-symbol.pipe";
+import { qualityProduct } from '../constants/quality-product.consta';
 
 
 @Component({
   selector: 'app-index-product',
-  imports: [TopbarComponent, SidebarComponent, RouterModule, CommonModule, FormsModule, NgSelectModule, ModalDeleteComponent, NotFoundComponent, MenuSelectCategoriesComponent, MenuSelectBrandsComponent, MenuSelectCountriesComponent, InputDialerComponent],
+  imports: [TopbarComponent, SidebarComponent, RouterModule, CommonModule, FormsModule, NgSelectModule, ModalDeleteComponent, NotFoundComponent, MenuSelectCategoriesComponent, MenuSelectBrandsComponent, MenuSelectCountriesComponent, InputDialerComponent, FallbackImageDirective, CurrencySymbolPipe],
   templateUrl: './index-product.component.html',
-  styleUrl: './index-product.component.css'
+  styleUrl: './index-product.component.css',
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class IndexProductComponent {
 
@@ -39,6 +44,7 @@ export class IndexProductComponent {
   public filter: string = '';
 	public status: string = 'Todos';
   public visibility: string = 'Todos';
+  public quality: string = 'Todos';
   public minPrice : any = null;
   public maxPrice : any = null;
 	public currentPage: number = 1;
@@ -52,6 +58,7 @@ export class IndexProductComponent {
   public products: any[] = [];
   public statusTable = statusProducts;
   public visibilityTable = visibilityProducts;
+  public qualityTable = qualityProduct;
 
   public brands: any = '';
 	public brandsSelected: any = [];
@@ -66,7 +73,13 @@ export class IndexProductComponent {
 		{ key: 'status', label: 'Estado', classCol: 'col-w-xs-100' },
 	];
   public pageLimit = pageLimit;
-  public arrDataSkull: Array<any> = Array.from({ length: 5 }, () => ({}));
+  public selectedIds = new Set<string>();
+
+  readonly qualityLabels: Record<string, string> = {
+		low: 'Baja',
+		medium: 'Media',
+		high: 'Alta',
+	};
 
   constructor(
     private productService: ProductService,
@@ -85,7 +98,7 @@ export class IndexProductComponent {
     this._route.queryParams
     .pipe(
       takeUntil(this.destroy$),
-      filter((params) => ValidateQueryParams(this._route, params, this._router))
+      filter((params) => ValidateQPProducts(this._route, params, this._router))
     )
     .subscribe((params) => {
       // ✅ Prepara parámetros con fallback
@@ -97,6 +110,7 @@ export class IndexProductComponent {
       this.limit = Number(params['limit']) || 10;
       this.status = params['status'] ?? '';
       this.visibility = params['visibility'] ?? '';
+      this.quality = params['quality'] ?? '';
       this.minPrice = params['minPrice'] ?? '';
       this.maxPrice = params['maxPrice'] ?? '';
       
@@ -154,7 +168,8 @@ export class IndexProductComponent {
         this.brands,
         this.countries,
         this.minPrice,
-        this.maxPrice
+        this.maxPrice,
+        this.quality
       );
     });
   }
@@ -198,12 +213,25 @@ export class IndexProductComponent {
     }
   }
 
-  init_products(filter: string, page: number, status: string, visibility: string, limit: number, categories: string, brands: string, countries: string,minPrice: number | null, maxPrice: number| null) {
+  toggleItem(id: string, event: Event) {
+		const checked = (event.target as HTMLInputElement).checked;
+		if (checked) {
+			this.selectedIds.add(id);
+		} else {
+			this.selectedIds.delete(id);
+		}
+	}
+
+	getSelectedIds(): string[] {
+		return [...this.selectedIds];
+	}
+
+  init_products(filter: string, page: number, status: string, visibility: string, limit: number, categories: string, brands: string, countries: string,minPrice: number | null, maxPrice: number| null, quality: string) {
     this.loading = true;
     this.errorMsmServerListProducts = '';
     
     this.productService
-      .get_products(filter, page, limit, status, visibility, categories, brands, countries, minPrice ,maxPrice)
+      .get_products(filter, page, limit, status, visibility, categories, brands, countries, minPrice ,maxPrice, quality)
       .pipe(
         takeUntil(this.destroy$),
         withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
@@ -213,6 +241,16 @@ export class IndexProductComponent {
         next: (next: { products: any[]; currentPage: number; totaProducts: number; totalPages: number }) => {
           console.log(next);
           this.products = next.products;
+          this.products = this.products.map((product) => ({
+            ...product,
+            miniature: `${environment.s3_public_url}/products/small/${product.miniature}`,
+            brand: {
+                ...product.brand,
+                logoUrl: `${environment.s3_public_url}/brands/small/${product.brand.logoUrl}`
+            }
+          }));
+          console.log(this.products);
+          
           this.totalPages = next.totalPages;
         },
         error: (err) => {
@@ -246,7 +284,8 @@ export class IndexProductComponent {
         brands: this.brandsSelected.join(','),
         countries: this.countriesSelected.join(','),
         minPrice: this.minPrice,
-        maxPrice: this.maxPrice
+        maxPrice: this.maxPrice,
+        quality: this.quality
 			},
 		});
 	}

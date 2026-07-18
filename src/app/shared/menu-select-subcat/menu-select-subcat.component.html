@@ -1,0 +1,178 @@
+<div class="d-flex flex-column justify-content-start mb-1 gap-1">
+  <div class="d-flex align-items-center">
+    <span class="text-gray-700 ls-1px" style="font-size: .7rem;">SUBCATEGORÍAS</span>
+  </div>
+  <div class="dropdown">
+
+    <div class="position-relative w-100 dropdown-toggle"  data-bs-toggle="dropdown" #trigger>
+      <input
+        type="text"
+        autocomplete="off"
+        readonly
+        class="form-control  w-100 text-ellipsis cursor-pointer custom-trigger pe-12"
+        [ngClass]="{'form-control-sm': sizeClass == 'sm'}"
+        aria-expanded="false"
+        [value]="getSelectedNames()"
+        [placeholder]="placeholder"
+        placement="top"
+        [ngbTooltip]="getSelectedNames()"
+        tooltipClass="tooltip-dark"
+      />
+
+      @if (selectedItems.length > 4) {
+        <span
+          class="badge bg-light-primary text-primary position-absolute"
+          style="right: 15px; top: 50%; transform: translateY(-50%); z-index: 5;">
+          +{{ selectedItems.length - 4 }}
+        </span>
+      }
+    </div>
+    
+    <div
+      id="dropdown"
+      class="dropdown-menu"
+      data-bs-display="static"
+      data-bs-auto-close="outside"
+      (click)="$event.stopPropagation()"
+    >
+
+      <!-- HEADER -->
+      <div class="dropdown-header-custom p-4">
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+
+          <div class="d-flex flex-column">
+            <span class="text-uppercase fs-6 text-gray-800 fw-700 ls-1px">
+              {{title}}
+            </span>
+            <small class="dropdown-subtitle text-gray-600">
+              Seleccion multiple de subcategorías
+            </small>
+          </div>
+
+          <button
+              type="button"
+              class="btn-refresh bg-light-primary text-primary"
+              (click)="initData()"
+              [disabled]="loadingData">
+
+              @if (loadingData) {
+                  <span class="spinner-border spinner-border-sm text-primary" role="status"></span>
+              } @else {
+                  <i class="bi bi-arrow-clockwise text-primary"></i>
+              }
+          </button>
+
+        </div>
+
+        <div class="position-relative">
+
+          <input
+            type="text"
+            class="form-control form-control-sm pe-5 dropdown-search custom-placeholder"
+            [placeholder]="placeholder"
+            [(ngModel)]="filter"
+            (keyup)="onFilterData()"
+          />
+
+          <i
+            class="bi bi-search dropdown-search-icon fs-8"
+            (click)="onFilterData()"
+          ></i>
+
+        </div>
+
+      </div>
+
+      <!-- ITEMS -->
+      <div class="items-container" style="overflow-y: scroll !important;">
+        <ng-container *ngIf="loadingData">
+          <div
+          class="dropdown-item-custom d-flex align-items-center"
+          *ngFor="let item of [1,2,3,4,5,6]" style="height: 40px !important;width: 100% !important;">
+              <div class="d-flex justify-content-start align-items-center" style="width: 100% !important">
+                  <div class="me-4">
+                      <div class="skeleton skeleton-check" style="width: 14.29px !important; height: 14.29px !important;"></div>
+                  </div>
+                  <div class="skeleton skeleton-text" style="width: 40% !important;"></div>
+              </div>
+          </div>
+
+        </ng-container>
+        <ng-container *ngIf="!loadingData">
+          <ng-container *ngIf="displayData.length >= 1">
+            <div class="accordion" id="accordionSubcategories">
+                <div class="border-0" *ngFor="let item of displayData">
+                    <div class="dropdown-item-custom d-flex justify-content-between align-items-center h-40px">
+                        <div class="form-check form-check-custom form-check-solid d-flex align-items-center">
+                            <input
+                            class="form-check-input form-check-input-sm me-4 cursor-pointer"
+                            type="checkbox"
+                            [(ngModel)]="item.checked"
+                            (ngModelChange)="onCategoryChecked(item)">
+                            <small class="text-gray-700 user-select-none fw-600"
+                            style="font-size: 12px !important;">
+                                <strong>{{ item.prefix }}</strong> - {{ item.name }}
+                            </small>
+
+                             <span
+                                class="badge bg-light-primary ms-2"
+                                *ngIf="getCheckedCount(item) > 0">
+                                {{ getCheckedCount(item) }}
+                            </span>
+                        </div>
+                        <a
+                            class="cursor-pointer p-0"
+                            style="padding-right: 0px !important;"
+                            data-bs-toggle="collapse"
+                            [attr.data-bs-target]="'#collapse-' + item.id"
+                            [attr.aria-controls]="'collapse-' + item.id"
+                            aria-expanded="false">
+                            <i class="bi bi-chevron-down"></i>
+                        </a>
+                    </div>
+
+                    <div
+                    [id]="'collapse-' + item.id"
+                    class="accordion-collapse collapse"
+                    data-bs-parent="#accordionSubcategories">
+                        <div class="accordion-body p-0">
+                            <div class="form-check dropdown-item-custom d-flex align-items-center ps-10" 
+                            *ngFor="let sub of item.subcategories">
+                                <input
+                                    class="form-check-input form-check-input-sm m-0 cursor-pointer"
+                                    type="checkbox"
+                                    [(ngModel)]="sub.checked"
+                                    (ngModelChange)="onSubcategoryChecked(item)">
+                                <label class="form-check-label ms-4 text-gray-700 fs-7 fw-400">
+                                    {{ sub.name }}
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+          </ng-container>
+          <ng-container *ngIf="displayData.length == 0">
+            <div class="empty-state">
+              No se encontraron resultados.
+            </div>
+          </ng-container>
+        </ng-container>
+      </div>
+      <!-- FOOTER -->
+      <div class="dropdown-footer p-4">
+          <div class="d-flex justify-content-end gap-2">
+              <button
+              class="btn btn-sm btn-dark d-flex align-items-center px-4 py-2 fs-8"
+              [disabled]="loadingData"
+              (click)="!loadingData ? confirmSelection() : null"
+              >
+                  Confirmar
+              </button>
+          </div>
+      </div>
+
+    </div>
+  </div>
+</div>

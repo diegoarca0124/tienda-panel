@@ -9,7 +9,7 @@ import { setUserAuth } from '@app/store/auth/auth.action';
 import { AuthService } from '@app/services/auth.service';
 import { AuthUserState } from '@app/store/auth/auth.state';
 import { GLOBAL } from '@app/services/GLOBAL';
-import { Collaborator } from '@app/common/interface/collaborator.interface';
+import { CollaboratorInterface } from '@app/pages/users/collaborators/interfaces/collaborator.interface';
 declare const toastr: any;
 
 interface Auth {
@@ -60,16 +60,15 @@ export class LoginComponent {
 				finalize(() => (this.loading = false))
 			)
 			.subscribe({
-				next: (next: { accessToken: string; collaborator: Collaborator }) => {
-					localStorage.setItem('token', next.accessToken);
-					this.store.dispatch(setUserAuth({ user: next.collaborator }));
+				next: (next: {data: { accessToken: string; collaborator: CollaboratorInterface }, message: string}) => {
+					localStorage.setItem('token', next.data.accessToken);
+					this.store.dispatch(setUserAuth({ user: next.data.collaborator }));
+					toastr.success(next.message);
 					this.router.navigate(['/dashboard']);
 				},
 				error: (err) => {
 					const error = err.error;
-
 					toastr.error(error.message || '¡Error desconocido!');
-
 					if (error.validation) {
 						this.errorsLogin = error.validation;
 						this.errorMsmServer = '';

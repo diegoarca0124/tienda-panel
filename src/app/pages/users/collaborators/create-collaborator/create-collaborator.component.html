@@ -7,11 +7,11 @@
                 <div id="kt_app_toolbar" class="app-toolbar py-5 py-lg-6" >
                     <div id="kt_app_toolbar_container" class="app-container container-fluid d-flex flex-stack">
                         <div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
-                            <h1 class="page-heading d-flex text-dark fw-bold fs-3 flex-column justify-content-center my-0">
+                            <h1 class="page-heading d-flex text-gray-700 fs-3 flex justify-content-start my-0 align-items-center text-uppercase ls-1px fw-700">
                                 Colaboradores
                             </h1>
      
-                            <ul class="breadcrumb breadcrumb-separatorless fw-semibold fs-7 my-0 pt-1">
+                            <ul class="breadcrumb breadcrumb-separatorless fs-7 my-0 pt-1">
                                 <li class="breadcrumb-item text-muted">
                                     <a [routerLink]="['/users/collaborators']" class="text-muted text-hover-primary">
                                         Colaboradores
@@ -20,7 +20,7 @@
                                 <li class="breadcrumb-item">
                                     <span class="bullet bg-gray-400 w-5px h-2px"></span>
                                 </li>
-                                <li class="breadcrumb-item text-primary">Nuevo colaborador</li>
+                                <li class="breadcrumb-item text-primary fw-600">Nuevo colaborador</li>
                             </ul>
                         </div>
                         <div class="d-flex align-items-center gap-2 gap-lg-3">
@@ -31,20 +31,13 @@
                 <div class="app-content  flex-column-fluid">
                     <div class="app-container container">
 
-                        <app-alert *ngIf="msmErrorCollaborator.length >= 1" [classAlert]="'bg-light-danger border-danger border-dashed mb-7'"
-						[title]="'¡Errores de Validación!'"
-						[description]="errorsCollaborator"
-						[type]="'errors'"
-						[classIcon]="'svg-icon-danger'">
-						</app-alert>
-
                         <div class="card mb-10">
                             <!--begin::Card header-->
-                            <div class="card-header" style="background-color: #f8f8f8;">
+                            <div class="card-header" style="background-color: #f1f5f9;">
                                 <!--begin::Heading-->
                                 <h4 class="card-title m-0 d-flex flex-column">
                                     <span class="fs-5 fw-600">Nuevo Colaborador</span>
-                                    <span class="text-gray-600 mt-1 fw-400 fs-0-9rem">
+                                    <span class="text-gray-500 mt-1 fw-400 fs-0-9rem">
                                       Agrega un nuevo colaborador completando los datos requeridos en el formulario.
                                     </span>
                                 </h4>
@@ -56,11 +49,13 @@
                                 <div class="row">
                                     <div class="col-lg-6">
                                         <div class="d-flex flex-column mb-5 fv-row fv-plugins-icon-container">
-                                            <!--begin::Label-->
-                                            <label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2">
-                                                <span class="required">Nombres</span>
-                                            </label>
-                                            <!--end::Label-->
+                                            <div class="d-flex align-items-center justify-content-between mb-1">
+												<label class="required fw-500 text-gray-700 fs-6 mb-1">Nombres</label>
+												<small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="errorsCollaborator?.names" (click)="showErrors.names = !showErrors.names">
+													<ion-icon name="information-circle-outline" class="validation-icon"> </ion-icon>
+													{{ showErrors.names ? 'Ocultar errores' : 'Ver errores' }}
+												</small>
+											</div>
 
                                             <input type="text" 
                                             class="form-control mb-1" 
@@ -70,15 +65,21 @@
                                             [ngClass]="{'is-invalid': errorsCollaborator?.names}">
 
                                             <span class="fs-8 text-muted">Nombres completos del usuario.</span>
+                                            <div class="validation-wrapper" [class.open]="showErrors.names">
+												<app-validation-popover 
+												[errors]="errorsCollaborator?.names"></app-validation-popover>
+											</div>
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="d-flex flex-column mb-5 fv-row fv-plugins-icon-container">
-                                            <!--begin::Label-->
-                                            <label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2">
-                                                <span class="required">Apellidos</span>
-                                            </label>
-                                            <!--end::Label-->
+                                            <div class="d-flex align-items-center justify-content-between mb-1">
+												<label class="required fw-500 text-gray-700 fs-6 mb-1">Apellidos</label>
+												<small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="errorsCollaborator?.surname" (click)="showErrors.surname = !showErrors.surname">
+													<ion-icon name="information-circle-outline" class="validation-icon"> </ion-icon>
+													{{ showErrors.surname ? 'Ocultar errores' : 'Ver errores' }}
+												</small>
+											</div>
 
                                             <input type="text" 
                                             class="form-control mb-1" 
@@ -88,17 +89,25 @@
                                             [ngClass]="{'is-invalid': errorsCollaborator?.surname}">
 
                                             <span class="fs-8 text-muted">Apellido paterno y materno del usuario.</span>
+
+                                            <div class="validation-wrapper" [class.open]="showErrors.surname">
+												<app-validation-popover 
+												[errors]="errorsCollaborator?.surname"></app-validation-popover>
+											</div>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-lg-6">
                                         <div class="d-flex flex-column mb-5 fv-row fv-plugins-icon-container">
-                                            <!--begin::Label-->
-                                            <label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2">
-                                                <span class="required">Rol</span>
-                                            </label>
-                                            <!--end::Label-->
+                                            <div class="d-flex align-items-center justify-content-between mb-1">
+												<label class="required fw-500 text-gray-700 fs-6 mb-1">Rol</label>
+												<small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="errorsCollaborator?.role" (click)="showErrors.role = !showErrors.role">
+													<ion-icon name="information-circle-outline" class="validation-icon"> </ion-icon>
+													{{ showErrors.role ? 'Ocultar errores' : 'Ver errores' }}
+												</small>
+											</div>
+
 
                                             <div [ngClass]="{ 'is-invalid': errorsCollaborator?.role }">
                                                 <ng-select
@@ -116,25 +125,35 @@
                                                 >
                                                     <!-- Opción en el dropdown -->
                                                     <ng-template ng-option-tmp let-item="item">
-                                                        <span>{{ item.name }}</span>
+                                                        <div class="option-item d-flex gap-3 align-items-center">
+                                                            <div class="option-name fs-7">{{ item.name }}</div>
+                                                        </div>
                                                     </ng-template>
 
                                                     <!-- Opción seleccionada en el input -->
                                                     <ng-template ng-label-tmp let-item="item">
-                                                        <span>{{ item.name }}</span>
+                                                        <div class="option-item d-flex gap-3 align-items-center">
+                                                            <div class="option-name fs-7">{{ item.name }}</div>
+                                                        </div>
                                                     </ng-template>
                                                 </ng-select>
                                             </div>
                                             <span class="fs-8 text-muted">Clasificación del colaborador.</span>
+                                            <div class="validation-wrapper" [class.open]="showErrors.role">
+												<app-validation-popover 
+												[errors]="errorsCollaborator?.role"></app-validation-popover>
+											</div>
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="d-flex flex-column mb-5 fv-row fv-plugins-icon-container">
-                                            <!--begin::Label-->
-                                            <label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2">
-                                                <span class="required">Correo electrónico</span>
-                                            </label>
-                                            <!--end::Label-->
+                                            <div class="d-flex align-items-center justify-content-between mb-1">
+												<label class="required fw-500 text-gray-700 fs-6 mb-1">Correo electrónico</label>
+												<small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="errorsCollaborator?.email" (click)="showErrors.email = !showErrors.email">
+													<ion-icon name="information-circle-outline" class="validation-icon"> </ion-icon>
+													{{ showErrors.email ? 'Ocultar errores' : 'Ver errores' }}
+												</small>
+											</div>
 
                                             <input
                                                 type="email"
@@ -146,22 +165,29 @@
                                             />
 
                                             <span class="fs-8 text-muted">Correo corporativo del usuario.</span>
+                                            <div class="validation-wrapper" [class.open]="showErrors.email">
+												<app-validation-popover 
+												[errors]="errorsCollaborator?.email"></app-validation-popover>
+											</div>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-lg-6">
                                         <div class="d-flex flex-column mb-5 fv-row fv-plugins-icon-container">
-                                            <!--begin::Label-->
-                                            <label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2">
-                                                <span class="required">Tipo de documento</span>
-                                            </label>
-                                            <!--end::Label-->
+                                            <div class="d-flex align-items-center justify-content-between mb-1">
+												<label class="required fw-500 text-gray-700 fs-6 mb-1">Tipo de documento</label>
+												<small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="errorsCollaborator?.type_document" (click)="showErrors.type_document = !showErrors.type_document">
+													<ion-icon name="information-circle-outline" class="validation-icon"> </ion-icon>
+													{{ showErrors.type_document ? 'Ocultar errores' : 'Ver errores' }}
+												</small>
+											</div>
 
                                             <div [ngClass]="{ 'is-invalid': errorsCollaborator?.type_document }">
                                                 <ng-select
                                                     [items]="identityDocuments"
                                                     bindLabel="name"
+												    bindValue="value"
                                                     [(ngModel)]="collaborator.type_document"
                                                     placeholder="Tipo de documento"
                                                     [clearable]="false"
@@ -172,27 +198,35 @@
                                                     <!-- Opción en el dropdown -->
                                                     <ng-template ng-option-tmp let-item="item">
                                                         <div class="option-item d-flex gap-3 align-items-center">
-                                                            <div class="option-name">{{ item.name }}</div>
+                                                            <div class="option-name fs-7">{{ item.name }}</div>
                                                         </div>
                                                     </ng-template>
 
                                                     <!-- Opción seleccionada en el input -->
                                                     <ng-template ng-label-tmp let-item="item">
-                                                        {{ item.name }}
+                                                        <div class="option-item d-flex gap-3 align-items-center">
+                                                            <div class="option-name fs-7">{{ item.name }}</div>
+                                                        </div>
                                                     </ng-template>
                                                 </ng-select>
                                             </div>
 
                                             <span class="fs-8 text-muted">Tipo de documento de identidad.</span>
+                                            <div class="validation-wrapper" [class.open]="showErrors.type_document">
+												<app-validation-popover 
+												[errors]="errorsCollaborator?.type_document"></app-validation-popover>
+											</div>
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="d-flex flex-column mb-5 fv-row fv-plugins-icon-container">
-                                            <!--begin::Label-->
-                                            <label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2">
-                                                <span class="required">Número de documento</span>
-                                            </label>
-                                            <!--end::Label-->
+                                            <div class="d-flex align-items-center justify-content-between mb-1">
+												<label class="required fw-500 text-gray-700 fs-6 mb-1">Número de documento</label>
+												<small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="errorsCollaborator?.number_document" (click)="showErrors.number_document = !showErrors.number_document">
+													<ion-icon name="information-circle-outline" class="validation-icon"> </ion-icon>
+													{{ showErrors.number_document ? 'Ocultar errores' : 'Ver errores' }}
+												</small>
+											</div>
 
                                             <input type="text" 
                                             class="form-control mb-1" 
@@ -204,17 +238,23 @@
                                             [ngClass]="{'is-invalid': errorsCollaborator?.number_document}">
 
                                             <span class="fs-8 text-muted">Documento de identidad nacional.</span>
+                                            <div class="validation-wrapper" [class.open]="showErrors.number_document">
+												<app-validation-popover 
+												[errors]="errorsCollaborator?.number_document"></app-validation-popover>
+											</div>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-lg-6">
                                         <div class="d-flex flex-column fv-row fv-plugins-icon-container">
-                                            <!--begin::Label-->
-                                            <label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2">
-                                                <span class="required">Telefono</span>
-                                            </label>
-                                            <!--end::Label-->
+                                            <div class="d-flex align-items-center justify-content-between mb-1">
+												<label class="required fw-500 text-gray-700 fs-6 mb-1">Telefono</label>
+												<small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="errorsCollaborator?.phone" (click)="showErrors.phone = !showErrors.phone">
+													<ion-icon name="information-circle-outline" class="validation-icon"> </ion-icon>
+													{{ showErrors.phone ? 'Ocultar errores' : 'Ver errores' }}
+												</small>
+											</div>
 
                                             <input type="text" 
                                             class="form-control mb-1" 
@@ -226,15 +266,21 @@
                                             >
 
                                             <span class="fs-8 text-muted">Número telefonico con prefijo peruano.</span>
+                                            <div class="validation-wrapper" [class.open]="showErrors.phone">
+												<app-validation-popover 
+												[errors]="errorsCollaborator?.phone"></app-validation-popover>
+											</div>
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="d-flex flex-column fv-row fv-plugins-icon-container">
-                                            <!--begin::Label-->
-                                            <label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2">
-                                                <span class="required">Contraseña</span>
-                                            </label>
-                                            <!--end::Label-->
+                                            <div class="d-flex align-items-center justify-content-between mb-1">
+												<label class="required fw-500 text-gray-700 fs-6 mb-1">Contraseña</label>
+												<small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="errorsCollaborator?.password" (click)="showErrors.password = !showErrors.password">
+													<ion-icon name="information-circle-outline" class="validation-icon"> </ion-icon>
+													{{ showErrors.password ? 'Ocultar errores' : 'Ver errores' }}
+												</small>
+											</div>
 
                                             <div class="input-group mb-1">
                                                 <input 
@@ -257,19 +303,35 @@
                                             </div>
 
                                             <span class="fs-8 text-muted">Contraseña de acceso a la plataforma.</span>
+                                            <div class="validation-wrapper" [class.open]="showErrors.password">
+												<app-validation-popover 
+												[errors]="errorsCollaborator?.password"></app-validation-popover>
+											</div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <!--end::Card body-->
-                            <div class="card-footer"  style="background-color: #f8f8f8;">
-                                <a *ngIf="!loadBtn" class="btn btn-sm btn-primary my-1 cursor-pointer" (click)="create()">
-                                    Crear colaborador
-                                </a>
-                                <button *ngIf="loadBtn" class="btn btn-sm btn-primary my-1 cursor-pointer" type="button" disabled>
-                                    <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
-                                    <span role="status">Procesando...</span>
-                                </button>
+                            <div class="card-footer" style="background-color: #f1f5f9;">
+                                <button
+									class="btn btn-sm btn-primary my-1 cursor-pointer d-flex align-items-center justify-content-center gap-1"
+									[disabled]="loadBtn"
+									(click)="!loadBtn && create()"
+									type="button"
+								>
+									<ng-container *ngIf="loadBtn">
+										<span class="spinner-border spinner-border-sm me-2"
+											aria-hidden="true">
+										</span>
+										<span role="status">Procesando...</span>
+									</ng-container>
+
+									<ng-container *ngIf="!loadBtn">
+										<i class="bi bi-person-plus"></i>
+										<span>Crear colaborador</span>
+									</ng-container>
+
+								</button>
                             </div>
                         </div>
                     </div>

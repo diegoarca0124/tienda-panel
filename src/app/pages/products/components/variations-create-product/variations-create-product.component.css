@@ -1,0 +1,72 @@
+.variation-table {
+    border: 1px solid #E4E6EF;
+}
+
+.variation-table thead th {
+    background: #F9F9F9;
+
+    color: #7E8299;
+
+    font-size: 10px;
+    font-weight: 700;
+
+    text-transform: uppercase;
+    letter-spacing: .5px;
+
+    padding: 10px 14px;
+}
+
+.variation-table tbody td {
+    padding: 5px 14px;
+    vertical-align: middle;
+}
+
+.variation-table tbody tr:hover {
+    background: #FAFBFC;
+}
+
+.variation-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: #181C32;
+}
+
+.action-column {
+    width: 50px;
+}
+
+@media (max-width: 576px) {
+
+    .variation-table thead th,
+    .variation-table tbody td {
+        padding: 8px 10px;
+    }
+
+    .variation-name {
+        font-size: 11px;
+    }
+}
+
+.btn-refresh{
+    width: 36px !important;
+    height: 36px !important;
+    border: 1px dashed #ccc !important;
+    border-radius: .475rem !important;
+}
+
+.btn-refresh i{
+    padding-right: 0px !important;
+}
+
+
+
+.btn-light-danger{
+    background-color: #FFEEF3 !important;
+}
+.p-none{
+    padding: 0px !important;
+}
+
+.form-control-invisible{
+    border: 0px !important;
+}

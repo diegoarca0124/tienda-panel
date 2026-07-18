@@ -1,0 +1,23 @@
+
+
+.validation-container ul {
+    margin: 0;
+    padding: 0;
+    border-left: 4px solid #f1416c;
+    list-style: none;
+}
+
+.validation-container li {
+    position: relative;
+    line-height: 1.4;
+    color: #5E6278;
+    font-size: .8rem;
+}
+
+.validation-container li:not(:last-child) {
+    margin-bottom: 3px;
+}
+
+.validation-list{
+    padding-left: 6px !important;
+}

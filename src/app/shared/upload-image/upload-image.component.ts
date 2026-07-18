@@ -3,13 +3,14 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { urlToImage } from '@app/common/utils/url-to-image.util';
+import { FallbackImageDirective } from '@app/common/directives/fallback-image.directive';
 declare const toastr: any;
 declare const $:any;
 
 @Component({
 	selector: 'app-upload-image',
 	standalone: true,
-	imports: [CommonModule, RouterModule, FormsModule],
+	imports: [CommonModule, RouterModule, FormsModule, FallbackImageDirective],
 	templateUrl: './upload-image.component.html',
 	styleUrls: ['./upload-image.component.css'],
 })
@@ -61,33 +62,6 @@ export class UploadImageComponent {
 			reader.onload = (e: any) => {
 				img.src = e.target.result;
 				img.onload = () => {
-					if(this.aspectMode != 'all'){
-						switch (this.aspectMode) {
-							case 'square':
-								if (img.width !== img.height) {
-									this.setError('La imagen debe ser cuadrada.');
-									return;
-								}
-								break;
-
-							case 'rectangle':
-								if (img.width <= img.height) {
-									this.setError('La imagen debe ser horizontal (más ancha que alta).');
-									return;
-								}
-								break;
-
-							case '2:1':
-								const ratio = img.width / img.height;
-								if (Math.abs(ratio - 2) > 0.05) {
-									// 👉 tolerancia del 5% para evitar errores por 1px
-									this.setError('La imagen debe tener relación 2:1 (ejemplo: 1200x600).');
-									return;
-								}
-								break;
-						}
-					}
-
 					// ✅ Válida
 					this.fileName = file.name;
 					this.imagePreview = e.target.result;
@@ -103,8 +77,6 @@ export class UploadImageComponent {
 	}
 
 	clearImage(): void {
-		console.log(this.inputId);
-		
 		this.imagePreview = null;
 		this.fileName = null;
 		this.fileSelected.emit(null);
@@ -118,7 +90,7 @@ export class UploadImageComponent {
 		this.imagePreview = null;
 		this.fileName = null;
 		this.fileSelected.emit(null);
-		this.validationError.emit(message); // 👉 avisar al padre
+		this.validationError.emit(message);
 		this.hasError = true;
 	}
 }

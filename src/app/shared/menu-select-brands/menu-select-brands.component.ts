@@ -6,6 +6,7 @@ import { withMinLoadingTime } from '@app/common/interface/with-min-loading-time.
 import { BrandService } from '@app/services/brand.service';
 import { GLOBAL } from '@app/services/GLOBAL';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+import { environment } from 'environments/environment.dev';
 import { finalize, Subject, takeUntil } from 'rxjs';
 
 @Component({
@@ -68,7 +69,7 @@ export class MenuSelectBrandsComponent {
           const transformed = this.brands.map(item => ({
             id: item.id,           // OJO: antes usabas item.icon.id
             name: item.name,       // OJO: antes usabas item.icon.name
-            logoUrl: item.logoUrl,
+            logoUrl: `${environment.s3_public_url}/brands/small/${item.logoUrl}`,
             checked: false,
           }));
 
@@ -105,6 +106,7 @@ export class MenuSelectBrandsComponent {
 
   onApplyBrands(): void {
     this.applyBrands.emit(this.displayBrands); 
+    this.closeMenu();
   }
 
   closeMenu(){

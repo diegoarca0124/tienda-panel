@@ -1,0 +1,58 @@
+<ul class="nav nav-pills nav-scroll">
+    <li class="nav-item">
+        <a class="nav-link bg-light-primary cursor-pointer bg-light"
+            [ngClass]="{ 'active': tab == 'general' }"
+            (click)="changeOption('general')">
+            General
+        </a>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link bg-light-primary cursor-pointer bg-light"
+            [ngClass]="{ 'active': tab == 'characteristics' }"
+            (click)="changeOption('characteristics')">
+            Características
+        </a>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link bg-light-primary cursor-pointer bg-light"
+            [ngClass]="{ 'active': tab == 'properties' }"
+            (click)="changeOption('properties')">
+            Propiedades
+        </a>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link bg-light-primary cursor-pointer bg-light"
+            [ngClass]="{ 'active': tab == 'shipping' }"
+            (click)="changeOption('shipping')">
+            Envío
+        </a>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link bg-light-primary cursor-pointer bg-light"
+            [ngClass]="{ 'active': tab == 'images' }"
+            (click)="changeOption('images')">
+            Imágenes
+        </a>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link bg-light-primary cursor-pointer bg-light"
+            [ngClass]="{ 'active': tab == 'variations' }"
+            (click)="changeOption('variations')">
+            Variaciones
+        </a>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link bg-light-primary cursor-pointer bg-light"
+            [ngClass]="{ 'active': tab == 'groups' }"
+            (click)="changeOption('groups')">
+            Grupo
+        </a>
+    </li>
+</ul>
+

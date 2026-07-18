@@ -1,13 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, ElementRef, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { Category } from '@app/common/interface/category.interface';
 import { SidebarComponent } from '@app/shared/sidebar/sidebar.component';
 import { TopbarComponent } from '@app/shared/topbar/topbar.component';
 import { finalize, Subject, takeUntil } from 'rxjs';
 import { EditorState } from '@codemirror/state';
-import { EditorView, basicSetup } from 'codemirror';
 import { html } from '@codemirror/lang-html';
 import { oneDark } from '@codemirror/theme-one-dark';
 import { CategoryService } from '@app/services/category.service';
@@ -15,40 +13,46 @@ import { withMinLoadingTime } from '@app/common/interface/with-min-loading-time.
 import { GLOBAL } from '@app/services/GLOBAL';
 import { AlertComponent } from '@app/shared/alert/alert.component';
 import { TextFieldModule } from '@angular/cdk/text-field';
+import { IMaskModule } from 'angular-imask';
+import { CategoryInterface } from '../interfaces/category.interface';
+import { createEmptyCategory } from '../utils/empties.util';
+import { showErrorsCategory } from '../constants/show-errors-category.constant';
+import { ValidationPopoverComponent } from '@app/shared/validation-popover/validation-popover.component';
 declare const toastr: any;
+import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
+import { MonacoOptions } from '../constants/monaco-options.constant';
+import { DomSanitizer } from '@angular/platform-browser';
+import { InputSvgComponent } from '@app/shared/input-svg/input-svg.component';
+import { TextareaAutoresizeDirective } from '@app/common/directives/textarea-autoresize.directive';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
 	selector: 'app-create-category',
 	standalone: true,
-	imports: [TopbarComponent, SidebarComponent, FormsModule, CommonModule, RouterModule, AlertComponent, TextFieldModule],
+	imports: [TopbarComponent, SidebarComponent, FormsModule, CommonModule, RouterModule, AlertComponent, TextFieldModule, IMaskModule, ValidationPopoverComponent, InputSvgComponent, TextareaAutoresizeDirective ],
 	templateUrl: './create-category.component.html',
 	styleUrl: './create-category.component.css',
+	schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class CreateCategoryComponent {
 	@ViewChild('editorContainer', { static: true }) editorContainer!: ElementRef;
-	editorView!: EditorView;
 	private destroy$ = new Subject<void>();
 	public loadBtn: boolean = false;
 	public errorsCategory: any = {};
 	public msmErrorCategory: any = [];
-	public errorMsmServer: string = '';
-	public category: Category = {
-		name: '',
-		slug: '',
-		icon: '',
-		description: '',
-		isDimensions: false,
-		isCharacteristics: false,
-		isConditiom: false,
-		isWarranty: false,
-		isCountryOfOrigin: false,
-		isMaterial: false,
-		isTemperature: false,	
+	public category: CategoryInterface = createEmptyCategory();
+	public prefixMask = {
+		mask: /^[A-Z]{0,3}$/,
+		prepare: (str: string) => str.toUpperCase()
 	};
+	public showErrors = showErrorsCategory;
+
+	
 
 	constructor(
 		private categoryService: CategoryService,
-		private _router: Router
+		private _router: Router,
+		
 	) {}
 
 	ngOnDestroy(): void {
@@ -57,10 +61,9 @@ export class CreateCategoryComponent {
 	}
 
 	create() {
-		this.loadBtn = true;
 		this.msmErrorCategory = [];
-		this.errorMsmServer = '';
-		this.errorsCategory = {};
+		this.loadBtn = true;
+		if(this.category.icon == null) this.category.icon = "";
 		this.categoryService
 			.create_category(this.category)
 			.pipe(
@@ -69,21 +72,28 @@ export class CreateCategoryComponent {
 				finalize(() => (this.loadBtn = false))
 			)
 			.subscribe({
-				next: (next) => {
+				next: (next: {data: [], message: string}) => {
 					this.errorsCategory = {};
-					toastr.success('Categoría creada correctamente.');
+					toastr.success(next.message);
 					this._router.navigate(['/products/categories']);
 				},
-				error: (err) => {
+				error: (err: HttpErrorResponse) => {
 					const error = err.error;
-					this.errorMsmServer = error.message || '¡Error desconocido!';
-					toastr.error(this.errorMsmServer);
+					toastr.error(error.message || '¡Error desconocido!');
 
 					if (error.validation) {
 						this.errorsCategory = error.validation;
-						this.msmErrorCategory =Object.values(this.errorsCategory).flat();	
+						this.msmErrorCategory =Object.values(this.errorsCategory).flat();
+						for (const key in this.showErrors) {
+							this.showErrors[key as keyof typeof this.showErrors] =
+							!!this.errorsCategory?.[key]?.length;
+						}	
 					}
 				},
 			});
 	}
+
+	
+
+	
 }

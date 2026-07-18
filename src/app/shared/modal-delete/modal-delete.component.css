@@ -3,3 +3,7 @@
 	word-wrap: break-word; /* Rompe palabras largas si es necesario */
 	overflow-wrap: break-word; /* Alternativa moderna */
 }
+
+.w-120px{
+	width: 120px !important;
+}

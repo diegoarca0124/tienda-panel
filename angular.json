@@ -25,6 +25,11 @@
               {
                 "glob": "**/*",
                 "input": "public"
+              },
+              {
+                "glob": "**/*",
+                "input": "node_modules/monaco-editor/min",
+                "output": "assets/monaco/min"
               }
             ],
             "styles": [
@@ -32,7 +37,6 @@
               "node_modules/@ng-select/ng-select/themes/default.theme.css",
               "node_modules/quill/dist/quill.snow.css",
               "src/styles.css"
-              
             ],
             "scripts": []
           },

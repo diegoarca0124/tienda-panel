@@ -1,18 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { Component, HostListener, signal, WritableSignal } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, HostListener, signal, WritableSignal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
 import { pageLimit } from '@app/common/constants/pageLimit.constant';
 import { statusTable } from '@app/common/constants/statusTable.contant';
-import { CollaboratorList } from '@app/common/interface/collaborator-list.interface';
-import { Collaborator } from '@app/common/interface/collaborator.interface';
 import { withMinLoadingTime } from '@app/common/interface/with-min-loading-time.interface';
 import { closeModal } from '@app/common/utils/close-modal.util';
 import { copyToClipboard } from '@app/common/utils/copy-clipboard.util';
 import { getColorBasedOnLetter } from '@app/common/utils/get-color-based-on-letter.util';
 import { sendWhatsAppMessageWithObject } from '@app/common/utils/send-message-whatsapp.util';
-import { sortColumnsTable } from '@app/common/utils/sort-columns-table.util';
-import { ValidateQueryParams } from '@app/common/utils/validate-query-params.util';
 import { CollaboratorService } from '@app/services/collaborator.service';
 import { GLOBAL } from '@app/services/GLOBAL';
 import { ModalDeleteComponent } from '@app/shared/modal-delete/modal-delete.component';
@@ -21,23 +17,26 @@ import { PaginationComponent } from '@app/shared/pagination/pagination.component
 import { SidebarComponent } from '@app/shared/sidebar/sidebar.component';
 import { TopbarComponent } from '@app/shared/topbar/topbar.component';
 import { NgSelectModule } from '@ng-select/ng-select';
-import { Store } from '@ngrx/store';
 import { finalize } from 'rxjs';
 import { takeUntil } from 'rxjs/internal/operators/takeUntil';
 import { Subject } from 'rxjs/internal/Subject';
 import { sortColumnsCollaborators } from '../constants/sortColumnsCollaborators.constant';
+import { CollaboratorInterface } from '../interfaces/collaborator.interface';
+import { ValidateQPCollaborators } from '../utils/validate-qp-collaborators.util';
+import { HttpErrorResponse } from '@angular/common/http';
+import { PaginationMetaInterface } from '@app/common/interface/pagination-meta.interface'
 declare const toastr: any;
-declare const $: any;
 
 @Component({
 	selector: 'app-index-collaborator',
 	imports: [TopbarComponent, SidebarComponent, CommonModule, FormsModule, RouterModule, ModalDeleteComponent, NotFoundComponent, PaginationComponent, NgSelectModule],
+	schemas: [CUSTOM_ELEMENTS_SCHEMA],
 	templateUrl: './index-collaborator.component.html',
 	styleUrl: './index-collaborator.component.css',
 })
 export class IndexCollaboratorComponent {
-	public loadBtnDelete: WritableSignal<boolean> = signal(false);
-	public loadBtnMultipleStatus: WritableSignal<boolean> = signal(false);
+	public loadBtnStatusSingle: WritableSignal<boolean> = signal(false);
+	public loadBtnStatusMultiple: WritableSignal<boolean> = signal(false);
 	public filter: string = '';
 	public status: string = 'Todos';
 	public sort: string = 'Predeterminado';
@@ -45,21 +44,15 @@ export class IndexCollaboratorComponent {
 	public limit: number = 10;
 	public totalPages: number = 0;
 	public loading: boolean = true;
-	public arrDataSkull: Array<any> = Array.from({ length: 5 }, () => ({}));
-	public collaborators: CollaboratorList[] = [];
+	public collaborators: CollaboratorInterface[] = [];
 	public screenHeight = window.innerHeight;
 	public errorMsmServerListCollaborators: string = '';
 	private destroy$ = new Subject<void>();
-	public columns = [
-		{ key: 'names', label: 'Colaborador', classCol: 'col-w-xs-200 col-w-md-250' },
-		{ key: 'role', label: 'Rol', classCol: 'col-w-xs-100' },
-		{ key: 'number_document', label: 'Documento', classCol: 'col-w-xs-100' },
-		{ key: 'status', label: 'Estado', classCol: 'col-w-xs-100' },
-	];
 	public pageLimit = pageLimit;
 	public statusTable = statusTable;
 	public sortColumns = sortColumnsCollaborators;
 	public selectedIds = new Set<string>();
+	public readonly sortValues = sortColumnsCollaborators.map(item => item.value);
 
 	constructor(
 		private _router: Router,
@@ -69,16 +62,10 @@ export class IndexCollaboratorComponent {
 
 	ngOnInit() {
 		this._route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params) => {
-			const sortArrStr = sortColumnsCollaborators.map(item => item.value);
-			const isValid = ValidateQueryParams(this._route, params, this._router, sortArrStr);
-			if (!isValid) return;
+			if (!ValidateQPCollaborators(this._route, params, this._router, this.sortValues)) return;
 
-			this.filter = params['filter'] || '';
-			this.currentPage = Number(params['page']);
-			this.limit = Number(params['limit']);
-			this.status = params['status'];
-			this.sort = params['sort'];
-			this.init_collaborators(this.filter, this.currentPage, this.status, this.limit, this.sort);
+			this.loadQueryParams(params);
+			this.initCollaborators(this.filter, this.currentPage, this.status, this.limit, this.sort);
 		});
 	}
 
@@ -87,19 +74,23 @@ export class IndexCollaboratorComponent {
 		this.screenHeight = window.innerHeight;
 	}
 
-	onFilterOrStatusChange() {
-		this.currentPage = 1;
-		this.redirect();
-	}
-
 	ngOnDestroy(): void {
 		this.destroy$.next();
 		this.destroy$.complete();
 	}
 
-	init_collaborators(filter: string, page: number, status: string, limit: number, sort: string) {
+	private loadQueryParams(params: Params): void {
+		this.filter = params['filter'] || '';
+		this.currentPage = Number(params['page'] ?? 1);
+		this.limit = Number(params['limit'] ?? 10);
+		this.status = params['status'];
+		this.sort = params['sort'];
+	}
+
+	initCollaborators(filter: string, page: number, status: string, limit: number, sort: string) {
 		this.loading = true;
 		this.errorMsmServerListCollaborators = '';
+		this.collaborators = [];
 		this.collaboratorService
 			.get_collaborators(filter, page, limit, status, sort)
 			.pipe(
@@ -108,16 +99,34 @@ export class IndexCollaboratorComponent {
 				finalize(() => (this.loading = false))
 			)
 			.subscribe({
-				next: (next: { collaborators: CollaboratorList[]; currentPage: number; totalCollaborators: number; totalPages: number }) => {
-					this.currentPage = next.currentPage;
+				next: (next: { collaborators: CollaboratorInterface[]; meta: PaginationMetaInterface}) => {
+					this.selectedIds.clear();
 					this.collaborators = next.collaborators;
-					this.totalPages = next.totalPages;
+					this.totalPages = next.meta.totalPages;
+					this.syncCurrentPage(next.meta.currentPage);
 				},
-				error: (err) => {
+				error: (err: HttpErrorResponse) => {
 					const error = err.error;
 					this.errorMsmServerListCollaborators = error;
 				},
 			});
+	}
+
+	syncCurrentPage(currentPage: number): void {
+		if (this.currentPage === currentPage) return;
+
+		this.currentPage = currentPage;
+
+		this._router.navigate([], {
+			queryParams: {
+				filter: this.filter,
+				page: this.currentPage,
+				limit: this.limit,
+				status: this.status,
+				sort: this.sort,
+			},
+			replaceUrl: true,
+		});
 	}
 
 	getColorBasedOnLetter(str: string) {
@@ -125,15 +134,36 @@ export class IndexCollaboratorComponent {
 	}
 
 	redirect() {
+		const queryParams = {
+			filter: this.filter,
+			page: this.currentPage,
+			limit: this.limit,
+			status: this.status,
+			sort: this.sort,
+		};
+
+		const current :any= this._route.snapshot.queryParams;
+
+		const same =
+			(current.filter ?? '') === queryParams.filter &&
+			Number(current.page ?? 1) === queryParams.page &&
+			Number(current.limit ?? 10) === queryParams.limit &&
+			(current.status ?? 'Todos') === queryParams.status &&
+			(current.sort ?? 'Predeterminado') === queryParams.sort;
+
+		if (same) {
+			this.initCollaborators(
+				this.filter,
+				this.currentPage,
+				this.status,
+				this.limit,
+				this.sort
+			);
+			return;
+		}
+
 		this._router.navigate([], {
-			queryParams: {
-				filter: this.filter,
-				page: this.currentPage,
-				limit: this.limit,
-				status: this.status,
-				sort: this.sort
-			},
-			queryParamsHandling: 'merge',
+			queryParams,
 		});
 	}
 
@@ -151,41 +181,42 @@ export class IndexCollaboratorComponent {
 		});
 	}
 
-	setStatus(id: string, status: boolean) {
-		this.loadBtnDelete.set(true);
+	onUpdateStatus(id: string, status: boolean) {
+		this.loadBtnStatusSingle.set(true);
 		this.collaboratorService
 			.update_status_collaborator(id, { status })
 			.pipe(
 				takeUntil(this.destroy$),
 				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
-				finalize(() => this.loadBtnDelete.set(false))
+				finalize(() => this.loadBtnStatusSingle.set(false))
 			)
 			.subscribe({
-				next: (next: Collaborator) => {
-					this.collaborators = this.collaborators.map((prev: Collaborator) => {
-						if (next.id === prev.id) {
-							return { ...prev, status: next.status };
-						}
-						return prev;
-					});
-
-					toastr.success('Se actualizó el estado correctamente.');
-					closeModal(id);
+				next: (next: {data: CollaboratorInterface, message: string}) => {
+					const collaborator = this.collaborators.find(c => c.id === next.data.id);
+					if (collaborator) {
+						collaborator.status = next.data.status;
+					}
+					toastr.success(next.message);
+					closeModal('modalDelete-'+id);
 				},
-				error: (error: any) => {
+				error: (error: HttpErrorResponse) => {
 					toastr.error(error.error.message);
 				},
 			});
 	}
 
-	setLimit() {
+	onLimitChange() {
 		this.currentPage = 1;
 		this.redirect();
 	}
 
 	onPageChange(newPage: number) {
 		this.currentPage = newPage;
-		this.redirect(); // o init_collaborators()
+		this.redirect();
+	}
+
+	onResetCurrentPage(){
+		this.currentPage = 1;
 	}
 
 	resetFilters(){
@@ -207,9 +238,7 @@ export class IndexCollaboratorComponent {
 		});
 	}
 
-	toggleItem(id: string, event: Event) {
-		const checked = (event.target as HTMLInputElement).checked;
-
+	toggleItem(id: string, checked: boolean) {
 		if (checked) {
 			this.selectedIds.add(id);
 		} else {
@@ -221,8 +250,12 @@ export class IndexCollaboratorComponent {
 		return [...this.selectedIds];
 	}
 
+	get hasSelectedCollaborators(): boolean {
+		return this.selectedIds.size > 0;
+	}
+
 	onUpdateStatusMultiple(status: boolean){
-		this.loadBtnMultipleStatus.set(true);
+		this.loadBtnStatusMultiple.set(true);
 		this.collaboratorService
 		.update_status_collaborators({
 			ids: this.getSelectedIds(),
@@ -231,27 +264,29 @@ export class IndexCollaboratorComponent {
 		.pipe(
 			takeUntil(this.destroy$),
 			withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
-			finalize(() => this.loadBtnMultipleStatus.set(false))
+			finalize(() => this.loadBtnStatusMultiple.set(false))
 		)
 		.subscribe({
-			next: (next: any) => {
-				console.log(next);
-				
-				this.collaborators = this.collaborators.map((prev: Collaborator) => {
-					if (next.includes(prev.id)) {
-						return { ...prev, status: status };
+			next: (next: {data: string[], message: string}) => {
+				const updatedIds = new Set(next.data);
+				this.collaborators = this.collaborators.map(prev => {
+					if (updatedIds.has(prev.id!)) {
+						return {
+							...prev,
+							status
+						};
 					}
 					return prev;
 				});
-
-				toastr.success('Se actualizó el estado correctamente.');
+				toastr.success(next.message);
 				closeModal(status ? 'modalMultipleActive' : 'modalMultipleDisabled');
 				this.selectedIds.clear();
 			},
-			error: (error: any) => {
+			error: (error: HttpErrorResponse) => {
 				toastr.error(error.error.message);
 			},
 		});
 	}
 
+	
 }

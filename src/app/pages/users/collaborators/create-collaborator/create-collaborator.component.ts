@@ -1,8 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { Collaborator } from '@app/common/interface/collaborator.interface';
 import { withMinLoadingTime } from '@app/common/interface/with-min-loading-time.interface';
 import { AuthService } from '@app/services/auth.service';
 import { CollaboratorService } from '@app/services/collaborator.service';
@@ -14,34 +13,38 @@ import { Subject } from 'rxjs/internal/Subject';
 import { IMaskModule } from 'angular-imask';
 import { rols } from '@app/common/constants/rols.constant';
 import { NgSelectModule } from '@ng-select/ng-select';
-import { identityDocuments } from '@app/common/constants/identityDocuments .constant';
-import { AlertComponent } from '@app/shared/alert/alert.component';
+import { identityDocuments } from '@app/common/constants/identityDocuments.constant';
+import { CollaboratorInterface } from '../interfaces/collaborator.interface';
+import { createEmptyCollaborator } from '../utils/empties.util';
+import { buildShowErrors } from '@app/common/utils/build-show.errors.util';
+import { ValidationPopoverComponent } from '@app/shared/validation-popover/validation-popover.component';
 declare const toastr: any;
 
 @Component({
 	selector: 'app-create-collaborator',
-	imports: [SidebarComponent, TopbarComponent, CommonModule, FormsModule, RouterModule, IMaskModule, NgSelectModule, AlertComponent],
+	imports: [SidebarComponent, TopbarComponent, CommonModule, FormsModule, RouterModule, IMaskModule, NgSelectModule, ValidationPopoverComponent],
 	templateUrl: './create-collaborator.component.html',
 	styleUrl: './create-collaborator.component.css',
+	schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class CreateCollaboratorComponent {
-	public collaborator: Collaborator = {
-		names: '',
-		surname: '',
-		type_document: undefined,
-		number_document: '',
-		role: undefined,
-		email: '',
-		password: '',
-		phone: '',
-	};
+	public collaborator: CollaboratorInterface = createEmptyCollaborator();
 	public errorsCollaborator: any = {};
 	public msmErrorCollaborator: any = [];
 	private destroy$ = new Subject<void>();
 	public loadBtn: boolean = false;
-	public errorMsmServer: string = '';
 	public rols = rols;
 	public identityDocuments = identityDocuments;
+	public showErrors = {
+		names: false,
+		surname: false,
+		role: false,
+		email: false,
+		type_document: false,
+		number_document: false,
+		phone: false,
+		password: false
+	};
 
 	constructor(
 		private authService: AuthService,
@@ -69,10 +72,7 @@ export class CreateCollaboratorComponent {
 	}
 
 	create() {
-		this.errorMsmServer = '';
-		this.errorsCollaborator = {};
 		this.msmErrorCollaborator = [];
-
 		this.loadBtn = true;
 		this.collaboratorService
 			.create_collaborator(this.collaborator)
@@ -82,18 +82,19 @@ export class CreateCollaboratorComponent {
 				finalize(() => (this.loadBtn = false))
 			)
 			.subscribe({
-				next: (next) => {
-					toastr.success('Colaborador creado correctamente.');
+				next: (next: {data: CollaboratorInterface, message: string}) => {
+					this.errorsCollaborator = {};
+					toastr.success(next.message);
 					this._router.navigate(['/users/collaborators']);
 				},
 				error: (err) => {
-					const error = err.error;
-					this.errorMsmServer = error.message || '¡Error desconocido!';
-					toastr.error(this.errorMsmServer);
+					const error = err?.error ?? {};
+					toastr.error(error.message || '¡Error desconocido!');
 					
 					if (error.validation) {
 						this.errorsCollaborator = error.validation;
 						this.msmErrorCollaborator = Object.values(this.errorsCollaborator).flat();
+						this.showErrors = buildShowErrors(this.showErrors,this.errorsCollaborator);
 					}
 				},
 			});

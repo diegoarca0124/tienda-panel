@@ -1,13 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output, signal, Signal } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, EventEmitter, Input, Output, signal, Signal } from '@angular/core';
 
 @Component({
   selector: 'app-modal-delete',
   imports: [
-    CommonModule
+    CommonModule,
   ],
   templateUrl: './modal-delete.component.html',
-  styleUrl: './modal-delete.component.css'
+  styleUrl: './modal-delete.component.css',
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class ModalDeleteComponent {
   @Input() id: string = '';

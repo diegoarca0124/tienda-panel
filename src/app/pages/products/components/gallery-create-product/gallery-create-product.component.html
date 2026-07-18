@@ -1,0 +1,207 @@
+<div class="d-flex flex-column gap-6">
+ 
+    <app-upload-images (filesSelected)="onSelectFiles($event)"></app-upload-images>
+    
+    @if (errorsProduct?.cover) {
+        <div class="alert alert-dismissible bg-light-danger d-flex flex-column flex-sm-row w-100 px-5 py-3 gap-3 mb-0" style="border: 1px dashed #ccc;border-radius: 0px !important;">
+            <app-icon-alert [classIcon]="'svg-icon-1 svg-icon-danger'"></app-icon-alert>                  
+
+            <div class="d-flex align-items-center pe-0 pe-sm-10">
+                <span class="text-gray-700">{{errorsProduct.cover[0]}}</span>
+            </div>
+        </div>
+    }
+
+    @if (errorsProduct?.miniature) {
+        <div class="alert alert-dismissible bg-light-danger d-flex flex-column flex-sm-row w-100 px-5 py-3 gap-3 mb-0" style="border: 1px dashed #ccc;border-radius: 0px !important;">
+            <app-icon-alert [classIcon]="'svg-icon-1 svg-icon-danger'"></app-icon-alert>                  
+
+            <div class="d-flex align-items-center pe-0 pe-sm-10">
+                <span class="text-gray-700">{{errorsProduct.miniature[0]}}</span>
+            </div>
+        </div>
+    }
+    @if (errorsProduct?.gallery) {
+        <div class="alert alert-dismissible bg-light-danger d-flex flex-column flex-sm-row w-100 px-5 py-3 gap-3 mb-0" style="border: 1px dashed #ccc;border-radius: 0px !important;">
+            <app-icon-alert [classIcon]="'svg-icon-1 svg-icon-danger'"></app-icon-alert>                  
+
+            <div class="d-flex align-items-center pe-0 pe-sm-10">
+                <span class="text-gray-700">{{errorsProduct.gallery[0]}}</span>
+            </div>
+        </div>
+    }
+
+
+    <ng-container *ngIf="!loadPhotos">
+        <div class="row g-3" *ngIf="images.length >= 1">
+            <div class="col-6 col-md-4 col-lg-3"
+                *ngFor="let item of images; let idx = index">
+                <a class="d-block overlay position-relative" data-fslightbox="lightbox-basic">
+                    <ng-container *ngIf="!id">
+                        <div
+                            class="overlay-wrapper
+                                bgi-no-repeat bgi-position-center bgi-size-gallery
+                                card-rounded min-h-175px"
+                            [ngStyle]="{ 'background-image': 'url(' + item.preview + ')' }"
+                            style="border: 1px dashed #ccc;"
+                        ></div>
+
+                        <div class="overlay-layer card-rounded bg-dark bg-opacity-25 shadow">
+                            <div class="d-flex flex-column gap-3">
+                                <button
+                                    type="button"
+                                    class="btn btn-xs bg-white w-100 text-primary"
+                                    title="Marcar como portada"
+                                    (click)="onSelectedCover(item)"
+                                    *ngIf="product.cover != item.file.name"
+                                >
+                                    Portada
+                                </button>
+                                <button
+                                    type="button"
+                                    class="btn btn-xs bg-white w-100 text-primary"
+                                    title="Marcar como miniatura"
+                                    (click)="onSelectedMiniature(item)"
+                                    *ngIf="product.miniature != item.file.name"
+                                >
+                                    Miniatura
+                                </button>
+                                <button
+                                    type="button"
+                                    class="btn btn btn-xs bg-white text-danger w-100"
+                                    title="Eliminar imagen"
+                                    (click)="removeImage(idx)"  
+                                    *ngIf="product.cover != item.file.name && product.miniature != item.file.name"
+                                >
+                                    Quitar
+                                </button>
+                            </div>
+                        </div>
+                        <div class="d-flex flex-column gap-3 position-absolute" style="top:10px; left:10px;">
+                            <span
+                                class="badge badge-primary"
+                                style="font-size: .7rem !important;"
+                                *ngIf="product.cover == item.file.name!"
+                            >
+                                PORTADA
+                            </span>
+                            <span
+                                class="badge badge-primary"
+                                style="font-size: .7rem !important;"
+                                *ngIf="product.miniature == item.file.name!"
+                            >
+                                MINIATURA
+                            </span>
+                        </div>
+                    </ng-container>
+                    <ng-container *ngIf="id">
+                        <div
+                            class="overlay-wrapper
+                                bgi-no-repeat bgi-position-center bgi-size-gallery
+                                card-rounded min-h-175px"
+                            [ngStyle]="{ 'background-image': 'url(' + item.preview + ')' }"
+                            style="border: 1px dashed #ccc;"
+                        ></div>
+
+                        <div class="overlay-layer card-rounded bg-dark bg-opacity-25 shadow">
+                            <div class="d-flex flex-column gap-3">
+                                <button
+                                    type="button"
+                                    class="btn btn-xs bg-white w-100px text-primary"
+                                    title="Marcar como portada"
+                                    (click)="onUpdateCover(item.index, item.url)"
+                                    *ngIf="product.cover != item.url"
+                                    [disabled]="idSelectUpdateCover === item.id"
+                                >
+                                    <span
+                                        *ngIf="loadSetCoverPhoto && idSelectUpdateCover === item.index"
+                                        class="spinner-border spinner-border-sm me-1"
+                                        aria-hidden="true">
+                                    </span>
+
+                                    <span>
+                                        {{ idSelectUpdateCover === item.index ? '' : 'Portada' }}
+                                    </span>
+                                </button>
+                                
+                                <button
+                                    type="button"
+                                    class="btn btn-xs bg-white w-100px text-primary"
+                                    title="Marcar como miniatura"
+                                    (click)="onUpdateMiniature(item.index, item.url)"
+                                    *ngIf="product.miniature != item.url"
+                                    [disabled]="idSelectUpdateMiniature === item.id"
+                                >
+                                    <span
+                                        *ngIf="loadSetMiniaturePhoto && idSelectUpdateMiniature === item.index"
+                                        class="spinner-border spinner-border-sm me-1"
+                                        aria-hidden="true">
+                                    </span>
+
+                                    <span>
+                                        {{ idSelectUpdateMiniature === item.index ? '' : 'Miniatura' }}
+                                    </span>
+                                </button>
+                                <button
+                                    type="button"
+                                    class="btn btn-xs bg-white text-danger w-100px"
+                                    title="Eliminar imagen"
+                                    (click)="onRemovePhoto(item.id)"
+                                    *ngIf="product.cover != item.url && product.miniature != item.url"
+                                    [disabled]="idSelectDeletePhoto === item.id"
+                                >
+                                    <span
+                                        *ngIf="loadDeletePhoto && idSelectDeletePhoto === item.id"
+                                        class="spinner-border spinner-border-sm me-1"
+                                        aria-hidden="true">
+                                    </span>
+
+                                    <span>
+                                        {{ idSelectDeletePhoto === item.id ? '' : 'Eliminar' }}
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="d-flex flex-column gap-3 position-absolute" style="top:10px; left:10px;">
+                            <span
+                                class="badge badge-primary"
+                                style="font-size: .7rem !important;"
+                                *ngIf="product.cover == item.url!"
+                            >
+                                PORTADA
+                            </span>
+                            <span
+                                class="badge badge-primary"
+                                style="font-size: .7rem !important;"
+                                *ngIf="product.miniature == item.url!"
+                            >
+                                MINIATURA
+                            </span>
+                        </div>
+                    </ng-container>
+                </a>
+            </div>
+        </div>
+        <ng-container *ngIf="images.length == 0">
+            <div class="card" style="box-shadow: none !important;border-color: #dce0ea !important;">
+                <div class="card-body p-0">
+                    <app-not-found [error]="{ message: 'No se encontraron imagenes cargadas.', statusCode: 404 }"></app-not-found>
+                </div>
+            </div>
+        </ng-container>
+    </ng-container>
+    <ng-container *ngIf="loadPhotos">
+        <div class="row g-3">
+            <div class="col-6 col-md-4 col-lg-3"
+                *ngFor="let item of [1,2,3,4]; let idx = index">
+                <a class="d-block overlay position-relative" data-fslightbox="lightbox-basic">
+                    <div
+                        class="overlay-wrapper
+                            bgi-no-repeat bgi-position-center bgi-size-gallery
+                            card-rounded min-h-175px skeleton"
+                    ></div>
+                </a>
+            </div>
+        </div>
+    </ng-container>
+</div>

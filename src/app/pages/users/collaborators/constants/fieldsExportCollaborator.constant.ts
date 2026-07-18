@@ -1,0 +1,80 @@
+export const fieldsExportCollaborator = [
+	{
+		key: 'names',
+		checked: true,
+		label: 'Nombres',
+		description: 'Incluye los nombres del colaborador',
+	},
+	{
+		key: 'surname',
+		checked: true,
+		label: 'Apellidos',
+		description: 'Incluye los apellidos del colaborador',
+	},
+	{
+		key: 'type_document',
+		checked: true,
+		label: 'Tipo de documento',
+		description: 'Tipo de identificación del colaborador',
+	},
+	{
+		key: 'number_document',
+		checked: true,
+		label: 'Número de documento',
+		description: 'Documento de identidad',
+	},
+	{
+		key: 'email',
+		checked: true,
+		label: 'Correo electrónico',
+		description: 'Email registrado',
+	},
+	{
+		key: 'prefix',
+		checked: true,
+		label: 'Prefijo Telefónico',
+		description: 'Prefijo del país',
+	},
+	{
+		key: 'phone',
+		checked: true,
+		label: 'Teléfono',
+		description: 'Número de contacto',
+	},
+	{
+		key: 'role',
+		checked: true,
+		label: 'Rol',
+		description: 'Rol asignado en el sistema',
+	},
+	{
+		key: 'status',
+		checked: true,
+		label: 'Estado',
+		description: 'Estado actual del colaborador',
+	},
+	{
+		key: 'createdAt',
+		checked: true,
+		label: 'Fecha de creación',
+		description: 'Fecha en que se creó el registro',
+	},
+	{
+		key: 'updatedAt',
+		checked: true,
+		label: 'Última actualización',
+		description: 'Fecha de última modificación',
+	},
+	{
+		key: 'statusAt',
+		checked: true,
+		label: 'Cambio estado',
+		description: 'Ultimo cambio de estado',
+	},
+	{
+		key: 'lastDateLogin',
+		checked: true,
+		label: 'Último acceso',
+		description: 'Última vez que inició sesión',
+	},
+];

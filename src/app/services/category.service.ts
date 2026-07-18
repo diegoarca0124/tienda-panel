@@ -1,10 +1,11 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'environments/environment.dev';
 import { AuthService } from './auth.service';
-import { Category } from '@app/common/interface/category.interface';
 import { Observable } from 'rxjs';
-import { Subcategory } from '@app/common/interface/subcategory.interface';
+import { CategoryInterface } from '@app/pages/categories/interfaces/category.interface';
+import { SubcategoryInterface } from '@app/pages/categories/interfaces/subcategory.interface';
+import { UpdatesCatsubcatProductsInterface } from '@app/pages/categories/interfaces/update-catsubcat.products.interface';
 
 @Injectable({
 	providedIn: 'root',
@@ -23,12 +24,16 @@ export class CategoryService {
 		private authsService: AuthService
 	) {}
 
-	create_category(category: Category): Observable<any> {
-		return this.http.post(`${this.apiUrl}/category/create_category`, category, { headers: this.getHeaders() });
+	create_category(category: CategoryInterface): Observable<any> {
+		return this.http.post(
+			`${this.apiUrl}/category/create_category`, 
+			category, 
+			{ headers: this.getHeaders() }
+		);
 	}
 
-	get_categories(filter: string, page: number, limit: number, status: string, sort : string): Observable<any> {
-		return this.http.get(`${this.apiUrl}/category/get_categories?filter=${filter}&page=${page}&limit=${limit}&status=${status}&sort=${sort}`, {
+	get_categories(filter: string, page: number, limit: number, status: string, sort : string, configuration: string): Observable<any> {
+		return this.http.get(`${this.apiUrl}/category/get_categories?filter=${filter}&page=${page}&limit=${limit}&status=${status}&sort=${sort}&configuration=${configuration}`, {
 			headers: this.getHeaders(),
 		});
 	}
@@ -41,11 +46,11 @@ export class CategoryService {
 		return this.http.get(`${this.apiUrl}/category/get_category/${id}`, { headers: this.getHeaders() });
 	}
 
-	update_category(id: string, category: Category): Observable<any> {
+	update_category(id: string, category: CategoryInterface): Observable<any> {
 		return this.http.put(`${this.apiUrl}/category/update_category/${id}`, category, { headers: this.getHeaders() });
 	}
 
-	create_subcategory(subcategory: Subcategory): Observable<any> {
+	create_subcategory(subcategory: SubcategoryInterface): Observable<any> {
 		return this.http.post(`${this.apiUrl}/category/create_subcategory`, subcategory, { headers: this.getHeaders() });
 	}
 
@@ -57,12 +62,67 @@ export class CategoryService {
 		return this.http.put(`${this.apiUrl}/category/update_status_subcategory/${id}`, data, { headers: this.getHeaders() });
 	}
 
-	update_subcategory(id: string, subcategory: Subcategory): Observable<any> {
+	update_subcategory(id: string, subcategory: SubcategoryInterface): Observable<any> {
 		return this.http.put(`${this.apiUrl}/category/update_subcategory/${id}`, subcategory, { headers: this.getHeaders() });
 	}
 
+	findCategoryProducts(
+		id: string,
+		qp: {
+			filter: string;
+			page: number;
+			limit: number;
+			status: string;
+			sort: string;
+			subcategoryIds: string;
+			quality: string;
+			visibility: string;
+			minPrice: number | null;
+			maxPrice: number | null;
+		}
+	): Observable<any> {
+
+		let params = new HttpParams()
+			.set('filter', qp.filter)
+			.set('page', qp.page)
+			.set('limit', qp.limit)
+			.set('status', qp.status)
+			.set('sort', qp.sort)
+			.set('subcategoryIds', qp.subcategoryIds)
+			.set('quality', qp.quality)
+			.set('visibility', qp.visibility);
+
+		if (qp.minPrice != null) {
+			params = params.set('minPrice', qp.minPrice);
+		}
+
+		if (qp.maxPrice != null) {
+			params = params.set('maxPrice', qp.maxPrice);
+		}
+
+		return this.http.get(
+			`${this.apiUrl}/category/findCategoryProducts/${id}`,
+			{ params, headers: this.getHeaders() }
+		);
+	}
+
+	get_categories_with_subcategories(): Observable<any> {
+		return this.http.get(`${this.apiUrl}/category/get_categories_with_subcategories`, {
+			headers: this.getHeaders(),
+		});
+	}
+
+	update_catsubcat_products(data: UpdatesCatsubcatProductsInterface): Observable<any> {
+		return this.http.post(`${this.apiUrl}/category/update_catsubcat_products`, data, { headers: this.getHeaders() });
+	}
+
+
 	get_categories_by_select(): Observable<any> {
 		return this.http.get(`${this.apiUrl}/category/get_categories_by_select`, { headers : this.getHeaders() });
+	}
+
+	get_subcat_by_select(): Observable<any> {
+		return this.http.get(`${this.apiUrl}/category/get_subcat_by_select`, { headers : this.getHeaders() });
 	}
 
 	get_subcategories_by_select(id: string): Observable<any> {
@@ -75,5 +135,9 @@ export class CategoryService {
 
 	update_status_subcategories(data: {ids: Array<string>, status: boolean}): Observable<any> {
 		return this.http.post(`${this.apiUrl}/category/update_status_subcategories`, data, { headers: this.getHeaders() });
+	}
+
+	update_category_in_subcategory(id: string, data: { categoryId: string }): Observable<any> {
+		return this.http.put(`${this.apiUrl}/category/update_category_in_subcategory/${id}`, data, { headers: this.getHeaders() });
 	}
 }
