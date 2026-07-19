@@ -22,7 +22,14 @@ export const ValidateQPProductsCategory= (
     const validVisibilityValues = ['Todos','public','private'];
     const validLimitVales = [10,20,25];
     const validSort = sortArray ?? [];
-    const validPrices = !isNaN(minPrice) && !isNaN(maxPrice) && minPrice >= 0 &&  maxPrice >= 0 && minPrice <= maxPrice;
+    const validPrices =
+        minPrice !== undefined &&
+        maxPrice !== undefined &&
+        Number.isFinite(minPrice) &&
+        Number.isFinite(maxPrice) &&
+        minPrice >= 0 &&
+        maxPrice >= 0 &&
+        minPrice <= maxPrice;
     const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
     //corregir page

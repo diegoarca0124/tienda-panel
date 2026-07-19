@@ -10,12 +10,12 @@
 							<h1 class="page-heading d-flex text-gray-700 fs-3 flex justify-content-start my-0 align-items-center text-uppercase ls-1px fw-700">
 								Categorías
 
-								<span *ngIf="!loadCategory && !errorMsmServerCategory && category?.name">
+								<span *ngIf="!isCategoryLoading && !categoryLoadError && category?.name">
 									&nbsp; | &nbsp;{{ category.name }}
 								</span>
 
 								<div
-									*ngIf="loadCategory"
+									*ngIf="isCategoryLoading"
 									class="skeleton skeleton-text"
 									style="width: 120px; height: 15px; margin-left: .9rem !important">
 								</div>
@@ -53,13 +53,13 @@
 														placeholder="Buscar producto"
 														name="filter"
 														[(ngModel)]="filter"
-														(keyup.enter)="redirect()"
+														(keyup.enter)="applyFilters()"
 													/>
 
 													<i
 														class="bi bi-search position-absolute cursor-pointer"
 														style="right: 15px; top: 50%; transform: translateY(-50%)"
-														(click)="redirect()"
+														(click)="applyFilters()"
 													></i>
 												</div>
 
@@ -67,16 +67,16 @@
 													type="button"
 													class="btn btn-sm btn-icon btn-light-primary d-flex align-items-center justify-content-center"
 													(click)="resetFilters()"
-													[disabled]="loading"
+													[disabled]="isProductsLoading"
 												>
 													<span
-														*ngIf="loading"
+														*ngIf="isProductsLoading"
 														class="spinner-border spinner-border-sm"
 														role="status"
 														aria-hidden="true"
 													></span>
 													<i
-														*ngIf="!loading"
+														*ngIf="!isProductsLoading"
 														class="bi bi-arrow-clockwise fs-5"
 													></i>
 												</button>
@@ -136,8 +136,8 @@
 													[items]="statusFilters"
 													bindLabel="name"
 													bindValue="value"
-													name="status"
-													[(ngModel)]="status"
+													name="selectedStatus"
+													[(ngModel)]="selectedStatus"
 													placeholder="Estado"
 													[clearable]="false"
 													[closeOnSelect]="true"
@@ -172,8 +172,8 @@
 													[items]="sortFilters"
 													bindLabel="name"
 													bindValue="value"
-													name="sort"
-													[(ngModel)]="sort"
+													name="selectedSort"
+													[(ngModel)]="selectedSort"
 													placeholder="Orden"
 													[clearable]="false"
 													[closeOnSelect]="true"
@@ -201,8 +201,8 @@
 										</div>
 										<div class="filter-item">
 											<app-menu-select-subcategories 
-											(applySubcategories)="getSubategories($event)"
-											[selectedSubcategories]="subcategoryIds"
+											(applySubcategories)="onSubcategoriesChange($event)"
+											[selectedSubcategories]="selectedSubcategoryIds"
 											[title]="'Subcategorías'"
 											[placeholder]="'Filtrar por subcategoría'"
 											[sizeClass]="'sm'"
@@ -218,8 +218,8 @@
 													[items]="qualityFilters"
 													bindLabel="name"
 													bindValue="value"
-													name="quality"
-													[(ngModel)]="quality"
+													name="selectedQuality"
+													[(ngModel)]="selectedQuality"
 													placeholder="Calidad"
 													[clearable]="false"
 													[closeOnSelect]="true"
@@ -253,14 +253,14 @@
 												<div class="d-flex gap-5">
 													<app-input-dialer
 													[value]="minPrice"
-													(valueChange)="getMinPrice($event)"
+													(valueChange)="onMinPriceChange($event)"
 													placeholder="Mín"
 													[step]="5">
 													</app-input-dialer>
 
 													<app-input-dialer
 													[value]="maxPrice"
-													(valueChange)="getMaxPrice($event)"
+													(valueChange)="onMaxPriceChange($event)"
 													placeholder="Máx"
 													[step]="5">
 													</app-input-dialer>
@@ -277,8 +277,8 @@
 													[items]="visibilityFilters"
 													bindLabel="name"
 													bindValue="value"
-													name="visibility"
-													[(ngModel)]="visibility"
+													name="selectedVisibility"
+													[(ngModel)]="selectedVisibility"
 													placeholder="Visibilidad"
 													[clearable]="false"
 													[closeOnSelect]="true"
@@ -306,10 +306,10 @@
 									</div>
 									<button
 										class="btn btn-xs bg-light-primary my-3 d-inline-flex align-items-center gap-2"
-										(click)="redirect()"
-										[disabled]="loading"
+										(click)="applyFilters()"
+										[disabled]="isProductsLoading"
 									>
-										<ng-container *ngIf="!loading; else loadingTpl">
+										<ng-container *ngIf="!isProductsLoading; else loadingTpl">
 											<ion-icon name="search-outline" class="fs-6 text-primary"></ion-icon>
 											<span class="text-primary">Buscar</span>
 										</ng-container>
@@ -334,7 +334,7 @@
 													/>
 													</label>
 												</th>
-												<th class="flex-column">
+												<th class="fixed-column min-w-250px">
 													Producto
 												</th>
 												<th class="fixed-sm">
@@ -361,7 +361,7 @@
 											</tr>
 										</thead>
 										<tbody>
-											@if (loading) {
+											@if (isProductsLoading) {
 												<tr *ngFor="let item of [1,2,3,4,5,6]">
 													<td class="fixed-xs text-center p-0">
 														<div class="skeleton skeleton-check"></div>
@@ -407,10 +407,10 @@
 														<div class="skeleton skeleton-btn"></div>
 													</td>
 												</tr>
-											}@else if (errorMsmServerListProducts) {
+											}@else if (productsLoadError) {
 												<tr>
 													<td colspan="6">
-														<app-not-found [error]="errorMsmServerListProducts"></app-not-found>
+														<app-not-found [error]="productsLoadError"></app-not-found>
 													</td>
 												</tr>
 											}@else if (products.length >= 1) {
@@ -421,7 +421,7 @@
 															class="form-check-input cursor-pointer"
 															type="checkbox"
 															[checked]="selectedProductsIds.has(item.id!)"
-															(change)="toggleItem(item.id!, $event)"
+															(change)="onProductSelectionChange(item.id!, $event)"
 														/>
 														</label>
 													</td>
@@ -599,14 +599,14 @@
 						<button
 							type="button"
 							class="btn btn-sm btn-light-primary my-5"
-							(click)="!loadCategories ? initCategories() : null"
-							[disabled]="loadCategories"
+							(click)="!isCategoriesLoading ? initCategories() : null"
+							[disabled]="isCategoriesLoading"
 						>
-							<ng-container *ngIf="!loadCategories">
+							<ng-container *ngIf="!isCategoriesLoading">
 								<i class="bi bi-arrow-clockwise me-1"></i>
 								Refrescar
 							</ng-container>
-							<ng-container *ngIf="loadCategories">
+							<ng-container *ngIf="isCategoriesLoading">
 								<span
 									class="spinner-border spinner-border-sm me-2"
 									aria-hidden="true"
@@ -620,7 +620,7 @@
 
 					<div class="accordion-container mb-5" style="margin-right: 0px !important;">
 						<div class="category-accordion-container min-h-card">
-							@if(loadCategories){
+							@if(isCategoriesLoading){
 								<div class="category-card" *ngFor="let category of [1,2,3,4,5,6]; let i = index">
 									<div class="category-header" style="background-color: white !important;">
 										<div class="d-flex align-items-center gap-3 min-w-0">
@@ -634,8 +634,8 @@
 										</div>
 									</div>
 								</div>
-							}@else if (errorMsmServerGetCategory) {
-								<app-not-found [error]="errorMsmServerGetCategory"></app-not-found>
+							}@else if (categoriesLoadError) {
+								<app-not-found [error]="categoriesLoadError"></app-not-found>
 							}@else if (categories.length >= 1) {
 								<div class="category-card" *ngFor="let category of categories; let i = index">
 									<div class="category-header" (click)="category.subcategories.length >= 1 ? toggleCategory(i) : null">
@@ -660,11 +660,11 @@
 												</div>
 											</div>
 										</div>
-										<div *ngIf="category.subcategories.length >= 1" class="category-arrow active" [class.active]="openedCategory === i">
+										<div *ngIf="category.subcategories.length >= 1" class="category-arrow active" [class.active]="expandedCategoryIndex === i">
 											<ion-icon name="chevron-down-outline" class="text-primary"></ion-icon>
 										</div>
 									</div>
-									<div class="subcategory-container" [class.open]="openedCategory === i">
+									<div class="subcategory-container" [class.open]="expandedCategoryIndex === i">
 										<div>
 											<div
 												class="subcategory-item"
@@ -684,8 +684,8 @@
 												</div>
 												<span class="btn btn-dark btn-sm d-flex align-items-center gap-2"
 													style="border: 1px solid #f0f0f0;padding: 5px 10px;"
-													(click)="selectSubcategory(category, subcategory)">
-													<ng-container *ngIf="loadingMove && subcategoryDestination == subcategory.id; else defaultTpl">
+													(click)="moveSelectedProductsTo(category, subcategory)">
+													<ng-container *ngIf="isMovingProducts && movingToSubcategoryId == subcategory.id; else defaultTpl">
 														<span class="spinner-border spinner-border-sm"
 															role="status"
 															aria-hidden="true"

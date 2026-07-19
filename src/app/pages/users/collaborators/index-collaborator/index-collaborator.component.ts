@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, HostListener, signal, WritableSignal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
-import { pageLimit } from '@app/common/constants/pageLimit.constant';
 import { statusTable } from '@app/common/constants/statusTable.contant';
 import { withMinLoadingTime } from '@app/common/interface/with-min-loading-time.interface';
 import { closeModal } from '@app/common/utils/close-modal.util';
@@ -35,23 +34,33 @@ declare const toastr: any;
 	styleUrl: './index-collaborator.component.css',
 })
 export class IndexCollaboratorComponent {
-	public loadBtnStatusSingle: WritableSignal<boolean> = signal(false);
-	public loadBtnStatusMultiple: WritableSignal<boolean> = signal(false);
-	public filter: string = '';
-	public status: string = 'Todos';
-	public sort: string = 'Predeterminado';
-	public currentPage: number = 1;
-	public limit: number = 10;
-	public totalPages: number = 0;
-	public loading: boolean = true;
-	public collaborators: CollaboratorInterface[] = [];
-	public screenHeight = window.innerHeight;
-	public errorMsmServerListCollaborators: string = '';
 	private destroy$ = new Subject<void>();
-	public pageLimit = pageLimit;
+
+	public filter: string = '';
+	public selectedStatus: string = 'Todos';
+	public selectedSort: string = 'Predeterminado';
+
+	public currentPage: number = 1;
+	public totalPages: number = 0;
+	public limit: number = 10;
+
 	public statusTable = statusTable;
 	public sortColumns = sortColumnsCollaborators;
-	public selectedIds = new Set<string>();
+
+	public selectedCollaboratorsIds = new Set<string>();
+
+	public isCollaboratorsLoading: boolean = true;
+
+	public collaboratorsLoadError: string = '';
+
+	public isUpdatingSingleStatus: WritableSignal<boolean> = signal(false);
+	public isUpdatingMultipleStatuses: WritableSignal<boolean> = signal(false);
+	
+	
+	public collaborators: CollaboratorInterface[] = [];
+	public screenHeight = window.innerHeight;
+	
+	
 	public readonly sortValues = sortColumnsCollaborators.map(item => item.value);
 
 	constructor(
@@ -65,7 +74,7 @@ export class IndexCollaboratorComponent {
 			if (!ValidateQPCollaborators(this._route, params, this._router, this.sortValues)) return;
 
 			this.loadQueryParams(params);
-			this.initCollaborators(this.filter, this.currentPage, this.status, this.limit, this.sort);
+			this.initCollaborators(this.filter, this.currentPage, this.selectedStatus, this.limit, this.selectedSort);
 		});
 	}
 
@@ -83,31 +92,31 @@ export class IndexCollaboratorComponent {
 		this.filter = params['filter'] || '';
 		this.currentPage = Number(params['page'] ?? 1);
 		this.limit = Number(params['limit'] ?? 10);
-		this.status = params['status'];
-		this.sort = params['sort'];
+		this.selectedStatus = params['status'];
+		this.selectedSort = params['sort'];
 	}
 
 	initCollaborators(filter: string, page: number, status: string, limit: number, sort: string) {
-		this.loading = true;
-		this.errorMsmServerListCollaborators = '';
+		this.isCollaboratorsLoading = true;
+		this.collaboratorsLoadError = '';
 		this.collaborators = [];
 		this.collaboratorService
-			.get_collaborators(filter, page, limit, status, sort)
+			.getCollaborators(filter, page, limit, status, sort)
 			.pipe(
 				takeUntil(this.destroy$),
 				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
-				finalize(() => (this.loading = false))
+				finalize(() => (this.isCollaboratorsLoading = false))
 			)
 			.subscribe({
 				next: (next: { collaborators: CollaboratorInterface[]; meta: PaginationMetaInterface}) => {
-					this.selectedIds.clear();
+					this.selectedCollaboratorsIds.clear();
 					this.collaborators = next.collaborators;
 					this.totalPages = next.meta.totalPages;
 					this.syncCurrentPage(next.meta.currentPage);
 				},
 				error: (err: HttpErrorResponse) => {
 					const error = err.error;
-					this.errorMsmServerListCollaborators = error;
+					this.collaboratorsLoadError = error;
 				},
 			});
 	}
@@ -122,8 +131,8 @@ export class IndexCollaboratorComponent {
 				filter: this.filter,
 				page: this.currentPage,
 				limit: this.limit,
-				status: this.status,
-				sort: this.sort,
+				status: this.selectedStatus,
+				sort: this.selectedSort,
 			},
 			replaceUrl: true,
 		});
@@ -133,13 +142,13 @@ export class IndexCollaboratorComponent {
 		return getColorBasedOnLetter(str);
 	}
 
-	redirect() {
+	applyFilters() {
 		const queryParams = {
 			filter: this.filter,
 			page: this.currentPage,
 			limit: this.limit,
-			status: this.status,
-			sort: this.sort,
+			status: this.selectedStatus,
+			sort: this.selectedSort,
 		};
 
 		const current :any= this._route.snapshot.queryParams;
@@ -155,9 +164,9 @@ export class IndexCollaboratorComponent {
 			this.initCollaborators(
 				this.filter,
 				this.currentPage,
-				this.status,
+				this.selectedStatus,
 				this.limit,
-				this.sort
+				this.selectedSort
 			);
 			return;
 		}
@@ -182,13 +191,13 @@ export class IndexCollaboratorComponent {
 	}
 
 	onUpdateStatus(id: string, status: boolean) {
-		this.loadBtnStatusSingle.set(true);
+		this.isUpdatingSingleStatus.set(true);
 		this.collaboratorService
 			.update_status_collaborator(id, { status })
 			.pipe(
 				takeUntil(this.destroy$),
 				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
-				finalize(() => this.loadBtnStatusSingle.set(false))
+				finalize(() => this.isUpdatingSingleStatus.set(false))
 			)
 			.subscribe({
 				next: (next: {data: CollaboratorInterface, message: string}) => {
@@ -207,12 +216,12 @@ export class IndexCollaboratorComponent {
 
 	onLimitChange() {
 		this.currentPage = 1;
-		this.redirect();
+		this.applyFilters();
 	}
 
 	onPageChange(newPage: number) {
 		this.currentPage = newPage;
-		this.redirect();
+		this.applyFilters();
 	}
 
 	onResetCurrentPage(){
@@ -221,8 +230,8 @@ export class IndexCollaboratorComponent {
 
 	resetFilters(){
 		this.filter = '';
-		this.status = 'Todos';
-		this.sort = 'Predeterminado';
+		this.selectedStatus = 'Todos';
+		this.selectedSort = 'Predeterminado';
 		this.currentPage = 1;
 		this.limit = 10;
 
@@ -238,24 +247,25 @@ export class IndexCollaboratorComponent {
 		});
 	}
 
-	toggleItem(id: string, checked: boolean) {
+	onCollaboratorSelectionChange(id: string, event: Event) {
+		const checked = (event.target as HTMLInputElement).checked;
 		if (checked) {
-			this.selectedIds.add(id);
+			this.selectedCollaboratorsIds.add(id);
 		} else {
-			this.selectedIds.delete(id);
+			this.selectedCollaboratorsIds.delete(id);
 		}
 	}
 
 	getSelectedIds(): string[] {
-		return [...this.selectedIds];
+		return [...this.selectedCollaboratorsIds];
 	}
 
 	get hasSelectedCollaborators(): boolean {
-		return this.selectedIds.size > 0;
+		return this.selectedCollaboratorsIds.size > 0;
 	}
 
 	onUpdateStatusMultiple(status: boolean){
-		this.loadBtnStatusMultiple.set(true);
+		this.isUpdatingMultipleStatuses.set(true);
 		this.collaboratorService
 		.update_status_collaborators({
 			ids: this.getSelectedIds(),
@@ -264,7 +274,7 @@ export class IndexCollaboratorComponent {
 		.pipe(
 			takeUntil(this.destroy$),
 			withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
-			finalize(() => this.loadBtnStatusMultiple.set(false))
+			finalize(() => this.isUpdatingMultipleStatuses.set(false))
 		)
 		.subscribe({
 			next: (next: {data: string[], message: string}) => {
@@ -280,7 +290,7 @@ export class IndexCollaboratorComponent {
 				});
 				toastr.success(next.message);
 				closeModal(status ? 'modalMultipleActive' : 'modalMultipleDisabled');
-				this.selectedIds.clear();
+				this.selectedCollaboratorsIds.clear();
 			},
 			error: (error: HttpErrorResponse) => {
 				toastr.error(error.error.message);

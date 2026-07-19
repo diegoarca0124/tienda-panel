@@ -3,21 +3,16 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
 import { CategoryService } from '@app/services/category.service';
-import { AlertComponent } from '@app/shared/alert/alert.component';
 import { SidebarComponent } from '@app/shared/sidebar/sidebar.component';
 import { TopbarComponent } from '@app/shared/topbar/topbar.component';
-import { combineLatest, distinctUntilChanged, EMPTY, filter, finalize, forkJoin, map, Subject, switchMap, takeUntil, tap } from 'rxjs';
-import { sortColumnsCategories } from '../constants/sort-columns-categories.constant';
+import { EMPTY, finalize, forkJoin, map, Subject, switchMap, takeUntil, tap } from 'rxjs';
 import { withMinLoadingTime } from '@app/common/interface/with-min-loading-time.interface';
 import { GLOBAL } from '@app/services/GLOBAL';
 import { ProductInterface } from '@app/pages/products/interfaces/product.interface';
-import { ModalDeleteComponent } from '@app/shared/modal-delete/modal-delete.component';
 import { FormsModule } from '@angular/forms';
 import { PaginationComponent } from '@app/shared/pagination/pagination.component';
 import { ValidateQPProductsCategory } from '../utils/validate-qp-products-category.util';
-import { statusTable } from '@app/common/constants/statusTable.contant';
 import { NgSelectModule } from '@ng-select/ng-select';
-import { statusProducts } from '../interfaces/status-produtcs.interface';
 import { MenuSelectSubcategoriesComponent } from '@app/shared/menu-select-subcategories/menu-select-subcategories.component';
 import { NotFoundComponent } from '@app/shared/not-found/not-found.component';
 import { UpdatesCatsubcatProductsInterface } from '../interfaces/update-catsubcat.products.interface';
@@ -28,7 +23,7 @@ import { CategoryInterface } from '../interfaces/category.interface';
 import { PadCodePipe } from "../../../common/pipes/pad-code.pipe";
 import { HttpErrorResponse } from '@angular/common/http';
 import { PaginationMetaInterface } from '@app/common/interface/pagination-meta.interface';
-import { sortColumnsProducts } from '../constants/sort-columns-products.constant';
+import { sortProductsFilters } from '../constants/sort-products-filters.constant';
 import { CurrencySymbolPipe } from "../../../common/pipes/currency-symbol.pipe";
 import { qualityFilters } from '../constants/quality-filters.constant';
 import { statusFilters } from '../constants/status-filters.constant';
@@ -43,7 +38,6 @@ declare var toastr:any;
     TopbarComponent,
     SidebarComponent,
     RouterModule,
-    AlertComponent,
     FormsModule,
     PaginationComponent,
     NgSelectModule,
@@ -61,42 +55,47 @@ declare var toastr:any;
 export class ProductsCategoryComponent {
 
   private destroy$ = new Subject<void>();
-  public filter: string = '';
-	public status: string = 'Todos';
-  public quality: string = 'Todos';
-  public visibility: string = 'Todos';
-  public minPrice : any = null;
-  public maxPrice : any = null;
-	public currentPage: number = 1;
-  public totalPages: number = 0;
-  public loadCategory : boolean = true;
-	public limit: number = 10;
-  public sort: string = 'Predeterminado';
-  public id : string = '';
-  public subcategoryIds : string = "";
-  public loading : boolean = true;
-  public errorMsmServerListProducts : string = '';
-  public errorMsmServerCategory : string = '';
-  public products : ProductInterface[] = [];
-  public selectedIds : string[] = [];
-  public statusFilters = statusFilters;
-  public qualityFilters = qualityFilters;
-  public visibilityFilters = visibilityFilters;
-  public sortFilters = sortColumnsProducts;
-  public subcategories: string = '';
-  public categories: CategoryInterface[] = [];
-  public data : UpdatesCatsubcatProductsInterface = createUpdateCatsubcatProducts();
-  public selectedProductsIds = new Set<string>();
-  public loadCategories : boolean = false;
-  public errorMsmServerGetSubcategory : string = '';
-  public errorMsmServerGetCategory : string = '';
-  public errorMsmServer : string = '';
-  public categoryName : string = '';
-  public openedCategory: number | null = 0;
-  public subcategoryDestination : string | null = null;
-  public loadingMove : boolean = false;
+
+  public id: string = '';
+
   public category: CategoryInterface = createEmptyCategory();
-  public readonly sortValues = sortColumnsProducts.map(item => item.value);
+  public categories: CategoryInterface[] = [];
+  public products: ProductInterface[] = [];
+
+  public filter: string = '';
+  public selectedStatus: string = 'Todos';
+  public selectedQuality: string = 'Todos';
+  public selectedVisibility: string = 'Todos';
+  public selectedSort: string = 'Predeterminado';
+  public selectedSubcategoryIds: string = 'Todos';
+  public minPrice: any = null;
+  public maxPrice: any = null;
+
+  public currentPage: number = 1;
+  public totalPages: number = 0;
+  public limit: number = 10;
+
+  public selectedProductsIds = new Set<string>();
+
+  public moveProductsPayload: UpdatesCatsubcatProductsInterface = createUpdateCatsubcatProducts();
+  public movingToSubcategoryId: string | null = null;
+
+  public expandedCategoryIndex: number | null = 0;
+
+  public isCategoryLoading: boolean = true;
+  public isCategoriesLoading: boolean = false;
+  public isProductsLoading: boolean = true;
+  public isMovingProducts: boolean = false;
+
+  public categoryLoadError: string = '';
+  public categoriesLoadError: string = '';
+  public productsLoadError: string = '';
+
+  public readonly statusFilters = statusFilters;
+  public readonly qualityFilters = qualityFilters;
+  public readonly visibilityFilters = visibilityFilters;
+  public readonly sortFilters = sortProductsFilters;
+  public readonly sortValues = sortProductsFilters.map(item => item.value);
 
   readonly qualityLabels: Record<string, string> = {
 		low: 'Baja',
@@ -105,27 +104,27 @@ export class ProductsCategoryComponent {
 	};
 
   constructor(
-    private _router: Router,
+    private router: Router,
 		private categoryService: CategoryService,
-		private _route: ActivatedRoute,
+		private route: ActivatedRoute,
 		private sanitizer: DomSanitizer
   ){
 
   }
 
   ngOnInit() {
-    this._route.params
+    this.route.params
       .pipe(
         takeUntil(this.destroy$),
         switchMap(params => {
           this.id = params['id'];
-          this.loadCategory = true;
+          this.isCategoryLoading = true;
 
           return this.categoryService.get_category(this.id).pipe(
             withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
-            finalize(() => (this.loadCategory = false)),
+            finalize(() => (this.isCategoryLoading = false)),
             switchMap(category =>
-              this._route.queryParams.pipe(
+              this.route.queryParams.pipe(
                 map(queryParams => ({
                   category,
                   queryParams,
@@ -136,30 +135,20 @@ export class ProductsCategoryComponent {
         }),
         switchMap(({ category, queryParams }) => {
           this.category = category.data;
+          if (!ValidateQPProductsCategory( this.route,queryParams, this.router, this.sortValues)) return EMPTY;
 
-          if (
-            !ValidateQPProductsCategory(
-              this._route,
-              queryParams,
-              this._router,
-              this.sortValues
-            )
-          ) {
-            return EMPTY;
-          }
-
-          this.loadQueryParams(queryParams);
+          this.applyQueryParams(queryParams);
 
           return forkJoin({
             products: this.initProducts$(
               this.filter,
               this.currentPage,
               this.limit,
-              this.status,
-              this.sort,
-              this.subcategoryIds,
-              this.quality,
-              this.visibility,
+              this.selectedStatus,
+              this.selectedSort,
+              this.selectedSubcategoryIds,
+              this.selectedQuality,
+              this.selectedVisibility,
               this.minPrice,
               this.maxPrice,
             ),
@@ -169,26 +158,26 @@ export class ProductsCategoryComponent {
       )
       .subscribe({
         error: (err: HttpErrorResponse) => {
-          this.loading = false;
-          this.errorMsmServerCategory = err.error;
+          this.isProductsLoading = false;
+          this.categoryLoadError = err.error;
         },
       });
   }
 
-  private loadQueryParams(params: Params): void {
+  private applyQueryParams(params: Params): void {
 		this.filter = params['filter'] || '';
     this.currentPage = Number(params['page']) || 1;
-    this.status = params['status'] || 'Todos';
+    this.selectedStatus = params['status'] || 'Todos';
     this.limit = Number(params['limit']) || 10;
-    this.sort = params['sort'] || 'Predeterminado';
-    this.subcategoryIds = params['subcategoryIds'] || 'Todos';
-    this.quality = params['quality'] || 'Todos';
-    this.visibility = params['visibility'] || 'Todos';
+    this.selectedSort = params['sort'] || 'Predeterminado';
+    this.selectedSubcategoryIds = params['subcategoryIds'] || 'Todos';
+    this.selectedQuality = params['quality'] || 'Todos';
+    this.selectedVisibility = params['visibility'] || 'Todos';
     this.minPrice = params['minPrice'] ? Number(params['minPrice']) : null;
     this.maxPrice = params['maxPrice'] ? Number(params['maxPrice']) : null;
 	}
 
-  getMinPrice(price: any){
+  onMinPriceChange(price: any){
     if(price != null){
       this.minPrice = parseFloat(price);
     }else{
@@ -196,7 +185,7 @@ export class ProductsCategoryComponent {
     }
   }
 
-  getMaxPrice(price: any){
+  onMaxPriceChange(price: any){
     if(price != null){
       this.maxPrice = parseFloat(price);
     }else{
@@ -204,11 +193,13 @@ export class ProductsCategoryComponent {
     }
   }
 
-  initProducts$(filter: string,page: number,limit: number,status: string,sort: string,subcategoryIds: string, quality: string, visibility: string, minPrice: number, maxPrice: number) {
-    this.loading = true;
+  initProducts$(
+    filter: string,page: number,limit: number,status: string,sort: string,subcategoryIds: string, quality: string, visibility: string, minPrice: number, maxPrice: number
+  ) {
+    this.isProductsLoading = true;
     this.products = [];
     this.totalPages = 1;
-    this.errorMsmServerListProducts = '';
+    this.productsLoadError = '';
 
     return this.categoryService
       .findCategoryProducts(this.id, {
@@ -225,7 +216,7 @@ export class ProductsCategoryComponent {
       })
       .pipe(
         withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
-        finalize(() => (this.loading = false)),
+        finalize(() => (this.isProductsLoading = false)),
         tap({
           next: (next: {
             products: ProductInterface[];
@@ -246,21 +237,21 @@ export class ProductsCategoryComponent {
             this.totalPages = next.meta.totalPages;
           },
           error: (err: HttpErrorResponse) => {
-            this.errorMsmServerListProducts = err.error;
+            this.productsLoadError = err.error;
           },
         })
       );
   }
 
   initCategories$() {
-    this.loadCategories = true;
-    this.errorMsmServerGetCategory = '';
+    this.isCategoriesLoading = true;
+    this.categoriesLoadError = '';
 
     return this.categoryService
       .get_categories_with_subcategories()
       .pipe(
         withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
-        finalize(() => (this.loadCategories = false)),
+        finalize(() => (this.isCategoriesLoading = false)),
         tap({
           next: (next: {
             data: CategoryInterface[];
@@ -272,7 +263,7 @@ export class ProductsCategoryComponent {
             }));
           },
           error: (err: HttpErrorResponse) => {
-            this.errorMsmServerGetCategory = err.error;
+            this.categoriesLoadError = err.error;
           },
         })
       );
@@ -285,17 +276,17 @@ export class ProductsCategoryComponent {
   }
 
   initProducts(){
-    this.initProducts$(this.filter,this.currentPage,this.limit,this.status,this.sort,this.subcategoryIds, this.quality, this.visibility, this.minPrice, this.maxPrice)
+    this.initProducts$(this.filter,this.currentPage,this.limit,this.selectedStatus,this.selectedSort,this.selectedSubcategoryIds, this.selectedQuality, this.selectedVisibility, this.minPrice, this.maxPrice)
     .pipe(takeUntil(this.destroy$))
     .subscribe();
   }
 
-  init_categories_noload$(){
-    this.errorMsmServerGetCategory = '';
-    this.subcategoryIds = 'Todos';
+  initCategoriesNoload$(){
+    this.categoriesLoadError = '';
+    this.selectedSubcategoryIds = 'Todos';
     this.currentPage = 1;
     this.limit = 10;
-    this.status = 'Todos';
+    this.selectedStatus = 'Todos';
     return this.categoryService.get_categories_with_subcategories().pipe(
       tap({
         next: (next: { data: CategoryInterface[], message: string}) => {
@@ -311,14 +302,14 @@ export class ProductsCategoryComponent {
           console.log(err);
           
           const error = err.error;
-          this.errorMsmServerGetCategory = error;
+          this.categoriesLoadError = error;
         },
       })
     );
   }
 
-  init_categories_noload(){
-    this.init_categories_noload$()
+  initCategoriesNoload(){
+    this.initCategoriesNoload$()
     .pipe(takeUntil(this.destroy$))
     .subscribe();
   }
@@ -330,27 +321,29 @@ export class ProductsCategoryComponent {
 
   setLimit() {
 		this.currentPage = 1;
-		this.redirect();
+		this.applyFilters();
 	}
 
 	onPageChange(newPage: number) {
 		this.currentPage = newPage;
-		this.redirect(); // o init_collaborators()
+		this.applyFilters(); // o init_collaborators()
 	}
 
   resetFilters(){
 		this.filter = '';
-		this.status = 'Todos';
+		this.selectedStatus = 'Todos';
 		this.currentPage = 1;
 		this.limit = 10;
-    this.sort = 'Todos';
-    this.subcategoryIds = 'Todos';
-    this.quality = 'Todos';
-    this.visibility = 'Todos';
+    this.selectedSort = 'Todos';
+    this.selectedSubcategoryIds = 'Todos';
+    this.selectedQuality = 'Todos';
+    this.selectedVisibility = 'Todos';
     this.minPrice = null;
     this.maxPrice = null;
 
-		this._router.navigate([], {
+    this.selectedProductsIds.clear();
+
+		this.router.navigate([], {
       queryParams: {
         page: 1,
         limit: 10,
@@ -366,21 +359,23 @@ export class ProductsCategoryComponent {
     });
 	}
 
-  redirect() {
+  applyFilters() {
+    this.selectedProductsIds.clear();
+
     const queryParams = {
       page: this.currentPage,
       limit: this.limit,
-      status: this.status,
+      status: this.selectedStatus,
       filter: this.filter,
-      sort: this.sort,
-      subcategoryIds: this.subcategoryIds,
-      quality: this.quality,
-      visibility: this.visibility,
+      sort: this.selectedSort,
+      subcategoryIds: this.selectedSubcategoryIds,
+      quality: this.selectedQuality,
+      visibility: this.selectedVisibility,
       minPrice: this.minPrice,
       maxPrice: this.maxPrice,
     };
 
-    const current: any = this._route.snapshot.queryParams;
+    const current: any = this.route.snapshot.queryParams;
 
     const same =
       Number(current.page) === queryParams.page &&
@@ -397,56 +392,54 @@ export class ProductsCategoryComponent {
 			return;
     }
 
-    this._router.navigate([], {
-      relativeTo: this._route,
+    this.router.navigate([], {
+      relativeTo: this.route,
       queryParams,
       queryParamsHandling: '',
     });
   }
 
-  getSubategories(subcategories: any){
+  onSubcategoriesChange(subcategories: any){
 		if(subcategories.length >= 1){
-      this.subcategoryIds = subcategories.join(',');
+      this.selectedSubcategoryIds = subcategories.join(',');
     }else{
-      this.subcategoryIds = 'Todos';
+      this.selectedSubcategoryIds = 'Todos';
     }
 	}
 
   toggleCategory(index: number) {
-    this.openedCategory = this.openedCategory === index ? null : index;
+    this.expandedCategoryIndex = this.expandedCategoryIndex === index ? null : index;
   }
 
   hasSelectedProducts(): boolean {
       return this.selectedProductsIds.size > 0;
   }
 
-  selectSubcategory(item: any, item_:any){
+  moveSelectedProductsTo(item: any, item_:any){
     if([...this.selectedProductsIds].length >= 1){
-      this.data.categoryId = item.id;
-      this.data.subcategoryId = item_.id;
-      this.data.products = [...this.selectedProductsIds];
-      this.loadingMove = true;
-      this.subcategoryDestination = item_.id;
-      this.categoryService.update_catsubcat_products(this.data)
+      this.moveProductsPayload.categoryId = item.id;
+      this.moveProductsPayload.subcategoryId = item_.id;
+      this.moveProductsPayload.products = [...this.selectedProductsIds];
+      this.isMovingProducts = true;
+      this.movingToSubcategoryId = item_.id;
+      this.categoryService.update_catsubcat_products(this.moveProductsPayload)
       .pipe(
         takeUntil(this.destroy$),
         finalize(() => {
-          this.loadingMove = false;
-          this.subcategoryDestination = null;
+          this.isMovingProducts = false;
+          this.movingToSubcategoryId = null;
         })
       )
       .subscribe({
           next: (next: { data: any, message: string}) => {
-            console.log(next);
-            
-            this.init_categories_noload();
+            this.selectedProductsIds.clear();
+            this.initCategoriesNoload();
             toastr.success(next.message);
           },
           error: (err: HttpErrorResponse) => {
             console.log(err);
             const error = err.error;
-            this.errorMsmServer = error.message || '¡Error desconocido!';
-            toastr.error(this.errorMsmServer);
+            toastr.error(error.message || '¡Error desconocido!');
           },
         });
     }else{
@@ -454,7 +447,7 @@ export class ProductsCategoryComponent {
     }
   }
 
-  toggleItem(id: string, event: Event) {
+  onProductSelectionChange(id: string, event: Event) {
 		const checked = (event.target as HTMLInputElement).checked;
 		if (checked) {
 			this.selectedProductsIds.add(id);

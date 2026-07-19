@@ -40,13 +40,13 @@
 														placeholder="Buscar colaborador"
 														name="filter"
 														[(ngModel)]="filter"
-														(keyup.enter)="redirect()"
+														(keyup.enter)="applyFilters()"
 													/>
 
 													<i
 														class="bi bi-search position-absolute cursor-pointer"
 														style="right: 15px; top: 50%; transform: translateY(-50%)"
-														(click)="redirect()"
+														(click)="applyFilters()"
 													></i>
 												</div>
 
@@ -54,16 +54,16 @@
 													type="button"
 													class="btn btn-sm btn-icon btn-light-primary d-flex align-items-center justify-content-center"
 													(click)="resetFilters()"
-													[disabled]="loading"
+													[disabled]="isCollaboratorsLoading"
 												>
 													<span
-														*ngIf="loading"
+														*ngIf="isCollaboratorsLoading"
 														class="spinner-border spinner-border-sm"
 														role="status"
 														aria-hidden="true"
 													></span>
 													<i
-														*ngIf="!loading"
+														*ngIf="!isCollaboratorsLoading"
 														class="bi bi-arrow-clockwise fs-5"
 													></i>
 												</button>
@@ -111,8 +111,8 @@
 													[items]="statusTable"
 													bindLabel="name"
 													bindValue="value"
-													name="status"
-													[(ngModel)]="status"
+													name="selectedStatus"
+													[(ngModel)]="selectedStatus"
 													placeholder="Estado"
 													[clearable]="false"
 													[closeOnSelect]="true"
@@ -147,8 +147,8 @@
 													[items]="sortColumns"
 													bindLabel="name"
 													bindValue="value"
-													name="sort"
-													[(ngModel)]="sort"
+													name="selectedSort"
+													[(ngModel)]="selectedSort"
 													placeholder="Orden"
 													[clearable]="false"
 													[closeOnSelect]="true"
@@ -177,10 +177,10 @@
 									</div>
 									<button
 										class="btn btn-xs bg-light-primary my-3 d-inline-flex align-items-center gap-2"
-										(click)="redirect()"
-										[disabled]="loading"
+										(click)="applyFilters()"
+										[disabled]="isCollaboratorsLoading"
 									>
-										<ng-container *ngIf="!loading; else loadingTpl">
+										<ng-container *ngIf="!isCollaboratorsLoading; else loadingTpl">
 											<ion-icon name="search-outline" class="fs-6 text-primary"></ion-icon>
 											<span class="text-primary">Buscar</span>
 										</ng-container>
@@ -214,9 +214,9 @@
 														aria-labelledby="dropdownTable">
 															<li>
 																<a class="dropdown-item cursor-pointer d-flex align-items-center gap-2 fs-7"
-																[class.disabled]="selectedIds.size === 0"
-																[attr.data-bs-toggle]="selectedIds.size > 0? 'modal': null"
-																[attr.data-bs-target]="selectedIds.size > 0? '#modalMultipleActive': null"
+																[class.disabled]="selectedCollaboratorsIds.size === 0"
+																[attr.data-bs-toggle]="selectedCollaboratorsIds.size > 0? 'modal': null"
+																[attr.data-bs-target]="selectedCollaboratorsIds.size > 0? '#modalMultipleActive': null"
 																style="text-transform: capitalize !important;">
 																	<ion-icon name="checkmark-circle-outline" class="text-primary"></ion-icon>
 																	Activar
@@ -224,9 +224,9 @@
 															</li>
 															<li>
 																<a class="dropdown-item cursor-pointer d-flex align-items-center gap-2 fs-7"
-																[class.disabled]="selectedIds.size === 0"
-																[attr.data-bs-toggle]="selectedIds.size > 0? 'modal': null"
-																[attr.data-bs-target]="selectedIds.size > 0? '#modalMultipleDisabled': null"
+																[class.disabled]="selectedCollaboratorsIds.size === 0"
+																[attr.data-bs-toggle]="selectedCollaboratorsIds.size > 0? 'modal': null"
+																[attr.data-bs-target]="selectedCollaboratorsIds.size > 0? '#modalMultipleDisabled': null"
 																style="text-transform: capitalize !important;">
 																	<ion-icon name="close-circle-outline" class="text-danger"></ion-icon>
 																	Desactivar
@@ -253,7 +253,7 @@
 											</tr>
 										</thead>
 										<tbody>
-											@if(loading){
+											@if(isCollaboratorsLoading){
 												<tr *ngFor="let item of [1,2,3,4,5,6]">
 													<td class="fixed-xs text-center p-0">
 														<div class="skeleton skeleton-check"></div>
@@ -281,10 +281,10 @@
 														<div class="skeleton skeleton-btn"></div>
 													</td>
 												</tr>
-											}@else if (errorMsmServerListCollaborators) {
+											}@else if (collaboratorsLoadError) {
 												<tr>
 													<td colspan="6">
-														<app-not-found [error]="errorMsmServerListCollaborators"></app-not-found>
+														<app-not-found [error]="collaboratorsLoadError"></app-not-found>
 													</td>
 												</tr>
 											}@else if (collaborators.length >= 1) {
@@ -294,8 +294,8 @@
 														<input
 															class="form-check-input cursor-pointer"
 															type="checkbox"
-															[checked]="selectedIds.has(item.id!)"
-															(change)="toggleItem(item.id!, $any($event.target).checked)"
+															[checked]="selectedCollaboratorsIds.has(item.id!)"
+															(change)="onCollaboratorSelectionChange(item.id!, $any($event.target).checked)"
 														/>
 														</label>
 													</td>
@@ -366,7 +366,7 @@
 																"
 																[textButton]="item.status ? 'Desactivar' : 'Activar'"
 																(actionConfirmed)="onUpdateStatus(item.id!, item.status!)"
-																[loadBtnDelete]="loadBtnStatusSingle">
+																[loadBtnDelete]="isUpdatingMultipleStatuses">
 															</app-modal-delete>
 															<div class="dropdown-menu menu-state-bg-light-primary" data-bs-display="static">
 																<a class="dropdown-item d-flex align-items-center gap-2 cursor-pointer"
@@ -452,7 +452,7 @@
 	[description]="'El estado de los usuarios seleccionados será actualizado. Verifica tu selección antes de continuar, ya que este cambio se aplicará a todos.'"
 	[textButton]="'Activar'"
 	(actionConfirmed)="onUpdateStatusMultiple(true)"
-	[loadBtnDelete]="loadBtnStatusMultiple"
+	[loadBtnDelete]="isUpdatingMultipleStatuses"
 >
 </app-modal-delete>
 
@@ -462,7 +462,7 @@
 	[description]="'El estado de los usuarios seleccionados será actualizado. Verifica tu selección antes de continuar, ya que este cambio se aplicará a todos.'"
 	[textButton]="'Desactivar'"
 	(actionConfirmed)="onUpdateStatusMultiple(false)"
-	[loadBtnDelete]="loadBtnStatusMultiple"
+	[loadBtnDelete]="isUpdatingMultipleStatuses"
 >
 </app-modal-delete>
 

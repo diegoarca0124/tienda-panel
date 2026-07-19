@@ -1,4 +1,4 @@
-export const sortColumnsProducts = [
+export const sortProductsFilters = [
   { name: "Predeterminado", value: "Predeterminado", icon: "swap-vertical-outline" },
   { name: "Nombre A → Z", value: "name:asc", icon: "text-outline" },
   { name: "Nombre Z → A", value: "name:desc", icon: "text-outline" },
