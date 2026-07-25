@@ -13,3 +13,7 @@
     box-shadow:0 10px 30px rgba(0,0,0,.15) !important;
 	z-index: 9999 !important;
 }
+
+/* .dropdown-menu {
+  top: calc(100% + 10px) !important;
+} */

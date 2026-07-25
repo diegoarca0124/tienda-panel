@@ -43,7 +43,7 @@
                                 </h4>
                                 <!--end::Heading-->
                                 <div class="card-toolbar">
-                                    @if (importData.length >= 1) {
+                                    @if (importedRows.length >= 1) {
                                         <button class="btn btn-dark btn-sm d-flex align-items-center gap-1" 
                                         data-bs-toggle="modal" [attr.data-bs-target]="'#modalMapColumns'">
                                             <ion-icon name="git-compare-outline"></ion-icon> 
@@ -72,9 +72,9 @@
                                             <div class="mb-1">
 												<app-upload-file-import
 													(fileSelected)="onFileSelected($event)"
-													(validationError)="validationImportError.file[0] = $event ?? ''"
+													(validationError)="importValidationErrors.file[0] = $event ?? ''"
 													[inputId]="'fileImport'"
-													[hasError]="validationImportError?.file[0]"
+													[hasError]="importValidationErrors?.file[0]"
 												></app-upload-file-import>
 											</div>
                                             <span class="fs-8 text-muted">Archivo de de datos.</span>
@@ -86,8 +86,8 @@
                                         </label>
                                         <div class="mb-1">
                                             <select class="form-select form-select-sm"
-                                                [ngClass]="{ 'is-invalid': validationImportError?.mode }"
-                                                [(ngModel)]="importConfig.mode"
+                                                [ngClass]="{ 'is-invalid': importValidationErrors?.mode }"
+                                                [(ngModel)]="importConfiguration.mode"
                                                 name="format">
                                                 <option value="news">Crear nuevos</option>
                                                 <option value="update">Actualizar existentes</option>
@@ -102,8 +102,8 @@
                                         </label>
                                         <div class="mb-1">
                                             <select class="form-select form-select-sm"
-                                                [ngClass]="{ 'is-invalid': validationImportError?.identifyBy }"
-                                                [(ngModel)]="importConfig.identifyBy"
+                                                [ngClass]="{ 'is-invalid': importValidationErrors?.identifyBy }"
+                                                [(ngModel)]="importConfiguration.identifyBy"
                                                 name="format">
                                                 <option value="number_document">Número de documento</option>
                                                 <option value="email">Correo</option>
@@ -127,8 +127,8 @@
                                                                 [ngbTooltip]="'Agregar fila'"
                                                                 tooltipClass="tooltip-dark"
                                                                 container="body"
-                                                                (click)="onAdd()"
-                                                                [disabled]="importKeys.length == 0">
+                                                                (click)="addRow()"
+                                                                [disabled]="importedColumns.length == 0">
                                                                 <ion-icon name="add-circle-outline"></ion-icon>
                                                             </button>
                                                         </th>
@@ -140,18 +140,18 @@
                                                                 [ngbTooltip]="'Eliminar seleccionados'"
                                                                 tooltipClass="tooltip-dark"
                                                                 container="body"
-                                                                (click)="onRemove()"
-                                                                [disabled]="importKeys.length == 0">
+                                                                (click)="removeSelectedRows()"
+                                                                [disabled]="importedColumns.length == 0">
                                                                 <ion-icon name="trash-outline"></ion-icon>
                                                             </button>
                                                         </th>
-                                                        <th *ngFor="let item of importKeys; let colIndex = index"
-                                                        (dragover)="onDragOver($event, colIndex)"
-                                                        (drop)="onDrop(colIndex)"
+                                                        <th *ngFor="let item of importedColumns; let colIndex = index"
+                                                        (dragover)="dragOverColumn($event, colIndex)"
+                                                        (drop)="dropColumn(colIndex)"
                                                         style="padding: 0px !important;"
                                                         class="fixed-lg"
                                                         [ngClass]="{
-                                                        'column-drag-over': dragOverIndex === colIndex
+                                                        'column-drag-over': dragOverColumnIndex === colIndex
                                                         }">
                                                             <div style="padding: .75rem !important;" [ngClass]="{'border-top-active': item.key}">
                                                                 <div class="d-flex justify-content-between align-items-center mb-2">
@@ -169,7 +169,7 @@
                                                                             tooltipClass="tooltip-dark"
                                                                             container="body"
                                                                             draggable="true"
-                                                                            (dragstart)="onDragStart(colIndex)">
+                                                                            (dragstart)="startColumnDrag(colIndex)">
                                                                             <ion-icon name="move-outline"></ion-icon>
                                                                         </button>
 
@@ -181,14 +181,14 @@
                                                                             [ngbTooltip]="'Eliminar Columna'"
                                                                             tooltipClass="tooltip-dark"
                                                                             container="body"
-                                                                            (click)="onRemoveColumn(item.index)">
+                                                                            (click)="removeColumn(item.index)">
                                                                             <ion-icon name="trash-outline"></ion-icon>
                                                                         </button>
                                                                     </div>
                                                                 </div>
                                                                 <select 
                                                                     class="form-select "
-                                                                    (change)="onSelectMapping(item, $event)"
+                                                                    (change)="selectColumnMapping(item, $event)"
                                                                     style="
                                                                     padding-top: .3rem !important;
                                                                     padding-bottom: .3rem !important;
@@ -196,7 +196,7 @@
                                                                     height: 30px !important;">
                                                                     <option value="">Seleccionar...</option>
 
-                                                                    <ng-container *ngFor="let field of importFields">
+                                                                    <ng-container *ngFor="let field of availableFields">
                                                                         <option 
                                                                         [value]="field.key" [selected]="item.key == field.key">
                                                                             {{ field.label }}
@@ -216,15 +216,15 @@
                                                     <ng-container *ngIf="isFileLoading">
                                                         <tr *ngFor="let s of [1,2,3,4,5]">
                                                             <td><div class="form-control-load" style="height:15px; width:20px;"></div></td>
-                                                            <td *ngFor="let k of importKeys">
+                                                            <td *ngFor="let k of importedColumns">
                                                                 <div class="form-control-load" style="height:13px; width:80%;"></div>
                                                             </td>
                                                         </tr>
                                                     </ng-container>
 
                                                     <!-- ================= DATA ================= -->
-                                                    <ng-container *ngIf="!isFileLoading && importData.length > 0">
-                                                        <tr *ngFor="let row of importData; let i = index">
+                                                    <ng-container *ngIf="!isFileLoading && importedRows.length > 0">
+                                                        <tr *ngFor="let row of importedRows; let i = index">
                                                             
                                                             <td class="fixed-xs text-center p-0 h-30px">
                                                                 {{ i + 1 }}
@@ -234,23 +234,23 @@
                                                                 <input
                                                                     class="form-check-input cursor-pointer checkbox-xs"
                                                                     type="checkbox"
-                                                                    (change)="onCheckboxChange($event, i)"
+                                                                    (change)="toggleRowSelection($event, i)"
                                                                 />
                                                                 </label>
                                                             </td>
                                                             <td 
-                                                            *ngFor="let key of importKeys; let tdIndex = index" 
+                                                            *ngFor="let key of importedColumns; let tdIndex = index" 
                                                             class="fixed-lg h-30px"
                                                             [ngClass]="{
                                                                 'bg-error': hasCellError(i, key.key),
-                                                                'column-drag-over': dragOverIndex === tdIndex
+                                                                'column-drag-over': dragOverColumnIndex === tdIndex
                                                             }">
                                                                 <ng-container *ngIf="!key.key">
                                                                     <input 
                                                                         type="text"
                                                                         class="form-control form-control-sm border-0 p-1"
                                                                         [ngClass]="{
-                                                                            'bg-error': getCellError(i, key.key).length >= 1
+                                                                            'bg-error': getCellErrors(i, key.key).length >= 1
                                                                         }"
                                                                         style="cursor: not-allowed;"
                                                                         [name]="'cell-' + i + '-' + key.label"
@@ -264,8 +264,8 @@
                                                                         type="text"
                                                                         class="form-control form-control-sm border-0 p-1 fs-7"
                                                                         [ngClass]="{
-                                                                            'cursor-pointer': getCellError(i, key.key)?.length,
-                                                                            'bg-error': getCellError(i, key.key).length >= 1
+                                                                            'cursor-pointer': getCellErrors(i, key.key)?.length,
+                                                                            'bg-error': getCellErrors(i, key.key).length >= 1
                                                                         }"
                                                                         [(ngModel)]="row[key.label]"
                                                                         style="background-color: transparent !important;font-size: .85rem !important;"
@@ -273,14 +273,14 @@
                                                                         [ngbPopover]="popoverTemplate"
                                                                         triggers="mouseenter:mouseleave"
                                                                         placement="bottom"
-                                                                        [disablePopover]="getCellError(i, key.key).length < 1"
+                                                                        [disablePopover]="getCellErrors(i, key.key).length < 1"
                                                                     />
                                                                     <select 
                                                                     *ngIf="key.inputType == 'select'"
                                                                     [name]="'cell-' + i + '-' + key.label"
                                                                     [ngClass]="{
-                                                                        'cursor-pointer': getCellError(i, key.key)?.length,
-                                                                        'bg-error': getCellError(i, key.key).length >= 1
+                                                                        'cursor-pointer': getCellErrors(i, key.key)?.length,
+                                                                        'bg-error': getCellErrors(i, key.key).length >= 1
                                                                     }"
                                                                     class="form-select form-control-sm border-0 p-1 fs-7"
                                                                     style="
@@ -290,7 +290,7 @@
                                                                     "
                                                                     [(ngModel)]="row[key.label]"
                                                                     [ngbPopover]="popoverTemplate"
-                                                                    [disablePopover]="getCellError(i, key.key).length < 1"
+                                                                    [disablePopover]="getCellErrors(i, key.key).length < 1"
                                                                     triggers="mouseenter:mouseleave"
                                                                     placement="bottom"
                                                                     >
@@ -306,7 +306,7 @@
                                                                 <ng-template #popoverTemplate>
                                                                     <div>
                                                                         <ul class="validation-list mb-0">
-                                                                            <li *ngFor="let err of getCellError(i, key.key)" class="text-gray-700 text-validation mb-1">
+                                                                            <li *ngFor="let err of getCellErrors(i, key.key)" class="text-gray-700 text-validation mb-1">
                                                                                 {{ err }}
                                                                             </li>
                                                                         </ul>
@@ -318,7 +318,7 @@
                                                     </ng-container>
 
                                                     <!-- ================= EMPTY ================= -->
-                                                    <tr *ngIf="!isFileLoading && importData.length == 0">
+                                                    <tr *ngIf="!isFileLoading && importedRows.length == 0">
                                                         <td colspan="100%">
                                                             <app-not-found 
                                                                 [error]="{ message: 'No hay datos para mostrar.', statusCode: 404 }">
@@ -339,14 +339,14 @@
                                     <button
                                         type="button"
                                         class="btn btn-sm btn-primary my-1"
-                                        [disabled]="loadBtnValidate || importData.length == 0"
+                                        [disabled]="isImportLoading || importedRows.length == 0"
                                         (click)="importCollaborators()"
                                     >
-                                        <span *ngIf="!loadBtnValidate" class="d-flex align-items-center gap-2">
+                                        <span *ngIf="!isImportLoading" class="d-flex align-items-center gap-2">
                                             <ion-icon name="cloud-upload-outline"></ion-icon>
                                             Importar
                                         </span>
-                                        <span *ngIf="loadBtnValidate" class="d-flex align-items-center gap-2">
+                                        <span *ngIf="isImportLoading" class="d-flex align-items-center gap-2">
                                             <span class="spinner-border spinner-border-sm"></span>
                                             Procesando...
                                         </span>
@@ -355,14 +355,14 @@
                                      <button
                                         type="button"
                                         class="btn btn-sm btn-dark my-1"
-                                        [disabled]="loadBtnValidate || importData.length == 0"
-                                        (click)="export()"
+                                        [disabled]="isImportLoading || importedRows.length == 0"
+                                        (click)="exportCollaborators()"
                                     >
-                                        <span *ngIf="!loadBtnValidate" class="d-flex align-items-center gap-2">
+                                        <span *ngIf="!isImportLoading" class="d-flex align-items-center gap-2">
                                             <i class="bi bi-filetype-xls"></i>
                                             Exportar
                                         </span>
-                                        <span *ngIf="loadBtnValidate" class="d-flex align-items-center gap-2">
+                                        <span *ngIf="isImportLoading" class="d-flex align-items-center gap-2">
                                             <span class="spinner-border spinner-border-sm"></span>
                                             Procesando...
                                         </span>
@@ -412,20 +412,20 @@
                                 Campo del archivo
                             </div>
                         </div>
-                        <div class="col-lg-12 d-flex align-items-center mb-1 gap-3" *ngFor="let item of importFields; let i = index">
+                        <div class="col-lg-12 d-flex align-items-center mb-1 gap-3" *ngFor="let item of availableFields; let i = index">
                             <div style="flex: 1;">
                                 <label class="form-control form-control-sm d-flex align-items-center gap-2 mb-0 justify-content-between"
-                                [ngClass]="{'alert-primary': hasMapping(item.key)}">
+                                [ngClass]="{'alert-primary': hasFieldMapping(item.key)}">
                                     <div>
                                         <ion-icon 
                                         [name]="'git-branch-outline'"
-                                        [ngClass]="hasMapping(item.key) ? 'text-primary' : 'text-muted'">
+                                        [ngClass]="hasFieldMapping(item.key) ? 'text-primary' : 'text-muted'">
                                         </ion-icon>
                                         {{item.key}}
                                     </div>
                                     <small class="text-primary cursor-pointer d-flex align-items-center gap-1" 
-                                    *ngIf="!hasColumn(item.key)"
-                                    (click)="onAddColumn(item.key)">
+                                    *ngIf="!hasImportedColumn(item.key)"
+                                    (click)="addColumn(item.key)">
                                         <ion-icon name="git-merge-outline"></ion-icon>
                                         Columna
                                     </small>
@@ -433,9 +433,9 @@
                             </div>
                             <div style="flex: 1;">
                                 <select class="form-select form-select-sm w-100"
-                                (change)="onMapSelect($event, item.key)">
+                                (change)="mapSystemField($event, item.key)">
                                     <option value="">Seleccionar...</option>
-                                    <ng-container *ngFor="let k of importKeys">
+                                    <ng-container *ngFor="let k of importedColumns">
                                         <option [value]="k.label" [selected]="k.key == item.key">
                                             {{ k.label }}
                                         </option>

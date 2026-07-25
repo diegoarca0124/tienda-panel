@@ -70,18 +70,36 @@
 											</div>
 										</div>
 									</div>
-									<div class="dropdown">
+									<div class="d-flex align-items-center gap-3">
 										<button
-											class="btn btn-dark btn-sm d-flex align-items-center gap-2 my-1"
-											type="button"
-											data-bs-toggle="dropdown"
-											aria-expanded="false"
+											class="btn btn-sm bg-light-primary d-inline-flex align-items-center 
+											gap-2 my-1"
+											(click)="applyFilters()"
+											[disabled]="isCollaboratorsLoading"
 										>
-											<ion-icon name="settings-outline" class="fs-5"></ion-icon>
-											<span>Opciones</span>
-											<ion-icon name="chevron-down-outline" class="fs-6"></ion-icon>
+											<ng-container *ngIf="!isCollaboratorsLoading; else loadingTpl">
+												<ion-icon name="search-outline" class="fs-6 text-primary"></ion-icon>
+												<span class="text-primary">Buscar</span>
+											</ng-container>
+
+											<ng-template #loadingTpl>
+												<span class="spinner-border spinner-border-sm text-primary" aria-hidden="true"></span>
+												<span class="text-primary">Buscando...</span>
+											</ng-template>
 										</button>
-										<ul class="dropdown-menu menu-state-bg-light-primary" aria-labelledby="dropdownMenuButton">
+										<div class="dropdown">
+											<button
+												class="btn btn-dark btn-sm d-flex align-items-center gap-2 my-1"
+												type="button"
+												data-bs-toggle="dropdown"
+												aria-expanded="false"
+												data-bs-offset="0,10"
+											>
+												<ion-icon name="settings-outline" class="fs-5"></ion-icon>
+												<span>Opciones</span>
+												<ion-icon name="chevron-down-outline" class="fs-6"></ion-icon>
+											</button>
+											<ul class="dropdown-menu menu-state-bg-light-primary" aria-labelledby="dropdownMenuButton">
 											<li>
 												<a class="dropdown-item d-flex align-items-center gap-2" 
 												[routerLink]="['/users/collaborators/export']">
@@ -97,6 +115,8 @@
 												</a>
 											</li>
 										</ul>
+										</div>
+										
 									</div>
 								</div>
 								
@@ -175,21 +195,7 @@
 											</div>
 										</div>
 									</div>
-									<button
-										class="btn btn-xs bg-light-primary my-3 d-inline-flex align-items-center gap-2"
-										(click)="applyFilters()"
-										[disabled]="isCollaboratorsLoading"
-									>
-										<ng-container *ngIf="!isCollaboratorsLoading; else loadingTpl">
-											<ion-icon name="search-outline" class="fs-6 text-primary"></ion-icon>
-											<span class="text-primary">Buscar</span>
-										</ng-container>
-
-										<ng-template #loadingTpl>
-											<span class="spinner-border spinner-border-sm text-primary" aria-hidden="true"></span>
-											<span class="text-primary">Buscando...</span>
-										</ng-template>
-									</button>
+									
 								</div>
 
 								<div class="table-wrapper  mb-7">
@@ -351,7 +357,8 @@
 														<div class="dropdown">
 															<button 
 																class="icon-btn btn-action dropdown-toggle d-flex align-items-center justify-content-center mx-auto"
-																data-bs-toggle="dropdown">
+																data-bs-toggle="dropdown"
+																data-bs-offset="0,10">
 																<i class="bi bi-three-dots"></i>
 															</button>
 															<app-modal-delete
