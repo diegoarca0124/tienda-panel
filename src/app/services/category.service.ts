@@ -6,6 +6,7 @@ import { Observable } from 'rxjs';
 import { CategoryInterface } from '@app/pages/categories/interfaces/category.interface';
 import { SubcategoryInterface } from '@app/pages/categories/interfaces/subcategory.interface';
 import { UpdatesCatsubcatProductsInterface } from '@app/pages/categories/interfaces/update-catsubcat.products.interface';
+import { GetCategoriessRESI, UpdateCategoriesStatusRESI, UpdateCategoryStatusRESI } from '@app/pages/categories/interfaces/response.interface';
 
 @Injectable({
 	providedIn: 'root',
@@ -32,14 +33,28 @@ export class CategoryService {
 		);
 	}
 
-	get_categories(filter: string, page: number, limit: number, status: string, sort : string, configuration: string): Observable<any> {
-		return this.http.get(`${this.apiUrl}/category/get_categories?filter=${filter}&page=${page}&limit=${limit}&status=${status}&sort=${sort}&configuration=${configuration}`, {
-			headers: this.getHeaders(),
-		});
+	getCategories(query:any): Observable<GetCategoriessRESI> {
+		const params = new HttpParams()
+			.set('filter', query.filter)
+			.set('page', query.page)
+			.set('limit', query.limit)
+			.set('status', query.status)
+			.set('sort', query.sort)
+			.set('configurations', query.configurations);
+
+		return this.http.get<GetCategoriessRESI>(
+			`${this.apiUrl}/category/getCategories`,
+			{ headers: this.getHeaders(), params },
+		);
+
 	}
 
-	update_status_category(id: string, data: { status: boolean }): Observable<any> {
-		return this.http.put(`${this.apiUrl}/category/update_status_category/${id}`, data, { headers: this.getHeaders() });
+	updateCategoryStatus(id: string, data: { status: boolean }): Observable<UpdateCategoryStatusRESI> {
+		return this.http.put<UpdateCategoryStatusRESI>(
+			`${this.apiUrl}/category/updateCategoryStatus/${id}`, 
+			data, 
+			{ headers: this.getHeaders() }
+		);
 	}
 
 	get_category(id: string): Observable<any> {
@@ -129,8 +144,12 @@ export class CategoryService {
 		return this.http.get(`${this.apiUrl}/category/get_subcategories_by_select/${id}`, { headers : this.getHeaders() });
 	}
 
-	update_status_categories(data: {ids: Array<string>, status: boolean}): Observable<any> {
-		return this.http.post(`${this.apiUrl}/category/update_status_categories`, data, { headers: this.getHeaders() });
+	update_status_categories(data: {ids: Array<string>, status: boolean}): Observable<UpdateCategoriesStatusRESI> {
+		return this.http.post<UpdateCategoriesStatusRESI>(
+			`${this.apiUrl}/category/update_status_categories`, 
+			data, 
+			{ headers: this.getHeaders() }
+		);
 	}
 
 	update_status_subcategories(data: {ids: Array<string>, status: boolean}): Observable<any> {

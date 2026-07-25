@@ -39,16 +39,16 @@
 							<!--end::Card header-->
 
 							<!--begin::Card body-->
-							<div class="card-body" *ngIf="!loading">
-								<ng-container *ngIf="!errorMsmServerGetCollaborator">
+							<div class="card-body" *ngIf="!isCollaboratorLoading">
+								<ng-container *ngIf="!collaboratorLoadError">
 									<div class="row">
 										<div class="col-lg-6">
 											<div class="d-flex flex-column mb-5 fv-row fv-plugins-icon-container">
 												<div class="d-flex align-items-center justify-content-between mb-1">
 													<label class="required fw-500 text-gray-700 fs-6 mb-1">Nombres</label>
-													<small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="errorsCollaborator?.names" (click)="showErrors.names = !showErrors.names">
+													<small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="validationCollaboratioError.names" (click)="fieldErrors.names = !fieldErrors.names">
 														<ion-icon name="information-circle-outline" class="validation-icon"> </ion-icon>
-														{{ showErrors.names ? 'Ocultar errores' : 'Ver errores' }}
+														{{ fieldErrors.names ? 'Ocultar errores' : 'Ver errores' }}
 													</small>
 												</div>
 
@@ -57,12 +57,12 @@
 												placeholder="Sheldon Lee"
 												name="names" 
 												[(ngModel)]="collaborator.names"
-												[ngClass]="{'is-invalid': errorsCollaborator?.names}">
+												[ngClass]="{'is-invalid': validationCollaboratioError.names}">
 
 												<span class="fs-8 text-muted">Nombres completos del usuario.</span>
-												<div class="validation-wrapper" [class.open]="showErrors.names">
+												<div class="validation-wrapper" [class.open]="fieldErrors.names">
 													<app-validation-popover 
-													[errors]="errorsCollaborator?.names"></app-validation-popover>
+													[errors]="validationCollaboratioError.names!"></app-validation-popover>
 												</div>
 											</div>
 										</div>
@@ -70,9 +70,9 @@
 											<div class="d-flex flex-column mb-5 fv-row fv-plugins-icon-container">
 												<div class="d-flex align-items-center justify-content-between mb-1">
 													<label class="required fw-500 text-gray-700 fs-6 mb-1">Apellidos</label>
-													<small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="errorsCollaborator?.surname" (click)="showErrors.surname = !showErrors.surname">
+													<small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="validationCollaboratioError.surname" (click)="fieldErrors.surname = !fieldErrors.surname">
 														<ion-icon name="information-circle-outline" class="validation-icon"> </ion-icon>
-														{{ showErrors.surname ? 'Ocultar errores' : 'Ver errores' }}
+														{{ fieldErrors.surname ? 'Ocultar errores' : 'Ver errores' }}
 													</small>
 												</div>
 
@@ -81,12 +81,12 @@
 												placeholder="Cooper"
 												name="surname" 
 												[(ngModel)]="collaborator.surname"
-												[ngClass]="{'is-invalid': errorsCollaborator?.surname}">
+												[ngClass]="{'is-invalid': validationCollaboratioError.surname}">
 
 												<span class="fs-8 text-muted">Apellido paterno y materno del usuario.</span>
-												<div class="validation-wrapper" [class.open]="showErrors.surname">
+												<div class="validation-wrapper" [class.open]="fieldErrors.surname">
 													<app-validation-popover 
-													[errors]="errorsCollaborator?.surname"></app-validation-popover>
+													[errors]="validationCollaboratioError.surname!"></app-validation-popover>
 												</div>
 											</div>
 										</div>
@@ -96,15 +96,15 @@
 											<div class="d-flex flex-column mb-5 fv-row fv-plugins-icon-container">
 												<div class="d-flex align-items-center justify-content-between mb-1">
 													<label class="required fw-500 text-gray-700 fs-6 mb-1">Rol</label>
-													<small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="errorsCollaborator?.role" (click)="showErrors.role = !showErrors.role">
+													<small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="validationCollaboratioError.role" (click)="fieldErrors.role = !fieldErrors.role">
 														<ion-icon name="information-circle-outline" class="validation-icon"> </ion-icon>
-														{{ showErrors.role ? 'Ocultar errores' : 'Ver errores' }}
+														{{ fieldErrors.role ? 'Ocultar errores' : 'Ver errores' }}
 													</small>
 												</div>
 
-												<div [ngClass]="{ 'is-invalid': errorsCollaborator?.role }">
+												<div [ngClass]="{ 'is-invalid': validationCollaboratioError.role }">
 													<ng-select
-														[items]="rols"
+														[items]="rolesOptions"
 														bindLabel="name"
 														bindValue="value"
 														name="role"
@@ -132,9 +132,9 @@
 													</ng-select>
 												</div>
 												<span class="fs-8 text-muted">Clasificación del colaborador.</span>
-												<div class="validation-wrapper" [class.open]="showErrors.role">
+												<div class="validation-wrapper" [class.open]="fieldErrors.role">
 													<app-validation-popover 
-													[errors]="errorsCollaborator?.role"></app-validation-popover>
+													[errors]="validationCollaboratioError.role!"></app-validation-popover>
 												</div>
 											</div>
 										</div>
@@ -142,9 +142,9 @@
 											<div class="d-flex flex-column mb-5 fv-row fv-plugins-icon-container">
 												<div class="d-flex align-items-center justify-content-between mb-1">
 													<label class="required fw-500 text-gray-700 fs-6 mb-1">Correo electrónico</label>
-													<small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="errorsCollaborator?.email" (click)="showErrors.email = !showErrors.email">
+													<small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="validationCollaboratioError.email" (click)="fieldErrors.email = !fieldErrors.email">
 														<ion-icon name="information-circle-outline" class="validation-icon"> </ion-icon>
-														{{ showErrors.email ? 'Ocultar errores' : 'Ver errores' }}
+														{{ fieldErrors.email ? 'Ocultar errores' : 'Ver errores' }}
 													</small>
 												</div>
 
@@ -154,14 +154,14 @@
 													placeholder="sheldon.cooper@praxiscomercial.pe"
 													name="email"
 													[(ngModel)]="collaborator.email"
-													[ngClass]="{ 'is-invalid': errorsCollaborator?.email }"
+													[ngClass]="{ 'is-invalid': validationCollaboratioError.email }"
 												/>
 
 												<span class="fs-8 text-muted">Correo corporativo del usuario.</span>
 												
-												<div class="validation-wrapper" [class.open]="showErrors.email">
+												<div class="validation-wrapper" [class.open]="fieldErrors.email">
 													<app-validation-popover 
-													[errors]="errorsCollaborator?.email"></app-validation-popover>
+													[errors]="validationCollaboratioError.email!"></app-validation-popover>
 												</div>
 											</div>
 										</div>
@@ -171,15 +171,15 @@
 											<div class="d-flex flex-column mb-5 fv-row fv-plugins-icon-container">
 												<div class="d-flex align-items-center justify-content-between mb-1">
 													<label class="required fw-500 text-gray-700 fs-6 mb-1">Tipo de documento</label>
-													<small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="errorsCollaborator?.type_document" (click)="showErrors.type_document = !showErrors.type_document">
+													<small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="validationCollaboratioError.type_document" (click)="fieldErrors.type_document = !fieldErrors.type_document">
 														<ion-icon name="information-circle-outline" class="validation-icon"> </ion-icon>
-														{{ showErrors.type_document ? 'Ocultar errores' : 'Ver errores' }}
+														{{ fieldErrors.type_document ? 'Ocultar errores' : 'Ver errores' }}
 													</small>
 												</div>
 
-												<div [ngClass]="{ 'is-invalid': errorsCollaborator?.type_document }">
+												<div [ngClass]="{ 'is-invalid': validationCollaboratioError.type_document }">
 													<ng-select
-														[items]="identityDocuments"
+														[items]="documentsOptions"
 														bindLabel="name"
 												    	bindValue="value"
 														[(ngModel)]="collaborator.type_document"
@@ -206,9 +206,9 @@
 												</div>
 
 												<span class="fs-8 text-muted">Tipo de documento de identidad.</span>
-												<div class="validation-wrapper" [class.open]="showErrors.type_document">
+												<div class="validation-wrapper" [class.open]="fieldErrors.type_document">
 													<app-validation-popover 
-													[errors]="errorsCollaborator?.type_document"></app-validation-popover>
+													[errors]="validationCollaboratioError.type_document!"></app-validation-popover>
 												</div>
 											</div>
 										</div>
@@ -216,9 +216,9 @@
 											<div class="d-flex flex-column mb-5 fv-row fv-plugins-icon-container">
 												<div class="d-flex align-items-center justify-content-between mb-1">
 													<label class="required fw-500 text-gray-700 fs-6 mb-1">Número de documento</label>
-													<small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="errorsCollaborator?.number_document" (click)="showErrors.number_document = !showErrors.number_document">
+													<small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="validationCollaboratioError.number_document" (click)="fieldErrors.number_document = !fieldErrors.number_document">
 														<ion-icon name="information-circle-outline" class="validation-icon"> </ion-icon>
-														{{ showErrors.number_document ? 'Ocultar errores' : 'Ver errores' }}
+														{{ fieldErrors.number_document ? 'Ocultar errores' : 'Ver errores' }}
 													</small>
 												</div>
 
@@ -229,12 +229,12 @@
 												[imask]="{ mask: (collaborator.type_document?.name == 'DNI') ? '00000000' : '0000000000000000000', unmask: true }"
 												name="number_document" 
 												[(ngModel)]="collaborator.number_document"
-												[ngClass]="{'is-invalid': errorsCollaborator?.number_document}">
+												[ngClass]="{'is-invalid': validationCollaboratioError.number_document}">
 
 												<span class="fs-8 text-muted">Documento de identidad nacional.</span>
-												<div class="validation-wrapper" [class.open]="showErrors.number_document">
+												<div class="validation-wrapper" [class.open]="fieldErrors.number_document">
 													<app-validation-popover 
-													[errors]="errorsCollaborator?.number_document"></app-validation-popover>
+													[errors]="validationCollaboratioError.number_document!"></app-validation-popover>
 												</div>
 											</div>
 										</div>
@@ -244,9 +244,9 @@
 											<div class="d-flex flex-column fv-row fv-plugins-icon-container">
 												<div class="d-flex align-items-center justify-content-between mb-1">
 													<label class="required fw-500 text-gray-700 fs-6 mb-1">Telefono</label>
-													<small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="errorsCollaborator?.phone" (click)="showErrors.phone = !showErrors.phone">
+													<small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="validationCollaboratioError.phone" (click)="fieldErrors.phone = !fieldErrors.phone">
 														<ion-icon name="information-circle-outline" class="validation-icon"> </ion-icon>
-														{{ showErrors.phone ? 'Ocultar errores' : 'Ver errores' }}
+														{{ fieldErrors.phone ? 'Ocultar errores' : 'Ver errores' }}
 													</small>
 												</div>
 
@@ -254,15 +254,15 @@
 												class="form-control mb-1" 
 												name="phone" 
 												[(ngModel)]="collaborator.phone"
-												[ngClass]="{'is-invalid': errorsCollaborator?.phone}"
+												[ngClass]="{'is-invalid': validationCollaboratioError.phone}"
 												placeholder="987654321"
 												[imask]="{ mask: '000000000', unmask: true }"
 												>
 
 												<span class="fs-8 text-muted">Número telefonico con prefijo peruano.</span>
-												<div class="validation-wrapper" [class.open]="showErrors.phone">
+												<div class="validation-wrapper" [class.open]="fieldErrors.phone">
 													<app-validation-popover 
-													[errors]="errorsCollaborator?.phone"></app-validation-popover>
+													[errors]="validationCollaboratioError.phone!"></app-validation-popover>
 												</div>
 											</div>
 										</div>
@@ -270,9 +270,9 @@
 											<div class="d-flex flex-column fv-row fv-plugins-icon-container">
 												<div class="d-flex align-items-center justify-content-between mb-1">
 													<label class="required fw-500 text-gray-700 fs-6 mb-1">Contraseña</label>
-													<small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="errorsCollaborator?.password" (click)="showErrors.password = !showErrors.password">
+													<small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="validationCollaboratioError.password" (click)="fieldErrors.password = !fieldErrors.password">
 														<ion-icon name="information-circle-outline" class="validation-icon"> </ion-icon>
-														{{ showErrors.password ? 'Ocultar errores' : 'Ver errores' }}
+														{{ fieldErrors.password ? 'Ocultar errores' : 'Ver errores' }}
 													</small>
 												</div>
 
@@ -283,10 +283,10 @@
 														placeholder="Contraseña segura"
 														name="password" 
 														[(ngModel)]="collaborator.password"
-														[ngClass]="{'is-invalid': errorsCollaborator?.password}"
+														[ngClass]="{'is-invalid': validationCollaboratioError.password}"
 													>
 													<span class="input-group-text bg-white border-start-0 px-5"
-													[ngClass]="{'border-danger': errorsCollaborator?.password}">
+													[ngClass]="{'border-danger': validationCollaboratioError.password}">
 														<a 
 														class="text-primary cursor-pointer" 
 														(click)="generatePassword()" 
@@ -297,22 +297,22 @@
 												</div>
 
 												<span class="fs-8 text-muted">Contraseña de acceso a la plataforma.</span>
-												<div class="validation-wrapper" [class.open]="showErrors.password">
+												<div class="validation-wrapper" [class.open]="fieldErrors.password">
 													<app-validation-popover 
-													[errors]="errorsCollaborator?.password"></app-validation-popover>
+													[errors]="validationCollaboratioError.password!"></app-validation-popover>
 												</div>
 											</div>
 										</div>
 									</div>
 								</ng-container>
 								<!--end::Table wrapper-->
-								<ng-container *ngIf="errorMsmServerGetCollaborator">
-									<app-not-found [error]="errorMsmServerGetCollaborator"></app-not-found>
+								<ng-container *ngIf="collaboratorLoadError">
+									<app-not-found [error]="collaboratorLoadError"></app-not-found>
 								</ng-container>
 							</div>
 
 							<!-- INICIO PRECARGADOR -->
-							<div class="card-body" *ngIf="loading">
+							<div class="card-body" *ngIf="isCollaboratorLoading">
 								<!--begin::Table wrapper-->
 								<div class="row">
 									<div class="col-lg-6">
@@ -448,18 +448,18 @@
 							<div class="card-footer" style="background-color: #f1f5f9;">
 								<button
 									class="btn btn-sm btn-primary my-1 cursor-pointer d-flex align-items-center justify-content-center gap-1"
-									[disabled]="loading || loadBtn || errorMsmServerGetCollaborator"
-									(click)="!loading && !loadBtn && !errorMsmServerGetCollaborator && update()"
+									[disabled]="isCollaboratorLoading || isEditCollaboratorLoading || collaboratorLoadError"
+									(click)="!isCollaboratorLoading && !isEditCollaboratorLoading && !collaboratorLoadError && updateCollaborator()"
 									type="button"
 								>
-									<ng-container *ngIf="loadBtn">
+									<ng-container *ngIf="isEditCollaboratorLoading">
 										<span class="spinner-border spinner-border-sm me-2"
 											aria-hidden="true">
 										</span>
 										<span role="status">Procesando...</span>
 									</ng-container>
 
-									<ng-container *ngIf="!loadBtn">
+									<ng-container *ngIf="!isEditCollaboratorLoading">
 										<i class="bi bi-person-plus"></i>
 										<span>Actualizar colaborador</span>
 									</ng-container>
@@ -468,8 +468,8 @@
 						</div>
 						<!-- FECHA VISIBLE EN LA PARTE INFERIOR  -->
 						<div class="d-flex flex-column w-100">
-							<ng-container *ngIf="!loading">
-								<ng-container *ngIf="!errorMsmServerGetCollaborator">
+							<ng-container *ngIf="!isCollaboratorLoading">
+								<ng-container *ngIf="!collaboratorLoadError">
 									<div class="d-flex gap-2">
 										<small class="text-gray-700 fw-600 fs-8"> Creación: </small>
 										<small class="text-muted fs-8">{{ collaborator.createdAt | date: 'medium' }}</small>

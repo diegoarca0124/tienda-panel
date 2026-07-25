@@ -3,14 +3,11 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, EventEmitter, Input, Output, signal,
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { pageLimit } from '@app/common/constants/pageLimit.constant';
-import { statusTable } from '@app/common/constants/statusTable.contant';
 import { withMinLoadingTime } from '@app/common/interface/with-min-loading-time.interface';
 import { closeModal } from '@app/common/utils/close-modal.util';
-import { sortColumnsTable } from '@app/common/utils/sort-columns-table.util';
 import { AttributeService } from '@app/services/attribute.service';
 import { CategoryService } from '@app/services/category.service';
 import { GLOBAL } from '@app/services/GLOBAL';
-import { MenuSelectCategoriesComponent } from '@app/shared/menu-select-categories/menu-select-categories.component';
 import { ModalDeleteComponent } from '@app/shared/modal-delete/modal-delete.component';
 import { NotFoundComponent } from '@app/shared/not-found/not-found.component';
 import { PaginationComponent } from '@app/shared/pagination/pagination.component';
@@ -39,7 +36,6 @@ declare const $: any;
 		NotFoundComponent,
 		ModalDeleteComponent,
 		NgSelectModule,
-		MenuSelectCategoriesComponent
 	],
 	templateUrl: './index-attribute.component.html',
 	styleUrl: './index-attribute.component.css',
@@ -70,7 +66,7 @@ export class IndexAttributeComponent {
 		{ key: 'status', label: 'Estado', classCol: 'col-w-xs-200 col-w-md-250' },
 	];
 	public pageLimit = pageLimit;
-	public statusTable = statusTable;
+	public statusTable = [];
 	public sortColumns = sortColumnsAttributes;
 	public selectedIds = new Set<string>();
 	public id : string = '';

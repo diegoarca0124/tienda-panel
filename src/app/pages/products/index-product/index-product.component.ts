@@ -5,17 +5,12 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { pageLimit } from '@app/common/constants/pageLimit.constant';
 import { statusProducts } from '@app/common/constants/statusProducts.contant';
-import { statusTable } from '@app/common/constants/statusTable.contant';
 import { visibilityProducts } from '@app/common/constants/visibilityProducts.constant';
 import { withMinLoadingTime } from '@app/common/interface/with-min-loading-time.interface';
 import { sortColumnsTable } from '@app/common/utils/sort-columns-table.util';
 import { GLOBAL } from '@app/services/GLOBAL';
 import { ProductService } from '@app/services/product.service';
 import { InputDialerComponent } from '@app/shared/input-dialer/input-dialer.component';
-import { InputRangePricesComponent } from '@app/shared/input-range-prices/input-range-prices.component';
-import { MenuSelectBrandsComponent } from '@app/shared/menu-select-brands/menu-select-brands.component';
-import { MenuSelectCategoriesComponent } from '@app/shared/menu-select-categories/menu-select-categories.component';
-import { MenuSelectCountriesComponent } from '@app/shared/menu-select-countries/menu-select-countries.component';
 import { ModalDeleteComponent } from '@app/shared/modal-delete/modal-delete.component';
 import { NotFoundComponent } from '@app/shared/not-found/not-found.component';
 import { PaginationComponent } from '@app/shared/pagination/pagination.component';
@@ -32,7 +27,7 @@ import { qualityProduct } from '../constants/quality-product.consta';
 
 @Component({
   selector: 'app-index-product',
-  imports: [TopbarComponent, SidebarComponent, RouterModule, CommonModule, FormsModule, NgSelectModule, ModalDeleteComponent, NotFoundComponent, MenuSelectCategoriesComponent, MenuSelectBrandsComponent, MenuSelectCountriesComponent, InputDialerComponent, FallbackImageDirective, CurrencySymbolPipe],
+  imports: [TopbarComponent, SidebarComponent, RouterModule, CommonModule, FormsModule, NgSelectModule, ModalDeleteComponent, NotFoundComponent, InputDialerComponent, FallbackImageDirective, CurrencySymbolPipe],
   templateUrl: './index-product.component.html',
   styleUrl: './index-product.component.css',
   schemas: [CUSTOM_ELEMENTS_SCHEMA]

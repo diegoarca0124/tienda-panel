@@ -25,11 +25,9 @@ import { createEmptyBrand } from '../utils/empties.util';
 import { HttpErrorResponse } from '@angular/common/http';
 import { CurrencySymbolPipe } from "../../../common/pipes/currency-symbol.pipe";
 import { sortColumnsProducts } from '../constants/sort-columns-products.constant';
-import { MenuSelectSubcategoriesComponent } from '@app/shared/menu-select-subcategories/menu-select-subcategories.component';
 import { PaginationMetaInterface } from '@app/common/interface/pagination-meta.interface';
 import { CategoryService } from '@app/services/category.service';
 import { CategoryInterface } from '@app/pages/categories/interfaces/category.interface';
-import { MenuSelectSubcatComponent } from '@app/shared/menu-select-subcat/menu-select-subcat.component';
 
 @Component({
   selector: 'app-products-brand',
@@ -47,7 +45,6 @@ import { MenuSelectSubcatComponent } from '@app/shared/menu-select-subcat/menu-s
     FallbackImageDirective,
     PadCodePipe,
     CurrencySymbolPipe,
-    MenuSelectSubcatComponent
 ],
   templateUrl: './products-brand.component.html',
   styleUrl: './products-brand.component.css',

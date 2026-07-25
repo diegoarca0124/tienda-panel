@@ -1,12 +1,14 @@
-export function buildShowErrors<T extends Record<string, boolean>>(
-	showErrors: T,
-	errors: Record<string, any>,
+export function buildShowErrors<T extends object>(
+	fields: T,
+	validationErrors: object,
 ): T {
-	const result = { ...showErrors };
+	const updatedFields = { ...fields };
 
-	for (const key in result) {
-		result[key as keyof T] = !!errors?.[key]?.length as T[keyof T];
+	for (const key of Object.keys(updatedFields) as Array<keyof T>) {
+		updatedFields[key] = Boolean(
+			Object.prototype.hasOwnProperty.call(validationErrors, key),
+		) as T[keyof T];
 	}
 
-	return result;
+	return updatedFields;
 }

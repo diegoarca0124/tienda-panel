@@ -2,10 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, signal, WritableSignal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { statusTable } from '@app/common/constants/statusTable.contant';
 import { AttributeService } from '@app/services/attribute.service';
 import { CategoryService } from '@app/services/category.service';
-import { MenuSelectCategoriesComponent } from '@app/shared/menu-select-categories/menu-select-categories.component';
 import { ModalDeleteComponent } from '@app/shared/modal-delete/modal-delete.component';
 import { NotFoundComponent } from '@app/shared/not-found/not-found.component';
 import { PaginationComponent } from '@app/shared/pagination/pagination.component';
@@ -33,7 +31,6 @@ declare const toastr:any;
 	NotFoundComponent,
 	ModalDeleteComponent,
 	NgSelectModule,
-	MenuSelectCategoriesComponent
   ],
   templateUrl: './index-group-attribute.component.html',
   styleUrl: './index-group-attribute.component.css',
@@ -54,7 +51,7 @@ export class IndexGroupAttributeComponent {
 	public categories: any = '';
 	public categoriesSelected: any = [];
 
-	public statusTable = statusTable;
+	public statusTable = [];
 	public sortColumns = sortColumnsAttributes;
 	public selectedIds = new Set<string>();
 	public attributeGroups: AttributeGroupInterface[] = [];

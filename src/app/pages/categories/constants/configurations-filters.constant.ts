@@ -1,10 +1,4 @@
-export const configurationsCategory = [
-    {
-		name: 'Predeterminado',
-		value: 'Predeterminado',
-		description: 'No mostrar ninguna sección adicional.',
-		icon: 'options-outline',
-	},
+export const configurationsFilters = [
 	{
 		name: 'Dimensiones',
 		value: 'isDimensions',

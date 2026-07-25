@@ -1,10 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, CUSTOM_ELEMENTS_SCHEMA, signal, WritableSignal } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, HostListener, signal, WritableSignal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
-import { pageLimit } from '@app/common/constants/pageLimit.constant';
-import { statusTable } from '@app/common/constants/statusTable.contant';
 import { withMinLoadingTime } from '@app/common/interface/with-min-loading-time.interface';
 import { closeModal } from '@app/common/utils/close-modal.util';
 import { getColorBasedOnLetter } from '@app/common/utils/get-color-based-on-letter.util';
@@ -16,81 +14,106 @@ import { PaginationComponent } from '@app/shared/pagination/pagination.component
 import { SidebarComponent } from '@app/shared/sidebar/sidebar.component';
 import { TopbarComponent } from '@app/shared/topbar/topbar.component';
 import { NgSelectModule } from '@ng-select/ng-select';
-import { finalize, Subject, takeUntil } from 'rxjs';
-import { sortColumnsCategories } from '../constants/sort-columns-categories.constant';
+import { catchError, finalize, map, of, Subject, switchMap, takeUntil } from 'rxjs';
 import { CategoryInterface } from '../interfaces/category.interface';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
-import { ValidateQPCategories } from '../utils/validate-pq-categories.util';
+import { validateCategoriesQueryParams } from '../utils/validate-categories-query-params.util';
 import { FallbackImageDirective } from '@app/common/directives/fallback-image.directive';
 import { environment } from 'environments/environment.dev';
 import { PadCodePipe } from "../../../common/pipes/pad-code.pipe";
-import { configurationsCategory } from '../constants/configurations-category.constant';
 import { HttpErrorResponse } from '@angular/common/http';
+import { configurationsFilters } from '../constants/configurations-filters.constant';
+import { MenuSettingsCategoriesComponent } from '@app/shared/menu-settings-categories/menu-settings-categories.component';
+import { GetCategoriesQPI } from '@app/pages/brands/interfaces/query-params.interface';
+import { sortOptions } from '../constants/sort-categories-filters.constant';
+import { statusFilters } from '../constants/status-filters.contant';
+import { GetCategoriessRESI, UpdateCategoriesStatusRESI, UpdateCategoryStatusRESI } from '../interfaces/response.interface';
 declare const toastr: any;
 declare const $: any;
+
+type CategoriesLoadResult =
+	| { data: GetCategoriessRESI; error: null }
+	| { data: null; error: HttpErrorResponse };
 
 @Component({
 	selector: 'app-index-category',
 	imports: [
-    TopbarComponent,
-    SidebarComponent,
-    CommonModule,
-    RouterModule,
-    FormsModule,
-    ModalDeleteComponent,
-    PaginationComponent,
-    NotFoundComponent,
-    NgSelectModule,
-    NgbTooltipModule,
-    FallbackImageDirective,
-    PadCodePipe
-],
+		TopbarComponent,
+		SidebarComponent,
+		CommonModule,
+		RouterModule,
+		FormsModule,
+		ModalDeleteComponent,
+		PaginationComponent,
+		NotFoundComponent,
+		NgSelectModule,
+		NgbTooltipModule,
+		FallbackImageDirective,
+		PadCodePipe,
+		MenuSettingsCategoriesComponent
+	],
 	templateUrl: './index-category.component.html',
 	styleUrl: './index-category.component.css',
 	schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class IndexCategoryComponent {
-	public loadBtnDelete: WritableSignal<boolean> = signal(false);
-	public loadBtnMultipleStatus: WritableSignal<boolean> = signal(false);
+
+	private destroy$ = new Subject<void>();
+	private readonly categoriesQuery$ = new Subject<GetCategoriesQPI>();
+
 	public filter: string = '';
-	public status: string = 'Todos';
-	public configuration: any = 'Predeterminado';
+	public selectedStatus: string = 'Todos';
+	public selectedSort: string = 'Predeterminado';
+	public selectedConfigurations: any = 'Predeterminado';
+
 	public currentPage: number = 1;
-	public limit: number = 10;
-	public sort: string = 'Predeterminado';
 	public totalPages: number = 0;
-	public loading: boolean = true;
+	public limit: number = 10;
+
+	public readonly statusFilters = statusFilters;
+	public readonly sortFilters = sortOptions;
+
+	public selectedCategoriesIds = new Set<string>();
+	public isCategoriesLoading: boolean = true;
+	public categoriesLoadError: string = '';
+
+	public isUpdatingSingleStatus: WritableSignal<boolean> = signal(false);
+	public isUpdatingMultipleStatuses: WritableSignal<boolean> = signal(false);
+	
 	public categories: CategoryInterface[] = [];
 	public screenHeight = window.innerHeight;
-	public errorMsmServerListCategories: string = '';
-	private destroy$ = new Subject<void>();
-	public columns = [
-		{ key: 'name', label: 'Categoría', classCol: 'col-w-xs-200 col-w-md-250' },
-		{ key: 'status', label: 'Estado', classCol: 'col-w-xs-200 col-w-md-250' },
-	];
-	public sortColumn: string = '';
-	public sortDirection: 'asc' | 'desc' = 'asc';
-	public pageLimit = pageLimit;
-	public statusFilter = statusTable;
-	public configurationFilter = configurationsCategory;
-	public sortFilter = sortColumnsCategories;
-	public selectedIds = new Set<string>();
-	public readonly sortValues = sortColumnsCategories.map(item => item.value);
-	public readonly configurationValues = configurationsCategory.map(item => item.value);
+	
+	public readonly sortValues = sortOptions.map(item => item.value);
+	public readonly configurationsValues = configurationsFilters.map(item => item.value);
+
 	constructor(
-		private _router: Router,
+		private router: Router,
 		private categoryService: CategoryService,
-		private _route: ActivatedRoute,
+		private route: ActivatedRoute,
 		private sanitizer: DomSanitizer
 	) {}
 
 	ngOnInit() {
-		this._route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params) => {
-			if (!ValidateQPCategories(this._route, params, this._router, this.sortValues, this.configurationValues)) return;
-
+		this.listenCategoriesQueries();
+		this.route.queryParams
+		.pipe(takeUntil(this.destroy$))
+		.subscribe((params) => {
+			const validParams = validateCategoriesQueryParams(
+				this.route,
+				params,
+				this.router,
+				this.sortValues,
+				this.configurationsValues
+			);
+			if (!validParams) return;
 			this.loadQueryParams(params);
-			this.init_categories(this.filter, this.currentPage, this.status, this.limit, this.sort, this.configuration);
+			this.loadCategories();
 		});
+	}
+
+	@HostListener('window:resize', [])
+	onResize() {
+		this.screenHeight = window.innerHeight;
 	}
 
 	ngOnDestroy(): void {
@@ -102,42 +125,84 @@ export class IndexCategoryComponent {
 		this.filter = params['filter'] || '';
 		this.currentPage = Number(params['page']);
 		this.limit = Number(params['limit']);
-		this.status = params['status'];
-		this.sort = params['sort'];
-		this.configuration = params['configuration'];
+		this.selectedStatus = params['status'];
+		this.selectedSort = params['sort'];
+		this.selectedConfigurations = params['configurations'];
 	}
 
-	init_categories(filter: string, page: number, status: string, limit: number, sort: string, configuration: string) {
-		this.loading = true;
-		this.errorMsmServerListCategories = '';
-		this.categories = [];
-		this.categoryService
-			.get_categories(filter, page, limit, status, sort, configuration)
+	private listenCategoriesQueries(): void {
+		this.categoriesQuery$
 			.pipe(
+				switchMap((query) => {
+					this.isCategoriesLoading = true;
+					this.categoriesLoadError = '';
+					return this.categoryService.getCategories(query).pipe(
+						withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
+						map(
+							(data): CategoriesLoadResult => ({
+								data,
+								error: null,
+							}),
+						),
+						catchError((error: HttpErrorResponse) =>
+							of<CategoriesLoadResult>({
+								data: null,
+								error,
+							}),
+						),
+					);
+				}),
 				takeUntil(this.destroy$),
-				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
-				finalize(() => (this.loading = false))
 			)
-			.subscribe({
-				next: (next: { categories: CategoryInterface[]; meta: any }) => {
-					console.log(next);
-
-					this.categories = this.mapCategories(next.categories);
-					this.currentPage = next.meta.currentPage;
-					this.totalPages = next.meta.totalPages;
-				},
-				error: (err: HttpErrorResponse) => {
-					const error = err.error;
-					this.errorMsmServerListCategories = error;
-				},
+			.subscribe(({ data, error }) => {
+				this.isCategoriesLoading = false;
+				if (error) {
+					this.categoriesLoadError = error.error;
+					return;
+				}
+				if (!data) return;
+				this.selectedCategoriesIds.clear();
+				this.categories = this.mapCategories(data.categories);
+				this.totalPages = data.meta.totalPages;
+				this.syncCurrentPage(data.meta.currentPage);
+				
 			});
+	}
+
+	syncCurrentPage(currentPage: number): void {
+		if (this.currentPage === currentPage) return;
+
+		this.currentPage = currentPage;
+
+		this.router.navigate([], {
+			queryParams: {
+				filter: this.filter,
+				page: this.currentPage,
+				limit: this.limit,
+				status: this.selectedStatus,
+				sort: this.selectedSort,
+				configurations: this.selectedConfigurations,
+			},
+			replaceUrl: true,
+		});
+	}
+
+	private loadCategories(): void {
+		this.categoriesQuery$.next({
+			filter: this.filter,
+			page: this.currentPage,
+			limit: this.limit,
+			status: this.selectedStatus,
+			sort: this.selectedSort,
+			configurations: this.selectedConfigurations
+		});
 	}
 
 	private mapCategories(categories: CategoryInterface[]): CategoryInterface[] {
 		return categories.map(category => ({
 			...category,
 			safeIcon: this.sanitizer.bypassSecurityTrustHtml(category.icon),
-			productsPreview: category.productsPreview!.map(product => ({
+			latestProducts: category.latestProducts!.map(product => ({
 				...product,
 				cover: `${environment.s3_public_url}/products/small/${product.cover}`,
 			})),
@@ -148,31 +213,44 @@ export class IndexCategoryComponent {
 		return getColorBasedOnLetter(str);
 	}
 
+	getConfigurations(configurations: any){
+		if(configurations.length >= 1){
+			this.selectedConfigurations = configurations.join(',');
+		}else{
+			this.selectedConfigurations = 'Predeterminado';
+		}
+	}
+
 	hasSelectedCategories(): boolean {
-		return this.selectedIds.size > 0;
+		return this.selectedCategoriesIds.size > 0;
 	}
 
-	setLimit() {
+	onLimitChange() {
 		this.currentPage = 1;
-		this.redirect();
+		this.applyFilters();
 	}
 
-	onPageChange(newPage: number) {
+	onPageChange(newPage: number): void {
+		if (newPage === this.currentPage) return;
 		this.currentPage = newPage;
-		this.redirect(); // o init_collaborators()
+		this.applyFilters();
 	}
 
-	setStatus(id: string, status: boolean) {
-		this.loadBtnDelete.set(true);
+	onResetCurrentPage(){
+		this.currentPage = 1;
+	}
+
+	onUpdateStatus(id: string, status: boolean) {
+		this.isUpdatingSingleStatus.set(true);
 		this.categoryService
-			.update_status_category(id, { status })
+			.updateCategoryStatus(id, { status: !status })
 			.pipe(
 				takeUntil(this.destroy$),
 				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
-				finalize(() => this.loadBtnDelete.set(false))
+				finalize(() => this.isUpdatingSingleStatus.set(false))
 			)
 			.subscribe({
-				next: (next: {data: CategoryInterface, message: string}) => {
+				next: (next: UpdateCategoryStatusRESI) => {
 					const category = this.categories.find(c => c.id === next.data.id);
 					if (category) {
 						category.status = next.data.status;
@@ -186,17 +264,17 @@ export class IndexCategoryComponent {
 			});
 	}
 
-	redirect() {
+	applyFilters() {
 		const queryParams = {
 			filter: this.filter,
 			page: this.currentPage,
 			limit: this.limit,
-			status: this.status,
-			sort: this.sort,
-			configuration: this.configuration
+			status: this.selectedStatus,
+			sort: this.selectedSort,
+			configurations: this.selectedConfigurations
 		};
 
-		const current: any = this._route.snapshot.queryParams;
+		const current: any = this.route.snapshot.queryParams;
 
 		const same =
 			(current.filter ?? '') === queryParams.filter &&
@@ -204,41 +282,35 @@ export class IndexCategoryComponent {
 			Number(current.limit) === queryParams.limit &&
 			(current.status ?? 'Todos') === queryParams.status &&
 			(current.sort ?? 'Predeterminado') === queryParams.sort &&
-			(current.configuration ?? 'Predeterminado') === queryParams.configuration;
-
+			(current.configurations ?? 'Predeterminado') === queryParams.configurations;
+		console.log(queryParams);
+		
 		if (same) {
-			this.init_categories(
-				this.filter,
-				this.currentPage,
-				this.status,
-				this.limit,
-				this.sort,
-				this.configuration
-			);
+			this.loadCategories();
 			return;
 		}
 
-		this._router.navigate(['/products/categories'], {
+		this.router.navigate([], {
 			queryParams,
 		});
 	}
 
 	resetFilters(){
 		this.filter = '';
-		this.status = 'Todos';
-		this.sort = 'Predeterminado';
+		this.selectedStatus = 'Todos';
+		this.selectedSort = 'Predeterminado';
 		this.currentPage = 1;
 		this.limit = 10;
-		this.configuration  = 'Predeterminado';
+		this.selectedConfigurations  = 'Predeterminado';
 
-		this._router.navigate([], {
+		this.router.navigate([], {
 			queryParams: {
 				filter: null,
 				page: 1,
 				limit: 10,
 				status: null,
 				sort: null,
-				configuration: null
+				configurations: null
 			},
 			queryParamsHandling: 'merge',
 		});
@@ -247,18 +319,18 @@ export class IndexCategoryComponent {
 	toggleItem(id: string, event: Event) {
 		const checked = (event.target as HTMLInputElement).checked;
 		if (checked) {
-			this.selectedIds.add(id);
+			this.selectedCategoriesIds.add(id);
 		} else {
-			this.selectedIds.delete(id);
+			this.selectedCategoriesIds.delete(id);
 		}
 	}
 
 	getSelectedIds(): string[] {
-		return [...this.selectedIds];
+		return [...this.selectedCategoriesIds];
 	}
 
 	onUpdateStatusMultiple(status: boolean){
-		this.loadBtnMultipleStatus.set(true);
+		this.isUpdatingMultipleStatuses.set(true);
 		this.categoryService
 		.update_status_categories({
 			ids: this.getSelectedIds(),
@@ -267,10 +339,10 @@ export class IndexCategoryComponent {
 		.pipe(
 			takeUntil(this.destroy$),
 			withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
-			finalize(() => this.loadBtnMultipleStatus.set(false))
+			finalize(() => this.isUpdatingMultipleStatuses.set(false))
 		)
 		.subscribe({
-			next: (next: {data: string[], message: string}) => {
+			next: (next: UpdateCategoriesStatusRESI) => {
 				const updatedIds = new Set(next.data);
 				this.categories = this.categories.map(prev => {
 					if (updatedIds.has(prev.id!)) {
@@ -283,7 +355,7 @@ export class IndexCategoryComponent {
 				});
 				toastr.success(next.message);
 				closeModal(status ? 'modalMultipleActive' : 'modalMultipleDisabled');
-				this.selectedIds.clear();
+				this.selectedCategoriesIds.clear();
 			},
 			error: (error: HttpErrorResponse) => {
 				toastr.error(error.error.message);

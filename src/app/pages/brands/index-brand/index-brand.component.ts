@@ -3,10 +3,8 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, signal, WritableSignal } from '@angu
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
 import { pageLimit } from '@app/common/constants/pageLimit.constant';
-import { statusTable } from '@app/common/constants/statusTable.contant';
 import { withMinLoadingTime } from '@app/common/interface/with-min-loading-time.interface';
 import { closeModal } from '@app/common/utils/close-modal.util';
-import { sortColumnsTable } from '@app/common/utils/sort-columns-table.util';
 import { BrandService } from '@app/services/brand.service';
 import { GLOBAL } from '@app/services/GLOBAL';
 import { ModalDeleteComponent } from '@app/shared/modal-delete/modal-delete.component';
@@ -23,7 +21,6 @@ import { ValidateQPBrands } from '../utils/validate-pq-brands.util';
 import { FallbackImageDirective } from '@app/common/directives/fallback-image.directive';
 import { environment } from 'environments/environment.dev';
 import { PadCodePipe } from "../../../common/pipes/pad-code.pipe";
-import { MenuSelectCountriesComponent } from '@app/shared/menu-select-countries/menu-select-countries.component';
 import { countries } from '@app/common/constants/countries.constant';
 import { HttpErrorResponse } from '@angular/common/http';
 declare const toastr: any;
@@ -44,7 +41,6 @@ declare const $: any;
     NgbTooltipModule,
     FallbackImageDirective,
     PadCodePipe,
-	MenuSelectCountriesComponent
 ],
 	templateUrl: './index-brand.component.html',
 	styleUrl: './index-brand.component.css',
@@ -70,7 +66,7 @@ export class IndexBrandComponent {
 		{ key: 'status', label: 'Estado', classCol: 'col-w-xs-200 col-w-md-250' },
 	];
 	public pageLimit = pageLimit;
-	public statusTable = statusTable;
+	public statusTable = [];
 	public sortColumns = sortColumnsBrands;
 	public selectedIds = new Set<string>();
 	

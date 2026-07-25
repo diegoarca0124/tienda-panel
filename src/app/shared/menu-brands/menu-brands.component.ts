@@ -10,17 +10,17 @@ import { environment } from 'environments/environment.dev';
 import { finalize, Subject, takeUntil } from 'rxjs';
 
 @Component({
-  selector: 'app-menu-select-brands',
+  selector: 'app-menu-brands',
   imports: [
     RouterModule,
     CommonModule,
     FormsModule,
     NgbTooltipModule
   ],
-  templateUrl: './menu-select-brands.component.html',
-  styleUrl: './menu-select-brands.component.css'
+  templateUrl: './menu-brands.component.html',
+  styleUrl: './menu-brands.component.css'
 })
-export class MenuSelectBrandsComponent {
+export class MenuBrandsComponent {
   @ViewChild('trigger') trigger!: ElementRef;
   private destroy$ = new Subject<void>();
   public filter: string = '';

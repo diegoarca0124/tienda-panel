@@ -72,9 +72,9 @@
                                             <div class="mb-1">
 												<app-upload-file-import
 													(fileSelected)="onFileSelected($event)"
-													(validationError)="errorsSettings.file[0] = $event ?? ''"
+													(validationError)="validationImportError.file[0] = $event ?? ''"
 													[inputId]="'fileImport'"
-													[hasError]="errorsSettings?.file[0]"
+													[hasError]="validationImportError?.file[0]"
 												></app-upload-file-import>
 											</div>
                                             <span class="fs-8 text-muted">Archivo de de datos.</span>
@@ -86,8 +86,8 @@
                                         </label>
                                         <div class="mb-1">
                                             <select class="form-select form-select-sm"
-                                                [ngClass]="{ 'is-invalid': errorsSettings?.mode }"
-                                                [(ngModel)]="settings.mode"
+                                                [ngClass]="{ 'is-invalid': validationImportError?.mode }"
+                                                [(ngModel)]="importConfig.mode"
                                                 name="format">
                                                 <option value="news">Crear nuevos</option>
                                                 <option value="update">Actualizar existentes</option>
@@ -102,8 +102,8 @@
                                         </label>
                                         <div class="mb-1">
                                             <select class="form-select form-select-sm"
-                                                [ngClass]="{ 'is-invalid': errorsSettings?.identifyBy }"
-                                                [(ngModel)]="settings.identifyBy"
+                                                [ngClass]="{ 'is-invalid': validationImportError?.identifyBy }"
+                                                [(ngModel)]="importConfig.identifyBy"
                                                 name="format">
                                                 <option value="number_document">Número de documento</option>
                                                 <option value="email">Correo</option>
@@ -187,9 +187,13 @@
                                                                     </div>
                                                                 </div>
                                                                 <select 
-                                                                    class="form-select form-select-sm"
+                                                                    class="form-select "
                                                                     (change)="onSelectMapping(item, $event)"
-                                                                    style="padding-top: .3rem !important;padding-bottom: .3rem !important;">
+                                                                    style="
+                                                                    padding-top: .3rem !important;
+                                                                    padding-bottom: .3rem !important;
+                                                                    font-size: 11px !important;
+                                                                    height: 30px !important;">
                                                                     <option value="">Seleccionar...</option>
 
                                                                     <ng-container *ngFor="let field of importFields">
@@ -209,7 +213,7 @@
                                                 <tbody>
 
                                                     <!-- ================= LOADING ================= -->
-                                                    <ng-container *ngIf="loadData">
+                                                    <ng-container *ngIf="isFileLoading">
                                                         <tr *ngFor="let s of [1,2,3,4,5]">
                                                             <td><div class="form-control-load" style="height:15px; width:20px;"></div></td>
                                                             <td *ngFor="let k of importKeys">
@@ -219,7 +223,7 @@
                                                     </ng-container>
 
                                                     <!-- ================= DATA ================= -->
-                                                    <ng-container *ngIf="!loadData && importData.length > 0">
+                                                    <ng-container *ngIf="!isFileLoading && importData.length > 0">
                                                         <tr *ngFor="let row of importData; let i = index">
                                                             
                                                             <td class="fixed-xs text-center p-0 h-30px">
@@ -278,8 +282,12 @@
                                                                         'cursor-pointer': getCellError(i, key.key)?.length,
                                                                         'bg-error': getCellError(i, key.key).length >= 1
                                                                     }"
-                                                                    class="form-select form-select-sm border-0 p-1 fs-7"
-                                                                    style="width: 100% !important;background-color: transparent !important;font-size: .85rem !important;"
+                                                                    class="form-select form-control-sm border-0 p-1 fs-7"
+                                                                    style="
+                                                                    width: 100% !important;
+                                                                    background-color: transparent !important;
+                                                                    
+                                                                    "
                                                                     [(ngModel)]="row[key.label]"
                                                                     [ngbPopover]="popoverTemplate"
                                                                     [disablePopover]="getCellError(i, key.key).length < 1"
@@ -310,7 +318,7 @@
                                                     </ng-container>
 
                                                     <!-- ================= EMPTY ================= -->
-                                                    <tr *ngIf="!loadData && importData.length == 0">
+                                                    <tr *ngIf="!isFileLoading && importData.length == 0">
                                                         <td colspan="100%">
                                                             <app-not-found 
                                                                 [error]="{ message: 'No hay datos para mostrar.', statusCode: 404 }">
@@ -332,7 +340,7 @@
                                         type="button"
                                         class="btn btn-sm btn-primary my-1"
                                         [disabled]="loadBtnValidate || importData.length == 0"
-                                        (click)="validate()"
+                                        (click)="importCollaborators()"
                                     >
                                         <span *ngIf="!loadBtnValidate" class="d-flex align-items-center gap-2">
                                             <ion-icon name="cloud-upload-outline"></ion-icon>

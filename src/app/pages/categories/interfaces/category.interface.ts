@@ -16,7 +16,7 @@ export interface CategoryInterface {
 	isMaterial?: boolean,
 	isTemperature?: boolean,
 	totalProducts?: number,
-	productsPreview?: Array<any>,
+	latestProducts?: Array<any>,
 	moreProducts?: number,
 	subcategories?: any,
 

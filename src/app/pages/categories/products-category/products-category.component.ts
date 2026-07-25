@@ -13,7 +13,7 @@ import { FormsModule } from '@angular/forms';
 import { PaginationComponent } from '@app/shared/pagination/pagination.component';
 import { ValidateQPProductsCategory } from '../utils/validate-qp-products-category.util';
 import { NgSelectModule } from '@ng-select/ng-select';
-import { MenuSelectSubcategoriesComponent } from '@app/shared/menu-select-subcategories/menu-select-subcategories.component';
+import { MenuSubcategoriesComponent } from '@app/shared/menu-subcategories/menu-subcategories.component';
 import { NotFoundComponent } from '@app/shared/not-found/not-found.component';
 import { UpdatesCatsubcatProductsInterface } from '../interfaces/update-catsubcat.products.interface';
 import { createEmptyCategory, createUpdateCatsubcatProducts } from '../utils/empties.util';
@@ -26,7 +26,6 @@ import { PaginationMetaInterface } from '@app/common/interface/pagination-meta.i
 import { sortProductsFilters } from '../constants/sort-products-filters.constant';
 import { CurrencySymbolPipe } from "../../../common/pipes/currency-symbol.pipe";
 import { qualityFilters } from '../constants/quality-filters.constant';
-import { statusFilters } from '../constants/status-filters.constant';
 import { visibilityFilters } from '../constants/visibility.filters.constant';
 import { InputDialerComponent } from '@app/shared/input-dialer/input-dialer.component';
 declare var toastr:any;
@@ -41,7 +40,7 @@ declare var toastr:any;
     FormsModule,
     PaginationComponent,
     NgSelectModule,
-    MenuSelectSubcategoriesComponent,
+    MenuSubcategoriesComponent,
     NotFoundComponent,
     FallbackImageDirective,
     PadCodePipe,
@@ -91,7 +90,7 @@ export class ProductsCategoryComponent {
   public categoriesLoadError: string = '';
   public productsLoadError: string = '';
 
-  public readonly statusFilters = statusFilters;
+  public readonly statusFilters = [];
   public readonly qualityFilters = qualityFilters;
   public readonly visibilityFilters = visibilityFilters;
   public readonly sortFilters = sortProductsFilters;

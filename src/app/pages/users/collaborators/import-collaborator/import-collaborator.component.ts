@@ -5,61 +5,54 @@ import { AlertComponent } from '@app/shared/alert/alert.component';
 import { SidebarComponent } from '@app/shared/sidebar/sidebar.component';
 import { TopbarComponent } from '@app/shared/topbar/topbar.component';
 import { UploadFileImportComponent } from '@app/shared/upload-file-import/upload-file-import.component';
-import { SettingsImport } from '../interfaces/settings-import.interface';
+import { ImportInterface } from '../interfaces/import.interface';
 import { FormsModule } from '@angular/forms';
 import { finalize, Subject, takeUntil } from 'rxjs';
-import { saveAs } from 'file-saver';
 import * as XLSX from 'xlsx-js-style';
 import { NotFoundComponent } from '@app/shared/not-found/not-found.component';
-import { fieldsExportCollaborator } from '../constants/fieldsExportCollaborator.constant';
-import { fieldsImportCollaborator } from '../constants/fieldsImportCollaborator.constant';
 import { CollaboratorService } from '@app/services/collaborator.service';
 import { withMinLoadingTime } from '@app/common/interface/with-min-loading-time.interface';
 import { GLOBAL } from '@app/services/GLOBAL';
 import { NgClearButtonTemplateDirective } from "@ng-select/ng-select";
 import { NgbPopover, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { ExportCollaboratorsXlsxUtil } from '../utils/export-collaborators-xlsx.util';
+import { fieldImportOptions } from '../constants/selectors.constants';
 declare const toastr:any;
 
 @Component({
   selector: 'app-import-collaborator',
   imports: [
-    AlertComponent,
-    TopbarComponent,
-    SidebarComponent,
-    RouterModule,
-    UploadFileImportComponent,
-    CommonModule,
-    FormsModule,
-    NotFoundComponent,
-    NgClearButtonTemplateDirective,
-    NgbTooltipModule,
-    NgbPopover
-],
+      AlertComponent,
+      TopbarComponent,
+      SidebarComponent,
+      RouterModule,
+      UploadFileImportComponent,
+      CommonModule,
+      FormsModule,
+      NotFoundComponent,
+      NgClearButtonTemplateDirective,
+      NgbTooltipModule,
+      NgbPopover
+  ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './import-collaborator.component.html',
   styleUrl: './import-collaborator.component.css'
 })
 export class ImportCollaboratorComponent {
-products = [
-    { name: 'Producto Premium' },
-    { name: 'Producto Gold' },
-    { name: 'Producto Enterprise' }
-];
-  public settings : SettingsImport = {
+  public importConfig : ImportInterface = {
     file: undefined,
     mode: 'upsert',
     identifyBy: 'number_document',
   }
-  public errorsSettings : any = {
+  public validationImportError : any = {
     file: []
   };
-  public loadBtn : boolean = false;
   private destroy$ = new Subject<void>();
+  
   public importData : Array<any> = [];
   public importKeys : Array<any> = [];
-  public loadData : boolean = false;
-  public importFields = fieldsImportCollaborator.map(({ index ,key, label, inputType, inputValues }) => ({
+  public isFileLoading : boolean = false;
+  public importFields = fieldImportOptions.map(({ index ,key, label, inputType, inputValues }) => ({
     index,
     key,
     label,
@@ -67,11 +60,9 @@ products = [
     inputValues,
     status: false,
   }));
-  public errorsCollaborator: any = {
+  public validationDataError: any = {
     data: []
   };
-	public msmErrorCollaborator: any = [];
-  public missingColumns: any = [];
   public selectedIndexes : number[] = [];
   public loadBtnMapColummns : boolean = false;
   public draggedColumnIndex: number | null = null;
@@ -100,9 +91,9 @@ products = [
 	}
 
   onFileSelected(file: File | null) {
-    this.settings.file = file ?? undefined;
+    this.importConfig.file = file ?? undefined;
 
-    if (!this.settings.file) return;
+    if (!this.importConfig.file) return;
     const extension = file!.name.split('.').pop()?.toLowerCase();
     const reader = new FileReader();
     reader.onload = (e: any) => {
@@ -138,14 +129,14 @@ products = [
     console.log(this.importKeys);
     
     if (extension === 'csv') {
-      reader.readAsText(this.settings.file, 'UTF-8');
+      reader.readAsText(this.importConfig.file, 'UTF-8');
     } else {
-      reader.readAsArrayBuffer(this.settings.file);
+      reader.readAsArrayBuffer(this.importConfig.file);
     }
   }
 
   hasCellError(i: number, field: string): boolean {
-    const rows = this.errorsCollaborator?.data?.[0] || [];
+    const rows = this.validationDataError?.data?.[0] || [];
     const found = rows.find((item: any) => item[i]);
     return !!found?.[i]?.[field];
   }
@@ -159,7 +150,7 @@ products = [
   }
   
   getCellError(i: number, field: string): string[] {
-    const rows = this.errorsCollaborator?.data?.[0] || [];
+    const rows = this.validationDataError?.data?.[0] || [];
     const found = rows.find((item: any) => item[i]);
     const errors = found?.[i]?.[field];
     if (!errors) return [];
@@ -175,7 +166,7 @@ products = [
     this.importKeys.find(item=> item.index == selectedColumn!.index).key = itemField!.key;
     this.importKeys.find(item=> item.key == itemField!.key).inputType = itemField!.inputType;
     this.importKeys.find(item=> item.key == itemField!.key).inputValues = itemField!.inputValues;
-    console.log(this.errorsCollaborator);
+    console.log(this.validationDataError);
     
     if(dropdownBtn){
       const dropdown = (window as any).bootstrap.Dropdown.getInstance(dropdownBtn)
@@ -242,10 +233,9 @@ products = [
     this.dragOverIndex = null;
   }
 
-  validate(){
+  importCollaborators(){
     this.errorsValidation.total = 0;
     this.errorsValidation.errors = 0; 
-    this.missingColumns = [];
     const mappedData = this.importData.map(item =>
       Object.fromEntries(
         Object.entries(item)
@@ -271,10 +261,10 @@ products = [
     this.loadBtnValidate = true;
     let importBody = {
       data : mappedData,
-      mode: this.settings.mode,
-      identifyBy: this.settings.identifyBy
+      mode: this.importConfig.mode,
+      identifyBy: this.importConfig.identifyBy
     }
-    this.colaboratorService.validate_import_collaborators(importBody)
+    this.colaboratorService.importCollaborators(importBody)
     .pipe(
       takeUntil(this.destroy$),
       withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
@@ -283,7 +273,7 @@ products = [
     .subscribe({
       next: (next: {message: string, created: number, updated: number, ignored: number}) => {
         this.validateStatus = true;
-        this.errorsCollaborator = {
+        this.validationDataError = {
           data: []
         };
         toastr.success(next.message);
@@ -293,12 +283,10 @@ products = [
         toastr.error(error.message || '¡Error desconocido!');
 
         if (error.validation) {
-          this.errorsCollaborator = error.validation;
-          this.missingColumns = error.validation.missing_columns[0];
-          this.msmErrorCollaborator =Object.values(this.errorsCollaborator).flat();
+          this.validationDataError = error.validation;
         }  
-        this.errorsValidation.total = this.errorsCollaborator.total[0];
-        this.errorsValidation.errors = this.errorsCollaborator.errors[0];
+        this.errorsValidation.total = this.validationDataError.total[0];
+        this.errorsValidation.errors = this.validationDataError.errors[0];
       },
     });
   }

@@ -108,7 +108,7 @@
 													<span class="text-gray-700 ls-1px" style="font-size: .7rem;">ESTADO</span>
 												</div>
 												<ng-select
-													[items]="statusTable"
+													[items]="statusFilters"
 													bindLabel="name"
 													bindValue="value"
 													name="selectedStatus"
@@ -144,7 +144,7 @@
 													<span class="text-gray-700 ls-1px" style="font-size: .7rem;">ORDEN</span>
 												</div>
 												<ng-select
-													[items]="sortColumns"
+													[items]="sortFilters"
 													bindLabel="name"
 													bindValue="value"
 													name="selectedSort"
@@ -254,7 +254,7 @@
 										</thead>
 										<tbody>
 											@if(isCollaboratorsLoading){
-												<tr *ngFor="let item of [1,2,3,4,5,6]">
+												<tr *ngFor="let item of [1,2,3,4,5,6,7,8,9,10]">
 													<td class="fixed-xs text-center p-0">
 														<div class="skeleton skeleton-check"></div>
 													</td>
@@ -304,7 +304,7 @@
 															<div class="symbol me-3" style="flex-shrink:0;">
 																<span class="symbol-label fw-bold"
 																style="height:30px; width:30px"
-																[ngClass]="getColorBasedOnLetter(item.names)">
+																[ngClass]="getAvatarColor(item.names)">
 																{{ item.names.charAt(0).toUpperCase() }}
 																</span>
 															</div>
@@ -376,13 +376,13 @@
 																</a>
 
 																<a class="dropdown-item d-flex align-items-center gap-2 cursor-pointer"
-																(click)="onSendWtpp(item)">
+																(click)="sendCollaboratorByWhatsApp(item)">
 																	<ion-icon name="logo-whatsapp"></ion-icon>
 																	Enviar a WhatsApp
 																</a>
 
 																<a class="dropdown-item d-flex align-items-center gap-2 cursor-pointer"
-																(click)="onCopyClick(item)">
+																(click)="copyCollaboratorToClipboard(item)">
 																	<ion-icon name="copy-outline"></ion-icon>
 																	Copiar
 																</a>
@@ -422,10 +422,14 @@
 									</table>
 								</div>
 
-								<div class="d-flex justify-content-between pb-10" *ngIf="collaborators.length >= 1">
+								<div class="d-flex justify-content-between pb-10">
 									<div class="d-flex align-items-center gap-2 text-gray-600 fs-8 text-uppercase ls-1px">
 										Ver
-										<select class="form-select form-select-sm w-auto" name="limit" [(ngModel)]="limit" (change)="onLimitChange()">
+										<select class="form-select form-control-sm w-auto" 
+										name="limit" 
+										[(ngModel)]="limit" 
+										(change)="onLimitChange()"
+										[disabled]="isCollaboratorsLoading">
 											<option value="10">10</option>
 											<option value="20">20</option>
 											<option value="25">25</option>

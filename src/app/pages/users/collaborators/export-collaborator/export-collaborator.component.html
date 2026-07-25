@@ -53,15 +53,15 @@
                                     <div class="col-md-6 fv-row fv-plugins-icon-container">
                                         <label class="required fw-500 text-gray-700 fs-6 mb-1">Formato de archivo</label>
                                         <select class="form-select form-select-sm"
-                                            [ngClass]="{ 'is-invalid': errorsExportCollaborators?.format }"
+                                            [ngClass]="{ 'is-invalid': validationCollaboratioError?.format }"
                                             [(ngModel)]="exportOptions.format"
                                             name="format">
                                             <option value="xlsx">Excel (.xlsx)</option>
                                             <option value="csv">CSV (.csv)</option>
                                         </select>
                                         <div class="fs-8 mt-1"
-                                        [ngClass]="errorsExportCollaborators?.format ? 'text-danger' : 'text-muted'">
-                                            {{ errorsExportCollaborators?.format?.[0] || 'Selecciona el tipo de archivo que se generará.' }}
+                                        [ngClass]="validationCollaboratioError?.format ? 'text-danger' : 'text-muted'">
+                                            {{ validationCollaboratioError?.format?.[0] || 'Selecciona el tipo de archivo que se generará.' }}
                                         </div>
                                     </div>
 
@@ -70,14 +70,14 @@
                                         <label class="required fw-500 text-gray-700 fs-6 mb-1">Enmascarar datos</label>
                                         <select class="form-select form-select-sm"
                                             [(ngModel)]="exportOptions.maskData"
-                                            [ngClass]="{ 'is-invalid': errorsExportCollaborators?.maskData }"
+                                            [ngClass]="{ 'is-invalid': validationCollaboratioError?.maskData }"
                                             name="maskData">
                                                 <option [ngValue]="false">No</option>
                                                 <option [ngValue]="true">Sí</option>
                                         </select>
                                         <div class="fs-8 mt-1"
-                                        [ngClass]="errorsExportCollaborators?.maskData ? 'text-danger' : 'text-muted'">
-                                            {{ errorsExportCollaborators?.maskData?.[0] || 'Oculta parcialmente datos sensibles.' }}
+                                        [ngClass]="validationCollaboratioError?.maskData ? 'text-danger' : 'text-muted'">
+                                            {{ validationCollaboratioError?.maskData?.[0] || 'Oculta parcialmente datos sensibles.' }}
                                         </div>
                                     </div>
 
@@ -86,7 +86,7 @@
                                         <select class="form-select form-select-sm"
                                         [(ngModel)]="exportOptions.scope"
                                         name="scope"
-                                        [ngClass]="{ 'is-invalid': errorsExportCollaborators?.scope }"
+                                        [ngClass]="{ 'is-invalid': validationCollaboratioError?.scope }"
                                         >
                                             <option value="all">Todos los registros</option>
                                             <option value="selected">Seleccionados</option>
@@ -94,8 +94,8 @@
 
                                         </select>
                                         <div class="fs-8 mt-1"
-                                        [ngClass]="errorsExportCollaborators?.scope ? 'text-danger' : 'text-muted'">
-                                            {{ errorsExportCollaborators?.scope?.[0] || 'Alcance de registros exportados.' }}
+                                        [ngClass]="validationCollaboratioError?.scope ? 'text-danger' : 'text-muted'">
+                                            {{ validationCollaboratioError?.scope?.[0] || 'Alcance de registros exportados.' }}
                                         </div>
                                     </div>
 
@@ -105,15 +105,15 @@
                                         <select class="form-select form-select-sm"
                                         [(ngModel)]="exportOptions.sort"
                                         name="sort"
-                                        [ngClass]="{ 'is-invalid': errorsExportCollaborators?.sort }">
-                                            <option *ngFor="let option of sortColumns"
+                                        [ngClass]="{ 'is-invalid': validationCollaboratioError?.sort }">
+                                            <option *ngFor="let option of sortOptions"
                                                     [value]="option.value">
                                                 {{ option.name }}
                                             </option>
                                         </select>
                                         <div class="fs-8 mt-1"
-                                        [ngClass]="errorsExportCollaborators?.sort ? 'text-danger' : 'text-muted'">
-                                            {{ errorsExportCollaborators?.sort?.[0] || 'Selecciona el orden de organización.' }}
+                                        [ngClass]="validationCollaboratioError?.sort ? 'text-danger' : 'text-muted'">
+                                            {{ validationCollaboratioError?.sort?.[0] || 'Selecciona el orden de organización.' }}
                                         </div>
                                     </div>
                                 </div>
@@ -150,14 +150,14 @@
                                     <button
                                         type="button"
                                         class="btn btn-sm btn-dark my-1"
-                                        [disabled]="loadBtnExportCollaborators"
+                                        [disabled]="isExportCollaboratorLoading"
                                         (click)="onExport()"
                                     >
-                                        <span *ngIf="!loadBtnExportCollaborators" class="d-flex align-items-center gap-2">
+                                        <span *ngIf="!isExportCollaboratorLoading" class="d-flex align-items-center gap-2">
                                             <i class="bi bi-filetype-xls"></i>
                                             Exportar
                                         </span>
-                                        <span *ngIf="loadBtnExportCollaborators" class="d-flex align-items-center gap-2">
+                                        <span *ngIf="isExportCollaboratorLoading" class="d-flex align-items-center gap-2">
                                             <span class="spinner-border spinner-border-sm"></span>
                                             Procesando...
                                         </span>

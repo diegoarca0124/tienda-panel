@@ -3,15 +3,16 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { SidebarComponent } from '@app/shared/sidebar/sidebar.component';
 import { TopbarComponent } from '@app/shared/topbar/topbar.component';
-import { fieldsExportCollaborator } from '../constants/fieldsExportCollaborator.constant';
 import { FormsModule } from '@angular/forms';
-import { sortColumnsCollaborators } from '../constants/sortColumnsCollaborators.constant';
 import { CollaboratorService } from '@app/services/collaborator.service';
 import { withMinLoadingTime } from '@app/common/interface/with-min-loading-time.interface';
 import { finalize, Subject, takeUntil } from 'rxjs';
 import { GLOBAL } from '@app/services/GLOBAL';
 import { ExportCollaboratorsXlsxUtil } from '../utils/export-collaborators-xlsx.util';
 import { ExportCollaboratorsCsvUtil } from '../utils/export-collaborators-csv.util';
+import { FieldExportColumns } from '../interfaces/validation.interface';
+import { HttpErrorResponse } from '@angular/common/http';
+import { fieldsExportOptions, sortOptions } from '../constants/selectors.constants';
 declare const toastr:any;
 
 @Component({
@@ -29,7 +30,7 @@ declare const toastr:any;
 })
 export class ExportCollaboratorComponent {
 
-  	public fieldsExport : Array<{key: string, checked: boolean,label: string, description: string}> = fieldsExportCollaborator;
+  	public fieldsExport : FieldExportColumns[] = fieldsExportOptions;
 	public exportOptions = {
 		format: 'xlsx',
 		maskData: false,
@@ -38,11 +39,9 @@ export class ExportCollaboratorComponent {
 		data: [] as any,
 		ids: [] as any
 	}
-	public loadBtnExportCollaborators : boolean = false;
-	public errorMsmServer: string = '';
-	public errorsExportCollaborators: any = {};
-	public msmErrorExportCollaborators: any = [];
-	public sortColumns = sortColumnsCollaborators;
+	public isExportCollaboratorLoading : boolean = false;
+	public validationCollaboratioError: any = {};
+	public sortOptions = sortOptions;
 	private destroy$ = new Subject<void>();
   
 
@@ -66,37 +65,33 @@ export class ExportCollaboratorComponent {
 			field: prev.key,
 			checked: prev.checked
 		}));
-		this.loadBtnExportCollaborators = true;
+		this.isExportCollaboratorLoading = true;
 		this.exportOptions.ids = [];
-		/* if(this.exportOptions.scope == 'selected'){
-			this.exportOptions.ids = [...this.selectedIds];
-		}
-		if(this.exportOptions.scope == 'page'){
-			this.exportOptions.ids = this.collaborators.map(c => c.id);
-		} */
 		this.collaboratorService
-			.export_collaborators(this.exportOptions)
+			.exportCollaborators(this.exportOptions)
 			.pipe(
 				takeUntil(this.destroy$),
 				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
-				finalize(() => (this.loadBtnExportCollaborators = false))
+				finalize(() => (this.isExportCollaboratorLoading = false))
 			)
 			.subscribe({
-				next: (next: { data: []}) => {
-
-					if(this.exportOptions.format == "xlsx"){
+				next: (next: { data: any[]}) => {
+					if (this.exportOptions.format === 'xlsx') {
 						ExportCollaboratorsXlsxUtil(next.data, {
 							fileName: 'IMP-COLLABORATORS',
-							sheetName: 'COLLABORATORS'
+							sheetName: 'COLLABORATORS',
 						});
-					}else if(this.exportOptions.format == "csv"){
+					} else if (this.exportOptions.format === 'csv') {
 						ExportCollaboratorsCsvUtil(next.data, {
-							fileName: 'IMP-COLLABORATORS'
+							fileName: 'IMP-COLLABORATORS',
 						});
+					} else {
+						toastr.error('El formato seleccionado no es válido.');
+						return;
 					}
 					toastr.success('Archivo generado correctamente.');
 				},
-				error: async (err) => {
+				error: async (err: HttpErrorResponse) => {
 					console.log(err);
 					let errorParsed: any;
 					if (err.error instanceof Blob && err.error.type === 'application/json') {
@@ -110,20 +105,18 @@ export class ExportCollaboratorComponent {
 						errorParsed = err.error;
 					}
 
-					this.errorMsmServer = errorParsed.message || '¡Error desconocido!';
-					toastr.error(this.errorMsmServer);
+					toastr.error(errorParsed.message || '¡Error desconocido!');
 
 					if (errorParsed.validation) {
-						this.errorsExportCollaborators = errorParsed.validation;
-						this.msmErrorExportCollaborators = Object.values(errorParsed.validation).flat();
-						if (this.errorsExportCollaborators.ids) {
-							this.errorsExportCollaborators.scope = [
-								...(this.errorsExportCollaborators.scope || []),
-								...this.errorsExportCollaborators.ids
+						this.validationCollaboratioError = errorParsed.validation;
+						if (this.validationCollaboratioError.ids) {
+							this.validationCollaboratioError.scope = [
+								...(this.validationCollaboratioError.scope || []),
+								...this.validationCollaboratioError.ids
 							];
 						}
 					}
-					console.log(this.errorsExportCollaborators);
+					console.log(this.validationCollaboratioError);
 					
 				},
 			});

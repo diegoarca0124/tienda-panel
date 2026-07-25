@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 360" role="img" aria-labelledby="title desc">
+  <title id="title">tenant blanco</title>
+  <desc id="desc">Logotipo tenant blanco con fondo transparente.</desc>
+  <text
+    x="40"
+    y="286"
+    fill="#ffffff"
+    font-family="Arial Black, Arial, Helvetica, sans-serif"
+    font-size="300"
+    font-weight="900"
+    letter-spacing="-18"
+  >tenant</text>
+</svg>

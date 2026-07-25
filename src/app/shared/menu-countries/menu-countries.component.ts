@@ -14,17 +14,17 @@ interface CountryOption {
 }
 
 @Component({
-  selector: 'app-menu-select-countries',
+  selector: 'app-menu-countries',
   imports: [
     RouterModule,
     CommonModule,
     FormsModule,
     NgbTooltipModule
   ],
-  templateUrl: './menu-select-countries.component.html',
-  styleUrl: './menu-select-countries.component.css'
+  templateUrl: './menu-countries.component.html',
+  styleUrl: './menu-countries.component.css'
 })
-export class MenuSelectCountriesComponent {
+export class MenuCountriesComponent {
 
   @ViewChild('trigger') trigger!: ElementRef;
 

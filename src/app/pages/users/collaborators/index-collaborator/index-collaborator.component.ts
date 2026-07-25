@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, HostListener, signal, WritableSignal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
-import { statusTable } from '@app/common/constants/statusTable.contant';
 import { withMinLoadingTime } from '@app/common/interface/with-min-loading-time.interface';
 import { closeModal } from '@app/common/utils/close-modal.util';
 import { copyToClipboard } from '@app/common/utils/copy-clipboard.util';
@@ -16,15 +15,21 @@ import { PaginationComponent } from '@app/shared/pagination/pagination.component
 import { SidebarComponent } from '@app/shared/sidebar/sidebar.component';
 import { TopbarComponent } from '@app/shared/topbar/topbar.component';
 import { NgSelectModule } from '@ng-select/ng-select';
-import { finalize } from 'rxjs';
+import { catchError, finalize, map, of, switchMap } from 'rxjs';
 import { takeUntil } from 'rxjs/internal/operators/takeUntil';
 import { Subject } from 'rxjs/internal/Subject';
-import { sortColumnsCollaborators } from '../constants/sortColumnsCollaborators.constant';
 import { CollaboratorInterface } from '../interfaces/collaborator.interface';
-import { ValidateQPCollaborators } from '../utils/validate-qp-collaborators.util';
+import { validateCollaboratorsQueryParams } from '../utils/validate-collaborators-query-params.util';
 import { HttpErrorResponse } from '@angular/common/http';
 import { PaginationMetaInterface } from '@app/common/interface/pagination-meta.interface'
+import { GetCollaboratorsQPI } from '../interfaces/query-params.interface';
+import { GetCollaboratorsRESI, UpdateCollaboratorsStatusRESI, UpdateCollaboratorStatusRESI } from '../interfaces/responses.interface';
+import { sortOptions, statusOptions } from '../constants/selectors.constants';
 declare const toastr: any;
+
+type CollaboratorsLoadResult =
+	| { data: GetCollaboratorsRESI; error: null }
+	| { data: null; error: HttpErrorResponse };
 
 @Component({
 	selector: 'app-index-collaborator',
@@ -33,8 +38,10 @@ declare const toastr: any;
 	templateUrl: './index-collaborator.component.html',
 	styleUrl: './index-collaborator.component.css',
 })
+//queryParams → loadCollaborators() → collaboratorsQuery$ → listenCollaboratorsQueries()
 export class IndexCollaboratorComponent {
 	private destroy$ = new Subject<void>();
+	private readonly collaboratorsQuery$ = new Subject<GetCollaboratorsQPI>();
 
 	public filter: string = '';
 	public selectedStatus: string = 'Todos';
@@ -44,38 +51,41 @@ export class IndexCollaboratorComponent {
 	public totalPages: number = 0;
 	public limit: number = 10;
 
-	public statusTable = statusTable;
-	public sortColumns = sortColumnsCollaborators;
+	public readonly statusFilters = statusOptions;
+	public readonly sortFilters = sortOptions;
 
 	public selectedCollaboratorsIds = new Set<string>();
-
 	public isCollaboratorsLoading: boolean = true;
-
 	public collaboratorsLoadError: string = '';
 
 	public isUpdatingSingleStatus: WritableSignal<boolean> = signal(false);
 	public isUpdatingMultipleStatuses: WritableSignal<boolean> = signal(false);
 	
-	
-	public collaborators: CollaboratorInterface[] = [];
-	public screenHeight = window.innerHeight;
-	
-	
-	public readonly sortValues = sortColumnsCollaborators.map(item => item.value);
+	public collaborators : CollaboratorInterface[] = [];
+	public screenHeight : number= window.innerHeight;
+	public readonly sortValues = sortOptions.map(item => item.value);
 
 	constructor(
-		private _router: Router,
+		private router: Router,
 		private collaboratorService: CollaboratorService,
-		private _route: ActivatedRoute
+		private route: ActivatedRoute
 	) {}
 
-	ngOnInit() {
-		this._route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params) => {
-			if (!ValidateQPCollaborators(this._route, params, this._router, this.sortValues)) return;
-
-			this.loadQueryParams(params);
-			this.initCollaborators(this.filter, this.currentPage, this.selectedStatus, this.limit, this.selectedSort);
-		});
+	ngOnInit(): void {
+		this.listenCollaboratorsQueries();
+		this.route.queryParams
+			.pipe(takeUntil(this.destroy$))
+			.subscribe((params) => {
+				const validParams = validateCollaboratorsQueryParams(
+					this.route,
+					params,
+					this.router,
+					this.sortValues,
+				);
+				if (!validParams) return;
+				this.loadQueryParams(params);
+				this.loadCollaborators();
+			});
 	}
 
 	@HostListener('window:resize', [])
@@ -96,28 +106,51 @@ export class IndexCollaboratorComponent {
 		this.selectedSort = params['sort'];
 	}
 
-	initCollaborators(filter: string, page: number, status: string, limit: number, sort: string) {
-		this.isCollaboratorsLoading = true;
-		this.collaboratorsLoadError = '';
-		this.collaborators = [];
-		this.collaboratorService
-			.getCollaborators(filter, page, limit, status, sort)
+	private loadCollaborators(): void {
+		this.collaboratorsQuery$.next({
+			filter: this.filter,
+			page: this.currentPage,
+			limit: this.limit,
+			status: this.selectedStatus,
+			sort: this.selectedSort,
+		});
+	}
+
+	private listenCollaboratorsQueries(): void {
+		this.collaboratorsQuery$
 			.pipe(
+				switchMap((query) => {
+					this.isCollaboratorsLoading = true;
+					this.collaboratorsLoadError = '';
+					return this.collaboratorService.getCollaborators(query).pipe(
+						withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
+						map(
+							(data): CollaboratorsLoadResult => ({
+								data,
+								error: null,
+							}),
+						),
+						catchError((error: HttpErrorResponse) =>
+							of<CollaboratorsLoadResult>({
+								data: null,
+								error,
+							}),
+						),
+					);
+				}),
 				takeUntil(this.destroy$),
-				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
-				finalize(() => (this.isCollaboratorsLoading = false))
 			)
-			.subscribe({
-				next: (next: { collaborators: CollaboratorInterface[]; meta: PaginationMetaInterface}) => {
-					this.selectedCollaboratorsIds.clear();
-					this.collaborators = next.collaborators;
-					this.totalPages = next.meta.totalPages;
-					this.syncCurrentPage(next.meta.currentPage);
-				},
-				error: (err: HttpErrorResponse) => {
-					const error = err.error;
-					this.collaboratorsLoadError = error;
-				},
+			.subscribe(({ data, error }) => {
+				this.isCollaboratorsLoading = false;
+				if (error) {
+					this.collaboratorsLoadError = error.error;
+					return;
+				}
+				if (!data) return;
+				this.selectedCollaboratorsIds.clear();
+				this.collaborators = data.collaborators;
+				this.totalPages = data.meta.totalPages;
+				this.syncCurrentPage(data.meta.currentPage);
 			});
 	}
 
@@ -126,7 +159,7 @@ export class IndexCollaboratorComponent {
 
 		this.currentPage = currentPage;
 
-		this._router.navigate([], {
+		this.router.navigate([], {
 			queryParams: {
 				filter: this.filter,
 				page: this.currentPage,
@@ -138,7 +171,7 @@ export class IndexCollaboratorComponent {
 		});
 	}
 
-	getColorBasedOnLetter(str: string) {
+	getAvatarColor(str: string) {
 		return getColorBasedOnLetter(str);
 	}
 
@@ -151,7 +184,7 @@ export class IndexCollaboratorComponent {
 			sort: this.selectedSort,
 		};
 
-		const current :any= this._route.snapshot.queryParams;
+		const current :any= this.route.snapshot.queryParams;
 
 		const same =
 			(current.filter ?? '') === queryParams.filter &&
@@ -161,26 +194,20 @@ export class IndexCollaboratorComponent {
 			(current.sort ?? 'Predeterminado') === queryParams.sort;
 
 		if (same) {
-			this.initCollaborators(
-				this.filter,
-				this.currentPage,
-				this.selectedStatus,
-				this.limit,
-				this.selectedSort
-			);
+			this.loadCollaborators();
 			return;
 		}
 
-		this._router.navigate([], {
+		this.router.navigate([], {
 			queryParams,
 		});
 	}
 
-	onSendWtpp(data: { names: string; surname: string; email: string }) {
+	sendCollaboratorByWhatsApp(data: { names: string; surname: string; email: string }) {
 		sendWhatsAppMessageWithObject(data);
 	}
 
-	onCopyClick(data: { names: string; surname: string; email: string }): void {
+	copyCollaboratorToClipboard(data: { names: string; surname: string; email: string }): void {
 		copyToClipboard(data).then((success) => {
 			if (success) {
 				toastr.success('Texto copiado al portapapeles.');
@@ -193,14 +220,14 @@ export class IndexCollaboratorComponent {
 	onUpdateStatus(id: string, status: boolean) {
 		this.isUpdatingSingleStatus.set(true);
 		this.collaboratorService
-			.update_status_collaborator(id, { status })
+			.updateCollaboratorStatus(id, { status: !status })
 			.pipe(
 				takeUntil(this.destroy$),
 				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
 				finalize(() => this.isUpdatingSingleStatus.set(false))
 			)
 			.subscribe({
-				next: (next: {data: CollaboratorInterface, message: string}) => {
+				next: (next: UpdateCollaboratorStatusRESI) => {
 					const collaborator = this.collaborators.find(c => c.id === next.data.id);
 					if (collaborator) {
 						collaborator.status = next.data.status;
@@ -219,7 +246,8 @@ export class IndexCollaboratorComponent {
 		this.applyFilters();
 	}
 
-	onPageChange(newPage: number) {
+	onPageChange(newPage: number): void {
+		if (newPage === this.currentPage) return;
 		this.currentPage = newPage;
 		this.applyFilters();
 	}
@@ -235,7 +263,7 @@ export class IndexCollaboratorComponent {
 		this.currentPage = 1;
 		this.limit = 10;
 
-		this._router.navigate([], {
+		this.router.navigate([], {
 			queryParams: {
 				filter: null,
 				page: 1,
@@ -247,17 +275,12 @@ export class IndexCollaboratorComponent {
 		});
 	}
 
-	onCollaboratorSelectionChange(id: string, event: Event) {
-		const checked = (event.target as HTMLInputElement).checked;
+	onCollaboratorSelectionChange(id: string, checked: boolean): void {
 		if (checked) {
 			this.selectedCollaboratorsIds.add(id);
 		} else {
 			this.selectedCollaboratorsIds.delete(id);
 		}
-	}
-
-	getSelectedIds(): string[] {
-		return [...this.selectedCollaboratorsIds];
 	}
 
 	get hasSelectedCollaborators(): boolean {
@@ -267,8 +290,8 @@ export class IndexCollaboratorComponent {
 	onUpdateStatusMultiple(status: boolean){
 		this.isUpdatingMultipleStatuses.set(true);
 		this.collaboratorService
-		.update_status_collaborators({
-			ids: this.getSelectedIds(),
+		.updateCollaboratorsStatus({
+			ids: [...this.selectedCollaboratorsIds],
 			status
 		})
 		.pipe(
@@ -277,13 +300,13 @@ export class IndexCollaboratorComponent {
 			finalize(() => this.isUpdatingMultipleStatuses.set(false))
 		)
 		.subscribe({
-			next: (next: {data: string[], message: string}) => {
+			next: (next: UpdateCollaboratorsStatusRESI) => {
 				const updatedIds = new Set(next.data);
 				this.collaborators = this.collaborators.map(prev => {
 					if (updatedIds.has(prev.id!)) {
 						return {
 							...prev,
-							status
+							status: !status
 						};
 					}
 					return prev;
@@ -297,6 +320,4 @@ export class IndexCollaboratorComponent {
 			},
 		});
 	}
-
-	
 }

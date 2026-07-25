@@ -10,17 +10,17 @@ import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { finalize, Subject, takeUntil } from 'rxjs';
 
 @Component({
-  selector: 'app-menu-select-categories',
+  selector: 'app-menu-categories',
   imports: [
     RouterModule,
     CommonModule,
     FormsModule,
     NgbTooltipModule
   ],
-  templateUrl: './menu-select-categories.component.html',
-  styleUrl: './menu-select-categories.component.css'
+  templateUrl: './menu-categories.component.html',
+  styleUrl: './menu-categories.component.css'
 })
-export class MenuSelectCategoriesComponent {
+export class MenuCategoriesComponent {
   @ViewChild('trigger') trigger!: ElementRef;
   private destroy$ = new Subject<void>();
   public filter: string = '';

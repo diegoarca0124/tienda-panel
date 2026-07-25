@@ -4,7 +4,7 @@ export const ValidateQPProductsCategory= (
     route: ActivatedRoute,
     params: any,
     router: Router,
-    sortArray?: Array<string>
+    sortArray: Array<string>
 ): boolean => {
     //filter: string, page: number, status: string, limit: number, subcategoryIds
     let page = Number(params['page']);

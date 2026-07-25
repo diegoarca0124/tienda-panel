@@ -11,17 +11,17 @@ import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { finalize, Subject, takeUntil } from 'rxjs';
 
 @Component({
-  selector: 'app-menu-select-subcat',
+  selector: 'app-menu-subcat',
   imports: [
     RouterModule,
     CommonModule,
     FormsModule,
     NgbTooltipModule
   ],
-  templateUrl: './menu-select-subcat.component.html',
-  styleUrl: './menu-select-subcat.component.css'
+  templateUrl: './menu-subcat.component.html',
+  styleUrl: './menu-subcat.component.css'
 })
-export class MenuSelectSubcatComponent {
+export class MenuSubcatComponent {
   @ViewChild('trigger') trigger!: ElementRef;
 
   @Input() title : string = '';

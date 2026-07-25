@@ -11,13 +11,13 @@ import { TopbarComponent } from '@app/shared/topbar/topbar.component';
 import { finalize, takeUntil } from 'rxjs';
 import { Subject } from 'rxjs/internal/Subject';
 import { IMaskModule } from 'angular-imask';
-import { rols } from '@app/common/constants/rols.constant';
 import { NgSelectModule } from '@ng-select/ng-select';
-import { identityDocuments } from '@app/common/constants/identityDocuments.constant';
 import { CollaboratorInterface } from '../interfaces/collaborator.interface';
-import { createEmptyCollaborator } from '../utils/empties.util';
+import { createEmptyCollaborator, createEmptyFieldErrors } from '../utils/empties.util';
 import { buildShowErrors } from '@app/common/utils/build-show.errors.util';
 import { ValidationPopoverComponent } from '@app/shared/validation-popover/validation-popover.component';
+import { CollaboratorFieldErrors, CollaboratorValidationErrors } from '../interfaces/validation.interface';
+import { documentsOptions, rolesOptions } from '../constants/selectors.constants';
 declare const toastr: any;
 
 @Component({
@@ -29,22 +29,12 @@ declare const toastr: any;
 })
 export class CreateCollaboratorComponent {
 	public collaborator: CollaboratorInterface = createEmptyCollaborator();
-	public errorsCollaborator: any = {};
-	public msmErrorCollaborator: any = [];
+	public validationCollaboratorError: CollaboratorValidationErrors = {};
 	private destroy$ = new Subject<void>();
-	public loadBtn: boolean = false;
-	public rols = rols;
-	public identityDocuments = identityDocuments;
-	public showErrors = {
-		names: false,
-		surname: false,
-		role: false,
-		email: false,
-		type_document: false,
-		number_document: false,
-		phone: false,
-		password: false
-	};
+	public isCreateCollaboratorLoading: boolean = false;
+	public rolesOptions = rolesOptions;
+	public documentsOptions = documentsOptions;
+	public fieldErrors : CollaboratorFieldErrors  = createEmptyFieldErrors();
 
 	constructor(
 		private authService: AuthService,
@@ -71,19 +61,18 @@ export class CreateCollaboratorComponent {
 		this.destroy$.complete();
 	}
 
-	create() {
-		this.msmErrorCollaborator = [];
-		this.loadBtn = true;
+	createCollaborator() {
+		this.isCreateCollaboratorLoading = true;
 		this.collaboratorService
-			.create_collaborator(this.collaborator)
+			.createCollaborator(this.collaborator)
 			.pipe(
 				takeUntil(this.destroy$),
 				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
-				finalize(() => (this.loadBtn = false))
+				finalize(() => (this.isCreateCollaboratorLoading = false))
 			)
 			.subscribe({
 				next: (next: {data: CollaboratorInterface, message: string}) => {
-					this.errorsCollaborator = {};
+					this.validationCollaboratorError = {};
 					toastr.success(next.message);
 					this._router.navigate(['/users/collaborators']);
 				},
@@ -92,9 +81,8 @@ export class CreateCollaboratorComponent {
 					toastr.error(error.message || '¡Error desconocido!');
 					
 					if (error.validation) {
-						this.errorsCollaborator = error.validation;
-						this.msmErrorCollaborator = Object.values(this.errorsCollaborator).flat();
-						this.showErrors = buildShowErrors(this.showErrors,this.errorsCollaborator);
+						this.validationCollaboratorError = error.validation;
+						this.fieldErrors = buildShowErrors(this.fieldErrors,this.validationCollaboratorError);
 					}
 				},
 			});
