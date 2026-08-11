@@ -1,180 +1,215 @@
-.pagination {
+:host {
+	display: block;
+
+	/* Colores compatibles con el tema actual del proyecto */
+	--pagination-primary: var(--bs-primary, #1b84ff);
+	--pagination-primary-dark: #1b84ff;
+	--pagination-primary-light: #eaf3ff;
+	--pagination-primary-border: #b2d5ff;
+
+	--pagination-text: var(--bs-gray-700, #4b5675);
+	--pagination-muted: var(--bs-gray-500, #99a1b7);
+	--pagination-border: var(--bs-gray-300, #dbdfe9);
+	--pagination-surface: #ffffff;
+	--pagination-secondary: var(--bs-gray-100, #f9f9f9);
+	--pagination-disabled: var(--bs-gray-200, #f1f1f2);
+}
+
+.pagination-container {
+	display: flex;
+	justify-content: center;
+	width: 100%;
+	padding: 0.25rem;
+	overflow-x: auto;
+	scrollbar-width: thin;
+}
+
+.pagination-list {
 	display: flex;
 	align-items: center;
-	gap: 0.4rem;
+	justify-content: center;
+	gap: 0.375rem;
+
+	width: max-content;
+	min-width: 100%;
 	margin: 0;
 	padding: 0;
 
-	.page-item {
-		margin: 0;
-
-		.page-link {
-			display: inline-flex;
-			align-items: center;
-			justify-content: center;
-
-			width: 2.5rem;
-			height: 2.5rem;
-			padding: 0;
-
-			font-size: 0.875rem;
-			font-weight: 500;
-			line-height: 1;
-			color: #5e6278;
-
-			background-color: #f8f9fa;
-			border: 1px solid #e4e6ef;
-			border-radius: 50%;
-
-			cursor: pointer;
-			user-select: none;
-			transition:
-				color 160ms ease,
-				background-color 160ms ease,
-				border-color 160ms ease,
-				box-shadow 160ms ease,
-				transform 160ms ease;
-
-			&:hover {
-				color: #ffffff;
-				background-color: #1b84ff;
-				border-color: #1b84ff;
-				box-shadow: 0 4px 10px rgba(27, 132, 255, 0.22);
-				transform: translateY(-1px);
-			}
-
-			&:focus-visible {
-				outline: none;
-				box-shadow: 0 0 0 3px rgba(27, 132, 255, 0.2);
-			}
-		}
-
-		/* Página seleccionada */
-		&.active .page-link {
-			color: #ffffff;
-			font-weight: 600;
-			background-color: #1b84ff !important;
-			border-color: #1b84ff;
-			box-shadow: 0 3px 8px rgba(27, 132, 255, 0.25);
-		}
-
-		/* Controles deshabilitados */
-		&.disabled {
-			pointer-events: none;
-
-			.page-link {
-				color: #b5b5c3;
-				background-color: #f5f5f5;
-				border-color: #eeeeee;
-				box-shadow: none;
-				opacity: 0.65;
-			}
-		}
-	}
-
-	/* Iconos de navegación */
-	.svg-icon {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-
-		svg {
-			width: 1.25rem;
-			height: 1.25rem;
-		}
-	}
-
-	.page-link:hover .svg-icon {
-		color: #ffffff;
-	}
-
-	/* Puntos suspensivos */
-	.page-item:has(.page-link:not(a)) .page-link {
-		color: #a1a5b7;
-		background-color: transparent;
-		border-color: transparent;
-		box-shadow: none;
-		cursor: default;
-	}
+	list-style: none;
 }
 
-/* Adaptación para pantallas pequeñas */
-@media (max-width: 576px) {
-	.pagination {
+.pagination-item {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex: 0 0 auto;
+}
+
+/* Estilo base */
+
+.pagination-control {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+
+	min-width: 2.5rem;
+	height: 2.5rem;
+	margin: 0;
+	padding: 0;
+
+	font-family: inherit;
+	font-size: 0.875rem;
+	font-weight: 600;
+	line-height: 1;
+
+	color: var(--pagination-text);
+	background-color: var(--pagination-surface);
+	border: 1px solid var(--pagination-border);
+
+	cursor: pointer;
+	user-select: none;
+}
+
+/* Números: circulares y visualmente separados de las flechas */
+
+.page-number {
+	width: 2.5rem;
+	border-color: transparent;
+	border-radius: 50%;
+}
+
+.page-number-active {
+	color: #ffffff;
+	font-weight: 700;
+	background-color: var(--pagination-primary);
+	border-color: var(--pagination-primary);
+}
+
+/* Anterior y siguiente: cuadrados redondeados grises */
+
+.arrow-control {
+	width: 2.5rem;
+	color: var(--pagination-text);
+	background-color: var(--pagination-secondary);
+	border-color: var(--pagination-border);
+	border-radius: 0.625rem;
+}
+
+.arrow-control svg {
+	width: 1.125rem;
+	height: 1.125rem;
+}
+
+/* Primera y última: botones tipo etiqueta azul */
+
+.edge-control {
+	gap: 0.375rem;
+
+	width: auto;
+	min-width: 2.5rem;
+	padding-right: 0.75rem;
+	padding-left: 0.75rem;
+
+	color: var(--pagination-primary-dark);
+	background-color: var(--pagination-primary-light);
+	border-color: var(--pagination-primary-border);
+	border-radius: 0.625rem;
+}
+
+.edge-control svg {
+	width: 1.125rem;
+	height: 1.125rem;
+	flex: 0 0 auto;
+}
+
+.edge-label {
+	font-size: 0.8125rem;
+	font-weight: 600;
+	white-space: nowrap;
+}
+
+/* Separación entre navegación y páginas */
+
+.navigation-previous {
+	margin-right: 0.375rem;
+}
+
+.navigation-next {
+	margin-left: 0.375rem;
+}
+
+/* Separadores */
+
+.pagination-ellipsis {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+
+	width: 1.75rem;
+	height: 2.5rem;
+
+	font-size: 1rem;
+	font-weight: 600;
+	line-height: 1;
+	color: var(--pagination-muted);
+}
+
+/* Estado deshabilitado */
+
+.pagination-control:disabled {
+	color: var(--pagination-muted);
+	background-color: var(--pagination-disabled);
+	border-color: var(--pagination-border);
+
+	cursor: default;
+	opacity: 0.6;
+}
+
+/* Accesibilidad para navegación con teclado */
+
+.pagination-control:focus-visible {
+	outline: 2px solid var(--pagination-primary);
+	outline-offset: 2px;
+}
+
+/* Adaptación móvil */
+
+@media (max-width: 767.98px) {
+	.pagination-list {
 		gap: 0.25rem;
-
-		.page-item .page-link {
-			width: 2.15rem;
-			height: 2.15rem;
-			font-size: 0.8rem;
-		}
-
-		.svg-icon svg {
-			width: 1.1rem;
-			height: 1.1rem;
-		}
-	}
-}
-
-.pagination {
-	/* Flechas anterior y siguiente */
-	.page-navigation .page-link {
-		color: #5e6278;
-		background-color: #f1f3f5;
-		border-color: #dfe2e7;
-
-		.svg-icon {
-			color: inherit !important;
-		}
-
-		&:hover {
-			color: #ffffff;
-			background-color: #1b84ff;
-			border-color: #1b84ff;
-		}
+		justify-content: flex-start;
 	}
 
-	/* Primera y última página */
-	.page-navigation-edge .page-link {
-		color: #1b84ff;
-		background-color: #eaf3ff;
-		border-color: #bcd8ff;
-
-		&:hover {
-			color: #ffffff;
-			background-color: #056ee9;
-			border-color: #056ee9;
-		}
+	.pagination-control,
+	.page-number,
+	.arrow-control {
+		width: 2.25rem;
+		min-width: 2.25rem;
+		height: 2.25rem;
+		font-size: 0.8125rem;
 	}
 
-	/* Asegura que los SVG adopten el color del botón */
-	.page-navigation .svg-icon,
-	.page-navigation .svg-icon-muted {
-		color: inherit !important;
+	.edge-control {
+		width: 2.25rem;
+		min-width: 2.25rem;
+		height: 2.25rem;
+		padding: 0;
 	}
 
-	.page-navigation svg path {
-		fill: currentColor;
+	.edge-label {
+		display: none;
 	}
 
-	/* Página numérica normal */
-	.page-link-number {
-		color: #5e6278;
-		background-color: #ffffff;
-		border-color: transparent;
-
-		&:hover {
-			color: #1b84ff;
-			background-color: #eaf3ff;
-			border-color: #bcd8ff;
-			box-shadow: none;
-		}
+	.navigation-previous {
+		margin-right: 0.125rem;
 	}
 
-	/* Página numérica seleccionada */
-	.page-item.active .page-link-number {
-		color: #ffffff;
-		background-color: #1b84ff !important;
-		border-color: #1b84ff;
+	.navigation-next {
+		margin-left: 0.125rem;
+	}
+
+	.pagination-ellipsis {
+		width: 1.25rem;
+		height: 2.25rem;
 	}
 }

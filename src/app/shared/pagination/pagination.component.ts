@@ -1,65 +1,107 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import {
+	ChangeDetectionStrategy,
+	Component,
+	EventEmitter,
+	Input,
+	Output
+} from '@angular/core';
+
+type PaginationItem = number | '...';
 
 @Component({
-  selector: 'app-pagination',
-  standalone: true,
-  imports: [
-    CommonModule
-  ],
-  templateUrl: './pagination.component.html',
-  styleUrls: ['./pagination.component.css']
+	selector: 'app-pagination',
+	standalone: true,
+	imports: [CommonModule],
+	templateUrl: './pagination.component.html',
+	styleUrls: ['./pagination.component.css'],
+	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PaginationComponent {
-  @Input() currentPage: number = 1;
-  @Input() totalPages: number = 1;
-  @Output() pageChanged = new EventEmitter<number>();
+	@Input() currentPage = 1;
+	@Input() totalPages = 1;
 
-  /** Cambia de página solo si es un número */
-  changePageIfNumber(page: number | string) {
-    if (typeof page === 'number') {
-      this.changePage(page);
-    }
-  }
+	@Output() pageChanged = new EventEmitter<number>();
 
-  /** Cambia de página */
-  changePage(page: number) {
-    if (page >= 1 && page <= this.totalPages && page !== this.currentPage) {
-      this.pageChanged.emit(page);
-    }
-  }
+	changePage(page: number): void {
+		if (
+			page < 1 ||
+			page > this.totalPages ||
+			page === this.currentPage
+		) {
+			return;
+		}
 
-  /** Genera el arreglo de páginas con ... */
-  get pages(): (number | string)[] {
-    const pages: (number | string)[] = [];
-    const total = this.totalPages;
-    const current = this.currentPage;
+		this.pageChanged.emit(page);
+	}
 
-    if (total <= 7) {
-      for (let i = 1; i <= total; i++) pages.push(i);
-    } else {
-      // 3 primeras páginas
-      pages.push(1, 2, 3);
+	changePageIfNumber(page: PaginationItem): void {
+		if (typeof page === 'number') {
+			this.changePage(page);
+		}
+	}
 
-      // separador antes del bloque central
-      if (current > 5) pages.push('...');
+	get pages(): PaginationItem[] {
+		const total = Math.max(0, this.totalPages);
+		const current = Math.min(
+			Math.max(1, this.currentPage),
+			Math.max(1, total)
+		);
 
-      // bloque central alrededor de la página actual
-      const start = Math.max(4, current - 1);
-      const end = Math.min(total - 3, current + 1);
+		if (total === 0) {
+			return [];
+		}
 
-      for (let i = start; i <= end; i++) {
-        if (!pages.includes(i)) pages.push(i);
-      }
+		if (total <= 7) {
+			return Array.from(
+				{ length: total },
+				(_, index) => index + 1
+			);
+		}
 
-      // separador después del bloque central
-      if (current < total - 4) pages.push('...');
+		/*
+		 * Cerca del inicio:
+		 * 1 2 3 4 5 ... 20
+		 */
+		if (current <= 4) {
+			return [1, 2, 3, 4, 5, '...', total];
+		}
 
-      // 3 últimas páginas
-      pages.push(total - 2, total - 1, total);
-    }
+		/*
+		 * Cerca del final:
+		 * 1 ... 16 17 18 19 20
+		 */
+		if (current >= total - 3) {
+			return [
+				1,
+				'...',
+				total - 4,
+				total - 3,
+				total - 2,
+				total - 1,
+				total
+			];
+		}
 
-    // elimina duplicados y mantiene orden
-    return Array.from(new Set(pages));
-  }
+		/*
+		 * Zona central:
+		 * 1 ... 9 10 11 ... 20
+		 */
+		return [
+			1,
+			'...',
+			current - 1,
+			current,
+			current + 1,
+			'...',
+			total
+		];
+	}
+
+	trackByPage(
+		index: number,
+		page: PaginationItem
+	): string {
+		return `${page}-${index}`;
+	}
 }
