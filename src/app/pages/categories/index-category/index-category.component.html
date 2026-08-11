@@ -65,27 +65,46 @@
 											</div>
 										</div>
 									</div>
-									<div class="dropdown">
+									<div class="d-flex align-items-center gap-3">
 										<button
-											class="btn btn-dark btn-sm d-flex align-items-center gap-2 my-1"
-											type="button"
-											id="dropdownMenuButton"
-											data-bs-toggle="dropdown"
-											aria-expanded="false"
+											class="btn btn-sm bg-light-primary d-inline-flex align-items-center 
+											gap-2 my-1"
+											(click)="applyFilters()"
+											[disabled]="isCategoriesLoading"
 										>
-											<ion-icon name="settings-outline" class="fs-5"></ion-icon>
-											<span>Opciones</span>
-											<ion-icon name="chevron-down-outline" class="fs-6"></ion-icon>
+											<ng-container *ngIf="!isCategoriesLoading; else loadingTpl">
+												<ion-icon name="search-outline" class="fs-6 text-primary"></ion-icon>
+												<span class="text-primary">Buscar</span>
+											</ng-container>
+
+											<ng-template #loadingTpl>
+												<span class="spinner-border spinner-border-sm text-primary" aria-hidden="true"></span>
+												<span class="text-primary">Buscando...</span>
+											</ng-template>
 										</button>
-										<ul class="dropdown-menu menu-state-bg-light-primary" aria-labelledby="dropdownMenuButton">
-											<li>
-												<a class="dropdown-item cursor-pointer d-flex align-items-center gap-2"
-												[routerLink]="['/products/categories/mapping']">
-													<ion-icon name="git-network-outline" class="text-primary"></ion-icon>
-													Mapeo
-												</a>
-											</li>
-										</ul>
+										<div class="dropdown">
+											<button
+												class="btn btn-dark btn-sm d-flex align-items-center gap-2 my-1"
+												type="button"
+												id="dropdownMenuButton"
+												data-bs-toggle="dropdown"
+												aria-expanded="false"
+											>
+												<ion-icon name="settings-outline" class="fs-5"></ion-icon>
+												<span>Opciones</span>
+												<ion-icon name="chevron-down-outline" class="fs-6"></ion-icon>
+											</button>
+											<ul class="dropdown-menu menu-state-bg-light-primary" aria-labelledby="dropdownMenuButton">
+												<li>
+													<a class="dropdown-item cursor-pointer d-flex align-items-center gap-2"
+													[routerLink]="['/products/categories/mapping']">
+														<ion-icon name="git-network-outline" class="text-primary"></ion-icon>
+														Mapeo
+													</a>
+												</li>
+											</ul>
+										</div>
+										
 									</div>
 								</div>
 
@@ -167,7 +186,7 @@
 											<div class="d-flex flex-column mb-1 gap-1">
 												<div class="d-flex align-items-center">
 													<span class="text-gray-700 ls-1px" style="font-size: .7rem;">
-														Configuraciones
+														CONFIGURACIONES
 													</span>
 												</div>
 												<app-menu-settings-categories 
@@ -180,21 +199,6 @@
 											</div>
 										</div>
 									</div>
-									<button
-										class="btn btn-xs bg-light-primary my-3 d-inline-flex align-items-center gap-2"
-										(click)="applyFilters()"
-										[disabled]="isCategoriesLoading"
-									>
-										<ng-container *ngIf="!isCategoriesLoading; else loadingTpl">
-											<ion-icon name="search-outline" class="fs-6 text-primary"></ion-icon>
-											<span class="text-primary">Buscar</span>
-										</ng-container>
-
-										<ng-template #loadingTpl>
-											<span class="spinner-border spinner-border-sm text-primary" aria-hidden="true"></span>
-											<span class="text-primary">Buscando...</span>
-										</ng-template>
-									</button>
 								</div>
 
 								<div class="table-wrapper mb-7">
@@ -256,7 +260,7 @@
 										</thead>
 										<tbody>
 											@if(isCategoriesLoading){
-												<tr *ngFor="let item of [1,2,3,4,5,6]">
+												<tr *ngFor="let item of [1,2,3,4,5,6,7,8,9,10]">
 													<td class="fixed-xs text-center p-0">
 														<div class="skeleton skeleton-check"></div>
 													</td>

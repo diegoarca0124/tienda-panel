@@ -1,7 +1,7 @@
 <ul class="pagination pagination-circle pagination-outline justify-content-center">
 	<!-- Primera -->
-	<li class="page-item" [class.disabled]="currentPage === 1">
-		<a class="page-link px-0 cursor-pointer" (click)="changePage(1)" style="background: #f8f8f8; border-color: #e2e2e2 !important;">
+	<li class="page-item page-navigation page-navigation-edge" [class.disabled]="currentPage === 1">
+		<a class="page-link px-0 cursor-pointer" (click)="changePage(1)">
 			<span class="svg-icon svg-icon-muted svg-icon-2"
 				><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 					<path
@@ -19,8 +19,8 @@
 	</li>
 
 	<!-- Anterior -->
-	<li class="page-item" [class.disabled]="currentPage === 1">
-		<a class="page-link px-0 cursor-pointer" (click)="changePage(currentPage - 1)" style="background: #f8f8f8; border-color: #e2e2e2 !important;">
+	<li class="page-item page-navigation" [class.disabled]="currentPage === 1">
+		<a class="page-link px-0 cursor-pointer" (click)="changePage(currentPage - 1)">
 			<span class="svg-icon svg-icon-muted svg-icon-2"
 				><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 					<path
@@ -38,7 +38,6 @@
 			class="page-link page-link-number px-0 cursor-pointer"
 			*ngIf="page !== '...'"
 			(click)="changePageIfNumber(page)"
-			[ngClass]="{ 'bg-white': page !== currentPage }"
 		>
 			{{ page }}
 		</a>
@@ -46,8 +45,8 @@
 	</li>
 
 	<!-- Siguiente -->
-	<li class="page-item" [class.disabled]="currentPage === totalPages">
-		<a class="page-link px-0 cursor-pointer" (click)="changePage(currentPage + 1)" style="background: #f8f8f8; border-color: #e2e2e2 !important;">
+	<li class="page-item page-navigation" [class.disabled]="currentPage === totalPages">
+		<a class="page-link px-0 cursor-pointer" (click)="changePage(currentPage + 1)">
 			<span class="svg-icon svg-icon-muted svg-icon-2"
 				><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 					<path
@@ -60,8 +59,8 @@
 	</li>
 
 	<!-- Última -->
-	<li class="page-item" [class.disabled]="currentPage === totalPages">
-		<a class="page-link px-0 cursor-pointer" (click)="changePage(totalPages)" style="background: #f8f8f8; border-color: #e2e2e2 !important;">
+	<li class="page-item page-navigation page-navigation-edge" [class.disabled]="currentPage === totalPages">
+		<a class="page-link px-0 cursor-pointer" (click)="changePage(totalPages)" >
 			<span class="svg-icon svg-icon-muted svg-icon-2"
 				><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 					<path

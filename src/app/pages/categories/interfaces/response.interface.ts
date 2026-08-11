@@ -24,3 +24,8 @@ export interface UpdateCategoriesStatusRESI {
 	data: string[];
 	message: string
 }
+
+export interface CreateCategoryRESI {
+    data: CategoryInterface;
+    message: string
+}

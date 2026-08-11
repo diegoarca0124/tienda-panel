@@ -18,6 +18,8 @@ import { buildShowErrors } from '@app/common/utils/build-show.errors.util';
 import { ValidationPopoverComponent } from '@app/shared/validation-popover/validation-popover.component';
 import { CollaboratorFieldErrors, CollaboratorValidationErrors } from '../interfaces/validation.interface';
 import { documentsOptions, rolesOptions } from '../constants/selectors.constants';
+import { CreateCollaboratorRESI } from '../interfaces/responses.interface';
+import { HttpErrorResponse } from '@angular/common/http';
 declare const toastr: any;
 
 @Component({
@@ -71,12 +73,12 @@ export class CreateCollaboratorComponent {
 				finalize(() => (this.isCreateCollaboratorLoading = false))
 			)
 			.subscribe({
-				next: (next: {data: CollaboratorInterface, message: string}) => {
+				next: (next: CreateCollaboratorRESI) => {
 					this.validationCollaboratorError = {};
 					toastr.success(next.message);
 					this._router.navigate(['/users/collaborators']);
 				},
-				error: (err) => {
+				error: (err: HttpErrorResponse) => {
 					const error = err?.error ?? {};
 					toastr.error(error.message || '¡Error desconocido!');
 					

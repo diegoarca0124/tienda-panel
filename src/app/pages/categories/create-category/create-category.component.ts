@@ -15,16 +15,18 @@ import { AlertComponent } from '@app/shared/alert/alert.component';
 import { TextFieldModule } from '@angular/cdk/text-field';
 import { IMaskModule } from 'angular-imask';
 import { CategoryInterface } from '../interfaces/category.interface';
-import { createEmptyCategory } from '../utils/empties.util';
-import { showErrorsCategory } from '../constants/show-errors-category.constant';
+import { createEmptyCategory, createEmptyFieldErrorsCategory } from '../utils/empties.util';
 import { ValidationPopoverComponent } from '@app/shared/validation-popover/validation-popover.component';
-declare const toastr: any;
+declare const toastr: any; 
 import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
 import { MonacoOptions } from '../constants/monaco-options.constant';
 import { DomSanitizer } from '@angular/platform-browser';
 import { InputSvgComponent } from '@app/shared/input-svg/input-svg.component';
 import { TextareaAutoresizeDirective } from '@app/common/directives/textarea-autoresize.directive';
 import { HttpErrorResponse } from '@angular/common/http';
+import { CategoryFieldErrors } from '../interfaces/validation.interface';
+import { buildShowErrors } from '@app/common/utils/build-show.errors.util';
+import { CreateCategoryRESI } from '../interfaces/response.interface';
 
 @Component({
 	selector: 'app-create-category',
@@ -37,17 +39,14 @@ import { HttpErrorResponse } from '@angular/common/http';
 export class CreateCategoryComponent {
 	@ViewChild('editorContainer', { static: true }) editorContainer!: ElementRef;
 	private destroy$ = new Subject<void>();
-	public loadBtn: boolean = false;
-	public errorsCategory: any = {};
-	public msmErrorCategory: any = [];
+	public isCreateCategoryLoading: boolean = false;
+	public validationCategoryError: any = {};
 	public category: CategoryInterface = createEmptyCategory();
 	public prefixMask = {
 		mask: /^[A-Z]{0,3}$/,
 		prepare: (str: string) => str.toUpperCase()
 	};
-	public showErrors = showErrorsCategory;
-
-	
+	public fieldErrors : CategoryFieldErrors = createEmptyFieldErrorsCategory();
 
 	constructor(
 		private categoryService: CategoryService,
@@ -61,19 +60,18 @@ export class CreateCategoryComponent {
 	}
 
 	create() {
-		this.msmErrorCategory = [];
-		this.loadBtn = true;
+		this.isCreateCategoryLoading = true;
 		if(this.category.icon == null) this.category.icon = "";
 		this.categoryService
 			.create_category(this.category)
 			.pipe(
 				takeUntil(this.destroy$),
 				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
-				finalize(() => (this.loadBtn = false))
+				finalize(() => (this.isCreateCategoryLoading = false))
 			)
 			.subscribe({
-				next: (next: {data: [], message: string}) => {
-					this.errorsCategory = {};
+				next: (next: CreateCategoryRESI) => {
+					this.validationCategoryError = {};
 					toastr.success(next.message);
 					this._router.navigate(['/products/categories']);
 				},
@@ -82,12 +80,8 @@ export class CreateCategoryComponent {
 					toastr.error(error.message || '¡Error desconocido!');
 
 					if (error.validation) {
-						this.errorsCategory = error.validation;
-						this.msmErrorCategory =Object.values(this.errorsCategory).flat();
-						for (const key in this.showErrors) {
-							this.showErrors[key as keyof typeof this.showErrors] =
-							!!this.errorsCategory?.[key]?.length;
-						}	
+						this.validationCategoryError = error.validation;
+						this.fieldErrors = buildShowErrors(this.fieldErrors,this.validationCategoryError);	
 					}
 				},
 			});

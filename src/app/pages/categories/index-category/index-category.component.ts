@@ -26,7 +26,7 @@ import { configurationsFilters } from '../constants/configurations-filters.const
 import { MenuSettingsCategoriesComponent } from '@app/shared/menu-settings-categories/menu-settings-categories.component';
 import { GetCategoriesQPI } from '@app/pages/brands/interfaces/query-params.interface';
 import { sortOptions } from '../constants/sort-categories-filters.constant';
-import { statusFilters } from '../constants/status-filters.contant';
+import { statusOptions } from '../constants/status-filters.contant';
 import { GetCategoriessRESI, UpdateCategoriesStatusRESI, UpdateCategoryStatusRESI } from '../interfaces/response.interface';
 declare const toastr: any;
 declare const $: any;
@@ -70,7 +70,7 @@ export class IndexCategoryComponent {
 	public totalPages: number = 0;
 	public limit: number = 10;
 
-	public readonly statusFilters = statusFilters;
+	public readonly statusFilters = statusOptions;
 	public readonly sortFilters = sortOptions;
 
 	public selectedCategoriesIds = new Set<string>();
@@ -332,7 +332,7 @@ export class IndexCategoryComponent {
 	onUpdateStatusMultiple(status: boolean){
 		this.isUpdatingMultipleStatuses.set(true);
 		this.categoryService
-		.update_status_categories({
+		.updateCategoriesStatus({
 			ids: this.getSelectedIds(),
 			status
 		})

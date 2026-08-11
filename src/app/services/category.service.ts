@@ -7,6 +7,8 @@ import { CategoryInterface } from '@app/pages/categories/interfaces/category.int
 import { SubcategoryInterface } from '@app/pages/categories/interfaces/subcategory.interface';
 import { UpdatesCatsubcatProductsInterface } from '@app/pages/categories/interfaces/update-catsubcat.products.interface';
 import { GetCategoriessRESI, UpdateCategoriesStatusRESI, UpdateCategoryStatusRESI } from '@app/pages/categories/interfaces/response.interface';
+import { GetCategoriesQPI } from '@app/pages/brands/interfaces/query-params.interface';
+import { UpdateCategoriesStatusREQI, UpdateCategoryStatusREQI } from '@app/pages/categories/interfaces/request.interface';
 
 @Injectable({
 	providedIn: 'root',
@@ -33,7 +35,7 @@ export class CategoryService {
 		);
 	}
 
-	getCategories(query:any): Observable<GetCategoriessRESI> {
+	getCategories(query: GetCategoriesQPI): Observable<GetCategoriessRESI> {
 		const params = new HttpParams()
 			.set('filter', query.filter)
 			.set('page', query.page)
@@ -49,9 +51,17 @@ export class CategoryService {
 
 	}
 
-	updateCategoryStatus(id: string, data: { status: boolean }): Observable<UpdateCategoryStatusRESI> {
+	updateCategoryStatus(id: string, data: UpdateCategoryStatusREQI): Observable<UpdateCategoryStatusRESI> {
 		return this.http.put<UpdateCategoryStatusRESI>(
 			`${this.apiUrl}/category/updateCategoryStatus/${id}`, 
+			data, 
+			{ headers: this.getHeaders() }
+		);
+	}
+
+	updateCategoriesStatus(data: UpdateCategoriesStatusREQI): Observable<UpdateCategoriesStatusRESI> {
+		return this.http.post<UpdateCategoriesStatusRESI>(
+			`${this.apiUrl}/category/updateCategoriesStatus`, 
 			data, 
 			{ headers: this.getHeaders() }
 		);
@@ -142,14 +152,6 @@ export class CategoryService {
 
 	get_subcategories_by_select(id: string): Observable<any> {
 		return this.http.get(`${this.apiUrl}/category/get_subcategories_by_select/${id}`, { headers : this.getHeaders() });
-	}
-
-	update_status_categories(data: {ids: Array<string>, status: boolean}): Observable<UpdateCategoriesStatusRESI> {
-		return this.http.post<UpdateCategoriesStatusRESI>(
-			`${this.apiUrl}/category/update_status_categories`, 
-			data, 
-			{ headers: this.getHeaders() }
-		);
 	}
 
 	update_status_subcategories(data: {ids: Array<string>, status: boolean}): Observable<any> {

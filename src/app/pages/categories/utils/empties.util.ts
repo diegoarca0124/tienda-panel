@@ -1,6 +1,7 @@
 import { CategoryInterface } from "../interfaces/category.interface";
 import { SubcategoryInterface } from "../interfaces/subcategory.interface";
 import { UpdatesCatsubcatProductsInterface } from "../interfaces/update-catsubcat.products.interface";
+import { CategoryFieldErrors, SubcategoryFieldErrors } from "../interfaces/validation.interface";
 
 
 export function createEmptyCategory(): CategoryInterface {
@@ -36,3 +37,27 @@ export function createUpdateCatsubcatProducts(): UpdatesCatsubcatProductsInterfa
 		subcategoryId: ''
     };
 }
+
+
+export const createEmptyFieldErrorsCategory = (): CategoryFieldErrors => ({
+	name: false,
+	code: false,
+	icon: false,
+	description: false,
+	prefix: false,
+
+	isDimensions: false,
+	isCharacteristics: false,
+	isConditiom: false,
+	isWarranty: false,
+	isCountryOfOrigin: false,
+	isMaterial: false,
+	isTemperature: false,
+});
+
+export const createEmptyFieldErrorsSubcategory = (): SubcategoryFieldErrors => ({
+	name: false,
+	icon: false,
+	description: false,
+	prefix: false,
+});

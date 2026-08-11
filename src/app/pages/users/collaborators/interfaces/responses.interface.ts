@@ -34,3 +34,8 @@ export interface UpdateCollaboratorsStatusRESI {
 	data: string[];
 	message: string
 }
+
+export interface CreateCollaboratorRESI {
+	data: CollaboratorInterface;
+	message: string
+}

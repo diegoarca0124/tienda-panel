@@ -301,12 +301,14 @@ export class IndexCollaboratorComponent {
 		)
 		.subscribe({
 			next: (next: UpdateCollaboratorsStatusRESI) => {
+				console.log(next);
+				
 				const updatedIds = new Set(next.data);
 				this.collaborators = this.collaborators.map(prev => {
 					if (updatedIds.has(prev.id!)) {
 						return {
 							...prev,
-							status: !status
+							status: status
 						};
 					}
 					return prev;

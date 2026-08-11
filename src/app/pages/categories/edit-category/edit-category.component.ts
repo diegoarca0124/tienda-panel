@@ -16,10 +16,9 @@ import { closeModal } from '@app/common/utils/close-modal.util';
 import { AlertComponent } from '@app/shared/alert/alert.component';
 declare const toastr: any;
 import { IMaskModule } from 'angular-imask';
-import { createEmptyCategory, createEmptySubcategory } from '../utils/empties.util';
+import { createEmptyCategory, createEmptyFieldErrorsCategory, createEmptyFieldErrorsSubcategory, createEmptySubcategory } from '../utils/empties.util';
 import { CategoryInterface } from '../interfaces/category.interface';
 import { SubcategoryInterface } from '../interfaces/subcategory.interface';
-import { showErrorsCategory } from '../constants/show-errors-category.constant';
 import { ValidationPopoverComponent } from '@app/shared/validation-popover/validation-popover.component';
 import { showErrorsSubcategory } from '../constants/show-errors-subcategory.constant';
 import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
@@ -29,6 +28,8 @@ import { PadCodePipe } from "../../../common/pipes/pad-code.pipe";
 import { TextareaAutoresizeDirective } from '@app/common/directives/textarea-autoresize.directive';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { HttpErrorResponse } from '@angular/common/http';
+import { CategoryFieldErrors, SubcategoryFieldErrors } from '../interfaces/validation.interface';
+import { buildShowErrors } from '@app/common/utils/build-show.errors.util';
 
 @Component({
 	selector: 'app-edit-category',
@@ -69,8 +70,8 @@ export class EditCategoryComponent {
 		mask: /^[A-Z]{0,3}$/,
 		prepare: (str: string) => str.toUpperCase()
 	};
-	public showErrorsCategory = showErrorsCategory;
-	public showErrorsSubcategory = showErrorsSubcategory;
+	public fieldErrorsCategory : CategoryFieldErrors = createEmptyFieldErrorsCategory();
+	public fieldErrorsSubcategory : SubcategoryFieldErrors = createEmptyFieldErrorsSubcategory();
 	public editorOptions = MonacoOptions;
 
 	constructor(
@@ -197,10 +198,7 @@ export class EditCategoryComponent {
 					if (error.validation) {
 						this.errorsCategory = error.validation;
 						this.msmErrorUpdateCategory = Object.values(this.errorsCategory).flat();
-						for (const key in this.showErrorsCategory) {
-							this.showErrorsCategory[key as keyof typeof this.showErrorsCategory] =
-							!!this.errorsCategory?.[key]?.length;
-						}	
+						this.fieldErrorsCategory = buildShowErrors(this.fieldErrorsCategory,this.msmErrorUpdateCategory);	
 					}
 				},
 			});
@@ -237,10 +235,7 @@ export class EditCategoryComponent {
 					if (error.validation) {
 						this.errorsSubcategory = error.validation;
 						this.msmErrorCreateSubcategory = Object.values(this.errorsSubcategory).flat();
-						for (const key in this.showErrorsSubcategory) {
-							this.showErrorsSubcategory[key as keyof typeof this.showErrorsSubcategory] =
-							!!this.errorsSubcategory?.[key]?.length;
-						}	
+						this.fieldErrorsSubcategory = buildShowErrors(this.fieldErrorsSubcategory,this.msmErrorUpdateSubcategory);		
 					}
 
 				},

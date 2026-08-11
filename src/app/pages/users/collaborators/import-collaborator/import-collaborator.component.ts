@@ -15,8 +15,8 @@ import { NgClearButtonTemplateDirective } from '@ng-select/ng-select';
 import { finalize, Subject, takeUntil } from 'rxjs';
 import * as XLSX from 'xlsx-js-style';
 import { fieldImportOptions } from '../constants/selectors.constants';
-import { ImportInterface } from '../interfaces/import.interface';
 import { ExportCollaboratorsXlsxUtil } from '../utils/export-collaborators-xlsx.util';
+import { ImportInterface } from '../interfaces/validation.interface';
 
 declare const toastr: any;
 

@@ -81,9 +81,9 @@
 												<div class="d-flex flex-column mb-5 fv-row fv-plugins-icon-container">
 													<div class="d-flex align-items-center justify-content-between mb-1">
 														<label class="required fw-500 text-gray-700 fs-6 mb-1">Nombre</label>
-														<small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="errorsCategory?.name" (click)="showErrorsCategory.name = !showErrorsCategory.name">
+														<small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="errorsCategory?.name" (click)="fieldErrorsCategory.name = !fieldErrorsCategory.name">
 															<ion-icon name="information-circle-outline" class="validation-icon"> </ion-icon>
-															{{ showErrorsCategory.name ? 'Ocultar errores' : 'Ver errores' }}
+															{{ fieldErrorsCategory.name ? 'Ocultar errores' : 'Ver errores' }}
 														</small>
 													</div>
 
@@ -96,7 +96,7 @@
 
 													<span class="fs-8 text-muted">Título de la categoría.</span>
 
-													<div class="validation-wrapper" [class.open]="showErrorsCategory.name">
+													<div class="validation-wrapper" [class.open]="fieldErrorsCategory.name">
 														<app-validation-popover 
 														[errors]="errorsCategory?.name"></app-validation-popover>
 													</div>
@@ -106,9 +106,9 @@
 												<div class="d-flex flex-column mb-5 fv-row fv-plugins-icon-container">
 													<div class="d-flex align-items-center justify-content-between mb-1">
 														<label class="required fw-500 text-gray-700 fs-6 mb-1">Prefijo</label>
-														<small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="errorsCategory?.prefix" (click)="showErrorsCategory.prefix = !showErrorsCategory.prefix">
+														<small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="errorsCategory?.prefix" (click)="fieldErrorsCategory.prefix = !fieldErrorsCategory.prefix">
 															<ion-icon name="information-circle-outline" class="validation-icon"> </ion-icon>
-															{{ showErrorsCategory.prefix ? 'Ocultar errores' : 'Ver errores' }}
+															{{ fieldErrorsCategory.prefix ? 'Ocultar errores' : 'Ver errores' }}
 														</small>
 													</div>
 
@@ -123,7 +123,7 @@
 
 													<span class="fs-8 text-muted">Dos caracteres representativos.</span>
 												
-													<div class="validation-wrapper" [class.open]="showErrorsCategory.prefix">
+													<div class="validation-wrapper" [class.open]="fieldErrorsCategory.prefix">
 														<app-validation-popover 
 														[errors]="errorsCategory?.prefix"></app-validation-popover>
 													</div>
@@ -135,9 +135,9 @@
 												<div class="d-flex flex-column mb-5 fv-row fv-plugins-icon-container">
 													<div class="d-flex align-items-center justify-content-between mb-1">
 														<label class="required fw-500 text-gray-700 fs-6 mb-1">Descripción</label>
-														<small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="errorsCategory?.description" (click)="showErrorsCategory.description = !showErrorsCategory.description">
+														<small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="errorsCategory?.description" (click)="fieldErrorsCategory.description = !fieldErrorsCategory.description">
 															<ion-icon name="information-circle-outline" class="validation-icon"> </ion-icon>
-															{{ showErrorsCategory.description ? 'Ocultar errores' : 'Ver errores' }}
+															{{ fieldErrorsCategory.description ? 'Ocultar errores' : 'Ver errores' }}
 														</small>
 													</div>
 
@@ -154,7 +154,7 @@
 
 													<span class="fs-8 text-muted">Descripción de la categoría.</span>
 
-													<div class="validation-wrapper" [class.open]="showErrorsCategory.description">
+													<div class="validation-wrapper" [class.open]="fieldErrorsCategory.description">
 														<app-validation-popover 
 														[errors]="errorsCategory?.description"></app-validation-popover>
 													</div>
@@ -166,9 +166,9 @@
 												<div class="d-flex flex-column fv-row fv-plugins-icon-container">
 													<div class="d-flex align-items-center justify-content-between mb-1">
 														<label class="fw-500 text-gray-700 fs-6 mb-1">Icono</label>
-														<small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="errorsCategory?.icon" (click)="showErrorsCategory.icon = !showErrorsCategory.icon">
+														<small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="errorsCategory?.icon" (click)="fieldErrorsCategory.icon = !fieldErrorsCategory.icon">
 															<ion-icon name="information-circle-outline" class="validation-icon"> </ion-icon>
-															{{ showErrorsCategory.icon ? 'Ocultar errores' : 'Ver errores' }}
+															{{ fieldErrorsCategory.icon ? 'Ocultar errores' : 'Ver errores' }}
 														</small>
 													</div>
 
@@ -179,7 +179,7 @@
 
 													<span class="fs-8 text-muted">Icono visible en la tienda.</span>
 												
-													<div class="validation-wrapper" [class.open]="showErrorsCategory.icon">
+													<div class="validation-wrapper" [class.open]="fieldErrorsCategory.icon">
 														<app-validation-popover 
 														[errors]="errorsCategory?.icon"></app-validation-popover>
 													</div>
@@ -204,7 +204,7 @@
 														</small>
 													</span>
 												</label>
-												<div class="validation-wrapper" [class.open]="showErrorsCategory.isDimensions">
+												<div class="validation-wrapper" [class.open]="fieldErrorsCategory.isDimensions">
 													<app-validation-popover 
 													[errors]="errorsCategory?.isDimensions"></app-validation-popover>
 												</div>
@@ -222,7 +222,7 @@
 													</span>
 												</label>
 
-												<div class="validation-wrapper" [class.open]="showErrorsCategory.isCharacteristics">
+												<div class="validation-wrapper" [class.open]="fieldErrorsCategory.isCharacteristics">
 													<app-validation-popover 
 													[errors]="errorsCategory?.isCharacteristics"></app-validation-popover>
 												</div>
@@ -243,7 +243,7 @@
 														</small>
 													</span>
 												</label>
-												<div class="validation-wrapper" [class.open]="showErrorsCategory.isConditiom">
+												<div class="validation-wrapper" [class.open]="fieldErrorsCategory.isConditiom">
 													<app-validation-popover 
 													[errors]="errorsCategory?.isConditiom"></app-validation-popover>
 												</div>
@@ -260,7 +260,7 @@
 														</small>
 													</span>
 												</label>
-												<div class="validation-wrapper" [class.open]="showErrorsCategory.isWarranty">
+												<div class="validation-wrapper" [class.open]="fieldErrorsCategory.isWarranty">
 													<app-validation-popover 
 													[errors]="errorsCategory?.isWarranty"></app-validation-popover>
 												</div>
@@ -281,7 +281,7 @@
 														</small>
 													</span>
 												</label>
-												<div class="validation-wrapper" [class.open]="showErrorsCategory.isCountryOfOrigin">
+												<div class="validation-wrapper" [class.open]="fieldErrorsCategory.isCountryOfOrigin">
 													<app-validation-popover 
 													[errors]="errorsCategory?.isCountryOfOrigin"></app-validation-popover>
 												</div>
@@ -298,7 +298,7 @@
 														</small>
 													</span>
 												</label>
-												<div class="validation-wrapper" [class.open]="showErrorsCategory.isMaterial">
+												<div class="validation-wrapper" [class.open]="fieldErrorsCategory.isMaterial">
 													<app-validation-popover 
 													[errors]="errorsCategory?.isMaterial"></app-validation-popover>
 												</div>
@@ -318,7 +318,7 @@
 														</small>
 													</span>
 												</label>
-												<div class="validation-wrapper" [class.open]="showErrorsCategory.isTemperature">
+												<div class="validation-wrapper" [class.open]="fieldErrorsCategory.isTemperature">
 													<app-validation-popover 
 													[errors]="errorsCategory?.isTemperature"></app-validation-popover>
 												</div>
@@ -388,9 +388,9 @@
 													<div class="d-flex flex-column mb-5 fv-row fv-plugins-icon-container">
 														<div class="d-flex align-items-center justify-content-between mb-1">
 															<label class="required fw-500 text-gray-700 fs-6 mb-1">Nombre</label>
-															<small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="errorsSubcategory?.name" (click)="showErrorsSubcategory.name = !showErrorsSubcategory.name">
+															<small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="errorsSubcategory?.name" (click)="fieldErrorsSubcategory.name = !fieldErrorsSubcategory.name">
 																<ion-icon name="information-circle-outline" class="validation-icon"> </ion-icon>
-																{{ showErrorsSubcategory.name ? 'Ocultar errores' : 'Ver errores' }}
+																{{ fieldErrorsSubcategory.name ? 'Ocultar errores' : 'Ver errores' }}
 															</small>
 														</div>
 
@@ -418,7 +418,7 @@
 
 														<span class="fs-8 text-muted">Título de la subcategoría.</span>
 
-														<div class="validation-wrapper" [class.open]="showErrorsSubcategory.name">
+														<div class="validation-wrapper" [class.open]="fieldErrorsSubcategory.name">
 															<app-validation-popover 
 															[errors]="errorsSubcategory?.name"></app-validation-popover>
 														</div>
@@ -428,9 +428,9 @@
 													<div class="d-flex flex-column mb-5 fv-row fv-plugins-icon-container">
 														<div class="d-flex align-items-center justify-content-between mb-1">
 															<label class="required fw-500 text-gray-700 fs-6 mb-1">Prefijo</label>
-															<small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="errorsSubcategory?.prefix" (click)="showErrorsSubcategory.prefix = !showErrorsSubcategory.prefix">
+															<small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="errorsSubcategory?.prefix" (click)="fieldErrorsSubcategory.prefix = !fieldErrorsSubcategory.prefix">
 																<ion-icon name="information-circle-outline" class="validation-icon"> </ion-icon>
-																{{ showErrorsSubcategory.prefix ? 'Ocultar errores' : 'Ver errores' }}
+																{{ fieldErrorsSubcategory.prefix ? 'Ocultar errores' : 'Ver errores' }}
 															</small>
 														</div>
 														@if (!loadingSubcategories) {
@@ -447,7 +447,7 @@
 
 														<span class="fs-8 text-muted">Dos caracteres representativos.</span>
 
-														<div class="validation-wrapper" [class.open]="showErrorsSubcategory.prefix">
+														<div class="validation-wrapper" [class.open]="fieldErrorsSubcategory.prefix">
 															<app-validation-popover 
 															[errors]="errorsSubcategory?.prefix"></app-validation-popover>
 														</div>
@@ -459,9 +459,9 @@
 													<div class="d-flex flex-column mb-5 fv-row fv-plugins-icon-container">
 														<div class="d-flex align-items-center justify-content-between mb-1">
 															<label class="fw-500 text-gray-700 fs-6 mb-1">Icono</label>
-															<small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="errorsSubcategory?.icon" (click)="showErrorsSubcategory.icon = !showErrorsSubcategory.icon">
+															<small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="errorsSubcategory?.icon" (click)="fieldErrorsSubcategory.icon = !fieldErrorsSubcategory.icon">
 																<ion-icon name="information-circle-outline" class="validation-icon"> </ion-icon>
-																{{ showErrorsSubcategory.icon ? 'Ocultar errores' : 'Ver errores' }}
+																{{ fieldErrorsSubcategory.icon ? 'Ocultar errores' : 'Ver errores' }}
 															</small>
 														</div>
 
@@ -476,7 +476,7 @@
 
 														<span class="fs-8 text-muted">Icono visible en la tienda.</span>
 
-														<div class="validation-wrapper" [class.open]="showErrorsSubcategory.icon">
+														<div class="validation-wrapper" [class.open]="fieldErrorsSubcategory.icon">
 															<app-validation-popover 
 															[errors]="errorsSubcategory?.icon"></app-validation-popover>
 														</div>

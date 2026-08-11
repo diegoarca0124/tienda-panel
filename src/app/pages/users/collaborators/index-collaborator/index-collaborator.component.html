@@ -125,7 +125,7 @@
 										<div class="filter-item">
 											<div class="d-flex flex-column mb-1 gap-1">
 												<div class="d-flex align-items-center">
-													<span class="text-gray-700 ls-1px" style="font-size: .7rem;">ESTADO</span>
+													<span class="text-gray-700 ls-1px fw-600" style="font-size: .75rem;">ESTADO</span>
 												</div>
 												<ng-select
 													[items]="statusFilters"
@@ -139,6 +139,7 @@
 													class="select-label-sm mb-1"
 													appendTo="body"
 													[searchable]="false"
+													[disabled]="isCollaboratorsLoading"
 												>
 													<!-- Opción en el dropdown -->
 													<ng-template ng-option-tmp let-item="item">
@@ -161,7 +162,7 @@
 										<div class="filter-item">
 											<div class="d-flex flex-column mb-1 gap-1">
 												<div class="d-flex align-items-center">
-													<span class="text-gray-700 ls-1px" style="font-size: .7rem;">ORDEN</span>
+													<span class="text-gray-700 ls-1px fw-600" style="font-size: .75rem;">ORDEN</span>
 												</div>
 												<ng-select
 													[items]="sortFilters"
@@ -175,6 +176,7 @@
 													class="select-label-sm mb-1"
 													appendTo="body"
 													[searchable]="false"
+													[disabled]="isCollaboratorsLoading"
 												>
 													<!-- Opción en el dropdown -->
 													<ng-template ng-option-tmp let-item="item">
@@ -210,7 +212,7 @@
 															placement="top" 
 															tooltipClass="tooltip-dark"
 															container="body"
-															[disabled]="!hasSelectedCollaborators"
+															[disabled]="!hasSelectedCollaborators || isCollaboratorsLoading"
 															id="dropdownTable"
 															data-bs-toggle="dropdown"
 															aria-expanded="false">
@@ -358,7 +360,7 @@
 															<button 
 																class="icon-btn btn-action dropdown-toggle d-flex align-items-center justify-content-center mx-auto"
 																data-bs-toggle="dropdown"
-																data-bs-offset="0,10">
+																data-bs-offset="0,07">
 																<i class="bi bi-three-dots"></i>
 															</button>
 															<app-modal-delete
