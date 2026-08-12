@@ -175,23 +175,27 @@ export class IndexCollaboratorComponent {
 		return getColorBasedOnLetter(str);
 	}
 
-	applyFilters() {
+	applyFilters(resetPage: boolean = true): void {
+		if (resetPage) {
+			this.currentPage = 1;
+		}
+
 		const queryParams = {
-			filter: this.filter,
+			filter: this.filter.trim(),
 			page: this.currentPage,
 			limit: this.limit,
 			status: this.selectedStatus,
 			sort: this.selectedSort,
 		};
 
-		const current :any= this.route.snapshot.queryParams;
+		const current = this.route.snapshot.queryParams;
 
 		const same =
-			(current.filter ?? '') === queryParams.filter &&
-			Number(current.page ?? 1) === queryParams.page &&
-			Number(current.limit ?? 10) === queryParams.limit &&
-			(current.status ?? 'Todos') === queryParams.status &&
-			(current.sort ?? 'Predeterminado') === queryParams.sort;
+			(current['filter'] ?? '') === queryParams.filter &&
+			Number(current['page'] ?? 1) === queryParams.page &&
+			Number(current['limit'] ?? 10) === queryParams.limit &&
+			(current['status'] ?? 'Todos') === queryParams.status &&
+			(current['sort'] ?? 'Predeterminado') === queryParams.sort;
 
 		if (same) {
 			this.loadCollaborators();
@@ -199,6 +203,7 @@ export class IndexCollaboratorComponent {
 		}
 
 		this.router.navigate([], {
+			relativeTo: this.route,
 			queryParams,
 		});
 	}
@@ -241,15 +246,15 @@ export class IndexCollaboratorComponent {
 			});
 	}
 
-	onLimitChange() {
-		this.currentPage = 1;
-		this.applyFilters();
+	onLimitChange(): void {
+		this.applyFilters(true);
 	}
 
 	onPageChange(newPage: number): void {
 		if (newPage === this.currentPage) return;
+
 		this.currentPage = newPage;
-		this.applyFilters();
+		this.applyFilters(false);
 	}
 
 	onResetCurrentPage(){

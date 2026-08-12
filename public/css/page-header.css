@@ -1,58 +1,90 @@
-.page-header {
-	border-bottom: 1px solid #edf0f3;
-}
+/* =========================================================
+   ENCABEZADO GLOBAL
+========================================================= */
 
-.page-header-action{
-	border-radius: 0.5rem !important; 
+.page-header {
+	background-color: #ffffff;
+	border-bottom: 1px solid #edf0f3;
 }
 
 .page-header-layout {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	gap: 1rem;
+	gap: 1.5rem;
 }
 
 .page-header-content {
 	display: flex;
 	flex-direction: column;
+	gap: 0.5rem;
 	min-width: 0;
 }
 
 .page-header-title {
 	margin: 0;
-
-	font-size: 1.25rem;
+	font-size: 1.375rem;
 	font-weight: 700;
-	line-height: 1.25;
-	letter-spacing: -0.01em;
+	line-height: 1.2;
+	letter-spacing: -0.025em;
 	color: #27364f;
 }
+
+/* =========================================================
+   BREADCRUMB
+========================================================= */
 
 .page-header-breadcrumb {
 	display: flex;
 	align-items: center;
-
-	margin: 0.25rem 0 0;
+	flex-wrap: wrap;
+	gap: 0;
+	margin: 0;
 	padding: 0;
-
 	list-style: none;
 }
 
 .page-header-breadcrumb-item {
 	display: inline-flex;
 	align-items: center;
-	gap: 0.375rem;
-
-	font-size: 0.7rem;
+	min-width: 0;
+	font-size: 0.6875rem;
 	font-weight: 600;
-	line-height: 1.2;
+	line-height: 1;
+	letter-spacing: 0.045em;
+	text-transform: uppercase;
+	color: #8b95a7;
+}
+
+.page-header-breadcrumb-item + .page-header-breadcrumb-item::before {
+	content: "";
+	width: 0.3rem;
+	height: 0.3rem;
+	margin: 0 0.625rem;
+	border-top: 1.5px solid #b8c0cc;
+	border-right: 1.5px solid #b8c0cc;
+	transform: rotate(45deg);
+}
+
+.page-header-breadcrumb-link {
+	color: #7d899b;
+	text-decoration: none;
+	transition: color 140ms ease;
+}
+
+.page-header-breadcrumb-link:hover,
+.page-header-breadcrumb-link:focus {
+	color: #1b84ff;
+	text-decoration: none;
+}
+
+.page-header-breadcrumb-active {
 	color: #1b84ff;
 }
 
-.page-header-breadcrumb-item ion-icon {
-	font-size: 0.875rem;
-}
+/* =========================================================
+   ACCIÓN PRINCIPAL
+========================================================= */
 
 .page-header-action {
 	display: inline-flex;
@@ -60,34 +92,54 @@
 	justify-content: center;
 	flex: 0 0 auto;
 	gap: 0.5rem;
-
 	min-height: 2.5rem;
-	padding-right: 1rem;
-	padding-left: 1rem;
-
+	padding: 0 1rem;
 	font-size: 0.8125rem;
 	font-weight: 600;
+	line-height: 1;
 	white-space: nowrap;
+	border-radius: 0.475rem !important;
+	box-shadow: 0 2px 5px rgba(27, 132, 255, 0.16);
 }
 
-.page-header-action ion-icon {
-	font-size: 1rem;
+.page-header-action-plus {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 1.25rem;
+	font-weight: 400;
+	line-height: 1;
 }
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
 
 @media (max-width: 575.98px) {
+	.page-header-layout {
+		gap: 1rem;
+	}
+
+	.page-header-content {
+		gap: 0.375rem;
+	}
+
 	.page-header-title {
-		font-size: 1rem;
+		font-size: 1.125rem;
 	}
 
 	.page-header-breadcrumb-item {
-		font-size: 0.65rem;
+		font-size: 0.625rem;
+	}
+
+	.page-header-breadcrumb-item + .page-header-breadcrumb-item::before {
+		margin: 0 0.45rem;
 	}
 
 	.page-header-action {
 		width: 2.5rem;
 		min-width: 2.5rem;
 		height: 2.5rem;
-		min-height: 2.5rem;
 		padding: 0;
 	}
 

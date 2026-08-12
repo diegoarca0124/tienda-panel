@@ -4,336 +4,159 @@
         <app-sidebar></app-sidebar>
         <div class="app-main flex-column flex-row-fluid ">
             <div class="d-flex flex-column flex-column-fluid">
-                <div id="kt_app_toolbar" class="app-toolbar py-5 py-lg-6" >
-                    <div id="kt_app_toolbar_container" class="app-container container-fluid d-flex flex-stack">
-                        <div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
-                            <h1 class="page-heading d-flex text-gray-700 fs-3 flex justify-content-start my-0 align-items-center text-uppercase ls-1px fw-700">
-                                Colaboradores
-                            </h1>
-     
-                            <ul class="breadcrumb breadcrumb-separatorless fs-7 my-0 pt-1">
-                                <li class="breadcrumb-item text-muted">
-                                    <a [routerLink]="['/users/collaborators']" class="text-muted text-hover-primary">
-                                        Colaboradores
-                                    </a>
-                                </li>
-                                <li class="breadcrumb-item">
-                                    <span class="bullet bg-gray-400 w-5px h-2px"></span>
-                                </li>
-                                <li class="breadcrumb-item text-primary fw-600">Nuevo colaborador</li>
-                            </ul>
-                        </div>
-                        <div class="d-flex align-items-center gap-2 gap-lg-3">
-                           
+                <div id="kt_app_toolbar" class="app-toolbar page-header py-5 py-lg-6">
+                    <div id="kt_app_toolbar_container" class="app-container container-fluid page-header-layout">
+                        <div class="page-header-content">
+                            <nav aria-label="Navegación actual">
+                                <ol class="page-header-breadcrumb">
+                                    <li class="page-header-breadcrumb-item">
+                                        <a class="page-header-breadcrumb-link" [routerLink]="['/users/collaborators']">Colaboradores</a>
+                                    </li>
+                                    <li class="page-header-breadcrumb-item page-header-breadcrumb-active" aria-current="page">Nuevo colaborador</li>
+                                </ol>
+                            </nav>
+                            <h1 class="page-header-title">Nuevo colaborador</h1>
                         </div>
                     </div>
                 </div>
                 <div class="app-content  flex-column-fluid">
                     <div class="app-container container">
 
-                        <div class="card mb-10">
-                            <!--begin::Card header-->
-                            <div class="card-header" style="background-color: #f1f5f9;">
-                                <!--begin::Heading-->
-                                <h4 class="card-title m-0 d-flex flex-column">
-                                    <span class="fs-5 fw-600">Nuevo Colaborador</span>
-                                    <span class="text-gray-500 mt-1 fw-400 fs-0-9rem">
-                                      Agrega un nuevo colaborador completando los datos requeridos en el formulario.
-                                    </span>
-                                </h4>
-                                <!--end::Heading-->
-                            </div>
-                            <!--end::Card header-->
-                            <!--begin::Card body-->
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-lg-6">
-                                        <div class="d-flex flex-column mb-5 fv-row fv-plugins-icon-container">
-                                            <div class="d-flex align-items-center justify-content-between mb-1">
-												<label class="required fw-500 text-gray-700 fs-6 mb-1">Nombres</label>
-												<small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="validationCollaboratorError?.names" (click)="fieldErrors.names = !fieldErrors.names">
-													<ion-icon name="information-circle-outline" class="validation-icon"> </ion-icon>
-													{{ fieldErrors.names ? 'Ocultar errores' : 'Ver errores' }}
-												</small>
+                        <div class="form-card mb-10">
+							<header class="form-card-header d-flex align-items-start justify-content-between gap-3">
+								<div>
+									<h2 class="form-card-title">Información del colaborador</h2>
+									<p class="form-card-description">Completa los datos necesarios para crear el acceso del nuevo colaborador.</p>
+								</div>
+								<span class="form-card-required-note"><span aria-hidden="true">*</span> Campos obligatorios</span>
+							</header>
+
+							<div class="form-card-body">
+								<div class="row g-4">
+									<div class="col-12 col-lg-6">
+										<div class="form-field">
+											<div class="d-flex align-items-center justify-content-between gap-2">
+												<label class="form-field-label required" for="collaboratorNames">Nombres</label>
+												<button *ngIf="validationCollaboratorError?.names" type="button" class="form-error-toggle" (click)="fieldErrors.names = !fieldErrors.names">{{ fieldErrors.names ? 'Ocultar errores' : 'Ver errores' }}</button>
 											</div>
+											<input id="collaboratorNames" type="text" class="form-control form-control-md" placeholder="Ej. Sheldon Lee" name="names" [(ngModel)]="collaborator.names" [class.is-invalid]="validationCollaboratorError?.names">
+											<p class="form-field-help">Nombres completos del colaborador.</p>
+											<div class="validation-wrapper" [class.open]="fieldErrors.names"><app-validation-popover [errors]="validationCollaboratorError?.names!"></app-validation-popover></div>
+										</div>
+									</div>
 
-                                            <input type="text" 
-                                            class="form-control mb-1" 
-                                            placeholder="Sheldon Lee"
-                                            name="names" 
-                                            [(ngModel)]="collaborator.names"
-                                            [ngClass]="{'is-invalid': validationCollaboratorError?.names}">
-
-                                            <span class="fs-8 text-muted">Nombres completos del usuario.</span>
-                                            <div class="validation-wrapper" [class.open]="fieldErrors.names">
-												<app-validation-popover 
-												[errors]="validationCollaboratorError?.names!"></app-validation-popover>
+									<div class="col-12 col-lg-6">
+										<div class="form-field">
+											<div class="d-flex align-items-center justify-content-between gap-2">
+												<label class="form-field-label required" for="collaboratorSurname">Apellidos</label>
+												<button *ngIf="validationCollaboratorError?.surname" type="button" class="form-error-toggle" (click)="fieldErrors.surname = !fieldErrors.surname">{{ fieldErrors.surname ? 'Ocultar errores' : 'Ver errores' }}</button>
 											</div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-6">
-                                        <div class="d-flex flex-column mb-5 fv-row fv-plugins-icon-container">
-                                            <div class="d-flex align-items-center justify-content-between mb-1">
-												<label class="required fw-500 text-gray-700 fs-6 mb-1">Apellidos</label>
-												<small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="validationCollaboratorError?.surname" (click)="fieldErrors.surname = !fieldErrors.surname">
-													<ion-icon name="information-circle-outline" class="validation-icon"> </ion-icon>
-													{{ fieldErrors.surname ? 'Ocultar errores' : 'Ver errores' }}
-												</small>
+											<input id="collaboratorSurname" type="text" class="form-control form-control-md" placeholder="Ej. Cooper" name="surname" [(ngModel)]="collaborator.surname" [class.is-invalid]="validationCollaboratorError?.surname">
+											<p class="form-field-help">Apellidos completos del colaborador.</p>
+											<div class="validation-wrapper" [class.open]="fieldErrors.surname"><app-validation-popover [errors]="validationCollaboratorError?.surname!"></app-validation-popover></div>
+										</div>
+									</div>
+
+									<div class="col-12 col-lg-6">
+										<div class="form-field">
+											<div class="d-flex align-items-center justify-content-between gap-2">
+												<label class="form-field-label required" for="collaboratorRole">Rol</label>
+												<button *ngIf="validationCollaboratorError?.role" type="button" class="form-error-toggle" (click)="fieldErrors.role = !fieldErrors.role">{{ fieldErrors.role ? 'Ocultar errores' : 'Ver errores' }}</button>
 											</div>
+											<ng-select id="collaboratorRole" [items]="rolesOptions" bindLabel="name" bindValue="value"
+                                                name="role" [(ngModel)]="collaborator.role" placeholder="Seleccionar rol"
+                                                [clearable]="false" [closeOnSelect]="true" [searchable]="false"
+                                                appendTo="body" dropdownPanelClass="app-select-panel"
+                                                class="app-select app-select-md"
+                                                [class.ng-select-invalid]="validationCollaboratorError?.role">
+                                            </ng-select>
+											<p class="form-field-help">Nivel de acceso que tendrá en el sistema.</p>
+											<div class="validation-wrapper" [class.open]="fieldErrors.role"><app-validation-popover [errors]="validationCollaboratorError?.role!"></app-validation-popover></div>
+										</div>
+									</div>
 
-                                            <input type="text" 
-                                            class="form-control mb-1" 
-                                            placeholder="Cooper"
-                                            name="surname" 
-                                            [(ngModel)]="collaborator.surname"
-                                            [ngClass]="{'is-invalid': validationCollaboratorError?.surname}">
-
-                                            <span class="fs-8 text-muted">Apellido paterno y materno del usuario.</span>
-
-                                            <div class="validation-wrapper" [class.open]="fieldErrors.surname">
-												<app-validation-popover 
-												[errors]="validationCollaboratorError?.surname!"></app-validation-popover>
+									<div class="col-12 col-lg-6">
+										<div class="form-field">
+											<div class="d-flex align-items-center justify-content-between gap-2">
+												<label class="form-field-label required" for="collaboratorEmail">Correo electrónico</label>
+												<button *ngIf="validationCollaboratorError?.email" type="button" class="form-error-toggle" (click)="fieldErrors.email = !fieldErrors.email">{{ fieldErrors.email ? 'Ocultar errores' : 'Ver errores' }}</button>
 											</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-lg-6">
-                                        <div class="d-flex flex-column mb-5 fv-row fv-plugins-icon-container">
-                                            <div class="d-flex align-items-center justify-content-between mb-1">
-												<label class="required fw-500 text-gray-700 fs-6 mb-1">Rol</label>
-												<small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="validationCollaboratorError?.role" (click)="fieldErrors.role = !fieldErrors.role">
-													<ion-icon name="information-circle-outline" class="validation-icon"> </ion-icon>
-													{{ fieldErrors.role ? 'Ocultar errores' : 'Ver errores' }}
-												</small>
+											<input id="collaboratorEmail" type="email" class="form-control form-control-md" placeholder="nombre@empresa.com" name="email" [(ngModel)]="collaborator.email" [class.is-invalid]="validationCollaboratorError?.email">
+											<p class="form-field-help">Se utilizará para iniciar sesión y recibir avisos.</p>
+											<div class="validation-wrapper" [class.open]="fieldErrors.email"><app-validation-popover [errors]="validationCollaboratorError?.email!"></app-validation-popover></div>
+										</div>
+									</div>
+
+									<div class="col-12 col-lg-6">
+										<div class="form-field">
+											<div class="d-flex align-items-center justify-content-between gap-2">
+												<label class="form-field-label required" for="collaboratorDocumentType">Tipo de documento</label>
+												<button *ngIf="validationCollaboratorError?.type_document" type="button" class="form-error-toggle" (click)="fieldErrors.type_document = !fieldErrors.type_document">{{ fieldErrors.type_document ? 'Ocultar errores' : 'Ver errores' }}</button>
 											</div>
+											<ng-select id="collaboratorDocumentType" [items]="documentsOptions" bindLabel="name" bindValue="value"
+                                                name="type_document" [(ngModel)]="collaborator.type_document"
+                                                placeholder="Seleccionar documento" [clearable]="false"
+                                                [closeOnSelect]="true" appendTo="body"
+                                                dropdownPanelClass="app-select-panel"
+                                                class="app-select app-select-md"
+                                                [class.ng-select-invalid]="validationCollaboratorError?.type_document">
+                                            </ng-select>
+											<p class="form-field-help">Documento oficial de identificación.</p>
+											<div class="validation-wrapper" [class.open]="fieldErrors.type_document"><app-validation-popover [errors]="validationCollaboratorError?.type_document!"></app-validation-popover></div>
+										</div>
+									</div>
 
-
-                                            <div [ngClass]="{ 'is-invalid': validationCollaboratorError?.role }">
-                                                <ng-select
-                                                    [items]="rolesOptions"
-                                                    bindLabel="name"
-												    bindValue="value"
-                                                    name="role"
-                                                    [(ngModel)]="collaborator.role"
-                                                    placeholder="Rol"
-                                                    [clearable]="false"
-                                                    [closeOnSelect]="true"
-                                                    class="select-element mb-1"
-                                                    appendTo="body"
-                                                    [searchable]="false"
-                                                >
-                                                    <!-- Opción en el dropdown -->
-                                                    <ng-template ng-option-tmp let-item="item">
-                                                        <div class="option-item d-flex gap-3 align-items-center">
-                                                            <div class="option-name fs-7">{{ item.name }}</div>
-                                                        </div>
-                                                    </ng-template>
-
-                                                    <!-- Opción seleccionada en el input -->
-                                                    <ng-template ng-label-tmp let-item="item">
-                                                        <div class="option-item d-flex gap-3 align-items-center">
-                                                            <div class="option-name fs-7">{{ item.name }}</div>
-                                                        </div>
-                                                    </ng-template>
-                                                </ng-select>
-                                            </div>
-                                            <span class="fs-8 text-muted">Clasificación del colaborador.</span>
-                                            <div class="validation-wrapper" [class.open]="fieldErrors.role">
-												<app-validation-popover 
-												[errors]="validationCollaboratorError?.role!"></app-validation-popover>
+									<div class="col-12 col-lg-6">
+										<div class="form-field">
+											<div class="d-flex align-items-center justify-content-between gap-2">
+												<label class="form-field-label required" for="collaboratorDocumentNumber">Número de documento</label>
+												<button *ngIf="validationCollaboratorError?.number_document" type="button" class="form-error-toggle" (click)="fieldErrors.number_document = !fieldErrors.number_document">{{ fieldErrors.number_document ? 'Ocultar errores' : 'Ver errores' }}</button>
 											</div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-6">
-                                        <div class="d-flex flex-column mb-5 fv-row fv-plugins-icon-container">
-                                            <div class="d-flex align-items-center justify-content-between mb-1">
-												<label class="required fw-500 text-gray-700 fs-6 mb-1">Correo electrónico</label>
-												<small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="validationCollaboratorError?.email" (click)="fieldErrors.email = !fieldErrors.email">
-													<ion-icon name="information-circle-outline" class="validation-icon"> </ion-icon>
-													{{ fieldErrors.email ? 'Ocultar errores' : 'Ver errores' }}
-												</small>
+											<input id="collaboratorDocumentNumber" type="text" class="form-control form-control-md" placeholder="Ingresar número" name="number_document" [(ngModel)]="collaborator.number_document" [disabled]="!collaborator.type_document" [imask]="{ mask: (collaborator.type_document?.name == 'DNI') ? '00000000' : '0000000000000000000', unmask: true }" [class.is-invalid]="validationCollaboratorError?.number_document">
+											<p class="form-field-help">Primero selecciona el tipo de documento.</p>
+											<div class="validation-wrapper" [class.open]="fieldErrors.number_document"><app-validation-popover [errors]="validationCollaboratorError?.number_document!"></app-validation-popover></div>
+										</div>
+									</div>
+
+									<div class="col-12 col-lg-6">
+										<div class="form-field">
+											<div class="d-flex align-items-center justify-content-between gap-2">
+												<label class="form-field-label required" for="collaboratorPhone">Teléfono</label>
+												<button *ngIf="validationCollaboratorError?.phone" type="button" class="form-error-toggle" (click)="fieldErrors.phone = !fieldErrors.phone">{{ fieldErrors.phone ? 'Ocultar errores' : 'Ver errores' }}</button>
 											</div>
+											<input id="collaboratorPhone" type="text" class="form-control form-control-md" placeholder="987 654 321" name="phone" [(ngModel)]="collaborator.phone" [imask]="{ mask: '000000000', unmask: true }" [class.is-invalid]="validationCollaboratorError?.phone">
+											<p class="form-field-help">Número de contacto con prefijo peruano.</p>
+											<div class="validation-wrapper" [class.open]="fieldErrors.phone"><app-validation-popover [errors]="validationCollaboratorError?.phone!"></app-validation-popover></div>
+										</div>
+									</div>
 
-                                            <input
-                                                type="email"
-                                                class="form-control mb-1"
-                                                placeholder="sheldon.cooper@praxiscomercial.pe"
-                                                name="email"
-                                                [(ngModel)]="collaborator.email"
-                                                [ngClass]="{ 'is-invalid': validationCollaboratorError?.email }"
-                                            />
-
-                                            <span class="fs-8 text-muted">Correo corporativo del usuario.</span>
-                                            <div class="validation-wrapper" [class.open]="fieldErrors.email">
-												<app-validation-popover 
-												[errors]="validationCollaboratorError?.email!"></app-validation-popover>
+									<div class="col-12 col-lg-6">
+										<div class="form-field">
+											<div class="d-flex align-items-center justify-content-between gap-2">
+												<label class="form-field-label required" for="collaboratorPassword">Contraseña</label>
+												<button *ngIf="validationCollaboratorError?.password" type="button" class="form-error-toggle" (click)="fieldErrors.password = !fieldErrors.password">{{ fieldErrors.password ? 'Ocultar errores' : 'Ver errores' }}</button>
 											</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-lg-6">
-                                        <div class="d-flex flex-column mb-5 fv-row fv-plugins-icon-container">
-                                            <div class="d-flex align-items-center justify-content-between mb-1">
-												<label class="required fw-500 text-gray-700 fs-6 mb-1">Tipo de documento</label>
-												<small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="validationCollaboratorError?.type_document" (click)="fieldErrors.type_document = !fieldErrors.type_document">
-													<ion-icon name="information-circle-outline" class="validation-icon"> </ion-icon>
-													{{ fieldErrors.type_document ? 'Ocultar errores' : 'Ver errores' }}
-												</small>
+											<div class="input-group form-password-group" [class.has-error]="validationCollaboratorError?.password">
+												<input id="collaboratorPassword" type="text" class="form-control form-control-md" placeholder="Contraseña segura" name="password" [(ngModel)]="collaborator.password">
+												<button type="button" class="btn form-password-generate" (click)="generatePassword()">Generar</button>
 											</div>
+											<p class="form-field-help">Mínimo ocho caracteres; puedes generarla automáticamente.</p>
+											<div class="validation-wrapper" [class.open]="fieldErrors.password"><app-validation-popover [errors]="validationCollaboratorError?.password!"></app-validation-popover></div>
+										</div>
+									</div>
+								</div>
+							</div>
 
-                                            <div [ngClass]="{ 'is-invalid': validationCollaboratorError?.type_document }">
-                                                <ng-select
-                                                    [items]="documentsOptions"
-                                                    bindLabel="name"
-												    bindValue="value"
-                                                    [(ngModel)]="collaborator.type_document"
-                                                    placeholder="Tipo de documento"
-                                                    [clearable]="false"
-                                                    [closeOnSelect]="true"
-                                                    class="select-element mb-1"
-                                                    appendTo="body"
-                                                >
-                                                    <!-- Opción en el dropdown -->
-                                                    <ng-template ng-option-tmp let-item="item">
-                                                        <div class="option-item d-flex gap-3 align-items-center">
-                                                            <div class="option-name fs-7">{{ item.name }}</div>
-                                                        </div>
-                                                    </ng-template>
-
-                                                    <!-- Opción seleccionada en el input -->
-                                                    <ng-template ng-label-tmp let-item="item">
-                                                        <div class="option-item d-flex gap-3 align-items-center">
-                                                            <div class="option-name fs-7">{{ item.name }}</div>
-                                                        </div>
-                                                    </ng-template>
-                                                </ng-select>
-                                            </div>
-
-                                            <span class="fs-8 text-muted">Tipo de documento de identidad.</span>
-                                            <div class="validation-wrapper" [class.open]="fieldErrors.type_document">
-												<app-validation-popover 
-												[errors]="validationCollaboratorError?.type_document!"></app-validation-popover>
-											</div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-6">
-                                        <div class="d-flex flex-column mb-5 fv-row fv-plugins-icon-container">
-                                            <div class="d-flex align-items-center justify-content-between mb-1">
-												<label class="required fw-500 text-gray-700 fs-6 mb-1">Número de documento</label>
-												<small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="validationCollaboratorError?.number_document" (click)="fieldErrors.number_document = !fieldErrors.number_document">
-													<ion-icon name="information-circle-outline" class="validation-icon"> </ion-icon>
-													{{ fieldErrors.number_document ? 'Ocultar errores' : 'Ver errores' }}
-												</small>
-											</div>
-
-                                            <input type="text" 
-                                            class="form-control mb-1" 
-                                            placeholder="Número de documento"
-                                            [disabled]="collaborator.type_document == undefined"
-                                            [imask]="{ mask: (collaborator.type_document?.name == 'DNI') ? '00000000' : '0000000000000000000', unmask: true }"
-                                            name="number_document" 
-                                            [(ngModel)]="collaborator.number_document"
-                                            [ngClass]="{'is-invalid': validationCollaboratorError?.number_document}">
-
-                                            <span class="fs-8 text-muted">Documento de identidad nacional.</span>
-                                            <div class="validation-wrapper" [class.open]="fieldErrors.number_document">
-												<app-validation-popover 
-												[errors]="validationCollaboratorError?.number_document!"></app-validation-popover>
-											</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-lg-6">
-                                        <div class="d-flex flex-column fv-row fv-plugins-icon-container">
-                                            <div class="d-flex align-items-center justify-content-between mb-1">
-												<label class="required fw-500 text-gray-700 fs-6 mb-1">Telefono</label>
-												<small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="validationCollaboratorError?.phone" (click)="fieldErrors.phone = !fieldErrors.phone">
-													<ion-icon name="information-circle-outline" class="validation-icon"> </ion-icon>
-													{{ fieldErrors.phone ? 'Ocultar errores' : 'Ver errores' }}
-												</small>
-											</div>
-
-                                            <input type="text" 
-                                            class="form-control mb-1" 
-                                            name="phone" 
-                                            [(ngModel)]="collaborator.phone"
-                                            [ngClass]="{'is-invalid': validationCollaboratorError?.phone}"
-                                            placeholder="987654321"
-                                            [imask]="{ mask: '000000000', unmask: true }"
-                                            >
-
-                                            <span class="fs-8 text-muted">Número telefonico con prefijo peruano.</span>
-                                            <div class="validation-wrapper" [class.open]="fieldErrors.phone">
-												<app-validation-popover 
-												[errors]="validationCollaboratorError?.phone!"></app-validation-popover>
-											</div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-6">
-                                        <div class="d-flex flex-column fv-row fv-plugins-icon-container">
-                                            <div class="d-flex align-items-center justify-content-between mb-1">
-												<label class="required fw-500 text-gray-700 fs-6 mb-1">Contraseña</label>
-												<small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="validationCollaboratorError?.password" (click)="fieldErrors.password = !fieldErrors.password">
-													<ion-icon name="information-circle-outline" class="validation-icon"> </ion-icon>
-													{{ fieldErrors.password ? 'Ocultar errores' : 'Ver errores' }}
-												</small>
-											</div>
-
-                                            <div class="input-group mb-1">
-                                                <input 
-                                                    type="text" 
-                                                    class="form-control border-end-0" 
-                                                    placeholder="Contraseña segura"
-                                                    name="password" 
-                                                    [(ngModel)]="collaborator.password"
-                                                    [ngClass]="{'is-invalid': validationCollaboratorError?.password}"
-                                                >
-                                                <span class="input-group-text bg-white border-start-0 px-5"
-                                                [ngClass]="{'border-danger': validationCollaboratorError?.password}">
-                                                    <a 
-                                                    class="text-primary cursor-pointer" 
-                                                    (click)="generatePassword()" 
-                                                    style="font-size: 0.85rem; text-decoration: none;">
-                                                    Generar
-                                                    </a>
-                                                </span>
-                                            </div>
-
-                                            <span class="fs-8 text-muted">Contraseña de acceso a la plataforma.</span>
-                                            <div class="validation-wrapper" [class.open]="fieldErrors.password">
-												<app-validation-popover 
-												[errors]="validationCollaboratorError?.password!"></app-validation-popover>
-											</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <!--end::Card body-->
-                            <div class="card-footer" style="background-color: #f1f5f9;">
-                                <button
-									class="btn btn-sm btn-primary my-1 cursor-pointer d-flex align-items-center justify-content-center gap-1"
-									[disabled]="isCreateCollaboratorLoading"
-									(click)="!isCreateCollaboratorLoading && createCollaborator()"
-									type="button"
-								>
-									<ng-container *ngIf="isCreateCollaboratorLoading">
-										<span class="spinner-border spinner-border-sm me-2"
-											aria-hidden="true">
-										</span>
-										<span role="status">Procesando...</span>
-									</ng-container>
-
-									<ng-container *ngIf="!isCreateCollaboratorLoading">
-										<i class="bi bi-person-plus"></i>
-										<span>Crear colaborador</span>
-									</ng-container>
-
+							<footer class="form-card-footer d-flex flex-column-reverse flex-sm-row justify-content-end gap-2">
+								<a class="btn btn-light btn-sm" [routerLink]="['/users/collaborators']">Cancelar</a>
+								<button class="btn btn-primary btn-sm d-inline-flex align-items-center justify-content-center gap-2" type="button" [disabled]="isCreateCollaboratorLoading" (click)="!isCreateCollaboratorLoading && createCollaborator()">
+									<span *ngIf="isCreateCollaboratorLoading" class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+									<i *ngIf="!isCreateCollaboratorLoading" class="bi bi-person-plus" aria-hidden="true"></i>
+									<span>{{ isCreateCollaboratorLoading ? 'Creando...' : 'Crear colaborador' }}</span>
 								</button>
-                            </div>
-                        </div>
+							</footer>
+						</div>
+
                     </div>
                 </div>
             </div>
