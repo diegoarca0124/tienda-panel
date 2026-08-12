@@ -20,9 +20,6 @@
 	transition: border-color 150ms ease, box-shadow 150ms ease, background-color 150ms ease;
 }
 
-.app-select.ng-select:not(.ng-select-disabled) .ng-select-container:hover {
-	border-color: #b8c2d1;
-}
 
 .app-select.ng-select.ng-select-focused .ng-select-container,
 .app-select.ng-select.ng-select-opened .ng-select-container {

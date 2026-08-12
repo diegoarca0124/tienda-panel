@@ -93,9 +93,6 @@ input::placeholder, textarea::placeholder, .placeholder-text{
 	opacity: 1;
 }
 
-.form-field .form-control:hover:not(:disabled) {
-	border-color: #b8c2d1;
-}
 
 .form-field .form-control:focus {
 	border-color: #84bbff;
@@ -174,4 +171,48 @@ input::placeholder, textarea::placeholder, .placeholder-text{
 	.form-card-required-note {
 		display: none;
 	}
+}
+
+
+/* =========================================================
+   INPUT GROUP GLOBAL
+========================================================= */
+
+.form-input-group.input-group {
+	display: flex;
+	flex-wrap: nowrap;
+	align-items: stretch;
+	width: 100%;
+}
+
+/* Campos principales */
+
+.form-input-group.input-group > .form-control,
+.form-input-group.input-group > .form-select {
+	flex: 1 1 auto;
+	align-self: stretch;
+	width: 1%;
+	min-width: 0;
+	margin: 0;
+}
+
+/* Botones y complementos igualan la altura del campo */
+
+.form-input-group.input-group > .btn,
+.form-input-group.input-group > .input-group-text {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex: 0 0 auto;
+	align-self: stretch;
+
+	height: auto;
+	margin: 0;
+	white-space: nowrap;
+
+	border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+	border-top-right-radius: 0.475rem !important;
+	border-bottom-right-radius: 0.475rem !important;
+	border: 1px solid #d7dee8 !important;
 }

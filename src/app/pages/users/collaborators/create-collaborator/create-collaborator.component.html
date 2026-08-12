@@ -135,9 +135,16 @@
 												<label class="form-field-label required" for="collaboratorPassword">Contraseña</label>
 												<button *ngIf="validationCollaboratorError?.password" type="button" class="form-error-toggle" (click)="fieldErrors.password = !fieldErrors.password">{{ fieldErrors.password ? 'Ocultar errores' : 'Ver errores' }}</button>
 											</div>
-											<div class="input-group form-password-group" [class.has-error]="validationCollaboratorError?.password">
-												<input id="collaboratorPassword" type="text" class="form-control form-control-md" placeholder="Contraseña segura" name="password" [(ngModel)]="collaborator.password">
-												<button type="button" class="btn form-password-generate" (click)="generatePassword()">Generar</button>
+											<div class="input-group form-input-group form-password-group"
+												[class.has-error]="validationCollaboratorError?.password">
+												<input id="collaboratorPassword" type="text" class="form-control form-control-md"
+													placeholder="Contraseña segura" name="password"
+													[(ngModel)]="collaborator.password">
+
+												<button type="button" class="btn form-password-generate"
+													(click)="generatePassword()">
+													Generar
+												</button>
 											</div>
 											<p class="form-field-help">Mínimo ocho caracteres; puedes generarla automáticamente.</p>
 											<div class="validation-wrapper" [class.open]="fieldErrors.password"><app-validation-popover [errors]="validationCollaboratorError?.password!"></app-validation-popover></div>
