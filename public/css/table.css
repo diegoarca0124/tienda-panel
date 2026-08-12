@@ -1,189 +1,352 @@
-/* =========================================
-   WRAPPER
-========================================= */
+/* =========================================================
+   CONTENEDOR
+========================================================= */
 
 .table-wrapper {
-    width: 100%;
-    overflow-x: auto;
-    overflow-y: hidden;
-    background: #ffffff;
-    border: 1px solid #eaecf0;
+	width: 100%;
+	max-width: 100%;
+	overflow-x: auto;
+	overflow-y: hidden;
+	-webkit-overflow-scrolling: touch;
+	background: #eef1f5;
+	border: 1px solid #d7dee8;
+	border-radius: 0;
+	scrollbar-width: thin;
+	scrollbar-color: #98a4b5 #e5e9ef;
 }
 
-/* =========================================
+/* =========================================================
    TABLA
-========================================= */
+========================================================= */
 
 .custom-table {
-    width: max-content;
-    min-width: 100%;
-
-    table-layout: fixed;
-
-    border-collapse: collapse;
-
-    margin: 0;
+	width: max-content;
+	min-width: 100%;
+	margin: 0;
+	table-layout: fixed;
+	border-collapse: separate;
+	border-spacing: 0;
 }
 
-/* =========================================
-   HEADER
-========================================= */
+/* =========================================================
+   ENCABEZADO
+========================================================= */
 
 .table-wrapper .custom-table thead th {
-    position: sticky;
-    top: 0;
-    z-index: 2;
-    height: 45px;
-    padding: 0 14px;
-    background: #f1f5f9;
-    color: #545454;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: .4px;
-    text-transform: uppercase;
-    vertical-align: middle;
-    white-space: nowrap;
-    border-bottom: 1px solid #eaecf0;
-    border-right: 1px solid #eaecf0;
+	position: sticky;
+	top: 0;
+	z-index: 2;
+	height: 3rem;
+	padding: 0 1rem;
+	font-size: 0.6875rem;
+	font-weight: 700;
+	line-height: 1;
+	letter-spacing: 0.055em;
+	text-transform: uppercase;
+	vertical-align: middle;
+	white-space: nowrap;
+	color: #ffffff;
+	background: #071437;
+	border: 0;
+	border-right: 1px solid rgba(255, 255, 255, 0.14);
+	border-bottom: 1px solid #465771;
 }
 
-/* =========================================
-   BODY
-========================================= */
+.table-wrapper .custom-table thead th:last-child {
+	border-right: 0;
+}
+
+/* =========================================================
+   FILAS
+========================================================= */
 
 .table-wrapper .custom-table tbody td {
-    height: 45px;
-    padding: 0 14px;
-    background: #ffffff;
-    color: #101828;
-    font-size: 13px;
-    font-weight: 500;
-    vertical-align: middle;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    border-bottom: 1px solid #eaecf0;
-    border-right: 1px solid #eaecf0;
-    transition: background .15s ease;
+	height: 3.5rem;
+	padding: 0 1rem;
+	font-size: 0.8125rem;
+	font-weight: 500;
+	line-height: 1.4;
+	vertical-align: middle;
+	white-space: nowrap;
+	color: #344054;
+	background: #ffffff;
+	border: 0;
+	border-right: 1px solid #e3e8ef;
+	border-bottom: 1px solid #e0e5ec;
 }
 
 .custom-table tbody tr:nth-child(even) td {
-    background: #fafafa;
+	background: #f5f7fa;
 }
-
-/* =========================================
-   ÚLTIMA COLUMNA
-========================================= */
-
-.custom-table thead th:last-child,
-.custom-table tbody td:last-child {
-    border-right: none;
-}
-
-/* =========================================
-   HOVER
-========================================= */
 
 .custom-table tbody tr:hover td {
-    background: #fafafa;
+	background: #eaf2ff;
 }
 
-/* =========================================
-   COLUMNAS FIJAS
-========================================= */
+.custom-table tbody tr:last-child td {
+	border-bottom: 0;
+}
+
+.custom-table tbody td:last-child {
+	border-right: 0;
+}
+
+/* =========================================================
+   TRUNCADO
+   Solo el texto marcado puede mostrar puntos suspensivos.
+========================================================= */
+
+.custom-table .text-truncate-1 {
+	display: block;
+	max-width: 100%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.custom-table .badge,
+.custom-table .symbol,
+.custom-table .form-check,
+.custom-table .dropdown {
+	overflow: visible;
+	text-overflow: clip;
+}
+
+.custom-table .badge {
+	width: max-content;
+	max-width: none;
+	white-space: nowrap;
+	font-size: 0.75rem !important;
+    font-weight: 600 !important;
+}
+
+/* =========================================================
+   JERARQUÍA DEL CONTENIDO
+========================================================= */
+
+.custom-table .table-cell-title {
+	font-size: 0.8125rem;
+	font-weight: 600;
+	line-height: 1.25;
+	color: #4b5d7b;
+}
+
+.custom-table .table-cell-secondary {
+	margin-top: 0.2rem;
+	font-size: 0.75rem;
+	font-weight: 400;
+	line-height: 1.2;
+	color: #7b8799;
+}
+
+.custom-table .table-phone {
+	display: flex;
+	align-items: center;
+	gap: 0.45rem;
+	min-width: 0;
+}
+
+.custom-table .table-phone-prefix {
+	flex: 0 0 auto;
+	padding: 0.2rem 0.4rem;
+	font-size: 0.6875rem;
+	font-weight: 600;
+	line-height: 1;
+	color: #53647f;
+	background: #e7ecf3;
+	border-radius: 0.35rem;
+}
+
+/* =========================================================
+   COLUMNAS
+========================================================= */
 
 .fixed-xs {
-    width: 55px;
-    min-width: 55px;
-    max-width: 55px;
+	width: 55px;
+	min-width: 55px;
+	max-width: 55px;
 }
 
 .fixed-sm {
-    width: 120px;
-    min-width: 120px;
-    max-width: 120px;
+	width: 120px;
+	min-width: 120px;
+	max-width: 120px;
 }
 
 .fixed-md {
-    width: 180px;
-    min-width: 180px;
-    max-width: 180px;
+	width: 180px;
+	min-width: 180px;
+	max-width: 180px;
 }
 
 .fixed-lg {
-    width: 260px;
-    min-width: 260px;
-    max-width: 260px;
+	width: 260px;
+	min-width: 260px;
+	max-width: 260px;
 }
 
 .fixed-xl {
-    width: 380px;
-    min-width: 380px;
-    max-width: 380px;
+	width: 380px;
+	min-width: 380px;
+	max-width: 380px;
 }
-
-/* =========================================
-   COLUMNAS FLEXIBLES
-========================================= */
 
 .flex-col {
-    width: auto;
-    min-width: 260px;
+	width: auto;
+	min-width: 260px;
 }
 
-/* =========================================
+/* =========================================================
+   BOTÓN DE ACCIONES ORIGINAL
+========================================================= */
+
+.btn-action {
+	width: 30px;
+	height: 30px;
+	padding: 0;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border: 1px solid #eaecf0;
+	border-radius: 8px;
+	background: #f1f5f9;
+	color: #667085;
+	font-size: 15px;
+	box-shadow: none;
+}
+
+/* =========================================================
    SCROLLBAR
-========================================= */
+========================================================= */
 
 .table-wrapper::-webkit-scrollbar {
-    height: 5px;
+	height: 7px;
 }
 
 .table-wrapper::-webkit-scrollbar-track {
-    background: #f5f5f5;
+	background: #e5e9ef;
 }
 
 .table-wrapper::-webkit-scrollbar-thumb {
-    background: #d0d5dd;
+	background: #98a4b5;
+	border: 2px solid #e5e9ef;
+	border-radius: 999px;
 }
 
 .table-wrapper::-webkit-scrollbar-thumb:hover {
-    background: #b8c0cc;
+	background: #748196;
 }
 
-/* =========================================
-   BOTÓN ACCIONES
-========================================= */
+/* =========================================================
+   RESPONSIVE
+========================================================= */
 
-.btn-action {
-    width: 30px;
-    height: 30px;
-    padding: 0;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid #eaecf0;
-    border-radius: 8px;
-    background: #f1f5f9;
-    color: #667085;
-    font-size: 15px;
-    box-shadow: none;
+@media (max-width: 991.98px) {
+	.fixed-md {
+		width: 150px;
+		min-width: 150px;
+		max-width: 150px;
+	}
+
+	.fixed-lg {
+		width: 225px;
+		min-width: 225px;
+		max-width: 225px;
+	}
+
+	.flex-col {
+		min-width: 225px;
+	}
 }
-/*********************************************/
+
+@media (max-width: 575.98px) {
+	.table-wrapper .custom-table thead th {
+		height: 2.75rem;
+		padding-right: 0.75rem;
+		padding-left: 0.75rem;
+		font-size: 0.625rem;
+	}
+
+	.table-wrapper .custom-table tbody td {
+		height: 3.25rem;
+		padding-right: 0.75rem;
+		padding-left: 0.75rem;
+		font-size: 0.75rem;
+	}
+
+	.fixed-xs {
+		width: 48px;
+		min-width: 48px;
+		max-width: 48px;
+	}
+
+	.fixed-sm {
+		width: 108px;
+		min-width: 108px;
+		max-width: 108px;
+	}
+
+	.fixed-md {
+		width: 140px;
+		min-width: 140px;
+		max-width: 140px;
+	}
+
+	.flex-col {
+		min-width: 208px;
+	}
+}
+
+
 
 .form-check.form-check-sm .form-check-input {
-    height: 1.35rem !important;
-    width: 1.35rem !important;
+    height: 1.4em !important;
+    width: 1.4rem !important;
 }
 
-.form-control.is-invalid, .was-validated .form-control:invalid{
-    background-image: none !important;
+.page-size-control {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.625rem;
+	margin: 0;
+
+	font-size: 0.75rem;
+	font-weight: 500;
+	color: #667085;
+	white-space: nowrap;
 }
 
-.bg-primary-light{
-    background-color: #eff6ff !important;
+.page-size-select {
+	width: 4.25rem;
+	height: 35px !important;
+	padding: 0 1.75rem 0 0.75rem;
+
+	font-size: 10px !important;
+	font-weight: 600;
+	color: #344054;
+
+	background-color: #ffffff;
+	border: 1px solid #d7dee8;
+	border-radius: 0.475rem;
+	box-shadow: none;
+	cursor: pointer;
 }
 
-.border-dashed-gray{
-    border: 1px dashed #ccc !important;
+.page-size-select:focus {
+	border-color: #1b84ff;
+	box-shadow: 0 0 0 2px rgba(27, 132, 255, 0.12);
+}
+
+.page-size-select:disabled {
+	color: #98a2b3;
+	background-color: #f5f7fa;
+	cursor: default;
+	opacity: 0.7;
+}
+
+@media (max-width: 575.98px) {
+	.page-size-control {
+		justify-content: center;
+		font-size: 0.7rem;
+	}
 }

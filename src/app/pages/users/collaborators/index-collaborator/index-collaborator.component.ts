@@ -38,7 +38,7 @@ type CollaboratorsLoadResult =
 	templateUrl: './index-collaborator.component.html',
 	styleUrl: './index-collaborator.component.css',
 })
-//queryParams → loadCollaborators() → collaboratorsQuery$ → listenCollaboratorsQueries()
+
 export class IndexCollaboratorComponent {
 	private destroy$ = new Subject<void>();
 	private readonly collaboratorsQuery$ = new Subject<GetCollaboratorsQPI>();

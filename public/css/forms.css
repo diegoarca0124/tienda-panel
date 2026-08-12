@@ -1,0 +1,9 @@
+input::placeholder, textarea::placeholder, .placeholder-text{
+	font-size: 1rem !important;
+	font-weight: 400 !important;
+	color: #99a1c0 !important;
+}
+
+input.form-check-input {
+    background: white !important;
+}

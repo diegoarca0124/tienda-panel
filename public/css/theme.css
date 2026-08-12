@@ -387,19 +387,15 @@ body {
     white-space: nowrap;
 }
 
-input::placeholder, textarea::placeholder, .placeholder-text{
-	letter-spacing: 0.5px !important;
-	text-transform: uppercase !important;
-	font-size: 0.8rem !important;
-	font-weight: 400 !important;
-	color: #99a1c0 !important;
-}
-
 input,
 textarea,
 select {
     font-size: 1rem !important;
     font-weight: 500 !important;
+}
+
+.form-control-sm{
+  height: 35.79px !important;
 }
 
 input[type="text"]:not(.form-control-sm),
@@ -409,8 +405,7 @@ input[type="email"]:not(.form-control-sm),
 input[type="password"]:not(.form-control-sm),
 input[type="search"]:not(.form-control-sm),
 input[type="url"]:not(.form-control-sm),
-input[type="tel"]:not(.form-control-sm),
-select:not(.form-control-sm) {
+input[type="tel"]:not(.form-control-sm){
     height: 42.93px !important;
 }
 

@@ -1,0 +1,97 @@
+.page-header {
+	border-bottom: 1px solid #edf0f3;
+}
+
+.page-header-action{
+	border-radius: 0.5rem !important; 
+}
+
+.page-header-layout {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 1rem;
+}
+
+.page-header-content {
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+}
+
+.page-header-title {
+	margin: 0;
+
+	font-size: 1.25rem;
+	font-weight: 700;
+	line-height: 1.25;
+	letter-spacing: -0.01em;
+	color: #27364f;
+}
+
+.page-header-breadcrumb {
+	display: flex;
+	align-items: center;
+
+	margin: 0.25rem 0 0;
+	padding: 0;
+
+	list-style: none;
+}
+
+.page-header-breadcrumb-item {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.375rem;
+
+	font-size: 0.7rem;
+	font-weight: 600;
+	line-height: 1.2;
+	color: #1b84ff;
+}
+
+.page-header-breadcrumb-item ion-icon {
+	font-size: 0.875rem;
+}
+
+.page-header-action {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex: 0 0 auto;
+	gap: 0.5rem;
+
+	min-height: 2.5rem;
+	padding-right: 1rem;
+	padding-left: 1rem;
+
+	font-size: 0.8125rem;
+	font-weight: 600;
+	white-space: nowrap;
+}
+
+.page-header-action ion-icon {
+	font-size: 1rem;
+}
+
+@media (max-width: 575.98px) {
+	.page-header-title {
+		font-size: 1rem;
+	}
+
+	.page-header-breadcrumb-item {
+		font-size: 0.65rem;
+	}
+
+	.page-header-action {
+		width: 2.5rem;
+		min-width: 2.5rem;
+		height: 2.5rem;
+		min-height: 2.5rem;
+		padding: 0;
+	}
+
+	.page-header-action-text {
+		display: none;
+	}
+}

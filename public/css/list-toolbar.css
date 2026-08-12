@@ -1,0 +1,283 @@
+/* =========================================================
+   BARRA GLOBAL PARA LISTADOS
+========================================================= */
+
+.list-toolbar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 1rem;
+
+	width: 100%;
+	min-width: 0;
+}
+
+/* =========================================================
+   GRUPO DE BÚSQUEDA
+========================================================= */
+
+.list-toolbar-search {
+	display: flex;
+	align-items: center;
+	gap: 0.65rem;
+
+	width: min(100%, 32rem);
+	min-width: 0;
+}
+
+.list-toolbar-search-field {
+	position: relative;
+	flex: 1 1 auto;
+	min-width: 0;
+}
+
+.list-toolbar-search-field .form-control {
+	width: 100%;
+	height: 2.5rem;
+	padding-right: 2.5rem;
+
+	font-size: 0.8125rem;
+	color: #344054;
+
+	background-color: #ffffff;
+	border-color: #d7dee8;
+	box-shadow: none;
+}
+
+.list-toolbar-search-field .form-control::placeholder {
+	color: #99a1b7;
+}
+
+.list-toolbar-search-field .form-control:focus {
+	border-color: #8fc2ff;
+	box-shadow: 0 0 0 2px rgba(27, 132, 255, 0.1);
+}
+
+.list-toolbar-search-field .form-control:disabled {
+	color: #98a2b3;
+	background-color: #f5f7fa;
+	cursor: default;
+}
+
+/* Icono dentro del input */
+
+.list-toolbar-input-icon {
+	position: absolute;
+	top: 50%;
+	right: 0.875rem;
+	z-index: 2;
+
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+
+	color: #99a1b7;
+	pointer-events: none;
+	transform: translateY(-50%);
+}
+
+/* =========================================================
+   BOTONES DE ICONO
+========================================================= */
+
+.list-toolbar-icon-button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex: 0 0 2.5rem;
+
+	width: 35.79px !important;
+	min-width: 35.79px !important;
+	height: 35.79px !important;
+	padding: 0 !important;
+}
+
+.list-toolbar-icon-button i,
+.list-toolbar-icon-button ion-icon {
+	font-size: 1rem;
+}
+
+.list-toolbar-icon-button .spinner-border {
+	width: 0.875rem;
+	height: 0.875rem;
+	border-width: 0.125rem;
+}
+
+/* =========================================================
+   ACCIONES DEL EXTREMO DERECHO
+========================================================= */
+
+.list-toolbar-actions {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 0.5rem;
+	flex: 0 0 auto;
+}
+
+/* =========================================================
+   RESPONSIVE: TABLET
+========================================================= */
+
+@media (max-width: 767.98px) {
+	.list-toolbar {
+		align-items: stretch;
+		flex-direction: column;
+	}
+
+	.list-toolbar-search {
+		width: 100%;
+	}
+
+	.list-toolbar-actions {
+		align-self: flex-end;
+	}
+}
+
+/* =========================================================
+   RESPONSIVE: MÓVIL
+========================================================= */
+
+@media (max-width: 479.98px) {
+	.list-toolbar {
+		gap: 0.75rem;
+	}
+
+	.list-toolbar-search {
+		gap: 0.375rem;
+	}
+
+	.list-toolbar-search-field .form-control {
+		min-width: 0;
+		font-size: 0.75rem;
+	}
+
+	.list-toolbar-actions {
+		width: 100%;
+	}
+
+	.list-toolbar-actions > .dropdown {
+		margin-left: auto;
+	}
+}
+
+
+
+/* =========================================================
+   MÓVILES MUY PEQUEÑOS
+========================================================= */
+
+@media (max-width: 359.98px) {
+	.list-toolbar-icon-button {
+		flex-basis: 2.25rem;
+
+		width: 2.25rem !important;
+		min-width: 2.25rem !important;
+		height: 2.25rem !important;
+	}
+
+	.list-toolbar-search-field .form-control {
+		height: 2.25rem;
+	}
+
+	.list-toolbar-actions .action-dropdown-toggle {
+		height: 2.25rem;
+	}
+}
+
+/* =========================================================
+   RESPONSIVE: TABLET Y MÓVIL
+   Mantiene todos los controles en una sola fila.
+========================================================= */
+
+@media (max-width: 767.98px) {
+	.list-toolbar {
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.5rem;
+	}
+
+	.list-toolbar-search {
+		flex: 1 1 auto;
+		width: auto;
+		min-width: 0;
+	}
+
+	.list-toolbar-actions {
+		flex: 0 0 auto;
+		align-self: auto;
+		width: auto;
+	}
+}
+
+/* =========================================================
+   RESPONSIVE: MÓVIL
+========================================================= */
+
+@media (max-width: 479.98px) {
+	.list-toolbar {
+		gap: 0.375rem;
+	}
+
+	.list-toolbar-search {
+		gap: 0.375rem;
+		min-width: 0;
+	}
+
+	.list-toolbar-search-field {
+		min-width: 0;
+	}
+
+	.list-toolbar-search-field .form-control {
+		min-width: 0;
+		font-size: 0.75rem;
+	}
+
+	.list-toolbar-actions {
+		flex: 0 0 auto;
+		width: auto;
+	}
+
+	.list-toolbar-actions > .dropdown {
+		margin-left: 0;
+	}
+}
+
+/* =========================================================
+   MÓVILES MUY PEQUEÑOS
+========================================================= */
+
+@media (max-width: 359.98px) {
+	.list-toolbar {
+		gap: 0.25rem;
+	}
+
+	.list-toolbar-search {
+		gap: 0.25rem;
+	}
+
+	.list-toolbar-search-field .form-control {
+		padding-right: 2rem;
+		font-size: 0.7rem;
+	}
+
+	.list-toolbar-input-icon {
+		right: 0.625rem;
+	}
+}
+
+@media (max-width: 479.98px) {
+	.action-dropdown-toggle-text,
+	.action-dropdown-chevron {
+		display: none;
+	}
+
+	.action-dropdown-toggle {
+		padding-right: 0.75rem;
+		padding-left: 0.75rem;
+        width: 35.79px !important;
+        min-width: 35.79px !important;
+        height: 35.79px !important;
+	}
+}

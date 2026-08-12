@@ -74,7 +74,8 @@
 
 .page-number {
 	width: 2.5rem;
-	border-color: transparent;
+	background-color: var(--pagination-secondary);
+	border-color: var(--pagination-border);
 	border-radius: 50%;
 }
 
