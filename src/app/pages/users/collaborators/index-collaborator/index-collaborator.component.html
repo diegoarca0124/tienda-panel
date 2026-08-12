@@ -192,114 +192,120 @@
 									</div>
 								</div>
 								<div class="list-filter-row my-7">
-									<!-- Estado -->
-									<div class="list-filter-item">
-										<label class="list-filter-label">
-											Estado
-										</label>
-										<ng-select
-											[items]="statusFilters"
-											bindLabel="name"
-											bindValue="value"
-											name="selectedStatus"
-											[(ngModel)]="selectedStatus"
-											placeholder="Seleccionar estado"
-											[clearable]="false"
-											[closeOnSelect]="true"
-											[searchable]="false"
-											[disabled]="isCollaboratorsLoading"
-											appendTo="body"
-											dropdownPanelClass="app-select-panel app-select-panel-sm"
-											class="app-select app-select-sm"
-										>
-											<!-- Contenido de las opciones -->
-											<ng-template ng-option-tmp let-item="item">
-												<div class="app-select-option">
-													<span
-														class="app-select-status-dot"
-														[ngClass]="'bg-' + item.color"
-													></span>
+	<!-- Estado -->
+	<div class="list-filter-item">
+		<label class="list-filter-label" for="collaboratorStatus">
+			Estado
+		</label>
 
-													<span class="app-select-option-content">
-														<span class="app-select-option-title">
-															{{ item.name }}
-														</span>
+		<ng-select
+			id="collaboratorStatus"
+			[items]="statusFilters"
+			bindLabel="name"
+			bindValue="value"
+			name="selectedStatus"
+			[(ngModel)]="selectedStatus"
+			placeholder="Seleccionar estado"
+			[clearable]="false"
+			[closeOnSelect]="true"
+			[searchable]="false"
+			[disabled]="isCollaboratorsLoading"
+			appendTo="body"
+			dropdownPanelClass="app-select-panel"
+			class="app-select app-select-sm"
+		>
+			<ng-template ng-option-tmp let-item="item">
+				<div class="app-select-option">
+					<span
+						class="app-select-dot"
+						[ngClass]="'bg-' + item.color"
+					></span>
 
-														<span
-															*ngIf="item.description"
-															class="app-select-option-description"
-														>
-															{{ item.description }}
-														</span>
-													</span>
+					<span class="app-select-option-text">
+						{{ item.name }}
+					</span>
 
-													<ion-icon
-														name="checkmark-outline"
-														class="app-select-option-check"
-														aria-hidden="true"
-													></ion-icon>
-												</div>
-											</ng-template>
+					<ion-icon
+						name="checkmark-outline"
+						class="app-select-check"
+						aria-hidden="true"
+					></ion-icon>
+				</div>
+			</ng-template>
 
-											<!-- Contenido seleccionado -->
-											<ng-template ng-label-tmp let-item="item">
-												<div class="app-select-value">
-													<span
-														class="app-select-status-dot"
-														[ngClass]="'bg-' + item.color"
-													></span>
+			<ng-template ng-label-tmp let-item="item">
+				<div class="app-select-value">
+					<span
+						class="app-select-dot"
+						[ngClass]="'bg-' + item.color"
+					></span>
 
-													<span class="app-select-value-text">
-														{{ item.name }}
-													</span>
-												</div>
-											</ng-template>
-										</ng-select>
-									</div>
-									<!-- Orden -->
-									<div class="list-filter-item list-filter-sort">
-										<label class="list-filter-label">
-											Orden
-										</label>
-										<ng-select
-											[items]="sortFilters"
-											bindLabel="name"
-											bindValue="value"
-											name="selectedSort"
-											[(ngModel)]="selectedSort"
-											placeholder="Orden"
-											[clearable]="false"
-											[closeOnSelect]="true"
-											[searchable]="false"
-											[disabled]="isCollaboratorsLoading"
-											appendTo="body"
-											class="select-label-sm"
-										>
-											<ng-template ng-option-tmp let-item="item">
-												<div class="d-flex align-items-center gap-2">
-													<ion-icon
-														[name]="item.icon"
-														aria-hidden="true"
-													></ion-icon>
-													<span class="select-option">
-														{{ item.name }}
-													</span>
-												</div>
-											</ng-template>
-											<ng-template ng-label-tmp let-item="item">
-												<div class="d-flex align-items-center gap-2">
-													<ion-icon
-														[name]="item.icon"
-														aria-hidden="true"
-													></ion-icon>
-													<span class="select-option">
-														{{ item.name }}
-													</span>
-												</div>
-											</ng-template>
-										</ng-select>
-									</div>
-								</div>
+					<span class="app-select-value-text">
+						{{ item.name }}
+					</span>
+				</div>
+			</ng-template>
+		</ng-select>
+	</div>
+
+	<!-- Orden -->
+	<div class="list-filter-item list-filter-sort">
+		<label class="list-filter-label" for="collaboratorSort">
+			Orden
+		</label>
+
+		<ng-select
+			id="collaboratorSort"
+			[items]="sortFilters"
+			bindLabel="name"
+			bindValue="value"
+			name="selectedSort"
+			[(ngModel)]="selectedSort"
+			placeholder="Seleccionar orden"
+			[clearable]="false"
+			[closeOnSelect]="true"
+			[searchable]="false"
+			[disabled]="isCollaboratorsLoading"
+			appendTo="body"
+			dropdownPanelClass="app-select-panel"
+			class="app-select app-select-sm"
+		>
+			<ng-template ng-option-tmp let-item="item">
+				<div class="app-select-option">
+					<ion-icon
+						[name]="item.icon"
+						class="app-select-option-icon"
+						aria-hidden="true"
+					></ion-icon>
+
+					<span class="app-select-option-text">
+						{{ item.name }}
+					</span>
+
+					<ion-icon
+						name="checkmark-outline"
+						class="app-select-check"
+						aria-hidden="true"
+					></ion-icon>
+				</div>
+			</ng-template>
+
+			<ng-template ng-label-tmp let-item="item">
+				<div class="app-select-value">
+					<ion-icon
+						[name]="item.icon"
+						class="app-select-value-icon"
+						aria-hidden="true"
+					></ion-icon>
+
+					<span class="app-select-value-text">
+						{{ item.name }}
+					</span>
+				</div>
+			</ng-template>
+		</ng-select>
+	</div>
+</div>
 								<div class="table-wrapper  mb-7">
 									<table class="table custom-table align-middle mb-0">
 										<thead>

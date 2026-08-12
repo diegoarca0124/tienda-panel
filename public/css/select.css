@@ -1,5 +1,5 @@
 /* =========================================================
-   NG-SELECT GLOBAL
+   SELECT GLOBAL
 ========================================================= */
 
 .app-select {
@@ -8,19 +8,16 @@
 	font-family: inherit;
 }
 
-/* Contenedor principal */
-
 .app-select.ng-select .ng-select-container {
 	width: 100%;
 	color: #344054;
-	background-color: #ffffff;
+	background-color: #fff;
 	border: 1px solid #d7dee8;
 	border-radius: 0.475rem;
 	box-shadow: none;
 	transition:
 		border-color 150ms ease,
-		box-shadow 150ms ease,
-		background-color 150ms ease;
+		box-shadow 150ms ease;
 }
 
 .app-select.ng-select:not(.ng-select-disabled)
@@ -29,43 +26,95 @@
 }
 
 .app-select.ng-select.ng-select-focused
+	.ng-select-container,
+.app-select.ng-select.ng-select-opened
 	.ng-select-container {
 	border-color: #8fc2ff;
 	box-shadow: 0 0 0 2px rgba(27, 132, 255, 0.1);
 }
 
-.app-select.ng-select.ng-select-opened
-	.ng-select-container {
-	border-color: #8fc2ff;
+/* Tamaño pequeño */
+
+.app-select-sm.ng-select .ng-select-container {
+	height: 2.5rem;
+	min-height: 2.5rem;
 }
 
-/* Valor y placeholder */
+/* Tamaño mediano */
+
+.app-select-md.ng-select .ng-select-container {
+	height: 2.875rem;
+	min-height: 2.875rem;
+}
+
+/* Contenido interno */
 
 .app-select.ng-select .ng-value-container {
 	display: flex;
 	align-items: center;
+	height: 100%;
 	min-width: 0;
-	padding-top: 0;
+	padding: 0 0.25rem 0 0.875rem;
 }
 
-.app-select.ng-select .ng-value {
-	min-width: 0;
+.app-select.ng-select .ng-value-container .ng-value {
+	display: flex;
+	align-items: center;
+	max-width: 100%;
 	margin: 0;
 }
 
 .app-select.ng-select .ng-placeholder {
-	top: auto;
+	position: static;
 	display: flex;
 	align-items: center;
-	margin: 0;
-	padding: 0;
 
 	font-size: 0.75rem;
 	font-weight: 400;
 	line-height: 1;
-	letter-spacing: 0.5px;
+	letter-spacing: 0.04em;
 	text-transform: uppercase;
-	color: #99a1c0;
+	color: #99a1b7;
+}
+
+/* Valor seleccionado */
+
+.app-select-value {
+	display: flex;
+	align-items: center;
+	gap: 0.625rem;
+	min-width: 0;
+}
+
+.app-select-value-text {
+	overflow: hidden;
+	min-width: 0;
+
+	font-size: 0.8125rem;
+	font-weight: 500;
+	line-height: 1.25;
+	color: #475467;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.app-select-md .app-select-value-text {
+	font-size: 0.875rem;
+}
+
+.app-select-dot {
+	display: inline-block;
+	flex: 0 0 0.5rem;
+	width: 0.5rem;
+	height: 0.5rem;
+	border-radius: 50%;
+}
+
+.app-select-value-icon,
+.app-select-option-icon {
+	flex: 0 0 auto;
+	font-size: 1rem;
+	color: #667085;
 }
 
 /* Flecha */
@@ -74,16 +123,17 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	width: 2.25rem;
+	height: 100%;
 	padding: 0;
 }
 
 .app-select.ng-select .ng-arrow-wrapper .ng-arrow {
 	width: 0;
 	height: 0;
-	border-color: #7d899e transparent transparent;
+	border-color: #98a2b3 transparent transparent;
 	border-style: solid;
 	border-width: 5px 4px 0;
-	transition: transform 150ms ease;
 }
 
 .app-select.ng-select.ng-select-opened
@@ -91,7 +141,7 @@
 	transform: rotate(180deg);
 }
 
-/* Estado deshabilitado */
+/* Deshabilitado */
 
 .app-select.ng-select.ng-select-disabled
 	.ng-select-container {
@@ -103,116 +153,36 @@
 }
 
 /* =========================================================
-   TAMAÑO PEQUEÑO
-========================================================= */
-
-.app-select-sm.ng-select .ng-select-container {
-	min-height: 2.5rem;
-	height: 2.5rem;
-}
-
-.app-select-sm.ng-select .ng-value-container {
-	height: 100%;
-	padding-right: 0.5rem;
-	padding-left: 0.875rem;
-}
-
-.app-select-sm.ng-select .ng-arrow-wrapper {
-	width: 2.25rem;
-	height: 2.375rem;
-}
-
-.app-select-sm .app-select-value-text {
-	font-size: 0.8125rem;
-}
-
-/* =========================================================
-   TAMAÑO MEDIANO
-========================================================= */
-
-.app-select-md.ng-select .ng-select-container {
-	min-height: 3rem;
-	height: 3rem;
-}
-
-.app-select-md.ng-select .ng-value-container {
-	height: 100%;
-	padding-right: 0.625rem;
-	padding-left: 1rem;
-}
-
-.app-select-md.ng-select .ng-arrow-wrapper {
-	width: 2.5rem;
-	height: 2.875rem;
-}
-
-.app-select-md .app-select-value-text {
-	font-size: 0.875rem;
-}
-
-/* =========================================================
-   VALOR SELECCIONADO
-========================================================= */
-
-.app-select-value {
-	display: flex;
-	align-items: center;
-	gap: 0.625rem;
-	min-width: 0;
-	height: 100%;
-}
-
-.app-select-status-dot {
-	display: inline-block;
-	flex: 0 0 0.5rem;
-	width: 0.5rem;
-	height: 0.5rem;
-	border-radius: 50%;
-}
-
-.app-select-value-text {
-	overflow: hidden;
-	min-width: 0;
-
-	font-weight: 500;
-	line-height: 1.25;
-	color: #475467;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-}
-
-/* =========================================================
    PANEL DESPLEGABLE
-   Debe permanecer en el CSS global por appendTo="body"
 ========================================================= */
 
 .app-select-panel.ng-dropdown-panel {
 	overflow: hidden;
 	margin-top: 0.375rem;
+	padding: 0.375rem;
 
-	background-color: #ffffff;
+	background-color: #fff;
 	border: 1px solid #e1e6ed;
 	border-radius: 0.5rem;
 	box-shadow:
-		0 4px 10px rgba(16, 24, 40, 0.06),
-		0 14px 32px rgba(16, 24, 40, 0.12);
+		0 6px 14px rgba(16, 24, 40, 0.08),
+		0 16px 32px rgba(16, 24, 40, 0.12);
 }
 
 .app-select-panel.ng-dropdown-panel
 	.ng-dropdown-panel-items {
-	padding: 0.375rem;
+	padding: 0;
 }
 
-.app-select-panel.ng-dropdown-panel
-	.ng-option {
+.app-select-panel.ng-dropdown-panel .ng-option {
+	min-height: 2.5rem;
 	margin: 0;
+	padding: 0.625rem 0.75rem;
+
 	color: #475467;
 	background-color: transparent;
 	border-radius: 0.375rem;
 	white-space: normal;
-	transition:
-		color 120ms ease,
-		background-color 120ms ease;
 }
 
 .app-select-panel.ng-dropdown-panel
@@ -227,9 +197,7 @@
 	background-color: #eaf4ff;
 }
 
-/* =========================================================
-   CONTENIDO DE LAS OPCIONES
-========================================================= */
+/* Contenido de cada opción */
 
 .app-select-option {
 	display: flex;
@@ -239,72 +207,27 @@
 	min-width: 0;
 }
 
-.app-select-option-content {
-	display: flex;
-	flex: 1 1 auto;
-	flex-direction: column;
-	min-width: 0;
-}
-
-.app-select-option-title {
+.app-select-option-text {
 	overflow: hidden;
+	flex: 1 1 auto;
+	min-width: 0;
 
 	font-size: 0.8125rem;
-	font-weight: 600;
+	font-weight: 500;
 	line-height: 1.25;
-	color: inherit;
 	text-overflow: ellipsis;
 	white-space: nowrap;
 }
 
-.app-select-option-description {
-	overflow: hidden;
-	margin-top: 0.125rem;
-
-	font-size: 0.6875rem;
-	font-weight: 400;
-	line-height: 1.25;
-	color: #8a95a6;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-}
-
-.app-select-option-check {
+.app-select-check {
 	flex: 0 0 auto;
 	font-size: 1rem;
 	color: #1b84ff;
-	visibility: hidden;
+	opacity: 0;
 }
 
 .app-select-panel
 	.ng-option.ng-option-selected
-	.app-select-option-check {
-	visibility: visible;
-}
-
-/* Opciones pequeñas */
-
-.app-select-panel-sm.ng-dropdown-panel .ng-option {
-	min-height: 2.5rem;
-	padding: 0.5rem 0.625rem;
-}
-
-/* Opciones medianas */
-
-.app-select-panel-md.ng-dropdown-panel .ng-option {
-	min-height: 2.875rem;
-	padding: 0.625rem 0.75rem;
-}
-
-.app-select-panel-md .app-select-option-title {
-	font-size: 0.875rem;
-}
-
-/* Sin resultados */
-
-.app-select-panel.ng-dropdown-panel
-	.ng-option.ng-option-disabled {
-	font-size: 0.8125rem;
-	color: #98a2b3;
-	background-color: transparent;
+	.app-select-check {
+	opacity: 1;
 }
