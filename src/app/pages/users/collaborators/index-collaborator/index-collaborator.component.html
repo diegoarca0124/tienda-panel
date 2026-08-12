@@ -15,7 +15,7 @@
 							<h1 class="page-header-title">Colaboradores</h1>
 						</div>
 						<a [routerLink]="['/users/collaborators/create']"
-							class="app-btn app-btn-md app-btn-primary app-btn-solid app-btn-responsive"
+							class="btn btn-sm btn-primary "
 							aria-label="Crear nuevo colaborador"
 							title="Nuevo colaborador">
 							<ion-icon name="person-add-outline" aria-hidden="true"></ion-icon>
@@ -39,7 +39,7 @@
 										</div>
 										<!-- Restablecer -->
 										<button type="button"
-											class="app-btn app-btn-sm app-btn-icon app-btn-primary app-btn-soft"
+											class="btn btn-sm btn-icon btn-light-primary"
 											(click)="resetFilters()"
 											[disabled]="isCollaboratorsLoading"
 											aria-label="Restablecer filtros"
@@ -49,7 +49,7 @@
 										</button>
 										<!-- Buscar -->
 										<button type="button"
-											class="app-btn app-btn-sm app-btn-icon app-btn-primary app-btn-solid"
+											class="btn btn-sm btn-icon btn-primary"
 											(click)="applyFilters()"
 											[disabled]="isCollaboratorsLoading"
 											aria-label="Buscar colaborador"
@@ -63,7 +63,7 @@
 										<div class="dropdown action-dropdown">
 											<button id="collaboratorOptionsButton"
 												type="button"
-												class="app-btn app-btn-sm app-btn-dark app-btn-solid app-btn-no-arrow"
+												class="btn btn-sm btn-dark"
 												data-bs-toggle="dropdown"
 												data-bs-offset="0,10"
 												aria-expanded="false"

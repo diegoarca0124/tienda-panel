@@ -1,406 +1,87 @@
-/* =========================================================
-   SISTEMA GLOBAL DE BOTONES
+:root {
+	--control-height-sm: 35.79px;
+	--control-height-md: 42.93px;
+}
 
-   Uso base:
-   class="app-btn app-btn-sm app-btn-primary app-btn-solid"
+/* Inputs */
 
-   Tamaños: app-btn-sm | app-btn-md
-   Formatos: app-btn-solid | app-btn-soft | app-btn-outline | app-btn-ghost
-   Colores:  app-btn-primary | app-btn-dark | app-btn-secondary
-             app-btn-success | app-btn-danger | app-btn-warning
-   Icono:    app-btn-icon
-========================================================= */
+.form-control-sm {
+	height: var(--control-height-sm) !important;
+	min-height: var(--control-height-sm) !important;
+}
 
-/* =========================================================
-   BASE
-========================================================= */
+.form-control-md {
+	height: var(--control-height-md) !important;
+	min-height: var(--control-height-md) !important;
+}
 
-.app-btn {
-	--app-btn-height: 2.5rem;
-	--app-btn-padding-x: 1rem;
-	--app-btn-font-size: 0.8125rem;
-	--app-btn-icon-size: 1rem;
-	--app-btn-radius: 0.475rem;
+/* Botones Bootstrap */
 
-	--app-btn-accent: #1b84ff;
-	--app-btn-accent-hover: #0878ed;
-	--app-btn-accent-active: #006bd8;
-	--app-btn-accent-rgb: 27, 132, 255;
-	--app-btn-contrast: #ffffff;
-	--app-btn-soft-bg: #eef6ff;
-	--app-btn-soft-hover: #e1efff;
-	--app-btn-soft-active: #d5e9ff;
-	--app-btn-soft-text: #176fc1;
-	--app-btn-outline-border: #9bc8ff;
+.btn-sm {
+	height: var(--control-height-sm);
+	min-height: var(--control-height-sm);
+}
 
+.btn-md {
+	height: var(--control-height-md);
+	min-height: var(--control-height-md);
+}
+
+/* Botones Bootstrap con solo icono */
+
+.btn.btn-sm.btn-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex: 0 0 var(--control-height-sm);
+	width: var(--control-height-sm) !important;
+	min-width: var(--control-height-sm) !important;
+	height: var(--control-height-sm) !important;
+	padding: 0 !important;
+	line-height: 1;
+}
+
+.btn.btn-md.btn-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex: 0 0 var(--control-height-md);
+	width: var(--control-height-md) !important;
+	min-width: var(--control-height-md) !important;
+	height: var(--control-height-md) !important;
+	padding: 0 !important;
+	line-height: 1;
+}
+
+.btn.btn-icon i,
+.btn.btn-icon ion-icon {
+	margin: 0;
+	line-height: 1;
+}
+
+.btn {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
 	gap: 0.5rem;
-	flex: 0 0 auto;
-
-	height: var(--app-btn-height);
-	min-height: var(--app-btn-height);
-	padding: 0 var(--app-btn-padding-x);
-
-	font-family: inherit;
-	font-size: var(--app-btn-font-size);
-	font-weight: 600;
-	line-height: 1;
-	text-align: center;
-	text-decoration: none;
-	white-space: nowrap;
-	vertical-align: middle;
-
-	border: 1px solid transparent;
-	border-radius: var(--app-btn-radius);
-	box-shadow: none;
-	cursor: pointer;
-	user-select: none;
-	transition:
-		color 140ms ease,
-		background-color 140ms ease,
-		border-color 140ms ease,
-		box-shadow 140ms ease;
 }
 
-.app-btn:hover,
-.app-btn:focus,
-.app-btn:active {
-	text-decoration: none;
-}
-
-.app-btn:focus-visible {
-	outline: 0;
-	box-shadow: 0 0 0 3px rgba(var(--app-btn-accent-rgb), 0.2);
-}
-
-/* =========================================================
-   TAMAÑOS
-========================================================= */
-
-/* Pequeño: toolbars, filtros y acciones compactas — 36px */
-
-.app-btn-sm {
-	--app-btn-height: 2.25rem;
-	--app-btn-padding-x: 0.875rem;
-	--app-btn-font-size: 0.75rem;
-	--app-btn-icon-size: 0.9375rem;
-	gap: 0.4375rem;
-}
-
-/* Mediano: encabezados y formularios — 40px */
-
-.app-btn-md {
-	--app-btn-height: 2.5rem;
-	--app-btn-padding-x: 1rem;
-	--app-btn-font-size: 0.8125rem;
-	--app-btn-icon-size: 1.0625rem;
-}
-
-/* =========================================================
-   BOTÓN DE SOLO ICONO
-========================================================= */
-
-.app-btn-icon {
-	width: var(--app-btn-height);
-	min-width: var(--app-btn-height);
-	padding-right: 0;
-	padding-left: 0;
-	gap: 0;
-}
-
-.app-btn-icon-circle {
-	border-radius: 50%;
-}
-
-/* =========================================================
-   ICONOS Y CONTENIDO
-========================================================= */
-
-.app-btn i,
-.app-btn ion-icon,
-.app-btn .app-btn-icon-element {
+.btn > i,
+.btn > ion-icon,
+.btn > svg,
+.btn > .spinner-border {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
 	flex: 0 0 auto;
 	margin: 0;
-	font-size: var(--app-btn-icon-size);
 	line-height: 1;
 }
 
-.app-btn-label {
+.btn > span {
 	display: inline-flex;
 	align-items: center;
-	line-height: 1;
+	line-height: 1.2;
 }
 
-.app-btn .spinner-border {
-	width: 0.875rem;
-	height: 0.875rem;
-	border-width: 0.125rem;
-}
 
-/* =========================================================
-   COLORES
-========================================================= */
-
-.app-btn-primary {
-	--app-btn-accent: #1b84ff;
-	--app-btn-accent-hover: #0878ed;
-	--app-btn-accent-active: #006bd8;
-	--app-btn-accent-rgb: 27, 132, 255;
-	--app-btn-contrast: #ffffff;
-	--app-btn-soft-bg: #eef6ff;
-	--app-btn-soft-hover: #e1efff;
-	--app-btn-soft-active: #d5e9ff;
-	--app-btn-soft-text: #176fc1;
-	--app-btn-outline-border: #9bc8ff;
-}
-
-.app-btn-dark {
-	--app-btn-accent: #27364f;
-	--app-btn-accent-hover: #344563;
-	--app-btn-accent-active: #1d293d;
-	--app-btn-accent-rgb: 39, 54, 79;
-	--app-btn-contrast: #ffffff;
-	--app-btn-soft-bg: #eef1f5;
-	--app-btn-soft-hover: #e3e8ef;
-	--app-btn-soft-active: #d9e0e9;
-	--app-btn-soft-text: #344054;
-	--app-btn-outline-border: #aab4c3;
-}
-
-.app-btn-secondary {
-	--app-btn-accent: #667085;
-	--app-btn-accent-hover: #535e72;
-	--app-btn-accent-active: #475467;
-	--app-btn-accent-rgb: 102, 112, 133;
-	--app-btn-contrast: #ffffff;
-	--app-btn-soft-bg: #f2f4f7;
-	--app-btn-soft-hover: #e9edf2;
-	--app-btn-soft-active: #e1e6ec;
-	--app-btn-soft-text: #475467;
-	--app-btn-outline-border: #c5ccd6;
-}
-
-.app-btn-success {
-	--app-btn-accent: #17a66a;
-	--app-btn-accent-hover: #118a58;
-	--app-btn-accent-active: #0d744a;
-	--app-btn-accent-rgb: 23, 166, 106;
-	--app-btn-contrast: #ffffff;
-	--app-btn-soft-bg: #ecfdf3;
-	--app-btn-soft-hover: #dcfae6;
-	--app-btn-soft-active: #cef5dc;
-	--app-btn-soft-text: #087443;
-	--app-btn-outline-border: #83d5ae;
-}
-
-.app-btn-danger {
-	--app-btn-accent: #e5484d;
-	--app-btn-accent-hover: #d1363d;
-	--app-btn-accent-active: #bc2d34;
-	--app-btn-accent-rgb: 229, 72, 77;
-	--app-btn-contrast: #ffffff;
-	--app-btn-soft-bg: #fff1f2;
-	--app-btn-soft-hover: #ffe4e6;
-	--app-btn-soft-active: #ffd8dc;
-	--app-btn-soft-text: #c62f36;
-	--app-btn-outline-border: #f3a1a5;
-}
-
-.app-btn-warning {
-	--app-btn-accent: #d98e04;
-	--app-btn-accent-hover: #be7600;
-	--app-btn-accent-active: #9f6200;
-	--app-btn-accent-rgb: 217, 142, 4;
-	--app-btn-contrast: #ffffff;
-	--app-btn-soft-bg: #fff8e7;
-	--app-btn-soft-hover: #ffefc2;
-	--app-btn-soft-active: #ffe7a3;
-	--app-btn-soft-text: #925c00;
-	--app-btn-outline-border: #eac46e;
-}
-
-/* =========================================================
-   FORMATOS VISUALES
-========================================================= */
-
-/* Sólido */
-
-.app-btn-solid {
-	color: var(--app-btn-contrast);
-	background-color: var(--app-btn-accent);
-	border-color: var(--app-btn-accent);
-}
-
-.app-btn-solid:hover {
-	color: var(--app-btn-contrast);
-	background-color: var(--app-btn-accent-hover);
-	border-color: var(--app-btn-accent-hover);
-}
-
-.app-btn-solid:active,
-.app-btn-solid.active,
-.app-btn-solid[aria-expanded="true"] {
-	color: var(--app-btn-contrast);
-	background-color: var(--app-btn-accent-active);
-	border-color: var(--app-btn-accent-active);
-}
-
-/* Suave */
-
-.app-btn-soft {
-	color: var(--app-btn-soft-text);
-	background-color: var(--app-btn-soft-bg);
-	border-color: transparent;
-}
-
-.app-btn-soft:hover {
-	color: var(--app-btn-soft-text);
-	background-color: var(--app-btn-soft-hover);
-	border-color: transparent;
-}
-
-.app-btn-soft:active,
-.app-btn-soft.active,
-.app-btn-soft[aria-expanded="true"] {
-	color: var(--app-btn-soft-text);
-	background-color: var(--app-btn-soft-active);
-	border-color: transparent;
-}
-
-/* Contorno */
-
-.app-btn-outline {
-	color: var(--app-btn-accent);
-	background-color: #ffffff;
-	border-color: var(--app-btn-outline-border);
-}
-
-.app-btn-outline:hover {
-	color: var(--app-btn-soft-text);
-	background-color: var(--app-btn-soft-bg);
-	border-color: var(--app-btn-accent);
-}
-
-.app-btn-outline:active,
-.app-btn-outline.active,
-.app-btn-outline[aria-expanded="true"] {
-	color: var(--app-btn-soft-text);
-	background-color: var(--app-btn-soft-active);
-	border-color: var(--app-btn-accent);
-}
-
-/* Fantasma */
-
-.app-btn-ghost {
-	color: var(--app-btn-accent);
-	background-color: transparent;
-	border-color: transparent;
-}
-
-.app-btn-ghost:hover {
-	color: var(--app-btn-soft-text);
-	background-color: var(--app-btn-soft-bg);
-	border-color: transparent;
-}
-
-.app-btn-ghost:active,
-.app-btn-ghost.active,
-.app-btn-ghost[aria-expanded="true"] {
-	color: var(--app-btn-soft-text);
-	background-color: var(--app-btn-soft-active);
-	border-color: transparent;
-}
-
-/* Deshabilitado: se declara después de los formatos para
-   prevalecer sobre cualquier variante visual. */
-
-.app-btn:disabled,
-.app-btn.disabled,
-.app-btn[aria-disabled="true"] {
-	color: #98a2b3;
-	background-color: #e9edf2;
-	border-color: #dce2e9;
-	box-shadow: none;
-	cursor: not-allowed;
-	pointer-events: none;
-	opacity: 1;
-}
-
-/* =========================================================
-   UTILIDADES
-========================================================= */
-
-.app-btn-block {
-	display: flex;
-	width: 100%;
-}
-
-.app-btn-nowrap {
-	white-space: nowrap;
-}
-
-.app-btn-no-shadow {
-	box-shadow: none !important;
-}
-
-/* Oculta la flecha automática de Bootstrap */
-
-.app-btn.dropdown-toggle-no-arrow::after,
-.app-btn.app-btn-no-arrow::after {
-	display: none !important;
-	content: none !important;
-}
-
-/* =========================================================
-   GRUPO DE BOTONES
-========================================================= */
-
-.app-btn-group {
-	display: inline-flex;
-	align-items: stretch;
-}
-
-.app-btn-group > .app-btn:not(:first-child) {
-	margin-left: -1px;
-	border-top-left-radius: 0;
-	border-bottom-left-radius: 0;
-}
-
-.app-btn-group > .app-btn:not(:last-child) {
-	border-top-right-radius: 0;
-	border-bottom-right-radius: 0;
-}
-
-/* =========================================================
-   RESPONSIVE OPCIONAL
-   Oculta el texto y conserva el icono en móvil.
-========================================================= */
-
-@media (max-width: 575.98px) {
-	.app-btn-responsive {
-		width: var(--app-btn-height);
-		min-width: var(--app-btn-height);
-		padding-right: 0;
-		padding-left: 0;
-		gap: 0;
-	}
-
-	.app-btn-responsive .app-btn-label {
-		display: none;
-	}
-}
-
-/* =========================================================
-   ACCESIBILIDAD
-========================================================= */
-
-@media (prefers-reduced-motion: reduce) {
-	.app-btn {
-		transition: none;
-	}
-}

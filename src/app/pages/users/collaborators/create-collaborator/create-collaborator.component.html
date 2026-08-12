@@ -147,7 +147,7 @@
 
 									<footer class="form-card-footer">
 										<div class="d-flex flex-column-reverse flex-sm-row align-items-stretch align-items-sm-center justify-content-end gap-2">
-											<a class="btn btn-light btn-sm px-5" [routerLink]="['/users/collaborators']">Cancelar</a>
+											
 											<button class="btn btn-primary btn-sm d-inline-flex align-items-center justify-content-center gap-2 px-5" type="button" [disabled]="isCreateCollaboratorLoading" (click)="!isCreateCollaboratorLoading && createCollaborator()">
 												<span *ngIf="isCreateCollaboratorLoading" class="spinner-border spinner-border-sm" aria-hidden="true"></span>
 												<i *ngIf="!isCreateCollaboratorLoading" class="bi bi-person-plus" aria-hidden="true"></i>

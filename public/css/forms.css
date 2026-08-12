@@ -61,7 +61,7 @@ input::placeholder, textarea::placeholder, .placeholder-text{
 
 .form-field-label {
 	margin: 0 0 0.4375rem;
-	font-size: 0.75rem;
+	font-size: 0.8rem;
 	font-weight: 600;
 	line-height: 1.2;
 	color: #475467;

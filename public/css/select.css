@@ -102,6 +102,7 @@
 	align-items: center;
 	height: 100%;
 	padding: 0;
+	padding-left: 13.5px !important;
 }
 
 .app-select.ng-select .ng-value-container .ng-input > input {
@@ -177,8 +178,14 @@
 	white-space: nowrap;
 }
 
+.ng-option-label{
+	font-size: .9rem;
+	font-weight: 500;
+	color: #475467;
+}
+
 .app-select.app-select-md.ng-select .ng-value-label {
-	font-size: 0.8125rem;
+	font-size: 1rem;
 	color: #344054;
 }
 
