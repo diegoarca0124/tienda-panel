@@ -74,7 +74,7 @@ input::placeholder, textarea::placeholder, .placeholder-text{
 
 .form-field .form-control {
 	height: 2.75rem;
-	padding: 0 0.875rem;
+	padding: 0 0.975rem;
 	font-size: 0.8125rem;
 	font-weight: 500;
 	color: #344054;
