@@ -44,37 +44,71 @@
    TAMAÑOS
 ========================================================= */
 
-/* Pequeño: filtros de listados */
+/* Pequeño: filtros de listados — 36px */
 
-.app-select-sm.ng-select .ng-select-container {
+.app-select.app-select-sm.ng-select {
 	height: 2.25rem;
 	min-height: 2.25rem;
 }
 
-.app-select-sm.ng-select .ng-value-container {
+.app-select.app-select-sm.ng-select.ng-select-single
+	.ng-select-container {
+	height: 2.25rem;
+	min-height: 2.25rem;
+}
+
+.app-select.app-select-sm.ng-select
+	.ng-value-container {
 	height: 100%;
 	padding: 0 0.25rem 0 0.75rem;
 }
 
-.app-select-sm.ng-select .ng-arrow-wrapper {
+.app-select.app-select-sm.ng-select
+	.ng-arrow-wrapper {
 	width: 2rem;
 	height: 100%;
 }
 
-/* Mediano: formularios */
+/* Mediano: formularios — 44px */
 
-.app-select-md.ng-select .ng-select-container {
+.app-select.app-select-md.ng-select {
+	height: 2.75rem !important;
+	min-height: 2.75rem !important;
+}
+
+.app-select.app-select-md.ng-select.ng-select-single
+	.ng-select-container {
 	height: 2.75rem;
 	min-height: 2.75rem;
 }
 
-.app-select-md.ng-select .ng-value-container {
+.app-select.app-select-md.ng-select
+	.ng-value-container {
 	height: 100%;
 	padding: 0 0.375rem 0 0.875rem;
 }
 
-.app-select-md.ng-select .ng-arrow-wrapper {
+.app-select.app-select-md.ng-select
+	.ng-arrow-wrapper {
 	width: 2.25rem;
+	height: 100%;
+}
+
+/* Corrige la posición interna aplicada por default.theme.css */
+
+.app-select.app-select-md.ng-select.ng-select-single
+	.ng-select-container
+	.ng-value-container
+	.ng-input {
+	top: 0;
+	height: 100%;
+}
+
+.app-select.app-select-sm.ng-select.ng-select-single
+	.ng-select-container
+	.ng-value-container
+	.ng-input {
+	top: 0;
 	height: 100%;
 }
 
