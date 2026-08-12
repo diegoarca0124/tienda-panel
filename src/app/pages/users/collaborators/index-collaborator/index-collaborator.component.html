@@ -14,11 +14,12 @@
 							</nav>
 							<h1 class="page-header-title">Colaboradores</h1>
 						</div>
-						<a [routerLink]="['/users/collaborators/create']" routerLinkActive="router-link-active"
-							class="btn btn-primary btn-sm page-header-action" aria-label="Crear nuevo colaborador"
-							title="Nuevo colaborador" >
-							<ion-icon name="person-add-outline" aria-hidden="true" ></ion-icon>
-							<span class="page-header-action-text">Nuevo colaborador</span>
+						<a [routerLink]="['/users/collaborators/create']"
+							class="app-btn app-btn-md app-btn-primary app-btn-solid app-btn-responsive"
+							aria-label="Crear nuevo colaborador"
+							title="Nuevo colaborador">
+							<ion-icon name="person-add-outline" aria-hidden="true"></ion-icon>
+							<span class="app-btn-label">Nuevo colaborador</span>
 						</a>
 					</div>
 				</div>
@@ -37,31 +38,40 @@
 											<i class="bi bi-search list-toolbar-input-icon" aria-hidden="true" ></i>
 										</div>
 										<!-- Restablecer -->
-										<button type="button" class="btn btn-sm btn-icon btn-light-primary list-toolbar-icon-button"
-											(click)="resetFilters()" [disabled]="isCollaboratorsLoading" aria-label="Restablecer filtros"
-											title="Restablecer filtros" >
-											<i *ngIf="!isCollaboratorsLoading" class="bi bi-arrow-clockwise" ></i>
-											<span *ngIf="isCollaboratorsLoading" class="spinner-border spinner-border-sm" aria-hidden="true"
-												></span>
+										<button type="button"
+											class="app-btn app-btn-sm app-btn-icon app-btn-primary app-btn-soft"
+											(click)="resetFilters()"
+											[disabled]="isCollaboratorsLoading"
+											aria-label="Restablecer filtros"
+											title="Restablecer filtros">
+											<i *ngIf="!isCollaboratorsLoading" class="bi bi-arrow-clockwise"></i>
+											<span *ngIf="isCollaboratorsLoading" class="spinner-border spinner-border-sm" aria-hidden="true"></span>
 										</button>
 										<!-- Buscar -->
-										<button type="button" class="btn btn-sm btn-icon btn-primary list-toolbar-icon-button"
-											(click)="applyFilters()" [disabled]="isCollaboratorsLoading" aria-label="Buscar colaborador"
-											title="Buscar colaborador" >
-											<i *ngIf="!isCollaboratorsLoading" class="bi bi-search" ></i>
-											<span *ngIf="isCollaboratorsLoading" class="spinner-border spinner-border-sm" aria-hidden="true"
-												></span>
+										<button type="button"
+											class="app-btn app-btn-sm app-btn-icon app-btn-primary app-btn-solid"
+											(click)="applyFilters()"
+											[disabled]="isCollaboratorsLoading"
+											aria-label="Buscar colaborador"
+											title="Buscar colaborador">
+											<i *ngIf="!isCollaboratorsLoading" class="bi bi-search"></i>
+											<span *ngIf="isCollaboratorsLoading" class="spinner-border spinner-border-sm" aria-hidden="true"></span>
 										</button>
 									</div>
 									<!-- Acciones del lado derecho -->
 									<div class="list-toolbar-actions">
 										<div class="dropdown action-dropdown">
-											<button id="collaboratorOptionsButton" type="button" class="action-dropdown-toggle"
-												data-bs-toggle="dropdown" data-bs-offset="0,10" aria-expanded="false" aria-label="Opciones"
-												title="Opciones" >
-												<ion-icon name="settings-outline" class="action-dropdown-toggle-icon" aria-hidden="true" ></ion-icon>
-												<span class="action-dropdown-toggle-text">Opciones</span>
-												<ion-icon name="chevron-down-outline" class="action-dropdown-chevron" aria-hidden="true" ></ion-icon>
+											<button id="collaboratorOptionsButton"
+												type="button"
+												class="app-btn app-btn-sm app-btn-dark app-btn-solid app-btn-no-arrow"
+												data-bs-toggle="dropdown"
+												data-bs-offset="0,10"
+												aria-expanded="false"
+												aria-label="Opciones"
+												title="Opciones">
+												<ion-icon name="settings-outline" aria-hidden="true"></ion-icon>
+												<span class="app-btn-label">Opciones</span>
+												<ion-icon name="chevron-down-outline" class="app-btn-chevron" aria-hidden="true"></ion-icon>
 											</button>
 											<ul class="dropdown-menu dropdown-menu-end action-dropdown-menu"
 												aria-labelledby="collaboratorOptionsButton" >
