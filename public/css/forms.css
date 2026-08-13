@@ -216,3 +216,16 @@ input::placeholder, textarea::placeholder, .placeholder-text{
 	border-bottom-right-radius: 0.475rem !important;
 	border: 1px solid #d7dee8 !important;
 }
+
+@media (min-width: 768px) {
+	.border-md-start {
+		border-left: 1px solid #dbdfe9;
+	}
+}
+
+@media (max-width: 767.98px) {
+	.border-md-start {
+		border-left: 0 !important;
+		padding-left: 0 !important;
+	}
+}

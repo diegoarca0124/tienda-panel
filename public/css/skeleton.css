@@ -1,0 +1,113 @@
+/* =========================================================
+   SKELETON GLOBAL
+========================================================= */
+
+:root {
+	--skeleton-background: #e9ecef;
+	--skeleton-highlight: rgba(255, 255, 255, 0.5);
+	--skeleton-radius: 0.5rem;
+	--skeleton-duration: 1.2s;
+	--skeleton-shimmer-width: 150px;
+	--skeleton-input-height: 42.93px;
+}
+
+/* Base */
+
+.skeleton {
+	position: relative;
+	overflow: hidden;
+	background-color: var(--skeleton-background);
+	border-radius: var(--skeleton-radius);
+}
+
+/* Brillo animado */
+
+.skeleton::after {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: calc(var(--skeleton-shimmer-width) * -1);
+	width: var(--skeleton-shimmer-width);
+	height: 100%;
+	background: linear-gradient(
+		90deg,
+		transparent,
+		var(--skeleton-highlight),
+		transparent
+	);
+	animation: skeleton-shimmer var(--skeleton-duration) infinite;
+}
+
+@keyframes skeleton-shimmer {
+	100% {
+		left: 100%;
+	}
+}
+
+/* Variantes */
+
+.skeleton-text {
+	height: 9px;
+}
+
+.skeleton-check {
+	width: 20px;
+	height: 20px;
+	margin: auto;
+	border-radius: 5px !important;
+}
+
+.skeleton-btn {
+	width: 30px;
+	height: 30px;
+	margin: auto;
+}
+
+.skeleton-badge {
+	width: 70px;
+	height: 22.39px;
+	border-radius: 20px;
+}
+
+.skeleton-input {
+	width: 100%;
+	height: var(--skeleton-input-height) !important;
+}
+
+/* Accesibilidad */
+
+@media (prefers-reduced-motion: reduce) {
+	.skeleton::after {
+		animation: none;
+	}
+}
+
+
+/* Formas */
+
+.skeleton-square-sm {
+	flex: 0 0 30px;
+	width: 30px;
+	height: 30px;
+}
+
+/* Contenedor de líneas */
+
+.skeleton-lines {
+	width: 100%;
+	max-width: 250px;
+}
+
+/* Anchos */
+
+.skeleton-w-40 {
+	width: 40%;
+}
+
+.skeleton-w-60 {
+	width: 60%;
+}
+
+.skeleton-select {
+	height: 3.25rem !important;
+}
