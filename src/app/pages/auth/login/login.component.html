@@ -1,70 +1,98 @@
-<div class="d-flex flex-column flex-column-fluid flex-center p-10 w-100" style="height: 100vh !important;">         
-    <div class="d-flex justify-content-between flex-column-fluid flex-column w-100 mw-450px">
-        <div class="d-flex justify-content-center py-2">
-            <div class="m-0">
-                <img src="images/logos/logo-color.png" alt="" style="width: 180px;">    
-            </div>                      
-        </div>          
-        <div class="py-20">
-            <div class="card-body">
-                <div class="text-center mb-10">
-                    <h1 class="text-gray-900 mb-3 fs-3x" data-kt-translate="sign-in-title">
-                        Iniciar Sesión
-                    </h1>
-                    <div class="text-gray-500 fw-semibold fs-6" data-kt-translate="general-desc">
-                        Panel Administrador de Tienda en Linea
-                    </div>
-                </div>
-                <div class="fv-row mb-8 fv-plugins-icon-container">
-                    <div class="position-relative pb-8px">
-                        <input type="text" 
-                        placeholder="Correo eletrónico" 
-                        name="email" 
-                        autocomplete="off"  
-                        class="form-control"
-                        [name]="'email'"
-                        [(ngModel)]="auth.email"
-                        [ngClass]="{'is-invalid': errorsLogin?.email}"
-                        (keyup.ENTER)="login()"> 
-                        <div class="invalid-feedback" *ngIf="errorsLogin.email">
-                            {{errorsLogin.email[0] || ' '}}
-                        </div>
-                    </div>
-                </div>
-                <div class="fv-row mb-8 fv-plugins-icon-container">   
-                    <div class="position-relative pb-8px">
-                        <input type="password"
-                        placeholder="Contraseña" 
-                        name="password" 
-                        autocomplete="off" 
-                        class="form-control"
-                        [name]="'password'"
-                        [(ngModel)]="auth.password"
-                        [ngClass]="{'is-invalid': errorsLogin?.password}"
-                        (keyup.ENTER)="login()">
-                         <div class="invalid-feedback" *ngIf="errorsLogin.password">
-                            {{errorsLogin.password[0] || ' '}}
-                        </div>
-                    </div>
-                </div>
-                <div class="d-flex justify-content-center flex-wrap gap-3 fs-base fw-semibold mb-10">
-                    <div></div>
-                    <a class="link-primary">
-                        Olvidaste tu contraseña ?
-                    </a>
-                </div>
-                <div class="d-flex justify-content-center">
-                    <button class="btn btn-primary me-2 flex-shrink-0" (click)="login()" *ngIf="!loading">
-                        Iniciar Sesión
-                    </button>
-                    <button *ngIf="loading" class="btn btn-primary me-2 flex-shrink-0" type="button" disabled>
-                        <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
-                        <span role="status">Procesando...</span>
-                    </button>
-                </div>
-            </div> 
-        </div>         
-        <div class="m-0">        
-        </div>
-    </div>   
+<div class="login-page">
+	<main class="login-container">
+		<header class="login-header">
+			<!-- <img
+				src="images/logos/logo-color.png"
+				alt="Logo"
+				class="login-logo"
+			> -->
+
+			<h1 class="login-title">Iniciar sesión</h1>
+
+			<p class="login-description">
+				Ingresa tus credenciales para acceder al panel administrativo.
+			</p>
+		</header>
+
+		<div class="login-form">
+			<div class="login-field">
+				<label for="loginEmail" class="login-label">
+					Correo electrónico
+				</label>
+
+				<input
+					id="loginEmail"
+					type="email"
+					class="form-control form-control-md"
+					[class.is-invalid]="errorsLogin?.email"
+					placeholder="Correo electrónico"
+					name="email"
+					autocomplete="email"
+					[(ngModel)]="auth.email"
+					(keyup.enter)="login()"
+					[disabled]="loading"
+				>
+
+				<div
+					*ngIf="errorsLogin?.email"
+					class="invalid-feedback d-block"
+				>
+					{{ errorsLogin.email[0] || ' ' }}
+				</div>
+			</div>
+
+			<div class="login-field">
+				<div class="d-flex align-items-center justify-content-between gap-3">
+					<label for="loginPassword" class="login-label">
+						Contraseña
+					</label>
+
+					<a class="login-recovery">
+						¿Olvidaste tu contraseña?
+					</a>
+				</div>
+
+				<input
+					id="loginPassword"
+					type="password"
+					class="form-control form-control-md"
+					[class.is-invalid]="errorsLogin?.password"
+					placeholder="Contraseña"
+					name="password"
+					autocomplete="current-password"
+					[(ngModel)]="auth.password"
+					(keyup.enter)="login()"
+					[disabled]="loading"
+				>
+
+				<div
+					*ngIf="errorsLogin?.password"
+					class="invalid-feedback d-block"
+				>
+					{{ errorsLogin.password[0] || ' ' }}
+				</div>
+			</div>
+
+			<button
+				type="button"
+				class="btn btn-primary btn-md w-100 mt-2"
+				[disabled]="loading"
+				(click)="!loading && login()"
+			>
+				<span
+					*ngIf="loading"
+					class="spinner-border spinner-border-sm"
+					aria-hidden="true"
+				></span>
+
+				<span>
+					{{ loading ? 'Ingresando...' : 'Iniciar sesión' }}
+				</span>
+			</button>
+		</div>
+
+		<footer class="login-footer">
+			Acceso exclusivo para usuarios autorizados
+		</footer>
+	</main>
 </div>

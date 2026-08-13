@@ -293,7 +293,8 @@
 										</ng-container>
 									</div>
 
-									<footer class="form-card-footer">
+									<footer class="form-card-footer"
+									*ngIf="!collaboratorLoadError">
 										<div class="d-flex flex-column-reverse flex-sm-row align-items-stretch align-items-sm-center justify-content-end gap-2">
 											<button class="btn btn-primary btn-sm px-5" type="button" [disabled]="isCollaboratorLoading || isEditCollaboratorLoading || collaboratorLoadError" (click)="!isCollaboratorLoading && !isEditCollaboratorLoading && !collaboratorLoadError && updateCollaborator()">
 												<span *ngIf="isEditCollaboratorLoading" class="spinner-border spinner-border-sm" aria-hidden="true"></span>
