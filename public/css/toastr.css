@@ -8,10 +8,9 @@
 	right: 1.25rem !important;
 }
 
-/*
- * El tema de Metronic agrega una imagen de fondo con !important.
- * Estos selectores más específicos evitan que el icono se repita.
- */
+/* =========================================================
+   ELIMINAR ICONOS NATIVOS DE METRONIC
+========================================================= */
 
 #toastr-container > .toastr,
 #toastr-container > .toastr.toastr-success,
@@ -28,21 +27,25 @@
 	background-size: auto !important;
 }
 
+/* =========================================================
+   CONTENEDOR GENERAL
+========================================================= */
+
 .toastr {
 	--toastr-accent: #4da3ff;
 
 	position: relative;
-	display: grid !important;
-	grid-template-columns: 2.375rem minmax(0, 1fr);
+	display: grid;
+	grid-template-columns: 2rem minmax(0, 1fr);
 	grid-auto-rows: auto;
 	align-items: center;
-	column-gap: 0.875rem;
+	column-gap: 0.75rem;
 	row-gap: 0.125rem;
 
 	width: 24rem !important;
-	min-height: 4.625rem;
-	margin: 0 0 0.75rem !important;
-	padding: 0.9375rem 2.75rem 0.9375rem 1rem !important;
+	min-height: 3.75rem;
+	margin: 0 0 0.625rem !important;
+	padding: 0.7rem 1rem 0.7rem 0.875rem !important;
 	overflow: hidden;
 
 	font-family: inherit;
@@ -55,22 +58,35 @@
 	box-shadow:
 		0 3px 8px rgba(16, 24, 40, 0.12),
 		0 16px 36px rgba(16, 24, 40, 0.2) !important;
+
+	/*
+	 * No agregar !important en opacity ni display.
+	 * Toastr necesita modificar ambas propiedades para ocultarse.
+	 */
 	opacity: 1 !important;
 }
 
-/* Icono */
+/* Reserva espacio cuando existe el botón de cierre */
+
+.toastr:has(.toastr-close-button) {
+	padding-right: 2.75rem !important;
+}
+
+/* =========================================================
+   ICONO
+========================================================= */
 
 .toastr::before {
 	content: "i";
 	grid-column: 1;
 	grid-row: 1 / span 2;
-	align-self: center;
+	place-self: center;
 
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	width: 2.375rem;
-	height: 2.375rem;
+	display: grid;
+	place-items: center;
+	width: 2rem;
+	height: 2rem;
+	padding: 0;
 
 	font-size: 1rem;
 	font-weight: 700;
@@ -81,7 +97,11 @@
 	border-radius: 0.4375rem;
 }
 
-/* Estados */
+/* =========================================================
+   ESTADOS
+========================================================= */
+
+/* Éxito */
 
 .toastr-success {
 	--toastr-accent: #32b982;
@@ -90,6 +110,8 @@
 .toastr-success::before {
 	content: "\2713";
 }
+
+/* Error */
 
 .toastr-error {
 	--toastr-accent: #ed5a67;
@@ -101,6 +123,8 @@
 	font-weight: 500;
 }
 
+/* Advertencia */
+
 .toastr-warning {
 	--toastr-accent: #e9a832;
 }
@@ -109,11 +133,15 @@
 	content: "!";
 }
 
+/* Información */
+
 .toastr-info {
 	--toastr-accent: #4d9fff;
 }
 
-/* Contenido */
+/* =========================================================
+   CONTENIDO
+========================================================= */
 
 .toastr-title,
 .toastr-message {
@@ -123,31 +151,37 @@
 
 .toastr-title {
 	margin: 0 !important;
+
 	font-size: 0.9375rem !important;
 	font-weight: 650 !important;
 	line-height: 1.35 !important;
 	letter-spacing: -0.01em;
+
 	color: #ffffff !important;
 }
 
 .toastr-message {
 	margin: 0 !important;
+
 	font-size: 0.875rem !important;
 	font-weight: 400 !important;
 	line-height: 1.45 !important;
+
 	color: #edf1f6 !important;
 }
 
-/* Centrado vertical cuando solamente existe un mensaje */
+/* Centrado cuando solamente existe el mensaje */
 
 .toastr:not(:has(.toastr-title)) .toastr-message,
 .toastr .toastr-message:only-of-type {
 	display: flex;
 	align-items: center;
-	min-height: 2.375rem;
+	min-height: 2rem;
 }
 
-/* Botón cerrar */
+/* =========================================================
+   BOTÓN CERRAR
+========================================================= */
 
 .toastr .toastr-close-button {
 	position: absolute !important;
@@ -156,14 +190,15 @@
 	left: auto !important;
 	float: none !important;
 
-	width: 1.125rem !important;
-	height: 1.125rem !important;
+	width: 1rem !important;
+	height: 1rem !important;
 	margin: 0 !important;
 	padding: 0 !important;
 
 	color: #aeb8c7 !important;
 	background-color: #aeb8c7 !important;
-	opacity: 0.65 !important;
+
+	opacity: 1 !important;
 	transform: translateY(-50%);
 }
 
@@ -172,15 +207,20 @@
 	opacity: 1 !important;
 }
 
-/* Progreso */
+/* =========================================================
+   BARRA DE PROGRESO
+========================================================= */
 
 .toastr-progress {
 	height: 3px !important;
+
 	background-color: var(--toastr-accent) !important;
 	opacity: 0.9 !important;
 }
 
-/* Responsive */
+/* =========================================================
+   RESPONSIVE
+========================================================= */
 
 @media (max-width: 575.98px) {
 	#toastr-container.toastr-top-right,
@@ -194,13 +234,19 @@
 	.toastr {
 		width: 100% !important;
 		min-width: 0 !important;
-		grid-template-columns: 2.25rem minmax(0, 1fr);
-		column-gap: 0.75rem;
-		padding-left: 0.875rem !important;
+
+		grid-template-columns: 2rem minmax(0, 1fr);
+		column-gap: 0.625rem;
+
+		padding: 0.7rem 0.875rem !important;
+	}
+
+	.toastr:has(.toastr-close-button) {
+		padding-right: 2.5rem !important;
 	}
 
 	.toastr::before {
-		width: 2.25rem;
-		height: 2.25rem;
+		width: 2rem;
+		height: 2rem;
 	}
 }
