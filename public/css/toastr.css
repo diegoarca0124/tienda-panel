@@ -1,0 +1,206 @@
+/* =========================================================
+   TOASTR GLOBAL — DISEÑO OSCURO
+========================================================= */
+
+#toastr-container.toastr-top-right,
+.toastr-top-right {
+	top: 1.25rem !important;
+	right: 1.25rem !important;
+}
+
+/*
+ * El tema de Metronic agrega una imagen de fondo con !important.
+ * Estos selectores más específicos evitan que el icono se repita.
+ */
+
+#toastr-container > .toastr,
+#toastr-container > .toastr.toastr-success,
+#toastr-container > .toastr.toastr-error,
+#toastr-container > .toastr.toastr-warning,
+#toastr-container > .toastr.toastr-info,
+.toastr.toastr-success,
+.toastr.toastr-error,
+.toastr.toastr-warning,
+.toastr.toastr-info {
+	background-image: none !important;
+	background-repeat: no-repeat !important;
+	background-position: initial !important;
+	background-size: auto !important;
+}
+
+.toastr {
+	--toastr-accent: #4da3ff;
+
+	position: relative;
+	display: grid !important;
+	grid-template-columns: 2.375rem minmax(0, 1fr);
+	grid-auto-rows: auto;
+	align-items: center;
+	column-gap: 0.875rem;
+	row-gap: 0.125rem;
+
+	width: 24rem !important;
+	min-height: 4.625rem;
+	margin: 0 0 0.75rem !important;
+	padding: 0.9375rem 2.75rem 0.9375rem 1rem !important;
+	overflow: hidden;
+
+	font-family: inherit;
+	color: #e9edf4 !important;
+
+	background: #27364f !important;
+	background-image: none !important;
+	border: 1px solid #354761 !important;
+	border-radius: 0.5rem !important;
+	box-shadow:
+		0 3px 8px rgba(16, 24, 40, 0.12),
+		0 16px 36px rgba(16, 24, 40, 0.2) !important;
+	opacity: 1 !important;
+}
+
+/* Icono */
+
+.toastr::before {
+	content: "i";
+	grid-column: 1;
+	grid-row: 1 / span 2;
+	align-self: center;
+
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 2.375rem;
+	height: 2.375rem;
+
+	font-size: 1rem;
+	font-weight: 700;
+	line-height: 1;
+	color: #ffffff;
+
+	background-color: var(--toastr-accent);
+	border-radius: 0.4375rem;
+}
+
+/* Estados */
+
+.toastr-success {
+	--toastr-accent: #32b982;
+}
+
+.toastr-success::before {
+	content: "\2713";
+}
+
+.toastr-error {
+	--toastr-accent: #ed5a67;
+}
+
+.toastr-error::before {
+	content: "\00d7";
+	font-size: 1.375rem;
+	font-weight: 500;
+}
+
+.toastr-warning {
+	--toastr-accent: #e9a832;
+}
+
+.toastr-warning::before {
+	content: "!";
+}
+
+.toastr-info {
+	--toastr-accent: #4d9fff;
+}
+
+/* Contenido */
+
+.toastr-title,
+.toastr-message {
+	grid-column: 2;
+	min-width: 0;
+}
+
+.toastr-title {
+	margin: 0 !important;
+	font-size: 0.9375rem !important;
+	font-weight: 650 !important;
+	line-height: 1.35 !important;
+	letter-spacing: -0.01em;
+	color: #ffffff !important;
+}
+
+.toastr-message {
+	margin: 0 !important;
+	font-size: 0.875rem !important;
+	font-weight: 400 !important;
+	line-height: 1.45 !important;
+	color: #edf1f6 !important;
+}
+
+/* Centrado vertical cuando solamente existe un mensaje */
+
+.toastr:not(:has(.toastr-title)) .toastr-message,
+.toastr .toastr-message:only-of-type {
+	display: flex;
+	align-items: center;
+	min-height: 2.375rem;
+}
+
+/* Botón cerrar */
+
+.toastr .toastr-close-button {
+	position: absolute !important;
+	top: 50% !important;
+	right: 0.875rem !important;
+	left: auto !important;
+	float: none !important;
+
+	width: 1.125rem !important;
+	height: 1.125rem !important;
+	margin: 0 !important;
+	padding: 0 !important;
+
+	color: #aeb8c7 !important;
+	background-color: #aeb8c7 !important;
+	opacity: 0.65 !important;
+	transform: translateY(-50%);
+}
+
+.toastr .toastr-close-button:hover,
+.toastr .toastr-close-button:focus {
+	opacity: 1 !important;
+}
+
+/* Progreso */
+
+.toastr-progress {
+	height: 3px !important;
+	background-color: var(--toastr-accent) !important;
+	opacity: 0.9 !important;
+}
+
+/* Responsive */
+
+@media (max-width: 575.98px) {
+	#toastr-container.toastr-top-right,
+	.toastr-top-right {
+		top: 0.75rem !important;
+		right: 0.75rem !important;
+		left: 0.75rem !important;
+		width: auto !important;
+	}
+
+	.toastr {
+		width: 100% !important;
+		min-width: 0 !important;
+		grid-template-columns: 2.25rem minmax(0, 1fr);
+		column-gap: 0.75rem;
+		padding-left: 0.875rem !important;
+	}
+
+	.toastr::before {
+		width: 2.25rem;
+		height: 2.25rem;
+	}
+}

@@ -5,21 +5,39 @@
 		<div class="app-main flex-column flex-row-fluid">
 			<div class="d-flex flex-column flex-column-fluid">
 				<div id="kt_app_toolbar" class="app-toolbar page-header py-5 py-lg-6">
-					<div id="kt_app_toolbar_container" class="app-container container-fluid page-header-layout">
+					<div
+						id="kt_app_toolbar_container"
+						class="app-container container-fluid page-header-layout"
+					>
 						<div class="page-header-content">
-							<nav aria-label="Navegación actual">
+							<nav aria-label="Migas de pan">
 								<ol class="page-header-breadcrumb">
-									<li class="page-header-breadcrumb-item page-header-breadcrumb-active" aria-current="page">Colaboradores</li>
+									<li
+										class="page-header-breadcrumb-item page-header-breadcrumb-active"
+										aria-current="page"
+									>
+										Colaboradores
+									</li>
 								</ol>
 							</nav>
+
 							<h1 class="page-header-title">Colaboradores</h1>
 						</div>
-						<a [routerLink]="['/users/collaborators/create']"
-							class="btn btn-sm btn-primary "
+
+						<a
+							[routerLink]="['/users/collaborators/create']"
+							class="btn btn-sm btn-primary page-header-action"
 							aria-label="Crear nuevo colaborador"
-							title="Nuevo colaborador">
-							<ion-icon name="person-add-outline" aria-hidden="true"></ion-icon>
-							<span class="app-btn-label">Nuevo colaborador</span>
+							title="Nuevo colaborador"
+						>
+							<ion-icon
+								name="person-add-outline"
+								aria-hidden="true"
+							></ion-icon>
+
+							<span class="page-header-action-text">
+								Nuevo colaborador
+							</span>
 						</a>
 					</div>
 				</div>

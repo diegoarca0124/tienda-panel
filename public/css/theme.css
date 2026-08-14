@@ -150,15 +150,6 @@ body {
 
 
 
-/***/
-
-.toastr {
-	border-radius: 0px !important;
-	backdrop-filter: blur(10px); /* borra solo el fondo */
-	border: 1px solid;
-	width: 400px !important;
-}
-
 /***********************************/
 
 .tagify.form-control {

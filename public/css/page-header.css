@@ -37,10 +37,12 @@
 .page-header-breadcrumb {
 	display: flex;
 	align-items: center;
-	flex-wrap: wrap;
-	gap: 0;
+	flex-wrap: nowrap;
+
+	min-width: 0;
 	margin: 0;
 	padding: 0;
+
 	list-style: none;
 }
 
@@ -48,38 +50,46 @@
 	display: inline-flex;
 	align-items: center;
 	min-width: 0;
-	font-size: 0.6875rem;
-	font-weight: 600;
-	line-height: 1;
-	letter-spacing: 0.045em;
-	text-transform: uppercase;
-	color: #8b95a7;
+
+	font-size: 0.75rem;
+	font-weight: 500;
+	line-height: 1.25;
+	letter-spacing: 0;
+	text-transform: none;
+	white-space: nowrap;
+
+	color: #8a95a6;
 }
 
-.page-header-breadcrumb-item + .page-header-breadcrumb-item::before {
-	content: "";
-	width: 0.3rem;
-	height: 0.3rem;
-	margin: 0 0.625rem;
-	border-top: 1.5px solid #b8c0cc;
-	border-right: 1.5px solid #b8c0cc;
-	transform: rotate(45deg);
+.page-header-breadcrumb-item +
+.page-header-breadcrumb-item::before {
+	content: "/";
+	margin: 0 0.5rem;
+
+	font-weight: 400;
+	color: #c5ccd6;
 }
 
 .page-header-breadcrumb-link {
+	overflow: hidden;
 	color: #7d899b;
 	text-decoration: none;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 	transition: color 140ms ease;
 }
 
 .page-header-breadcrumb-link:hover,
-.page-header-breadcrumb-link:focus {
-	color: #1b84ff;
+.page-header-breadcrumb-link:focus-visible {
+	color: #475467;
 	text-decoration: none;
 }
 
 .page-header-breadcrumb-active {
+	overflow: hidden;
+	font-weight: 600;
 	color: #1b84ff;
+	text-overflow: ellipsis;
 }
 
 /* =========================================================
