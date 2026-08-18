@@ -1,33 +1,70 @@
 :root {
-	--control-height-sm: 35.79px;
-	--control-height-md: 42.93px;
+	/*
+	 * Los botones reutilizan las mismas medidas de forms.css.
+	 * Los valores después de la coma son respaldo.
+	 */
+	--control-height-sm: var(--form-control-height-sm, 2.875rem);
+	--control-height-md: var(--form-control-height-md, 3.25rem);
+
+	--control-text-sm: var(--form-control-text-sm, 0.875rem);
+	--control-text-md: var(--form-control-text-md, 0.9375rem);
+
+	--control-padding-sm: var(--form-control-padding-sm, 0.75rem);
+	--control-padding-md: var(--form-control-padding-md, 0.875rem);
+
+	--control-icon-sm: 1rem;
+	--control-icon-md: 1.125rem;
+
+	--control-gap: 0.5rem;
+	--control-radius: 0.5rem;
 }
 
-/* Inputs */
+/* =========================================================
+   BOTÓN BASE
+========================================================= */
 
-.form-control-sm {
+.btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: var(--control-gap);
+	box-sizing: border-box;
+	font-family: inherit;
+	line-height: 1.2;
+	border-radius: var(--control-radius) !important;
+}
+
+/* =========================================================
+   BOTÓN SM
+   Mismo alto que form-control-sm
+========================================================= */
+
+.btn.btn-sm {
+	box-sizing: border-box !important;
 	height: var(--control-height-sm) !important;
 	min-height: var(--control-height-sm) !important;
+	padding: var(--control-padding-sm) 1rem !important;
+	font-size: var(--control-text-sm) !important;
+	line-height: 1.2 !important;
 }
 
-.form-control-md {
+/* =========================================================
+   BOTÓN MD
+   Mismo alto que form-control-md
+========================================================= */
+
+.btn.btn-md {
+	box-sizing: border-box !important;
 	height: var(--control-height-md) !important;
 	min-height: var(--control-height-md) !important;
+	padding: var(--control-padding-md) !important;
+	font-size: var(--control-text-md) !important;
+	line-height: 1.2 !important;
 }
 
-/* Botones Bootstrap */
-
-.btn-sm {
-	height: var(--control-height-sm);
-	min-height: var(--control-height-sm);
-}
-
-.btn-md {
-	height: var(--control-height-md);
-	min-height: var(--control-height-md);
-}
-
-/* Botones Bootstrap con solo icono */
+/* =========================================================
+   BOTÓN SM CON SOLO ICONO
+========================================================= */
 
 .btn.btn-sm.btn-icon {
 	display: inline-flex;
@@ -36,10 +73,16 @@
 	flex: 0 0 var(--control-height-sm);
 	width: var(--control-height-sm) !important;
 	min-width: var(--control-height-sm) !important;
+	max-width: var(--control-height-sm) !important;
 	height: var(--control-height-sm) !important;
+	min-height: var(--control-height-sm) !important;
 	padding: 0 !important;
-	line-height: 1;
+	line-height: 1 !important;
 }
+
+/* =========================================================
+   BOTÓN MD CON SOLO ICONO
+========================================================= */
 
 .btn.btn-md.btn-icon {
 	display: inline-flex;
@@ -48,24 +91,16 @@
 	flex: 0 0 var(--control-height-md);
 	width: var(--control-height-md) !important;
 	min-width: var(--control-height-md) !important;
+	max-width: var(--control-height-md) !important;
 	height: var(--control-height-md) !important;
+	min-height: var(--control-height-md) !important;
 	padding: 0 !important;
-	line-height: 1;
+	line-height: 1 !important;
 }
 
-.btn.btn-icon i,
-.btn.btn-icon ion-icon {
-	margin: 0;
-	line-height: 1;
-}
-
-.btn {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	gap: 0.5rem;
-	border-radius: 0.5rem !important;
-}
+/* =========================================================
+   ICONOS
+========================================================= */
 
 .btn > i,
 .btn > ion-icon,
@@ -79,10 +114,45 @@
 	line-height: 1;
 }
 
+.btn.btn-sm > i,
+.btn.btn-sm > ion-icon,
+.btn.btn-sm > svg {
+	font-size: var(--control-icon-sm);
+}
+
+.btn.btn-md > i,
+.btn.btn-md > ion-icon,
+.btn.btn-md > svg {
+	font-size: var(--control-icon-md);
+}
+
+.btn.btn-icon i,
+.btn.btn-icon ion-icon,
+.btn.btn-icon svg {
+	margin: 0;
+	line-height: 1;
+}
+
+/* =========================================================
+   TEXTO
+========================================================= */
+
 .btn > span {
 	display: inline-flex;
 	align-items: center;
 	line-height: 1.2;
 }
 
+/* =========================================================
+   SPINNER
+========================================================= */
 
+.btn.btn-sm .spinner-border {
+	width: var(--control-icon-sm);
+	height: var(--control-icon-sm);
+}
+
+.btn.btn-md .spinner-border {
+	width: var(--control-icon-md);
+	height: var(--control-icon-md);
+}

@@ -1,165 +1,582 @@
-<div class="app-page flex-column flex-column-fluid" id="kt_app_page">
+<div
+	class="app-page flex-column flex-column-fluid"
+	id="kt_app_page"
+>
 	<app-topbar></app-topbar>
-	<div class="app-wrapper flex-column flex-row-fluid" id="kt_app_wrapper">
+
+	<div
+		class="app-wrapper flex-column flex-row-fluid"
+		id="kt_app_wrapper"
+	>
 		<app-sidebar></app-sidebar>
+
 		<div class="app-main flex-column flex-row-fluid">
 			<div class="d-flex flex-column flex-column-fluid">
-				<div id="kt_app_toolbar" class="app-toolbar page-header py-5 py-lg-6">
-					<div id="kt_app_toolbar_container" class="app-container container-fluid page-header-layout">
+
+				<div
+					id="kt_app_toolbar"
+					class="app-toolbar page-header py-5 py-lg-6"
+				>
+					<div
+						id="kt_app_toolbar_container"
+						class="app-container container-fluid page-header-layout"
+					>
 						<div class="page-header-content">
 							<nav aria-label="Navegación actual">
 								<ol class="page-header-breadcrumb">
 									<li class="page-header-breadcrumb-item">
-										<a class="page-header-breadcrumb-link" [routerLink]="['/users/collaborators']">Colaboradores</a>
+										<a
+											class="page-header-breadcrumb-link"
+											[routerLink]="['/users/collaborators']"
+										>
+											Colaboradores
+										</a>
 									</li>
-									<li class="page-header-breadcrumb-item page-header-breadcrumb-active" aria-current="page">Nuevo colaborador</li>
+
+									<li
+										class="page-header-breadcrumb-item page-header-breadcrumb-active"
+										aria-current="page"
+									>
+										Nuevo colaborador
+									</li>
 								</ol>
 							</nav>
-							<h1 class="page-header-title">Nuevo colaborador</h1>
+
+							<h1 class="page-header-title">
+								Nuevo colaborador
+							</h1>
 						</div>
 					</div>
 				</div>
 
-				<div class="app-content flex-column-fluid">
+				<div class="app-content flex-column-fluid mt-5">
 					<div class="app-container container-fluid">
-						<div class="row justify-content-center">
-							<div class="col-12 col-xxl-11">
-								<div class="form-card mb-10">
+						<div class="form-card mb-10">
+							<div class="form-card-body">
 
-									<div class="form-card-body">
-										<section class="mb-7">
-											<div class="border-bottom pb-3 mb-4">
-												<h3 class="fs-6 fw-bold text-gray-700 mb-1">Datos personales</h3>
-												<p class="fs-8 text-muted mb-0">Información básica y documento de identidad del colaborador.</p>
+								<section class="mb-7">
+									<header class="border-bottom pb-3 mb-4">
+										<h2 class="form-card-title">
+											Datos personales
+										</h2>
+
+										<p class="form-card-description">
+											Información básica y documento de identidad
+											del colaborador.
+										</p>
+									</header>
+
+									<div class="row g-4">
+
+										<div class="col-12 col-md-6">
+											<div class="form-field">
+												<div
+													class="d-flex align-items-center justify-content-between gap-2"
+												>
+													<label
+														class="form-field-label required"
+														for="collaboratorNames"
+													>
+														Nombres
+													</label>
+
+													<button
+														*ngIf="validationCollaboratorError?.names"
+														type="button"
+														class="form-error-toggle"
+														(click)="fieldErrors.names = !fieldErrors.names"
+													>
+														{{
+															fieldErrors.names
+																? 'Ocultar errores'
+																: 'Ver errores'
+														}}
+													</button>
+												</div>
+
+												<input
+													id="collaboratorNames"
+													type="text"
+													class="form-control form-control-md"
+													placeholder="Ej. Sheldon Lee"
+													name="names"
+													autocomplete="given-name"
+													[(ngModel)]="collaborator.names"
+													[class.is-invalid]="validationCollaboratorError?.names"
+												>
+
+												<p class="form-field-help">
+													Nombres completos del colaborador.
+												</p>
+
+												<div
+													class="validation-wrapper"
+													[class.open]="fieldErrors.names"
+												>
+													<app-validation-popover
+														[errors]="validationCollaboratorError?.names!"
+													></app-validation-popover>
+												</div>
 											</div>
-
-											<div class="row g-4">
-														<div class="col-12 col-md-6">
-															<div class="form-field">
-																<div class="d-flex align-items-center justify-content-between gap-2">
-																	<label class="form-field-label required" for="collaboratorNames">Nombres</label>
-																	<button *ngIf="validationCollaboratorError?.names" type="button" class="form-error-toggle" (click)="fieldErrors.names = !fieldErrors.names">{{ fieldErrors.names ? 'Ocultar errores' : 'Ver errores' }}</button>
-																</div>
-																<input id="collaboratorNames" type="text" class="form-control form-control-md" placeholder="Ej. Sheldon Lee" name="names" [(ngModel)]="collaborator.names" [class.is-invalid]="validationCollaboratorError?.names">
-																<p class="form-field-help">Nombres completos del colaborador.</p>
-																<div class="validation-wrapper" [class.open]="fieldErrors.names"><app-validation-popover [errors]="validationCollaboratorError?.names!"></app-validation-popover></div>
-															</div>
-														</div>
-
-														<div class="col-12 col-md-6">
-															<div class="form-field">
-																<div class="d-flex align-items-center justify-content-between gap-2">
-																	<label class="form-field-label required" for="collaboratorSurname">Apellidos</label>
-																	<button *ngIf="validationCollaboratorError?.surname" type="button" class="form-error-toggle" (click)="fieldErrors.surname = !fieldErrors.surname">{{ fieldErrors.surname ? 'Ocultar errores' : 'Ver errores' }}</button>
-																</div>
-																<input id="collaboratorSurname" type="text" class="form-control form-control-md" placeholder="Ej. Cooper" name="surname" [(ngModel)]="collaborator.surname" [class.is-invalid]="validationCollaboratorError?.surname">
-																<p class="form-field-help">Apellidos completos del colaborador.</p>
-																<div class="validation-wrapper" [class.open]="fieldErrors.surname"><app-validation-popover [errors]="validationCollaboratorError?.surname!"></app-validation-popover></div>
-															</div>
-														</div>
-
-														<div class="col-12 col-md-6">
-															<div class="form-field">
-																<div class="d-flex align-items-center justify-content-between gap-2">
-																	<label class="form-field-label required" for="collaboratorDocumentType">Tipo de documento</label>
-																	<button *ngIf="validationCollaboratorError?.type_document" type="button" class="form-error-toggle" (click)="fieldErrors.type_document = !fieldErrors.type_document">{{ fieldErrors.type_document ? 'Ocultar errores' : 'Ver errores' }}</button>
-																</div>
-																<ng-select id="collaboratorDocumentType" [items]="documentsOptions" bindLabel="name" bindValue="value" name="type_document" [(ngModel)]="collaborator.type_document" placeholder="Seleccionar documento" [clearable]="false" [closeOnSelect]="true" appendTo="body" dropdownPanelClass="app-select-panel" class="app-select app-select-md" [class.ng-select-invalid]="validationCollaboratorError?.type_document"></ng-select>
-																<p class="form-field-help">Documento oficial de identificación.</p>
-																<div class="validation-wrapper" [class.open]="fieldErrors.type_document"><app-validation-popover [errors]="validationCollaboratorError?.type_document!"></app-validation-popover></div>
-															</div>
-														</div>
-
-														<div class="col-12 col-md-6">
-															<div class="form-field">
-																<div class="d-flex align-items-center justify-content-between gap-2">
-																	<label class="form-field-label required" for="collaboratorDocumentNumber">Número de documento</label>
-																	<button *ngIf="validationCollaboratorError?.number_document" type="button" class="form-error-toggle" (click)="fieldErrors.number_document = !fieldErrors.number_document">{{ fieldErrors.number_document ? 'Ocultar errores' : 'Ver errores' }}</button>
-																</div>
-																<input id="collaboratorDocumentNumber" type="text" class="form-control form-control-md" placeholder="Ingresar número" name="number_document" [(ngModel)]="collaborator.number_document" [disabled]="!collaborator.type_document" [imask]="{ mask: (collaborator.type_document?.name == 'DNI') ? '00000000' : '0000000000000000000', unmask: true }" [class.is-invalid]="validationCollaboratorError?.number_document">
-																<p class="form-field-help">Primero selecciona el tipo de documento.</p>
-																<div class="validation-wrapper" [class.open]="fieldErrors.number_document"><app-validation-popover [errors]="validationCollaboratorError?.number_document!"></app-validation-popover></div>
-															</div>
-														</div>
-											</div>
-										</section>
-
-										<section>
-											<div class="border-bottom pb-3 mb-4">
-												<h3 class="fs-6 fw-bold text-gray-700 mb-1">Contacto y acceso</h3>
-												<p class="fs-8 text-muted mb-0">Canales de contacto, rol y credenciales de acceso.</p>
-											</div>
-
-											<div class="row g-4">
-														<div class="col-12 col-md-6">
-															<div class="form-field">
-																<div class="d-flex align-items-center justify-content-between gap-2">
-																	<label class="form-field-label required" for="collaboratorEmail">Correo electrónico</label>
-																	<button *ngIf="validationCollaboratorError?.email" type="button" class="form-error-toggle" (click)="fieldErrors.email = !fieldErrors.email">{{ fieldErrors.email ? 'Ocultar errores' : 'Ver errores' }}</button>
-																</div>
-																<input id="collaboratorEmail" type="email" class="form-control form-control-md" placeholder="nombre@empresa.com" name="email" [(ngModel)]="collaborator.email" [class.is-invalid]="validationCollaboratorError?.email">
-																<p class="form-field-help">Se utilizará para iniciar sesión y recibir avisos.</p>
-																<div class="validation-wrapper" [class.open]="fieldErrors.email"><app-validation-popover [errors]="validationCollaboratorError?.email!"></app-validation-popover></div>
-															</div>
-														</div>
-
-														<div class="col-12 col-md-6">
-															<div class="form-field">
-																<div class="d-flex align-items-center justify-content-between gap-2">
-																	<label class="form-field-label required" for="collaboratorPhone">Teléfono</label>
-																	<button *ngIf="validationCollaboratorError?.phone" type="button" class="form-error-toggle" (click)="fieldErrors.phone = !fieldErrors.phone">{{ fieldErrors.phone ? 'Ocultar errores' : 'Ver errores' }}</button>
-																</div>
-																<input id="collaboratorPhone" type="text" class="form-control form-control-md" placeholder="987 654 321" name="phone" [(ngModel)]="collaborator.phone" [imask]="{ mask: '000000000', unmask: true }" [class.is-invalid]="validationCollaboratorError?.phone">
-																<p class="form-field-help">Número de contacto con prefijo peruano.</p>
-																<div class="validation-wrapper" [class.open]="fieldErrors.phone"><app-validation-popover [errors]="validationCollaboratorError?.phone!"></app-validation-popover></div>
-															</div>
-														</div>
-
-														<div class="col-12 col-md-6">
-															<div class="form-field">
-																<div class="d-flex align-items-center justify-content-between gap-2">
-																	<label class="form-field-label required" for="collaboratorRole">Rol</label>
-																	<button *ngIf="validationCollaboratorError?.role" type="button" class="form-error-toggle" (click)="fieldErrors.role = !fieldErrors.role">{{ fieldErrors.role ? 'Ocultar errores' : 'Ver errores' }}</button>
-																</div>
-																<ng-select id="collaboratorRole" [items]="rolesOptions" bindLabel="name" bindValue="value" name="role" [(ngModel)]="collaborator.role" placeholder="Seleccionar rol" [clearable]="false" [closeOnSelect]="true" [searchable]="false" appendTo="body" dropdownPanelClass="app-select-panel" class="app-select app-select-md" [class.ng-select-invalid]="validationCollaboratorError?.role"></ng-select>
-																<p class="form-field-help">Nivel de acceso que tendrá en el sistema.</p>
-																<div class="validation-wrapper" [class.open]="fieldErrors.role"><app-validation-popover [errors]="validationCollaboratorError?.role!"></app-validation-popover></div>
-															</div>
-														</div>
-
-														<div class="col-12 col-md-6">
-															<div class="form-field">
-																<div class="d-flex align-items-center justify-content-between gap-2">
-																	<label class="form-field-label required" for="collaboratorPassword">Contraseña</label>
-																	<button *ngIf="validationCollaboratorError?.password" type="button" class="form-error-toggle" (click)="fieldErrors.password = !fieldErrors.password">{{ fieldErrors.password ? 'Ocultar errores' : 'Ver errores' }}</button>
-																</div>
-																<div class="input-group form-input-group form-password-group" [class.has-error]="validationCollaboratorError?.password">
-																	<input id="collaboratorPassword" type="text" class="form-control form-control-md" placeholder="Contraseña segura" name="password" [(ngModel)]="collaborator.password">
-																	<button type="button" class="btn form-password-generate" (click)="generatePassword()">Generar</button>
-																</div>
-																<p class="form-field-help">Mínimo ocho caracteres; puedes generarla automáticamente.</p>
-																<div class="validation-wrapper" [class.open]="fieldErrors.password"><app-validation-popover [errors]="validationCollaboratorError?.password!"></app-validation-popover></div>
-															</div>
-														</div>
-											</div>
-										</section>
-									</div>
-
-									<footer class="form-card-footer">
-										<div class="d-flex flex-column-reverse flex-sm-row align-items-stretch align-items-sm-center justify-content-end gap-2">
-											
-											<button class="btn btn-primary btn-sm d-inline-flex align-items-center justify-content-center gap-2 px-5" type="button" [disabled]="isCreateCollaboratorLoading" (click)="!isCreateCollaboratorLoading && createCollaborator()">
-												<span *ngIf="isCreateCollaboratorLoading" class="spinner-border spinner-border-sm" aria-hidden="true"></span>
-												<i *ngIf="!isCreateCollaboratorLoading" class="bi bi-person-plus" aria-hidden="true"></i>
-												<span>{{ isCreateCollaboratorLoading ? 'Creando...' : 'Crear colaborador' }}</span>
-											</button>
 										</div>
-									</footer>
-								</div>
+
+										<div class="col-12 col-md-6">
+											<div class="form-field">
+												<div
+													class="d-flex align-items-center justify-content-between gap-2"
+												>
+													<label
+														class="form-field-label required"
+														for="collaboratorSurname"
+													>
+														Apellidos
+													</label>
+
+													<button
+														*ngIf="validationCollaboratorError?.surname"
+														type="button"
+														class="form-error-toggle"
+														(click)="fieldErrors.surname = !fieldErrors.surname"
+													>
+														{{
+															fieldErrors.surname
+																? 'Ocultar errores'
+																: 'Ver errores'
+														}}
+													</button>
+												</div>
+
+												<input
+													id="collaboratorSurname"
+													type="text"
+													class="form-control form-control-md"
+													placeholder="Ej. Cooper"
+													name="surname"
+													autocomplete="family-name"
+													[(ngModel)]="collaborator.surname"
+													[class.is-invalid]="validationCollaboratorError?.surname"
+												>
+
+												<p class="form-field-help">
+													Apellidos completos del colaborador.
+												</p>
+
+												<div
+													class="validation-wrapper"
+													[class.open]="fieldErrors.surname"
+												>
+													<app-validation-popover
+														[errors]="validationCollaboratorError?.surname!"
+													></app-validation-popover>
+												</div>
+											</div>
+										</div>
+
+										<div class="col-12 col-md-6">
+											<div class="form-field">
+												<div
+													class="d-flex align-items-center justify-content-between gap-2"
+												>
+													<label
+														class="form-field-label required"
+														for="collaboratorDocumentType"
+													>
+														Tipo de documento
+													</label>
+
+													<button
+														*ngIf="validationCollaboratorError?.type_document"
+														type="button"
+														class="form-error-toggle"
+														(click)="fieldErrors.type_document = !fieldErrors.type_document"
+													>
+														{{
+															fieldErrors.type_document
+																? 'Ocultar errores'
+																: 'Ver errores'
+														}}
+													</button>
+												</div>
+
+												<ng-select
+													id="collaboratorDocumentType"
+													class="app-select app-select-md"
+													[items]="documentsOptions"
+													bindLabel="name"
+													bindValue="value"
+													name="type_document"
+													[(ngModel)]="collaborator.type_document"
+													placeholder="Seleccionar documento"
+													[clearable]="false"
+													[closeOnSelect]="true"
+													appendTo="body"
+													dropdownPanelClass="app-select-panel"
+													[class.ng-select-invalid]="validationCollaboratorError?.type_document"
+												></ng-select>
+
+												<p class="form-field-help">
+													Documento oficial de identificación.
+												</p>
+
+												<div
+													class="validation-wrapper"
+													[class.open]="fieldErrors.type_document"
+												>
+													<app-validation-popover
+														[errors]="validationCollaboratorError?.type_document!"
+													></app-validation-popover>
+												</div>
+											</div>
+										</div>
+
+										<div class="col-12 col-md-6">
+											<div class="form-field">
+												<div
+													class="d-flex align-items-center justify-content-between gap-2"
+												>
+													<label
+														class="form-field-label required"
+														for="collaboratorDocumentNumber"
+													>
+														Número de documento
+													</label>
+
+													<button
+														*ngIf="validationCollaboratorError?.number_document"
+														type="button"
+														class="form-error-toggle"
+														(click)="fieldErrors.number_document = !fieldErrors.number_document"
+													>
+														{{
+															fieldErrors.number_document
+																? 'Ocultar errores'
+																: 'Ver errores'
+														}}
+													</button>
+												</div>
+
+												<input
+													id="collaboratorDocumentNumber"
+													type="text"
+													class="form-control form-control-md"
+													placeholder="Ingresar número"
+													name="number_document"
+													[(ngModel)]="collaborator.number_document"
+													[disabled]="!collaborator.type_document"
+													[imask]="{
+														mask:
+															collaborator.type_document?.name == 'DNI'
+																? '00000000'
+																: '0000000000000000000',
+														unmask: true
+													}"
+													[class.is-invalid]="validationCollaboratorError?.number_document"
+												>
+
+												<p class="form-field-help">
+													Primero selecciona el tipo de documento.
+												</p>
+
+												<div
+													class="validation-wrapper"
+													[class.open]="fieldErrors.number_document"
+												>
+													<app-validation-popover
+														[errors]="validationCollaboratorError?.number_document!"
+													></app-validation-popover>
+												</div>
+											</div>
+										</div>
+
+									</div>
+								</section>
+
+								<section>
+									<header class="border-bottom pb-3 mb-4">
+										<h2 class="form-card-title">
+											Contacto y acceso
+										</h2>
+
+										<p class="form-card-description">
+											Canales de contacto, rol y credenciales de acceso.
+										</p>
+									</header>
+
+									<div class="row g-4">
+
+										<div class="col-12 col-md-6">
+											<div class="form-field">
+												<div
+													class="d-flex align-items-center justify-content-between gap-2"
+												>
+													<label
+														class="form-field-label required"
+														for="collaboratorEmail"
+													>
+														Correo electrónico
+													</label>
+
+													<button
+														*ngIf="validationCollaboratorError?.email"
+														type="button"
+														class="form-error-toggle"
+														(click)="fieldErrors.email = !fieldErrors.email"
+													>
+														{{
+															fieldErrors.email
+																? 'Ocultar errores'
+																: 'Ver errores'
+														}}
+													</button>
+												</div>
+
+												<input
+													id="collaboratorEmail"
+													type="email"
+													class="form-control form-control-md"
+													placeholder="nombre@empresa.com"
+													name="email"
+													autocomplete="email"
+													[(ngModel)]="collaborator.email"
+													[class.is-invalid]="validationCollaboratorError?.email"
+												>
+
+												<p class="form-field-help">
+													Se utilizará para iniciar sesión y recibir
+													avisos.
+												</p>
+
+												<div
+													class="validation-wrapper"
+													[class.open]="fieldErrors.email"
+												>
+													<app-validation-popover
+														[errors]="validationCollaboratorError?.email!"
+													></app-validation-popover>
+												</div>
+											</div>
+										</div>
+
+										<div class="col-12 col-md-6">
+											<div class="form-field">
+												<div
+													class="d-flex align-items-center justify-content-between gap-2"
+												>
+													<label
+														class="form-field-label required"
+														for="collaboratorPhone"
+													>
+														Teléfono
+													</label>
+
+													<button
+														*ngIf="validationCollaboratorError?.phone"
+														type="button"
+														class="form-error-toggle"
+														(click)="fieldErrors.phone = !fieldErrors.phone"
+													>
+														{{
+															fieldErrors.phone
+																? 'Ocultar errores'
+																: 'Ver errores'
+														}}
+													</button>
+												</div>
+
+												<input
+													id="collaboratorPhone"
+													type="text"
+													class="form-control form-control-md"
+													placeholder="987 654 321"
+													name="phone"
+													autocomplete="tel"
+													[(ngModel)]="collaborator.phone"
+													[imask]="{
+														mask: '000000000',
+														unmask: true
+													}"
+													[class.is-invalid]="validationCollaboratorError?.phone"
+												>
+
+												<p class="form-field-help">
+													Número de contacto con prefijo peruano.
+												</p>
+
+												<div
+													class="validation-wrapper"
+													[class.open]="fieldErrors.phone"
+												>
+													<app-validation-popover
+														[errors]="validationCollaboratorError?.phone!"
+													></app-validation-popover>
+												</div>
+											</div>
+										</div>
+
+										<div class="col-12 col-md-6">
+											<div class="form-field">
+												<div
+													class="d-flex align-items-center justify-content-between gap-2"
+												>
+													<label
+														class="form-field-label required"
+														for="collaboratorRole"
+													>
+														Rol
+													</label>
+
+													<button
+														*ngIf="validationCollaboratorError?.role"
+														type="button"
+														class="form-error-toggle"
+														(click)="fieldErrors.role = !fieldErrors.role"
+													>
+														{{
+															fieldErrors.role
+																? 'Ocultar errores'
+																: 'Ver errores'
+														}}
+													</button>
+												</div>
+
+												<ng-select
+													id="collaboratorRole"
+													class="app-select app-select-md"
+													[items]="rolesOptions"
+													bindLabel="name"
+													bindValue="value"
+													name="role"
+													[(ngModel)]="collaborator.role"
+													placeholder="Seleccionar rol"
+													[clearable]="false"
+													[closeOnSelect]="true"
+													[searchable]="false"
+													appendTo="body"
+													dropdownPanelClass="app-select-panel"
+													[class.ng-select-invalid]="validationCollaboratorError?.role"
+												></ng-select>
+
+												<p class="form-field-help">
+													Nivel de acceso que tendrá en el sistema.
+												</p>
+
+												<div
+													class="validation-wrapper"
+													[class.open]="fieldErrors.role"
+												>
+													<app-validation-popover
+														[errors]="validationCollaboratorError?.role!"
+													></app-validation-popover>
+												</div>
+											</div>
+										</div>
+
+										<div class="col-12 col-md-6">
+											<div class="form-field">
+												<div
+													class="d-flex align-items-center justify-content-between gap-2"
+												>
+													<label
+														class="form-field-label required"
+														for="collaboratorPassword"
+													>
+														Contraseña
+													</label>
+
+													<button
+														*ngIf="validationCollaboratorError?.password"
+														type="button"
+														class="form-error-toggle"
+														(click)="fieldErrors.password = !fieldErrors.password"
+													>
+														{{
+															fieldErrors.password
+																? 'Ocultar errores'
+																: 'Ver errores'
+														}}
+													</button>
+												</div>
+
+												<div
+													class="input-group form-input-group form-password-group"
+													[class.has-error]="validationCollaboratorError?.password"
+												>
+													<input
+														id="collaboratorPassword"
+														type="text"
+														class="form-control form-control-md"
+														placeholder="Contraseña segura"
+														name="password"
+														autocomplete="new-password"
+														[(ngModel)]="collaborator.password"
+													>
+
+													<button
+														type="button"
+														class="btn btn-md btn-light-primary"
+														(click)="generatePassword()"
+													>
+														Generar
+													</button>
+												</div>
+
+												<p class="form-field-help">
+													Mínimo ocho caracteres; puedes generarla
+													automáticamente.
+												</p>
+
+												<div
+													class="validation-wrapper"
+													[class.open]="fieldErrors.password"
+												>
+													<app-validation-popover
+														[errors]="validationCollaboratorError?.password!"
+													></app-validation-popover>
+												</div>
+											</div>
+										</div>
+
+									</div>
+								</section>
+
 							</div>
+
+							<footer class="form-card-footer">
+								<div
+									class="d-flex flex-column-reverse flex-sm-row align-items-stretch align-items-sm-center justify-content-end gap-2"
+								>
+									<button
+										type="button"
+										class="btn btn-primary btn-sm d-inline-flex align-items-center justify-content-center gap-2 px-5"
+										[disabled]="isCreateCollaboratorLoading"
+										(click)="!isCreateCollaboratorLoading && createCollaborator()"
+									>
+										<span
+											*ngIf="isCreateCollaboratorLoading"
+											class="spinner-border spinner-border-sm"
+											aria-hidden="true"
+										></span>
+
+										<i
+											*ngIf="!isCreateCollaboratorLoading"
+											class="bi bi-person-plus"
+											aria-hidden="true"
+										></i>
+
+										<span>
+											{{
+												isCreateCollaboratorLoading
+													? 'Creando...'
+													: 'Crear colaborador'
+											}}
+										</span>
+									</button>
+								</div>
+							</footer>
 						</div>
 					</div>
 				</div>
+
 			</div>
 		</div>
 	</div>

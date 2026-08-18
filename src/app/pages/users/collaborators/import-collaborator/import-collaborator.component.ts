@@ -124,6 +124,29 @@ export class ImportCollaboratorComponent implements OnDestroy {
     fileReader.readAsArrayBuffer(this.importConfiguration.file);
   }
 
+  selectColumnField(
+      column: ImportColumn,
+      fieldKey: string,
+  ): void {
+      if (!fieldKey) {
+          column.key = '';
+          column.inputType = '';
+          column.inputValues = [];
+
+          return;
+      }
+
+      const field = this.availableFields.find(
+          (item) => item.key === fieldKey,
+      );
+
+      if (!field) {
+          return;
+      }
+
+      this.applyFieldToColumn(column, field);
+  }
+
   hasCellError(rowIndex: number, fieldKey: string): boolean {
     const validationRows = this.dataValidationErrors?.data?.[0] || [];
     const rowErrors = validationRows.find((item: any) => item[rowIndex]);

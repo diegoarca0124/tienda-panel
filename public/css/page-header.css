@@ -87,7 +87,6 @@
 
 .page-header-breadcrumb-active {
 	overflow: hidden;
-	font-weight: 600;
 	color: #1b84ff;
 	text-overflow: ellipsis;
 }

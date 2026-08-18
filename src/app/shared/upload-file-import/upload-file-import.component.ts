@@ -1,92 +1,160 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output, SimpleChanges } from '@angular/core';
+import {
+    Component,
+    CUSTOM_ELEMENTS_SCHEMA,
+    EventEmitter,
+    Input,
+    OnChanges,
+    Output,
+    SimpleChanges,
+} from '@angular/core';
+
 declare const toastr: any;
-declare const $:any;
 
 @Component({
-  selector: 'app-upload-file-import',
-  imports: [
-    CommonModule,
-  ],
-  templateUrl: './upload-file-import.component.html',
-  styleUrl: './upload-file-import.component.css'
+    selector: 'app-upload-file-import',
+    standalone: true,
+    imports: [CommonModule],
+    templateUrl: './upload-file-import.component.html',
+    styleUrl: './upload-file-import.component.css',
+	schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
 })
-export class UploadFileImportComponent {
-  	imagePreview: string | null = "";
-	fileName: string | null = null;
+export class UploadFileImportComponent implements OnChanges {
+    @Input() inputId = `fileInput-${Math.random()
+        .toString(36)
+        .substring(2, 9)}`;
 
-	@Output() fileSelected = new EventEmitter<File | null>();
-	@Output() validationError = new EventEmitter<string | null>();
-	@Input() inputId: any = `fileInput-${Math.random().toString(36).substring(2, 9)}`;
-	@Input() hasError: any = '';
-	@Input() previewImage: any = false;
-	public isLoading = false;
+    @Input() hasError: string | boolean | string[] | null = null;
+    @Input() previewImage: string | false | null = null;
 
-  constructor() {}
+    @Output() fileSelected = new EventEmitter<File | null>();
+    @Output() validationError = new EventEmitter<string | null>();
 
-	ngOnChanges(changes: SimpleChanges) {
-		if (changes['previewImage'] && changes['previewImage'].currentValue) {
-			this.imagePreview = changes['previewImage'].currentValue;
-			this.fileName = this.previewImage.split('/').pop() || '';
-		}
-	}
+    public imagePreview: string | null = null;
+    public fileName: string | null = null;
 
-	ngOnInit() {}
+    private readonly allowedExtensions = ['xls', 'xlsx', 'csv'];
 
-	onFileChange(event: Event): void {
-		const input = event.target as HTMLInputElement;
-		if (input.files && input.files.length > 0) {
-			const file = input.files[0];
-      const fileExtesion = file.name.split('.').pop()?.toLowerCase()!;
-			// Validar tipo
-			const allowedTypes = [
-        'application/vnd.ms-excel', // .xls
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // .xlsx
-        'text/csv'
-      ];
+    private readonly allowedTypes = [
+        'application/vnd.ms-excel',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'text/csv',
+    ];
 
-      const fileExtension = file.name.split('.').pop()?.toLowerCase();
+    private readonly maxFileSize = 10 * 1024 * 1024;
 
-      const allowedExtensions = ['xls', 'xlsx', 'csv'];
+    ngOnChanges(changes: SimpleChanges): void {
+        const previewChange = changes['previewImage'];
 
-      if (!allowedTypes.includes(file.type) && !allowedExtensions.includes(fileExtension || '')) {
-        this.setError('Solo se permiten archivos Excel (.xls, .xlsx) o CSV.');
-        return;
-      }
+        if (!previewChange) {
+            return;
+        }
 
-			// Validar tamaño (2MB)
-			const maxSize = 10 * 1024 * 1024;
-			if (file.size > maxSize) {
-				this.setError('El archivo debe pesar menos de 10Mb.');
-				return;
-			}
-      console.log(fileExtension);
-      
-			this.fileName = file.name;
-      this.imagePreview = (fileExtesion == 'csv') ? 'images/svg/csv-file.png' : 'images/svg/xls.png';
-      this.fileSelected.emit(file);
-      this.validationError.emit(null);
-      this.hasError = false;
-		}
-	}
+        const preview = previewChange.currentValue;
 
-	clearImage(): void {
-		console.log(this.inputId);
-		
-		this.imagePreview = null;
-		this.fileName = null;
-		this.fileSelected.emit(null);
-		this.validationError.emit(null);
-		this.hasError = false;
-		$('#'+this.inputId).val('');
-	}
+        if (typeof preview === 'string' && preview.length > 0) {
+            this.imagePreview = preview;
+            this.fileName = preview.split('/').pop() || 'Archivo seleccionado';
+            return;
+        }
 
-	private setError(message: string) {
-		toastr.error(message);
-		this.imagePreview = null;
-		this.fileName = null;
-		this.fileSelected.emit(null);
-		this.validationError.emit(message);
-		this.hasError = true;
-	}
+        if (!preview) {
+            this.imagePreview = null;
+            this.fileName = null;
+        }
+    }
+
+    onFileChange(event: Event): void {
+        const input = event.target as HTMLInputElement;
+        const file = input.files?.[0];
+
+        if (!file) {
+            return;
+        }
+
+        const extension = this.getFileExtension(file.name);
+
+        if (!this.isAllowedFile(file, extension)) {
+            this.setError(
+                'Solo se permiten archivos Excel (.xls, .xlsx) o CSV.',
+                input,
+            );
+            return;
+        }
+
+        if (file.size > this.maxFileSize) {
+            this.setError(
+                'El archivo debe pesar menos de 10 MB.',
+                input,
+            );
+            return;
+        }
+
+        this.fileName = file.name;
+        this.imagePreview =
+            extension === 'csv'
+                ? 'images/svg/csv-file.png'
+                : 'images/svg/xls.png';
+
+        this.fileSelected.emit(file);
+        this.validationError.emit(null);
+    }
+
+    clearImage(event?: Event): void {
+        event?.preventDefault();
+        event?.stopPropagation();
+
+        this.imagePreview = null;
+        this.fileName = null;
+
+        this.resetInput();
+
+        this.fileSelected.emit(null);
+        this.validationError.emit(null);
+    }
+
+    private getFileExtension(fileName: string): string {
+        return fileName.split('.').pop()?.toLowerCase() ?? '';
+    }
+
+    private isAllowedFile(file: File, extension: string): boolean {
+        const hasAllowedExtension =
+            this.allowedExtensions.includes(extension);
+
+        /*
+         * Algunos navegadores no proporcionan el MIME de archivos CSV.
+         * Por eso también se valida la extensión.
+         */
+        const hasAllowedType =
+            !file.type || this.allowedTypes.includes(file.type);
+
+        return hasAllowedExtension && hasAllowedType;
+    }
+
+    private setError(
+        message: string,
+        input: HTMLInputElement,
+    ): void {
+        this.imagePreview = null;
+        this.fileName = null;
+
+        input.value = '';
+
+        this.fileSelected.emit(null);
+        this.validationError.emit(message);
+
+        if (typeof toastr !== 'undefined') {
+            toastr.error(message);
+        }
+    }
+
+    private resetInput(): void {
+        const input = document.getElementById(
+            this.inputId,
+        ) as HTMLInputElement | null;
+
+        if (input) {
+            input.value = '';
+        }
+    }
 }

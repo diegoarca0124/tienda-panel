@@ -1,36 +1,53 @@
-<input 
-	type="file"
-	[id]="inputId"
-	class="d-none"
-	accept="
-		.xls,
-		.xlsx,
-		.csv,
-		application/vnd.ms-excel,
-		application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,
-		text/csv
-	"
-	(change)="onFileChange($event)" 
-/>
+<div class="position-relative w-100">
+    <input
+        type="file"
+        class="d-none"
+        [id]="inputId"
+        accept=".xls,.xlsx,.csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/csv"
+        (change)="onFileChange($event)"
+    />
 
-<div class="w-100">
-	<label
-		[for]="inputId"
-		class="upload-label flex-fill"
-		[ngClass]="{ 'border-danger': hasError }"
-		style="justify-content: space-between"
-		[title]="fileName"
-	>
-		<ng-container *ngIf="imagePreview; else emptyState">
-			<div class="d-flex align-items-center gap-3 flex-content">
-				<img [src]="imagePreview" alt="Preview" class="preview-img" />
-				<span class="file-name">{{ fileName }}</span>
-			</div>
-			<button type="button" class="btn-clear fs-7 fw-700" (click)="clearImage(); $event.stopPropagation()">✕</button>
-		</ng-container>
+    <label
+        class="form-control form-control-md upload-file-control mb-0"
+        [class.is-invalid]="hasError"
+        [class.pe-12]="fileName"
+        [for]="inputId"
+        [title]="fileName || 'Seleccionar archivo'"
+    >
+        <ng-container *ngIf="fileName; else emptyState">
+            <span class="upload-file-content">
+                <img
+                    *ngIf="imagePreview"
+                    class="upload-file-icon"
+                    [src]="imagePreview"
+                    alt=""
+                    aria-hidden="true"
+                />
 
-		<ng-template #emptyState>
-			<span class="placeholder-text">Sube el archivo aquí</span>
-		</ng-template>
-	</label>
+                <span class="upload-file-name">
+                    {{ fileName }}
+                </span>
+            </span>
+        </ng-container>
+
+        <ng-template #emptyState>
+            <span class="text-muted fw-normal">
+                Seleccionar archivo Excel o CSV
+            </span>
+        </ng-template>
+    </label>
+
+    <button
+        *ngIf="fileName"
+        type="button"
+        class="upload-file-clear"
+        (click)="clearImage($event)"
+        aria-label="Quitar archivo seleccionado"
+        title="Quitar archivo"
+    >
+        <ion-icon
+            name="close-outline"
+            aria-hidden="true"
+        ></ion-icon>
+    </button>
 </div>

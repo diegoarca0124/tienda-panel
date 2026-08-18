@@ -25,13 +25,10 @@
 .list-filter-label {
 	margin: 0;
 	padding-left: 0.125rem;
-
-	font-size: 0.625rem;
-	font-weight: 700;
+	font-size: 0.8125rem;
+	font-weight: 500;
 	line-height: 1;
-	letter-spacing: 0.07em;
-	text-transform: uppercase;
-	color: #667085;
+	color: #2d3036;
 }
 
 .list-filter-item ng-select {

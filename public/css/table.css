@@ -45,11 +45,11 @@
 	text-transform: uppercase;
 	vertical-align: middle;
 	white-space: nowrap;
-	color: #ffffff;
-	background: #071437;
+	color: #273c66;
+	background: #e3e6ea;
 	border: 0;
-	border-right: 1px solid rgba(255, 255, 255, 0.14);
-	border-bottom: 1px solid #465771;
+	border-right: 1px solid #fff;
+	border-bottom: 1px solid #fff;
 }
 
 .table-wrapper .custom-table thead th:last-child {

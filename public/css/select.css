@@ -2,79 +2,155 @@
    SELECT GLOBAL
 ========================================================= */
 
+:root {
+	/*
+	 * Los ng-select reutilizan las medidas de forms.css.
+	 * Los segundos valores son medidas de respaldo.
+	 */
+	--select-height-sm: var(--form-control-height-sm, 2.875rem);
+	--select-height-md: var(--form-control-height-md, 3.25rem);
+
+	--select-padding-sm: var(--form-control-padding-sm, 0.75rem);
+	--select-padding-md: var(--form-control-padding-md, 0.875rem);
+
+	--select-text-sm: var(--form-control-text-sm, 0.875rem);
+	--select-text-md: var(--form-control-text-md, 0.9375rem);
+
+	--select-line-height: 1.4;
+	--select-radius: var(--form-control-radius, 0.475rem);
+	--select-border: var(--form-control-border, #d7dee8);
+	--select-focus: var(--form-control-focus, #84bbff);
+	--select-error: var(--form-control-error, #f04438);
+}
+
+/* =========================================================
+   CONTENEDOR GENERAL
+========================================================= */
+
 .app-select {
 	display: block;
+	box-sizing: border-box;
 	width: 100%;
+	margin: 0;
 	font-family: inherit;
 }
 
 .app-select.ng-select .ng-select-container {
+	box-sizing: border-box;
 	width: 100%;
+	margin: 0;
 	padding: 0;
 	color: #344054;
 	background-color: #ffffff;
-	border: 1px solid #d7dee8;
-	border-radius: 0.475rem;
+	border: 1px solid var(--select-border);
+	border-radius: var(--select-radius);
 	box-shadow: none;
-	box-sizing: border-box;
-	transition: border-color 150ms ease, box-shadow 150ms ease, background-color 150ms ease;
+	transition:
+		border-color 150ms ease,
+		box-shadow 150ms ease,
+		background-color 150ms ease;
 }
-
 
 .app-select.ng-select.ng-select-focused .ng-select-container,
 .app-select.ng-select.ng-select-opened .ng-select-container {
-	border-color: #8fc2ff;
-	box-shadow: 0 0 0 3px rgba(27, 132, 255, 0.1);
+	border-color: var(--select-focus);
+	box-shadow: 0 0 0 0.1875rem rgba(27, 132, 255, 0.1);
 }
 
 /* =========================================================
-   TAMAÑO PEQUEÑO — 36px
-   Para filtros y barras de búsqueda
+   TAMAÑO SM
+   Igual que form-control-sm y form-select-sm
 ========================================================= */
 
-.app-select.app-select-sm.ng-select {
-	height: 2.25rem;
-	min-height: 2.25rem;
+.form-control-sm,
+.form-select-sm,
+.app-select.app-select-sm.ng-select,
+.app-select.app-select-sm.ng-select .ng-select-container {
+	box-sizing: border-box !important;
+	height: var(--select-height-sm) !important;
+	min-height: var(--select-height-sm) !important;
+	max-height: var(--select-height-sm) !important;
+	font-size: var(--select-text-sm) !important;
+	line-height: var(--select-line-height) !important;
 }
 
-.app-select.app-select-sm.ng-select.ng-select-single .ng-select-container {
-	height: 2.25rem !important;
-	min-height: 2.25rem !important;
+.form-control-sm,
+.form-select-sm {
+	padding: var(--select-padding-sm) !important;
 }
 
 .app-select.app-select-sm.ng-select .ng-value-container {
-	height: 100%;
-	padding: 0 0.25rem 0 0.75rem;
+	box-sizing: border-box !important;
+	height: 100% !important;
+	min-height: 0 !important;
+	padding: var(--select-padding-sm) !important;
+	font-size: var(--select-text-sm) !important;
+	line-height: var(--select-line-height) !important;
 }
 
 .app-select.app-select-sm.ng-select .ng-arrow-wrapper {
-	width: 2rem;
+	flex: 0 0 var(--select-height-sm);
+	width: var(--select-height-sm);
 	height: 100%;
+}
+
+.app-select.app-select-sm.ng-select .ng-placeholder,
+.app-select.app-select-sm.ng-select .ng-value-label,
+.app-select.app-select-sm.ng-select .app-select-value-text,
+.app-select.app-select-sm.ng-select
+	.ng-value-container
+	.ng-input
+	> input {
+	font-size: var(--select-text-sm) !important;
+	line-height: var(--select-line-height) !important;
 }
 
 /* =========================================================
-   TAMAÑO MEDIANO — 52px
-   Para formularios
+   TAMAÑO MD
+   Igual que form-control-md y form-select-md
 ========================================================= */
 
-.app-select.app-select-md.ng-select {
-	height: 3.25rem;
-	min-height: 3.25rem;
+.form-control-md,
+.form-select-md,
+.app-select.app-select-md.ng-select,
+.app-select.app-select-md.ng-select .ng-select-container {
+	box-sizing: border-box !important;
+	height: var(--select-height-md) !important;
+	min-height: var(--select-height-md) !important;
+	max-height: var(--select-height-md) !important;
+	font-size: var(--select-text-md) !important;
+	line-height: var(--select-line-height) !important;
 }
 
-.app-select.app-select-md.ng-select.ng-select-single .ng-select-container {
-	height: 3.25rem !important;
-	min-height: 3.25rem !important;
+.form-control-md,
+.form-select-md {
+	padding: var(--select-padding-md) !important;
 }
 
 .app-select.app-select-md.ng-select .ng-value-container {
-	height: 100%;
-	padding: 0 0.375rem 0 1rem;
+	box-sizing: border-box !important;
+	height: 100% !important;
+	min-height: 0 !important;
+	padding: var(--select-padding-md) !important;
+	font-size: var(--select-text-md) !important;
+	line-height: var(--select-line-height) !important;
 }
 
 .app-select.app-select-md.ng-select .ng-arrow-wrapper {
-	width: 2.5rem;
+	flex: 0 0 var(--select-height-md);
+	width: var(--select-height-md);
 	height: 100%;
+}
+
+.app-select.app-select-md.ng-select .ng-placeholder,
+.app-select.app-select-md.ng-select .ng-value-label,
+.app-select.app-select-md.ng-select .app-select-value-text,
+.app-select.app-select-md.ng-select
+	.ng-value-container
+	.ng-input
+	> input {
+	font-size: var(--select-text-md) !important;
+	line-height: var(--select-line-height) !important;
 }
 
 /* =========================================================
@@ -82,11 +158,12 @@
 ========================================================= */
 
 .app-select.ng-select .ng-value-container {
+	position: relative;
 	display: flex;
 	align-items: center;
+	flex: 1 1 auto;
 	min-width: 0;
-	padding-top: 0;
-	padding-bottom: 0;
+	margin: 0;
 }
 
 .app-select.ng-select .ng-value-container .ng-value {
@@ -94,49 +171,62 @@
 	align-items: center;
 	max-width: 100%;
 	margin: 0;
+	padding: 0;
 }
 
 .app-select.ng-select .ng-value-container .ng-input {
-	top: 0;
+	top: 0 !important;
 	display: flex;
 	align-items: center;
+	box-sizing: border-box;
+	width: 100%;
 	height: 100%;
-	padding: 0;
-	padding-left: 13.5px !important;
+	padding: 0 !important;
+	padding-left: 0.875rem !important;
 }
 
 .app-select.ng-select .ng-value-container .ng-input > input {
+	box-sizing: border-box;
+	width: 100%;
 	height: 100%;
+	margin: 0;
 	padding: 0;
 	font-family: inherit;
-	font-size: 0.8125rem;
 	font-weight: 500;
 	color: #344054;
+	background: transparent;
+	border: 0;
+	outline: 0;
+}
+
+/* Los selectores no buscables no muestran el input interno */
+
+.app-select.ng-select.ng-select-single:not(.ng-select-searchable)
+	.ng-value-container
+	.ng-input {
+	display: none;
 }
 
 /* =========================================================
    PLACEHOLDER
 ========================================================= */
 
-.app-select.ng-select .ng-placeholder {
-	position: static;
-	display: flex;
-	align-items: center;
-	margin: 0;
-	padding: 0;
-	font-size: 0.6875rem;
-	font-weight: 500;
-	line-height: 1;
-	letter-spacing: 0.05em;
-	text-transform: uppercase;
-	color: #99a1b7;
-}
-
-.app-select.app-select-md.ng-select .ng-placeholder {
-	font-size: 0.75rem;
-	font-weight: 400;
+.app-select.ng-select .ng-placeholder,
+.app-select.ng-select.ng-select-focused .ng-placeholder,
+.app-select.ng-select.ng-select-opened .ng-placeholder,
+.app-select.ng-select.ng-select-filtered .ng-placeholder {
+	position: static !important;
+	top: auto !important;
+	display: flex !important;
+	align-items: center !important;
+	margin: 0 !important;
+	padding: 0 !important;
+	font-weight: 400 !important;
 	letter-spacing: 0.02em;
 	text-transform: none;
+	color: #99a1c0 !important;
+	transform: none !important;
+	transition: none !important;
 }
 
 /* =========================================================
@@ -147,49 +237,38 @@
 	display: flex;
 	align-items: center;
 	gap: 0.5rem;
+	width: 100%;
 	min-width: 0;
 }
 
 .app-select-value-text {
 	overflow: hidden;
+	flex: 1 1 auto;
 	min-width: 0;
-	font-size: 0.78rem;
 	font-weight: 500;
-	line-height: 1.2;
-	color: #475467;
+	color: #4b5d7b;
 	text-overflow: ellipsis;
 	white-space: nowrap;
 }
-
-.app-select-md .app-select-value-text {
-	font-size: 0.8125rem;
-	color: #344054;
-}
-
-/* Valor predeterminado cuando no existe ng-label-tmp */
 
 .app-select.ng-select .ng-value-label {
 	overflow: hidden;
-	font-size: 0.78rem;
+	min-width: 0;
 	font-weight: 500;
-	line-height: 1.2;
-	color: #475467;
+	color: #4b5d7b;
 	text-overflow: ellipsis;
 	white-space: nowrap;
 }
 
-.ng-option-label{
-	font-size: .9rem;
+.ng-option-label {
+	font-size: 0.9375rem !important;
 	font-weight: 500;
 	color: #475467;
 }
 
-.app-select.app-select-md.ng-select .ng-value-label {
-	font-size: 1rem;
-	color: #344054;
-}
-
-/* Indicador de estado */
+/* =========================================================
+   INDICADOR DE ESTADO
+========================================================= */
 
 .app-select-dot {
 	display: inline-block;
@@ -199,10 +278,15 @@
 	border-radius: 50%;
 }
 
-/* Iconos */
+/* =========================================================
+   ICONOS
+========================================================= */
 
 .app-select-value-icon,
 .app-select-option-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
 	flex: 0 0 auto;
 	font-size: 0.9375rem;
 	color: #7a8699;
@@ -216,25 +300,53 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	flex: 0 0 auto;
+	height: 100%;
 	padding: 0;
 }
 
+/*
+ * Se reemplaza el triángulo predeterminado de ng-select
+ * por una flecha de tamaño fijo.
+ */
 .app-select.ng-select .ng-arrow-wrapper .ng-arrow {
-	width: 0;
-	height: 0;
-	border-color: #98a2b3 transparent transparent;
-	border-style: solid;
-	border-width: 4px 4px 0;
-	transition: transform 150ms ease;
+	position: static !important;
+	top: auto !important;
+	display: block;
+	box-sizing: border-box;
+	width: 0.5rem !important;
+	height: 0.5rem !important;
+	margin: -0.25rem 0 0 !important;
+	padding: 0 !important;
+	background: transparent !important;
+	border: solid #98a2b3 !important;
+	border-width: 0 0.125rem 0.125rem 0 !important;
+	transform: rotate(45deg);
+	transform-origin: center;
+	transition:
+		transform 150ms ease,
+		border-color 150ms ease;
 }
 
-.app-select.ng-select.ng-select-opened .ng-arrow-wrapper .ng-arrow {
-	transform: rotate(180deg);
+/* Misma flecha, mismo tamaño, rotada hacia arriba */
+
+.app-select.ng-select.ng-select-opened
+	.ng-arrow-wrapper
+	.ng-arrow {
+	margin: 0 0 -0.25rem !important;
+	border: solid #98a2b3 !important;
+	border-width: 0 0.125rem 0.125rem 0 !important;
+	transform: rotate(225deg);
 }
 
-.app-select.ng-select .ng-arrow-wrapper::before {
-	display: none;
-	content: none;
+/* Evita iconos adicionales de la plantilla */
+
+.app-select.ng-select .ng-arrow-wrapper::before,
+.app-select.ng-select .ng-arrow-wrapper::after,
+.app-select.ng-select .ng-arrow::before,
+.app-select.ng-select .ng-arrow::after {
+	display: none !important;
+	content: none !important;
 }
 
 /* =========================================================
@@ -259,18 +371,20 @@
 ========================================================= */
 
 .app-select.ng-select.ng-select-invalid .ng-select-container {
-	border-color: #f04438;
+	border-color: var(--select-error);
 }
 
-.app-select.ng-select.ng-select-invalid.ng-select-focused .ng-select-container,
-.app-select.ng-select.ng-select-invalid.ng-select-opened .ng-select-container {
-	border-color: #f04438;
-	box-shadow: 0 0 0 3px rgba(240, 68, 56, 0.1);
+.app-select.ng-select.ng-select-invalid.ng-select-focused
+	.ng-select-container,
+.app-select.ng-select.ng-select-invalid.ng-select-opened
+	.ng-select-container {
+	border-color: var(--select-error);
+	box-shadow: 0 0 0 0.1875rem rgba(240, 68, 56, 0.1);
 }
 
 /* =========================================================
    PANEL DESPLEGABLE
-   Necesario en CSS global por appendTo="body"
+   Debe permanecer global porque usa appendTo="body"
 ========================================================= */
 
 .app-select-panel.ng-dropdown-panel {
@@ -280,14 +394,18 @@
 	background-color: #ffffff;
 	border: 1px solid #e1e6ed;
 	border-radius: 0.5rem;
-	box-shadow: 0 6px 14px rgba(16, 24, 40, 0.08), 0 16px 32px rgba(16, 24, 40, 0.12);
+	box-shadow:
+		0 0.375rem 0.875rem rgba(16, 24, 40, 0.08),
+		0 1rem 2rem rgba(16, 24, 40, 0.12);
 }
 
 .app-select-panel.ng-dropdown-panel .ng-dropdown-panel-items {
 	padding: 0;
 }
 
-.app-select-panel.ng-dropdown-panel .ng-dropdown-panel-items .ng-optgroup {
+.app-select-panel.ng-dropdown-panel
+	.ng-dropdown-panel-items
+	.ng-optgroup {
 	padding: 0.5rem 0.625rem;
 	font-size: 0.6875rem;
 	font-weight: 700;
@@ -304,14 +422,16 @@
 .app-select-panel.ng-dropdown-panel .ng-option {
 	display: flex;
 	align-items: center;
-	min-height: 2.25rem;
+	min-height: 2.625rem;
 	margin: 0;
-	padding: 0.5rem 0.625rem;
+	padding: 0.625rem;
 	color: #475467;
 	background-color: transparent;
 	border-radius: 0.375rem;
 	white-space: normal;
-	transition: color 120ms ease, background-color 120ms ease;
+	transition:
+		color 120ms ease,
+		background-color 120ms ease;
 }
 
 .app-select-panel.ng-dropdown-panel .ng-option.ng-option-marked {
@@ -332,7 +452,9 @@
 	cursor: default;
 }
 
-/* Contenido personalizado */
+/* =========================================================
+   CONTENIDO DE OPCIONES
+========================================================= */
 
 .app-select-option {
 	display: flex;
@@ -346,14 +468,18 @@
 	overflow: hidden;
 	flex: 1 1 auto;
 	min-width: 0;
-	font-size: 0.78rem;
+	font-size: var(--select-text-sm);
 	font-weight: 500;
 	line-height: 1.25;
 	text-overflow: ellipsis;
 	white-space: nowrap;
+	color: #4b5d7b;
 }
 
 .app-select-check {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
 	flex: 0 0 auto;
 	font-size: 1rem;
 	color: #1b84ff;
@@ -361,7 +487,9 @@
 	transition: opacity 120ms ease;
 }
 
-.app-select-panel .ng-option.ng-option-selected .app-select-check {
+.app-select-panel
+	.ng-option.ng-option-selected
+	.app-select-check {
 	opacity: 1;
 }
 
@@ -369,20 +497,24 @@
    SCROLL
 ========================================================= */
 
-.app-select-panel.ng-dropdown-panel .ng-dropdown-panel-items::-webkit-scrollbar {
+.app-select-panel.ng-dropdown-panel
+	.ng-dropdown-panel-items::-webkit-scrollbar {
 	width: 0.375rem;
 }
 
-.app-select-panel.ng-dropdown-panel .ng-dropdown-panel-items::-webkit-scrollbar-track {
+.app-select-panel.ng-dropdown-panel
+	.ng-dropdown-panel-items::-webkit-scrollbar-track {
 	background-color: transparent;
 }
 
-.app-select-panel.ng-dropdown-panel .ng-dropdown-panel-items::-webkit-scrollbar-thumb {
+.app-select-panel.ng-dropdown-panel
+	.ng-dropdown-panel-items::-webkit-scrollbar-thumb {
 	background-color: #d7dee8;
 	border-radius: 1rem;
 }
 
-.app-select-panel.ng-dropdown-panel .ng-dropdown-panel-items::-webkit-scrollbar-thumb:hover {
+.app-select-panel.ng-dropdown-panel
+	.ng-dropdown-panel-items::-webkit-scrollbar-thumb:hover {
 	background-color: #b8c2d1;
 }
 
@@ -394,63 +526,4 @@
 	.app-select-panel.ng-dropdown-panel {
 		max-width: calc(100vw - 1.5rem);
 	}
-
-	.app-select-option-text,
-	.app-select-value-text {
-		font-size: 0.75rem;
-	}
 }
-
-/* =========================================================
-   PLACEHOLDER FIJO AL ABRIR O ENFOCAR EL SELECT
-========================================================= */
-
-.app-select.ng-select .ng-placeholder,
-.app-select.ng-select.ng-select-focused .ng-placeholder,
-.app-select.ng-select.ng-select-opened .ng-placeholder,
-.app-select.ng-select.ng-select-filtered .ng-placeholder {
-	position: static !important;
-	top: auto !important;
-	display: flex !important;
-	align-items: center !important;
-	margin: 0 !important;
-	padding: 0 !important;
-	transform: none !important;
-	transition: none !important;
-
-	font-size: 1rem !important;
-	font-weight: 400 !important;
-	color: #99a1c0 !important;
-}
-
-/* Mantiene centrado el contenido del select */
-
-.app-select.ng-select .ng-select-container .ng-value-container {
-	position: relative;
-	display: flex;
-	align-items: center;
-	height: 100%;
-}
-
-/* El campo interno no debe desplazar el placeholder */
-
-.app-select.ng-select.ng-select-single
-	.ng-select-container
-	.ng-value-container
-	.ng-input {
-	top: 0 !important;
-	display: flex;
-	align-items: center;
-	height: 100%;
-	padding: 0;
-}
-
-/* Los selectores no buscables no necesitan mostrar el input interno */
-
-.app-select.ng-select.ng-select-single:not(.ng-select-searchable)
-	.ng-value-container
-	.ng-input {
-	display: none;
-}
-
-

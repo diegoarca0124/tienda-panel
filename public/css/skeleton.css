@@ -8,7 +8,25 @@
 	--skeleton-radius: 0.5rem;
 	--skeleton-duration: 1.2s;
 	--skeleton-shimmer-width: 150px;
-	--skeleton-input-height: 42.93px;
+
+	/*
+	 * Mismos altos definidos en forms.css.
+	 * Los valores de respaldo son:
+	 * SM: 46px
+	 * MD: 52px
+	 */
+	--skeleton-input-height-sm:
+		var(--form-control-height-sm, 2.875rem);
+
+	--skeleton-input-height-md:
+		var(--form-control-height-md, 3.25rem);
+
+	/*
+	 * Compatibilidad con los skeleton anteriores.
+	 * El tamaño predeterminado continúa siendo MD.
+	 */
+	--skeleton-input-height:
+		var(--skeleton-input-height-md);
 }
 
 /* Base */
@@ -16,6 +34,7 @@
 .skeleton {
 	position: relative;
 	overflow: hidden;
+	box-sizing: border-box;
 	background-color: var(--skeleton-background);
 	border-radius: var(--skeleton-radius);
 }
@@ -69,9 +88,44 @@
 	border-radius: 20px;
 }
 
-.skeleton-input {
+/* =========================================================
+   INPUT Y SELECT PREDETERMINADO
+   MD: 52px
+========================================================= */
+
+.skeleton-input,
+.skeleton-select {
 	width: 100%;
-	height: var(--skeleton-input-height) !important;
+	height: var(--skeleton-input-height-md) !important;
+	min-height: var(--skeleton-input-height-md) !important;
+}
+
+/* =========================================================
+   INPUT Y SELECT SM
+   Mismo alto que form-control-sm y form-select-sm
+========================================================= */
+
+.skeleton-input-sm,
+.skeleton-select-sm,
+.skeleton-input.skeleton-sm,
+.skeleton-select.skeleton-sm {
+	width: 100%;
+	height: var(--skeleton-input-height-sm) !important;
+	min-height: var(--skeleton-input-height-sm) !important;
+}
+
+/* =========================================================
+   INPUT Y SELECT MD
+   Mismo alto que form-control-md y form-select-md
+========================================================= */
+
+.skeleton-input-md,
+.skeleton-select-md,
+.skeleton-input.skeleton-md,
+.skeleton-select.skeleton-md {
+	width: 100%;
+	height: var(--skeleton-input-height-md) !important;
+	min-height: var(--skeleton-input-height-md) !important;
 }
 
 /* Accesibilidad */
@@ -81,7 +135,6 @@
 		animation: none;
 	}
 }
-
 
 /* Formas */
 
@@ -106,8 +159,4 @@
 
 .skeleton-w-60 {
 	width: 60%;
-}
-
-.skeleton-select {
-	height: 3.25rem !important;
 }

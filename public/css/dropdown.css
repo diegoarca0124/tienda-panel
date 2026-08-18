@@ -176,7 +176,7 @@
 	font-size: 0.8125rem;
 	font-weight: 600;
 	line-height: 1.25;
-	color: inherit;
+	color: #4b5d7b;
 	white-space: nowrap;
 }
 
@@ -235,7 +235,7 @@
 ========================================================= */
 
 .action-dropdown-menu-compact {
-	min-width: 13.5rem;
+	min-width: 14.5rem;
 	padding: 0.375rem;
 }
 
