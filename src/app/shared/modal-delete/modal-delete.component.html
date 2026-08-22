@@ -1,44 +1,22 @@
-<div
-	class="modal fade"
-	[id]="id"
-	tabindex="-1"
-	[attr.aria-labelledby]="id + '-title'"
-	[attr.aria-describedby]="id + '-description'"
-	aria-hidden="true"
->
+<div class="modal fade" [id]="id" tabindex="-1" [attr.aria-labelledby]="id + '-title'" [attr.aria-describedby]="id + '-description'" aria-hidden="true">
 	<div class="modal-dialog modal-dialog-centered confirm-modal-dialog">
 		<div class="modal-content confirm-modal-content">
 			<div class="modal-header confirm-modal-header">
 				<div class="confirm-modal-heading">
-
 					<h2 class="confirm-modal-title" [id]="id + '-title'">
 						{{ title }}
 					</h2>
 				</div>
 
-				<button
-					type="button"
-					class="btn-close confirm-modal-close"
-					data-bs-dismiss="modal"
-					aria-label="Cerrar"
-				></button>
+				<button type="button" class="btn-close confirm-modal-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
 			</div>
 
 			<div class="modal-body confirm-modal-body">
-				<div
-					class="confirm-modal-description"
-					[id]="id + '-description'"
-					[innerHTML]="description"
-				></div>
+				<div class="confirm-modal-description" [id]="id + '-description'" [innerHTML]="description"></div>
 			</div>
 
 			<div class="modal-footer confirm-modal-footer">
-				<button
-					type="button"
-					class="btn btn-sm btn-light-dark confirm-modal-button"
-					data-bs-dismiss="modal"
-					[disabled]="loadBtnDelete()"
-				>
+				<button type="button" class="btn btn-sm btn-light-dark confirm-modal-button" data-bs-dismiss="modal" [disabled]="loadBtnDelete()">
 					<span>Cancelar</span>
 				</button>
 
@@ -47,7 +25,7 @@
 					class="btn btn-sm confirm-modal-button"
 					[ngClass]="{
 						'btn-danger': textButton === 'Desactivar' || textButton === 'Eliminar',
-						'btn-primary': textButton === 'Activar'
+						'btn-primary': textButton === 'Activar',
 					}"
 					[disabled]="loadBtnDelete()"
 					(click)="onActionConfirmed()"

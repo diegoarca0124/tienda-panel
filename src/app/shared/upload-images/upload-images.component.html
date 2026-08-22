@@ -1,8 +1,4 @@
-<div 
-	class="upload-container cursor-pointer"
-	[class.dragging]="isDragging"
->
-
+<div class="upload-container cursor-pointer" [class.dragging]="isDragging">
 	<!-- SPINNER -->
 	<div class="loading-overlay" *ngIf="isLoading">
 		<div class="text-center">
@@ -12,30 +8,13 @@
 		</div>
 	</div>
 
-	<label
-		[for]="inputId"
-		class="upload-label cursor-pointer d-flex align-items-center justify-content-center text-center"
-	>
+	<label [for]="inputId" class="upload-label cursor-pointer d-flex align-items-center justify-content-center text-center">
 		<app-icon-upload classIcon="svg-icon-4x me-2"></app-icon-upload>
 		<div class="d-flex flex-column align-items-start justify-content-start">
-			<p class="fw-500 mb-0">
-				Arrastra tus imágenes aquí o haz clic para subir
-			</p>
-			<small class="text-muted text-start">
-				Los archivos que no correspondan a formatos de imagen serán eliminados automáticamente.
-			</small>
+			<p class="fw-500 mb-0">Arrastra tus imágenes aquí o haz clic para subir</p>
+			<small class="text-muted text-start">Los archivos que no correspondan a formatos de imagen serán eliminados automáticamente.</small>
 		</div>
-
 	</label>
 
-	<input
-		#fileInput
-		type="file"
-		[id]="inputId"
-		class="d-none"
-		accept="image/*"
-		multiple
-		(change)="onFilesChange($event)"
-	/>
-
+	<input #fileInput type="file" [id]="inputId" class="d-none" accept="image/*" multiple (change)="onFilesChange($event)" />
 </div>

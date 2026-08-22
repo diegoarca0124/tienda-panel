@@ -2,10 +2,10 @@ export interface AttributeGroupInterface {
 	id?: string;
 	name: string;
 	description?: string;
-	categories: any[],
+	categories: any[];
 	status?: boolean;
 	attributeCategories?: any[];
-	attributes?: number,
+	attributes?: number;
 	createdAt?: Date;
 	updatedAt?: Date;
 	statusAt?: Date;

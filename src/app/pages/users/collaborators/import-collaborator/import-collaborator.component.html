@@ -117,226 +117,249 @@
                             </div>
                         </div>
 
+                        <div class="d-flex flex-column flex-md-row align-items-stretch align-items-md-center justify-content-between gap-3">
+                            <div class="d-flex flex-column flex-sm-row gap-2">
+                                <button type="button" class="btn btn-sm btn-primary" [disabled]="isImportLoading || importedRows.length === 0" (click)="importCollaborators()">
+                                    <span *ngIf="!isImportLoading" class="d-flex align-items-center justify-content-center gap-2">
+                                        <ion-icon name="cloud-upload-outline"></ion-icon>
+                                        Importar
+                                    </span>
+                                    <span *ngIf="isImportLoading" class="d-flex align-items-center justify-content-center gap-2">
+                                        <span class="spinner-border spinner-border-sm"></span>
+                                        Procesando...
+                                    </span>
+                                </button>
+
+                                <button type="button" class="btn btn-sm btn-dark" [disabled]="isImportLoading || importedRows.length === 0" (click)="exportCollaborators()">
+                                    <span class="d-flex align-items-center justify-content-center gap-2">
+                                        <i class="bi bi-filetype-xls"></i>
+                                        Exportar
+                                    </span>
+                                </button>
+                            </div>
+
+                            <button type="button" class="btn btn-sm btn-dark d-flex align-items-center justify-content-center gap-2" data-bs-toggle="modal" [attr.data-bs-target]="importedRows.length > 0 ? '#modalMapColumns' : null" [disabled]="isImportLoading || importedRows.length === 0">
+                                <ion-icon name="git-compare-outline"></ion-icon>
+                                Mapear columnas
+                            </button>
+                        </div>
+
                         <div class="table-wrapper mt-4 mb-7">
                             <table class="table custom-table align-middle mb-0">
                                 <thead>
-                                    <tr>
-                                        <!-- Agregar fila -->
-                                        <th
-                                            class="fixed-xs text-center p-0"
-                                            style="position: unset !important"
-                                        >
-                                            <button
-                                                type="button"
-                                                class="btn btn-icon btn-dark h-25px w-25px"
-                                                placement="top"
-                                                [ngbTooltip]="'Agregar fila'"
-                                                tooltipClass="tooltip-dark"
-                                                container="body"
-                                                (click)="addRow()"
-                                                [disabled]="importedColumns.length === 0"
-                                                aria-label="Agregar fila"
-                                            >
-                                                <ion-icon
-                                                    name="add-outline"
-                                                    class="fs-5"
-                                                    aria-hidden="true"
-                                                ></ion-icon>
-                                            </button>
-                                        </th>
+									<tr>
+										<th class="fixed-xs text-center p-0"></th>
+										<th class="fixed-xs text-center p-0"></th>
+										<th
+											*ngFor="let column of importedColumns; let columnIndex = index"
+											class="fixed-lg p-0"
+											(dragover)="dragOverColumn($event, columnIndex)"
+											(drop)="dropColumn(columnIndex)"
+											[ngClass]="{
+												'column-drag-over': dragOverColumnIndex === columnIndex,
+											}"
+										>
+											<div
+												class="p-3"
+												[ngClass]="{
+													'border-top-active': column.key,
+												}"
+											>
+												<span class="table-cell-title text-truncate-1 text-uppercase">
+													{{ column.label }}
+												</span>
+											</div>
+										</th>
+									</tr>
+									<tr>
+										<!-- Agregar fila -->
+										<th class="fixed-xs text-center p-0" style="position: unset !important">
+											<button
+												type="button"
+												class="btn btn-icon btn-dark h-25px w-25px"
+												placement="top"
+												[ngbTooltip]="'Agregar fila'"
+												tooltipClass="tooltip-dark"
+												container="body"
+												(click)="addRow()"
+												[disabled]="importedColumns.length === 0"
+												aria-label="Agregar fila"
+											>
+												<ion-icon name="add-outline" class="fs-5" aria-hidden="true"></ion-icon>
+											</button>
+										</th>
 
-                                        <!-- Eliminar filas seleccionadas -->
-                                        <th
-                                            class="fixed-xs text-center p-0"
-                                            style="position: unset !important"
-                                        >
-                                            <button
-                                                type="button"
-                                                class="btn btn-icon btn-light-danger h-25px w-25px"
-                                                placement="top"
-                                                [ngbTooltip]="'Eliminar seleccionados'"
-                                                tooltipClass="tooltip-dark"
-                                                container="body"
-                                                (click)="removeSelectedRows()"
-                                                [disabled]="selectedRowIndexes.length === 0"
-                                                aria-label="Eliminar filas seleccionadas"
-                                            >
-                                                <ion-icon
-                                                    name="trash-outline"
-                                                    class="fs-5"
-                                                    aria-hidden="true"
-                                                ></ion-icon>
-                                            </button>
-                                        </th>
+										<!-- Eliminar filas seleccionadas -->
+										<th class="fixed-xs text-center p-0" style="position: unset !important">
+											<button
+												type="button"
+												class="btn btn-icon btn-light-danger h-25px w-25px"
+												placement="top"
+												[ngbTooltip]="'Eliminar seleccionados'"
+												tooltipClass="tooltip-dark"
+												container="body"
+												(click)="removeSelectedRows()"
+												[disabled]="selectedRowIndexes.length === 0"
+												aria-label="Eliminar filas seleccionadas"
+											>
+												<ion-icon name="trash-outline" class="fs-5" aria-hidden="true"></ion-icon>
+											</button>
+										</th>
 
-                                        <!-- Columnas importadas -->
-                                        <th
-                                            *ngFor="
-                                                let column of importedColumns;
-                                                let columnIndex = index
-                                            "
-                                            class="fixed-lg p-0"
-                                            (dragover)="dragOverColumn($event, columnIndex)"
-                                            (drop)="dropColumn(columnIndex)"
-                                            [ngClass]="{
-                                                'column-drag-over':
-                                                    dragOverColumnIndex === columnIndex
-                                            }"
-                                        >
-                                            <div
-                                                class="p-3"
-                                                [ngClass]="{
-                                                    'border-top-active': column.key
-                                                }"
-                                            >
-                                                <div
-                                                    class="d-flex align-items-center justify-content-between gap-2 px-3"
-                                                >
-                                                    <span
-                                                        class="table-cell-title text-truncate-1 text-uppercase"
-                                                    >
-                                                        {{ column.label }}
-                                                    </span>
+										<!-- Columnas importadas -->
+										<th
+											*ngFor="let column of importedColumns; let columnIndex = index"
+											class="fixed-lg p-0"
+											(dragover)="dragOverColumn($event, columnIndex)"
+											(drop)="dropColumn(columnIndex)"
+											[ngClass]="{
+												'column-drag-over': dragOverColumnIndex === columnIndex,
+											}"
+										>
+											<div
+												class="p-3"
+												[ngClass]="{
+													'border-top-active': column.key,
+												}"
+											>
+												<div class="d-flex align-items-center gap-2 w-100">
+	<!-- Mover columna -->
+	<button
+		type="button"
+		class="btn btn-xs btn-icon btn-light flex-shrink-0 cursor-move"
+		draggable="true"
+		(dragstart)="startColumnDrag(columnIndex)"
+		placement="top"
+		[ngbTooltip]="'Mover columna'"
+		tooltipClass="tooltip-dark"
+		container="body"
+		aria-label="Mover columna"
+	>
+		<ion-icon name="reorder-two-outline" class="fs-16 text-gray"></ion-icon>
+	</button>
 
-                                                    <div class="d-flex align-items-center gap-1">
-                                                        <div class="dropdown">
-                                                            <button
-                                                                type="button"
-                                                                class="btn btn-icon h-25px w-25px dropdown-toggle dropdown-toggle-no-arrow"
-                                                                [ngClass]="{
-                                                                    'btn-primary': column.key,
-                                                                    'btn-light-primary': !column.key
-                                                                }"
-                                                                data-bs-toggle="dropdown"
-                                                                data-bs-offset="0,7"
-                                                                aria-expanded="false"
-                                                                aria-label="Mapear columna"
-                                                                title="Mapear columna"
-                                                                placement="top"
-                                                                [ngbTooltip]="
-                                                                    column.key
-                                                                        ? 'Columna establecida'
-                                                                        : 'Establecer columna'
-                                                                "
-                                                                tooltipClass="tooltip-dark"
-                                                                container="body"
-                                                            >
-                                                                <ion-icon
-                                                                    [name]="
-                                                                        column.key
-                                                                            ? 'checkmark-outline'
-                                                                            : 'remove-circle-outline'
-                                                                    "
-                                                                    class="fs-5"
-                                                                    aria-hidden="true"
-                                                                ></ion-icon>
-                                                            </button>
+	<!-- Selector de campo -->
+	<div class="dropdown flex-grow-1 min-w-0">
+		<button
+			type="button"
+			class="btn btn-xs w-100 d-flex align-items-center justify-content-between gap-2 dropdown-toggle dropdown-toggle-no-arrow"
+			[ngClass]="{
+				'btn-light-primary': column.key,
+				'btn-light border border-gray-300': !column.key
+			}"
+			data-bs-toggle="dropdown"
+			data-bs-offset="0,7"
+			aria-expanded="false"
+		>
+			<span class="d-flex align-items-center gap-2 min-w-0">
+				<ion-icon
+					[name]="column.key ? 'link-outline' : 'add-circle-outline'"
+					class="flex-shrink-0 fs-16"
+				></ion-icon>
 
-                                                            <div
-                                                                class="dropdown-menu dropdown-menu-end action-dropdown-menu action-dropdown-menu-compact"
-                                                            >
-                                                                <button
-                                                                    type="button"
-                                                                    class="dropdown-item action-dropdown-item action-dropdown-item-compact"
-                                                                    [class.active]="!column.key"
-                                                                    (click)="selectColumnField(column, '')"
-                                                                >
-                                                                    <span class="action-dropdown-item-icon">
-                                                                        <ion-icon
-                                                                            name="remove-circle-outline"
-                                                                            class="fs-4 text-muted"
-                                                                            aria-hidden="true"
-                                                                        ></ion-icon>
-                                                                    </span>
+				<span class="fs-12 fw-500 text-dark text-truncate-1">
+					{{ column.key ? getFieldLabel(column.key) : 'Asignar campo' }}
+				</span>
+			</span>
 
-                                                                    <span class="action-dropdown-item-title">
-                                                                        Sin relacionar
-                                                                    </span>
+			<ion-icon
+				name="chevron-down-outline"
+				class="flex-shrink-0 fs-16 text-gray"
+			></ion-icon>
+		</button>
 
-                                                                    <ion-icon
-                                                                        *ngIf="!column.key"
-                                                                        name="checkmark-outline"
-                                                                        class="ms-auto text-primary"
-                                                                        aria-hidden="true"
-                                                                    ></ion-icon>
-                                                                </button>
+		<!-- Menú de campos -->
+		<div class="dropdown-menu dropdown-menu-end action-dropdown-menu action-dropdown-menu-compact w-100">
+			<div class="px-3 py-2 border-bottom">
+				<span class="fs-10 fw-600 text-muted text-uppercase ls-wider">
+					Campo del sistema
+				</span>
+			</div>
 
-                                                                <div class="action-dropdown-divider"></div>
+			<!-- Sin asignar -->
+			<button
+				type="button"
+				class="dropdown-item action-dropdown-item action-dropdown-item-compact"
+				[ngClass]="{ 'bg-light-primary text-primary': !column.key }"
+				(click)="selectColumnField(column, '')"
+			>
+				<span class="action-dropdown-item-icon">
+					<ion-icon name="remove-circle-outline" class="fs-16"></ion-icon>
+				</span>
 
-                                                                <button
-                                                                    *ngFor="let field of availableFields"
-                                                                    type="button"
-                                                                    class="dropdown-item action-dropdown-item action-dropdown-item-compact"
-                                                                    [class.active]="column.key === field.key"
-                                                                    (click)="selectColumnField(column, field.key)"
-                                                                >
-                                                                    <span class="action-dropdown-item-icon">
-                                                                        <ion-icon
-                                                                            name="reorder-two-outline"
-                                                                            class="fs-4"
-                                                                            [ngClass]="{
-                                                                                'text-primary': column.key === field.key
-                                                                            }"
-                                                                            aria-hidden="true"
-                                                                        ></ion-icon>
-                                                                    </span>
+				<span
+					class="action-dropdown-item-title flex-grow-1 fs-12 fw-500 text-dark text-truncate-1"
+				>
+					Sin asignar
+				</span>
 
-                                                                    <span class="action-dropdown-item-title">
-                                                                        {{ field.label }}
-                                                                    </span>
+				<span
+					*ngIf="!column.key"
+					class="badge badge-light-primary fs-10 fw-600"
+				>
+					Actual
+				</span>
+			</button>
 
-                                                                    <ion-icon
-                                                                        *ngIf="column.key === field.key"
-                                                                        name="checkmark-outline"
-                                                                        class="ms-auto text-primary"
-                                                                        aria-hidden="true"
-                                                                    ></ion-icon>
-                                                                </button>
-                                                            </div>
-                                                        </div>
+			<div class="action-dropdown-divider"></div>
 
-                                                        <button
-                                                            type="button"
-                                                            class="btn btn-icon btn-primary h-25px w-25px"
-                                                            placement="top"
-                                                            [ngbTooltip]="'Mover columna'"
-                                                            tooltipClass="tooltip-dark"
-                                                            container="body"
-                                                            draggable="true"
-                                                            (dragstart)="
-                                                                startColumnDrag(columnIndex)
-                                                            "
-                                                            aria-label="Mover columna"
-                                                        >
-                                                            <ion-icon
-                                                                name="move-outline"
-                                                                class="fs-5"
-                                                                aria-hidden="true"
-                                                            ></ion-icon>
-                                                        </button>
+			<!-- Campos disponibles -->
+			<button
+				*ngFor="let field of availableFields"
+				type="button"
+				class="dropdown-item action-dropdown-item action-dropdown-item-compact"
+				[ngClass]="{
+					'bg-light-primary text-primary': column.key === field.key,
+					'opacity-50': isFieldSelected(field.key) && column.key !== field.key
+				}"
+				[disabled]="isFieldSelected(field.key) && column.key !== field.key"
+				(click)="selectColumnField(column, field.key)"
+			>
+				<span class="action-dropdown-item-icon">
+					<ion-icon name="link-outline" class="fs-16"></ion-icon>
+				</span>
 
-                                                        <button
-                                                            type="button"
-                                                            class="btn btn-icon btn-primary h-25px w-25px"
-                                                            placement="top"
-                                                            [ngbTooltip]="'Eliminar columna'"
-                                                            tooltipClass="tooltip-dark"
-                                                            container="body"
-                                                            (click)="removeColumn(column.index)"
-                                                            aria-label="Eliminar columna"
-                                                        >
-                                                            <ion-icon
-                                                                name="trash-outline"
-                                                                class="fs-5"
-                                                                aria-hidden="true"
-                                                            ></ion-icon>
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </th>
-                                    </tr>
-                                </thead>
+				<span
+					class="action-dropdown-item-title flex-grow-1 fs-12 fw-500 text-dark text-truncate-1"
+				>
+					{{ field.label }}
+				</span>
+
+				<span
+					*ngIf="column.key === field.key"
+					class="badge badge-light-primary fs-10 fw-600"
+				>
+					Actual
+				</span>
+
+				<span
+					*ngIf="isFieldSelected(field.key) && column.key !== field.key"
+					class="fs-10 fw-500 text-muted text-nowrap"
+				>
+					En uso
+				</span>
+			</button>
+		</div>
+	</div>
+
+	<!-- Eliminar columna -->
+	<button
+		type="button"
+		class="btn btn-xs btn-icon btn-light-danger flex-shrink-0"
+		(click)="removeColumn(column.index)"
+		placement="top"
+		[ngbTooltip]="'Eliminar columna'"
+		tooltipClass="tooltip-dark"
+		container="body"
+		aria-label="Eliminar columna"
+	>
+		<ion-icon name="trash-outline" class="fs-16"></ion-icon>
+	</button>
+</div>
+											</div>
+										</th>
+									</tr>
+								</thead>
 
                                 <tbody>
                                     <!-- Cargando -->
@@ -574,84 +597,6 @@
                             </table>
                         </div>
 
-                        <button
-                            type="button"
-                            class="btn btn-sm btn-primary my-1"
-                            [disabled]="isImportLoading || importedRows.length == 0"
-                            (click)="importCollaborators()"
-                        >
-                            <span *ngIf="!isImportLoading" class="d-flex align-items-center gap-2">
-                                <ion-icon name="cloud-upload-outline"></ion-icon>
-                                Importar
-                            </span>
-                            <span *ngIf="isImportLoading" class="d-flex align-items-center gap-2">
-                                <span class="spinner-border spinner-border-sm"></span>
-                                Procesando...
-                            </span>
-                        </button>
-
-                        <button
-                            type="button"
-                            class="btn btn-sm btn-dark my-1"
-                            [disabled]="isImportLoading || importedRows.length == 0"
-                            (click)="exportCollaborators()"
-                        >
-                            <span *ngIf="!isImportLoading" class="d-flex align-items-center gap-2">
-                                <i class="bi bi-filetype-xls"></i>
-                                Exportar
-                            </span>
-                            <span *ngIf="isImportLoading" class="d-flex align-items-center gap-2">
-                                <span class="spinner-border spinner-border-sm"></span>
-                                Procesando...
-                            </span>
-                        </button>
-
-                        <div class="card mb-10">
-                            <!--begin::Card header-->
-                            <div class="card-header" style="background-color: #f1f5f9;">
-                                <!--begin::Heading-->
-                                <h4 class="card-title m-0 d-flex flex-column">
-                                    <span class="fs-5 fw-600">Importación Masiva</span>
-                                    <span class="text-gray-600 mt-1 fw-400 fs-0-9rem">
-                                      Carga múltiples colaboradores mediante un archivo Excel o CSV.
-                                    </span>
-                                </h4>
-                                <!--end::Heading-->
-                                <div class="card-toolbar">
-                                    @if (importedRows.length >= 1) {
-                                        <button class="btn btn-dark btn-sm d-flex align-items-center gap-1" 
-                                        data-bs-toggle="modal" [attr.data-bs-target]="'#modalMapColumns'">
-                                            <ion-icon name="git-compare-outline"></ion-icon> 
-                                            Mapear Columnas
-                                        </button>
-                                    }
-                                    @else {
-                                        <button class="btn btn-dark btn-sm d-flex align-items-center gap-1"
-                                        disabled>
-                                            <ion-icon name="git-compare-outline"></ion-icon> 
-                                            Mapear Columnas
-                                        </button>
-                                    }
-                                    
-                                </div>
-                            </div>
-                            <!--end::Card header-->
-                            <!--begin::Card body-->
-                            <div class="card-body">
-                           
-                                <div class="row">
-                                    <div class="col-12">
-                                        
-                                    </div>
-                                </div>
-                            </div>
-                            <!--end::Card body-->
-                            <div class="card-footer"  style="background-color: #f1f5f9;">
-                                <div class="d-flex gap-3">
-                                    
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>

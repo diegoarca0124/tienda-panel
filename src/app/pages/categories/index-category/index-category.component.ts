@@ -20,7 +20,7 @@ import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { validateCategoriesQueryParams } from '../utils/validate-categories-query-params.util';
 import { FallbackImageDirective } from '@app/common/directives/fallback-image.directive';
 import { environment } from 'environments/environment.dev';
-import { PadCodePipe } from "../../../common/pipes/pad-code.pipe";
+import { PadCodePipe } from '../../../common/pipes/pad-code.pipe';
 import { HttpErrorResponse } from '@angular/common/http';
 import { configurationsFilters } from '../constants/configurations-filters.constant';
 import { MenuSettingsCategoriesComponent } from '@app/shared/menu-settings-categories/menu-settings-categories.component';
@@ -31,9 +31,7 @@ import { GetCategoriessRESI, UpdateCategoriesStatusRESI, UpdateCategoryStatusRES
 declare const toastr: any;
 declare const $: any;
 
-type CategoriesLoadResult =
-	| { data: GetCategoriessRESI; error: null }
-	| { data: null; error: HttpErrorResponse };
+type CategoriesLoadResult = { data: GetCategoriessRESI; error: null } | { data: null; error: HttpErrorResponse };
 
 @Component({
 	selector: 'app-index-category',
@@ -50,14 +48,13 @@ type CategoriesLoadResult =
 		NgbTooltipModule,
 		FallbackImageDirective,
 		PadCodePipe,
-		MenuSettingsCategoriesComponent
+		MenuSettingsCategoriesComponent,
 	],
 	templateUrl: './index-category.component.html',
 	styleUrl: './index-category.component.css',
-	schemas: [CUSTOM_ELEMENTS_SCHEMA]
+	schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class IndexCategoryComponent {
-
 	private destroy$ = new Subject<void>();
 	private readonly categoriesQuery$ = new Subject<GetCategoriesQPI>();
 
@@ -79,12 +76,12 @@ export class IndexCategoryComponent {
 
 	public isUpdatingSingleStatus: WritableSignal<boolean> = signal(false);
 	public isUpdatingMultipleStatuses: WritableSignal<boolean> = signal(false);
-	
+
 	public categories: CategoryInterface[] = [];
 	public screenHeight = window.innerHeight;
-	
-	public readonly sortValues = sortOptions.map(item => item.value);
-	public readonly configurationsValues = configurationsFilters.map(item => item.value);
+
+	public readonly sortValues = sortOptions.map((item) => item.value);
+	public readonly configurationsValues = configurationsFilters.map((item) => item.value);
 
 	constructor(
 		private router: Router,
@@ -95,16 +92,8 @@ export class IndexCategoryComponent {
 
 	ngOnInit() {
 		this.listenCategoriesQueries();
-		this.route.queryParams
-		.pipe(takeUntil(this.destroy$))
-		.subscribe((params) => {
-			const validParams = validateCategoriesQueryParams(
-				this.route,
-				params,
-				this.router,
-				this.sortValues,
-				this.configurationsValues
-			);
+		this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params) => {
+			const validParams = validateCategoriesQueryParams(this.route, params, this.router, this.sortValues, this.configurationsValues);
 			if (!validParams) return;
 			this.loadQueryParams(params);
 			this.loadCategories();
@@ -142,17 +131,17 @@ export class IndexCategoryComponent {
 							(data): CategoriesLoadResult => ({
 								data,
 								error: null,
-							}),
+							})
 						),
 						catchError((error: HttpErrorResponse) =>
 							of<CategoriesLoadResult>({
 								data: null,
 								error,
-							}),
-						),
+							})
+						)
 					);
 				}),
-				takeUntil(this.destroy$),
+				takeUntil(this.destroy$)
 			)
 			.subscribe(({ data, error }) => {
 				this.isCategoriesLoading = false;
@@ -165,7 +154,6 @@ export class IndexCategoryComponent {
 				this.categories = this.mapCategories(data.categories);
 				this.totalPages = data.meta.totalPages;
 				this.syncCurrentPage(data.meta.currentPage);
-				
 			});
 	}
 
@@ -194,15 +182,15 @@ export class IndexCategoryComponent {
 			limit: this.limit,
 			status: this.selectedStatus,
 			sort: this.selectedSort,
-			configurations: this.selectedConfigurations
+			configurations: this.selectedConfigurations,
 		});
 	}
 
 	private mapCategories(categories: CategoryInterface[]): CategoryInterface[] {
-		return categories.map(category => ({
+		return categories.map((category) => ({
 			...category,
 			safeIcon: this.sanitizer.bypassSecurityTrustHtml(category.icon),
-			latestProducts: category.latestProducts!.map(product => ({
+			latestProducts: category.latestProducts!.map((product) => ({
 				...product,
 				cover: `${environment.s3_public_url}/products/small/${product.cover}`,
 			})),
@@ -213,10 +201,10 @@ export class IndexCategoryComponent {
 		return getColorBasedOnLetter(str);
 	}
 
-	getConfigurations(configurations: any){
-		if(configurations.length >= 1){
+	getConfigurations(configurations: any) {
+		if (configurations.length >= 1) {
 			this.selectedConfigurations = configurations.join(',');
-		}else{
+		} else {
 			this.selectedConfigurations = 'Predeterminado';
 		}
 	}
@@ -236,7 +224,7 @@ export class IndexCategoryComponent {
 		this.applyFilters();
 	}
 
-	onResetCurrentPage(){
+	onResetCurrentPage() {
 		this.currentPage = 1;
 	}
 
@@ -251,12 +239,12 @@ export class IndexCategoryComponent {
 			)
 			.subscribe({
 				next: (next: UpdateCategoryStatusRESI) => {
-					const category = this.categories.find(c => c.id === next.data.id);
+					const category = this.categories.find((c) => c.id === next.data.id);
 					if (category) {
 						category.status = next.data.status;
 					}
 					toastr.success(next.message);
-					closeModal('modalDelete-'+id);
+					closeModal('modalDelete-' + id);
 				},
 				error: (error: HttpErrorResponse) => {
 					toastr.error(error.error.message);
@@ -271,7 +259,7 @@ export class IndexCategoryComponent {
 			limit: this.limit,
 			status: this.selectedStatus,
 			sort: this.selectedSort,
-			configurations: this.selectedConfigurations
+			configurations: this.selectedConfigurations,
 		};
 
 		const current: any = this.route.snapshot.queryParams;
@@ -284,7 +272,7 @@ export class IndexCategoryComponent {
 			(current.sort ?? 'Predeterminado') === queryParams.sort &&
 			(current.configurations ?? 'Predeterminado') === queryParams.configurations;
 		console.log(queryParams);
-		
+
 		if (same) {
 			this.loadCategories();
 			return;
@@ -295,13 +283,13 @@ export class IndexCategoryComponent {
 		});
 	}
 
-	resetFilters(){
+	resetFilters() {
 		this.filter = '';
 		this.selectedStatus = 'Todos';
 		this.selectedSort = 'Predeterminado';
 		this.currentPage = 1;
 		this.limit = 10;
-		this.selectedConfigurations  = 'Predeterminado';
+		this.selectedConfigurations = 'Predeterminado';
 
 		this.router.navigate([], {
 			queryParams: {
@@ -310,7 +298,7 @@ export class IndexCategoryComponent {
 				limit: 10,
 				status: null,
 				sort: null,
-				configurations: null
+				configurations: null,
 			},
 			queryParamsHandling: 'merge',
 		});
@@ -329,37 +317,37 @@ export class IndexCategoryComponent {
 		return [...this.selectedCategoriesIds];
 	}
 
-	onUpdateStatusMultiple(status: boolean){
+	onUpdateStatusMultiple(status: boolean) {
 		this.isUpdatingMultipleStatuses.set(true);
 		this.categoryService
-		.updateCategoriesStatus({
-			ids: this.getSelectedIds(),
-			status
-		})
-		.pipe(
-			takeUntil(this.destroy$),
-			withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
-			finalize(() => this.isUpdatingMultipleStatuses.set(false))
-		)
-		.subscribe({
-			next: (next: UpdateCategoriesStatusRESI) => {
-				const updatedIds = new Set(next.data);
-				this.categories = this.categories.map(prev => {
-					if (updatedIds.has(prev.id!)) {
-						return {
-							...prev,
-							status
-						};
-					}
-					return prev;
-				});
-				toastr.success(next.message);
-				closeModal(status ? 'modalMultipleActive' : 'modalMultipleDisabled');
-				this.selectedCategoriesIds.clear();
-			},
-			error: (error: HttpErrorResponse) => {
-				toastr.error(error.error.message);
-			},
-		});
+			.updateCategoriesStatus({
+				ids: this.getSelectedIds(),
+				status,
+			})
+			.pipe(
+				takeUntil(this.destroy$),
+				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
+				finalize(() => this.isUpdatingMultipleStatuses.set(false))
+			)
+			.subscribe({
+				next: (next: UpdateCategoriesStatusRESI) => {
+					const updatedIds = new Set(next.data);
+					this.categories = this.categories.map((prev) => {
+						if (updatedIds.has(prev.id!)) {
+							return {
+								...prev,
+								status,
+							};
+						}
+						return prev;
+					});
+					toastr.success(next.message);
+					closeModal(status ? 'modalMultipleActive' : 'modalMultipleDisabled');
+					this.selectedCategoriesIds.clear();
+				},
+				error: (error: HttpErrorResponse) => {
+					toastr.error(error.error.message);
+				},
+			});
 	}
 }

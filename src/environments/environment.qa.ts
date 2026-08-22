@@ -5,7 +5,6 @@
 }; */
 
 export const environment = {
-    production: true,
-    apiUrl: 'https://qa.praxiscomercial.pe/api',  
-    
+	production: true,
+	apiUrl: 'https://qa.praxiscomercial.pe/api',
 };

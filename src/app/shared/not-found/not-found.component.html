@@ -3,11 +3,8 @@
 		*ngIf="error?.statusCode != null"
 		class="empty-result-code"
 		[ngClass]="{
-			'empty-result-code-danger':
-				(error?.statusCode ?? 0) >= 500,
-			'empty-result-code-primary':
-				(error?.statusCode ?? 0) >= 400 &&
-				(error?.statusCode ?? 0) < 500
+			'empty-result-code-danger': (error?.statusCode ?? 0) >= 500,
+			'empty-result-code-primary': (error?.statusCode ?? 0) >= 400 && (error?.statusCode ?? 0) < 500,
 		}"
 	>
 		{{ error?.statusCode }}
@@ -16,18 +13,10 @@
 	<div class="empty-result-content">
 		<span class="empty-result-label">
 			<ng-container [ngSwitch]="error?.statusCode">
-				<ng-container *ngSwitchCase="401">
-					No autorizado
-				</ng-container>
+				<ng-container *ngSwitchCase="401">No autorizado</ng-container>
 
 				<ng-container *ngSwitchDefault>
-					{{
-						(error?.statusCode ?? 0) >= 500
-							? 'Error del sistema'
-							: (error?.statusCode ?? 0) >= 400
-								? 'Solicitud no disponible'
-								: 'Sin resultados'
-					}}
+					{{ (error?.statusCode ?? 0) >= 500 ? 'Error del sistema' : (error?.statusCode ?? 0) >= 400 ? 'Solicitud no disponible' : 'Sin resultados' }}
 				</ng-container>
 			</ng-container>
 		</span>
@@ -36,37 +25,14 @@
 			{{ error?.message || 'No pudimos completar la solicitud' }}
 		</h3>
 
-		<p
-			*ngIf="error?.statusCode === 401"
-			class="empty-result-description"
-		>
-			No tienes autorización para acceder a esta información.
-		</p>
+		<p *ngIf="error?.statusCode === 401" class="empty-result-description">No tienes autorización para acceder a esta información.</p>
 
-		<p
-			*ngIf="
-				(error?.statusCode ?? 0) >= 400 &&
-				(error?.statusCode ?? 0) < 500 &&
-				error?.statusCode !== 401
-			"
-			class="empty-result-description"
-		>
+		<p *ngIf="(error?.statusCode ?? 0) >= 400 && (error?.statusCode ?? 0) < 500 && error?.statusCode !== 401" class="empty-result-description">
 			No encontramos información que coincida con la solicitud.
 		</p>
 
-		<p
-			*ngIf="(error?.statusCode ?? 0) >= 500"
-			class="empty-result-description"
-		>
-			No pudimos completar la solicitud. Intenta nuevamente dentro
-			de unos momentos.
-		</p>
+		<p *ngIf="(error?.statusCode ?? 0) >= 500" class="empty-result-description">No pudimos completar la solicitud. Intenta nuevamente dentro de unos momentos.</p>
 
-		<p
-			*ngIf="error?.statusCode == null"
-			class="empty-result-description"
-		>
-			No hay información disponible para mostrar.
-		</p>
+		<p *ngIf="error?.statusCode == null" class="empty-result-description">No hay información disponible para mostrar.</p>
 	</div>
 </div>

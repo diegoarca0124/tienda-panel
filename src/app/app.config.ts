@@ -8,18 +8,16 @@ import { metaReducers } from './store/meta-reducers';
 import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
 
 export const appConfig: ApplicationConfig = {
-  providers: [
-    provideZoneChangeDetection({ eventCoalescing: true }), 
-    provideRouter(routes),
-    provideHttpClient(),
-    provideStore(
-      {
-        authUser: AuthUserReducer,
-      },
-      { metaReducers } 
-    ),
-    importProvidersFrom(
-      MonacoEditorModule.forRoot()
-    )
-  ]
+	providers: [
+		provideZoneChangeDetection({ eventCoalescing: true }),
+		provideRouter(routes),
+		provideHttpClient(),
+		provideStore(
+			{
+				authUser: AuthUserReducer,
+			},
+			{ metaReducers }
+		),
+		importProvidersFrom(MonacoEditorModule.forRoot()),
+	],
 };

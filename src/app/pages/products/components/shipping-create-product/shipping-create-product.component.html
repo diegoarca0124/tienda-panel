@@ -1,150 +1,148 @@
 <div class="d-flex flex-column gap-6">
-    <div class="row">
-        <div class="col-lg-12 mb-5">
-            <h4 class="mb-0">Logistica y preparación</h4>
-            <span class="text-gray-500 mt-1 fw-400 fs-0-9rem">
-                Configura cómo se embala el producto, cuánto tiempo toma prepararlo y qué cuidados requiere en el envío.
-            </span>
-        </div>
-        <div class="col-md-6 mb-4">
-            <div class="d-flex align-items-center justify-content-between mb-1">
-                <label class="required fw-500 text-gray-700 fs-6 mb-1">Empaquetado</label>
-                <small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="errorsProduct?.packageType" (click)="showErrors.packageType = !showErrors.packageType">
-                    <ion-icon name="information-circle-outline" class="validation-icon"> </ion-icon>
-                     {{ showErrors.packageType ? 'Ocultar errores' : 'Ver errores' }}
-                </small>
-            </div>
-            @if (!loadProduct  || !id) {
-                <div [ngClass]="{ 'is-invalid': errorsProduct?.packageType }">
-                    <ng-select
-                        [items]="packages_"
-                        bindLabel="name"
-                        bindValue="name"
-                        [(ngModel)]="shipping.packageType"
-                        placeholder="Tipo de empaque"
-                        [clearable]="false"
-                        [closeOnSelect]="true"
-                        class="select-element mb-1"
-                        appendTo="body"
-                    >
-                        <!-- Opción en el dropdown -->
-                        <ng-template ng-option-tmp let-item="item">
-                            <div class="option-item d-flex gap-3 align-items-center">
-                                <div class="option-name">{{ item.name }}</div>
-                            </div>
-                        </ng-template>
+	<div class="row">
+		<div class="col-lg-12 mb-5">
+			<h4 class="mb-0">Logistica y preparación</h4>
+			<span class="text-gray-500 mt-1 fw-400 fs-0-9rem">Configura cómo se embala el producto, cuánto tiempo toma prepararlo y qué cuidados requiere en el envío.</span>
+		</div>
+		<div class="col-md-6 mb-4">
+			<div class="d-flex align-items-center justify-content-between mb-1">
+				<label class="required fw-500 text-gray-700 fs-6 mb-1">Empaquetado</label>
+				<small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="errorsProduct?.packageType" (click)="showErrors.packageType = !showErrors.packageType">
+					<ion-icon name="information-circle-outline" class="validation-icon"></ion-icon>
+					{{ showErrors.packageType ? 'Ocultar errores' : 'Ver errores' }}
+				</small>
+			</div>
+			@if (!loadProduct || !id) {
+				<div [ngClass]="{ 'is-invalid': errorsProduct?.packageType }">
+					<ng-select
+						[items]="packages_"
+						bindLabel="name"
+						bindValue="name"
+						[(ngModel)]="shipping.packageType"
+						placeholder="Tipo de empaque"
+						[clearable]="false"
+						[closeOnSelect]="true"
+						class="select-element mb-1"
+						appendTo="body"
+					>
+						<!-- Opción en el dropdown -->
+						<ng-template ng-option-tmp let-item="item">
+							<div class="option-item d-flex gap-3 align-items-center">
+								<div class="option-name">{{ item.name }}</div>
+							</div>
+						</ng-template>
 
-                        <!-- Opción seleccionada en el input -->
-                        <ng-template ng-label-tmp let-item="item">
-                            {{ item.name }}
-                        </ng-template>
+						<!-- Opción seleccionada en el input -->
+						<ng-template ng-label-tmp let-item="item">
+							{{ item.name }}
+						</ng-template>
 
-                        <ng-template ng-loading-text>
-                            <div class="spinner-container">
-                                <span class="spinner-border spinner-border-sm"></span>
-                            </div>
-                        </ng-template>
-                    </ng-select>
-                </div>
-            }@else {
-                <div class="skeleton skeleton-input mb-1"></div>
-            }
-            <span class="fs-8 text-muted">{{labelHelper.packageType}}</span>
+						<ng-template ng-loading-text>
+							<div class="spinner-container">
+								<span class="spinner-border spinner-border-sm"></span>
+							</div>
+						</ng-template>
+					</ng-select>
+				</div>
+			} @else {
+				<div class="skeleton skeleton-input mb-1"></div>
+			}
+			<span class="fs-8 text-muted">{{ labelHelper.packageType }}</span>
 
-            <div class="validation-wrapper" [class.open]="showErrors.packageType">
-                <app-validation-popover 
-                [errors]="errorsProduct?.packageType"></app-validation-popover>
-            </div>
-        </div>
-        <div class="col-md-6 mb-4">
-            <div class="d-flex align-items-center justify-content-between mb-1">
-                <label class="required fw-500 text-gray-700 fs-6 mb-1">Días de preparación</label>
-                <small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="errorsProduct?.handlingDays" (click)="showErrors.handlingDays = !showErrors.handlingDays">
-                    <ion-icon name="information-circle-outline" class="validation-icon"> </ion-icon>
-                     {{ showErrors.handlingDays ? 'Ocultar errores' : 'Ver errores' }}
-                </small>
-            </div>
-            @if (!loadProduct  || !id) {
-                <input type="number" class="form-control mb-1" [(ngModel)]="shipping.handlingDays" placeholder="Días para el envío"
-                [ngClass]="{ 'is-invalid': errorsProduct?.handlingDays }">
-            }@else {
-                <div class="skeleton skeleton-input mb-1"></div>
-            }
-            <span class="fs-8 text-muted">{{labelHelper.handlingDays}}</span>
+			<div class="validation-wrapper" [class.open]="showErrors.packageType">
+				<app-validation-popover [errors]="errorsProduct?.packageType"></app-validation-popover>
+			</div>
+		</div>
+		<div class="col-md-6 mb-4">
+			<div class="d-flex align-items-center justify-content-between mb-1">
+				<label class="required fw-500 text-gray-700 fs-6 mb-1">Días de preparación</label>
+				<small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="errorsProduct?.handlingDays" (click)="showErrors.handlingDays = !showErrors.handlingDays">
+					<ion-icon name="information-circle-outline" class="validation-icon"></ion-icon>
+					{{ showErrors.handlingDays ? 'Ocultar errores' : 'Ver errores' }}
+				</small>
+			</div>
+			@if (!loadProduct || !id) {
+				<input
+					type="number"
+					class="form-control mb-1"
+					[(ngModel)]="shipping.handlingDays"
+					placeholder="Días para el envío"
+					[ngClass]="{ 'is-invalid': errorsProduct?.handlingDays }"
+				/>
+			} @else {
+				<div class="skeleton skeleton-input mb-1"></div>
+			}
+			<span class="fs-8 text-muted">{{ labelHelper.handlingDays }}</span>
 
-            <div class="validation-wrapper" [class.open]="showErrors.handlingDays">
-                <app-validation-popover 
-                [errors]="errorsProduct?.handlingDays"></app-validation-popover>
-            </div>
-        </div>
-        <div class="col-12">
-            <div class="d-flex align-items-center justify-content-between mb-1">
-                <label class=" fw-500 text-gray-700 fs-6 mb-1">Instrucciones de envío</label>
-                <small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="errorsProduct?.specialInstructions" (click)="showErrors.specialInstructions = !showErrors.specialInstructions">
-                    <ion-icon name="information-circle-outline" class="validation-icon"> </ion-icon>
-                     {{ showErrors.specialInstructions ? 'Ocultar errores' : 'Ver errores' }}
-                </small>
-            </div>
-            @if (!loadProduct  || !id) {
-                <textarea name="specialInstructions" class="form-control mb-1" 
-                placeholder="Especifica algunas instrucciones"
-                [(ngModel)]="shipping.specialInstructions"
-                textAreaAutoResize
-                rows="3"
-                [ngClass]="{ 'is-invalid': errorsProduct?.specialInstructions }"></textarea>
-            }@else {
-                 <div class="skeleton skeleton-input mb-1" style="height: 79px !important;"></div>
-            }
-            <span class="fs-8 text-muted">{{labelHelper.specialInstructions}}</span>
+			<div class="validation-wrapper" [class.open]="showErrors.handlingDays">
+				<app-validation-popover [errors]="errorsProduct?.handlingDays"></app-validation-popover>
+			</div>
+		</div>
+		<div class="col-12">
+			<div class="d-flex align-items-center justify-content-between mb-1">
+				<label class="fw-500 text-gray-700 fs-6 mb-1">Instrucciones de envío</label>
+				<small
+					class="text-danger cursor-pointer d-flex align-items-center gap-1"
+					*ngIf="errorsProduct?.specialInstructions"
+					(click)="showErrors.specialInstructions = !showErrors.specialInstructions"
+				>
+					<ion-icon name="information-circle-outline" class="validation-icon"></ion-icon>
+					{{ showErrors.specialInstructions ? 'Ocultar errores' : 'Ver errores' }}
+				</small>
+			</div>
+			@if (!loadProduct || !id) {
+				<textarea
+					name="specialInstructions"
+					class="form-control mb-1"
+					placeholder="Especifica algunas instrucciones"
+					[(ngModel)]="shipping.specialInstructions"
+					textAreaAutoResize
+					rows="3"
+					[ngClass]="{ 'is-invalid': errorsProduct?.specialInstructions }"
+				></textarea>
+			} @else {
+				<div class="skeleton skeleton-input mb-1" style="height: 79px !important"></div>
+			}
+			<span class="fs-8 text-muted">{{ labelHelper.specialInstructions }}</span>
 
-            <div class="validation-wrapper" [class.open]="showErrors.specialInstructions">
-                <app-validation-popover 
-                [errors]="errorsProduct?.specialInstructions"></app-validation-popover>
-            </div>
+			<div class="validation-wrapper" [class.open]="showErrors.specialInstructions">
+				<app-validation-popover [errors]="errorsProduct?.specialInstructions"></app-validation-popover>
+			</div>
+		</div>
+	</div>
+	<div class="separator separator-dashed my-3"></div>
+	<div class="row">
+		<div class="col-lg-12 mb-5">
+			<h4 class="mb-0">Opciones de entrega</h4>
+			<span class="text-gray-500 mt-1 fw-400 fs-0-9rem">Configura beneficios y modalidades disponibles para la entrega del producto.</span>
+		</div>
+		<!-- FILA 1 -->
+		<div class="col-12 col-md-6 mb-4">
+			<label class="form-check form-check-custom form-check-solid align-items-start">
+				<input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="shipping.freeShipping" [disabled]="loadProduct && !!id" />
+				<span class="form-check-label d-flex flex-column align-items-start">
+					<span class="fw-500 text-gray-700 fs-6 mb-1">Envío gratuito</span>
+					<small class="text-muted">El producto se enviará sin costo adicional para el cliente.</small>
+				</span>
+			</label>
 
-        </div>
-    </div>
-    <div class="separator separator-dashed my-3"></div>
-    <div class="row">
-        <div class="col-lg-12 mb-5">
-            <h4 class="mb-0">Opciones de entrega</h4>
-            <span class="text-gray-500 mt-1 fw-400 fs-0-9rem">
-                Configura beneficios y modalidades disponibles para la entrega del producto.
-            </span>
-        </div>
-        <!-- FILA 1 -->
-        <div class="col-12 col-md-6 mb-4">
-            <label class="form-check form-check-custom form-check-solid align-items-start">
-                <input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="shipping.freeShipping" [disabled]="loadProduct && !!id"/>
-                <span class="form-check-label d-flex flex-column align-items-start">
-                    <span class="fw-500 text-gray-700 fs-6 mb-1">Envío gratuito</span>
-                    <small class="text-muted">
-                        El producto se enviará sin costo adicional para el cliente.
-                    </small>
-                </span>
-            </label>
+			<div class="validation-wrapper" [class.open]="showErrors.freeShipping">
+				<app-validation-popover [errors]="errorsProduct?.freeShipping"></app-validation-popover>
+			</div>
+		</div>
 
-            <div class="validation-wrapper" [class.open]="showErrors.freeShipping">
-                <app-validation-popover 
-                [errors]="errorsProduct?.freeShipping"></app-validation-popover>
-            </div>
-        </div>
+		<div class="col-12 col-md-6 mb-4">
+			<label class="form-check form-check-custom form-check-solid align-items-start">
+				<input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="shipping.pickupInStore" [disabled]="loadProduct && !!id" />
+				<span class="form-check-label d-flex flex-column align-items-start">
+					<span class="fw-500 text-gray-700 fs-6 mb-1">Recojo en tienda</span>
+					<small class="text-muted">Permite recoger el producto directamente en sucursal.</small>
+				</span>
+			</label>
 
-        <div class="col-12 col-md-6 mb-4">
-            <label class="form-check form-check-custom form-check-solid align-items-start">
-                <input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="shipping.pickupInStore" [disabled]="loadProduct && !!id"/>
-                <span class="form-check-label d-flex flex-column align-items-start">
-                    <span class="fw-500 text-gray-700 fs-6 mb-1">Recojo en tienda</span>
-                    <small class="text-muted">
-                        Permite recoger el producto directamente en sucursal.
-                    </small>
-                </span>
-            </label>
-
-            <div class="validation-wrapper" [class.open]="showErrors.pickupInStore">
-                <app-validation-popover 
-                [errors]="errorsProduct?.pickupInStore"></app-validation-popover>
-            </div>
-        </div>
-    </div>
+			<div class="validation-wrapper" [class.open]="showErrors.pickupInStore">
+				<app-validation-popover [errors]="errorsProduct?.pickupInStore"></app-validation-popover>
+			</div>
+		</div>
+	</div>
 </div>

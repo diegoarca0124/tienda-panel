@@ -10,70 +10,59 @@ import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { finalize, Subject, takeUntil } from 'rxjs';
 
 @Component({
-  selector: 'app-menu-subcategories',
-  imports: [
-    RouterModule,
-    CommonModule,
-    FormsModule,
-    NgbTooltipModule
-  ],
-  templateUrl: './menu-subcategories.component.html',
-  styleUrl: './menu-subcategories.component.css'
+	selector: 'app-menu-subcategories',
+	imports: [RouterModule, CommonModule, FormsModule, NgbTooltipModule],
+	templateUrl: './menu-subcategories.component.html',
+	styleUrl: './menu-subcategories.component.css',
 })
 export class MenuSubcategoriesComponent {
-  @ViewChild('trigger') trigger!: ElementRef;
+	@ViewChild('trigger') trigger!: ElementRef;
 
-  @Input() title : string = '';
-  @Input() categoryId : string = '';
-  @Input() placeholder : string = '';
-  @Input() selectedSubcategories: any = '';
-  @Input() sizeClass : 'sm' | 'lg' = 'sm';
+	@Input() title: string = '';
+	@Input() categoryId: string = '';
+	@Input() placeholder: string = '';
+	@Input() selectedSubcategories: any = '';
+	@Input() sizeClass: 'sm' | 'lg' = 'sm';
 
-  @Output() applySubcategories = new EventEmitter();
+	@Output() applySubcategories = new EventEmitter();
 
-  private destroy$ = new Subject<void>();
-  public filter: string = '';
-  public loadingSubcategories: boolean = true;
+	private destroy$ = new Subject<void>();
+	public filter: string = '';
+	public loadingSubcategories: boolean = true;
 
-  public subcategories: any[] = [];
-  public displaySubcategories: any[] = [];   
-  public errorMsmSeverListCategories: string = '';
-  
-	
+	public subcategories: any[] = [];
+	public displaySubcategories: any[] = [];
+	public errorMsmSeverListCategories: string = '';
 
-  constructor(
-    private categoryService:CategoryService, 
-  ){
+	constructor(private categoryService: CategoryService) {}
 
-  }
+	ngOnInit() {
+		this.initSubcategories();
+	}
 
-  ngOnInit(){
-    this.initSubcategories();
-  }
+	ngOnChanges(changes: SimpleChanges) {
+		if (changes['selectedSubcategories']) {
+			console.log(this.selectedSubcategories);
+			this.syncSelectedCategories();
+		}
+	}
 
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes['selectedSubcategories']) {
-      console.log(this.selectedSubcategories);
-      this.syncSelectedCategories();
-    }
-  }
+	private syncSelectedCategories() {
+		this.displaySubcategories = this.displaySubcategories.map((item) => ({
+			...item,
+			checked: this.selectedSubcategories.includes(item.id),
+		}));
 
-  private syncSelectedCategories() {
-    this.displaySubcategories = this.displaySubcategories.map(item => ({
-      ...item,
-      checked: this.selectedSubcategories.includes(item.id)
-    }));
+		this.subcategories.forEach((sub) => (sub.checked = this.selectedSubcategories.includes(sub.id)));
+		this.onFilterSubcategories();
+	}
 
-    this.subcategories.forEach(sub => sub.checked = this.selectedSubcategories.includes(sub.id));
-    this.onFilterSubcategories();
-  }
-
-  initSubcategories() {
+	initSubcategories() {
 		this.loadingSubcategories = true;
 		this.errorMsmSeverListCategories = '';
-    this.displaySubcategories = [];
-    this.subcategories = [];
-    this.filter = '';
+		this.displaySubcategories = [];
+		this.subcategories = [];
+		this.filter = '';
 		this.categoryService
 			.get_subcategories_by_select(this.categoryId)
 			.pipe(
@@ -82,19 +71,19 @@ export class MenuSubcategoriesComponent {
 				finalize(() => (this.loadingSubcategories = false))
 			)
 			.subscribe({
-				next: (next: {data: SubcategoryInterface[], message: string}) => {
-          console.log(next);
-          
+				next: (next: { data: SubcategoryInterface[]; message: string }) => {
+					console.log(next);
+
 					this.subcategories = next.data;
-          const transformed = this.subcategories.map(item => ({
-            id: item.id,          
-            name: item.name,       
-            totalProducts: item.totalProducts,
-            prefix: item.prefix,
-            checked: false,
-          }));
-          this.displaySubcategories = [...transformed];
-          this.syncSelectedCategories();
+					const transformed = this.subcategories.map((item) => ({
+						id: item.id,
+						name: item.name,
+						totalProducts: item.totalProducts,
+						prefix: item.prefix,
+						checked: false,
+					}));
+					this.displaySubcategories = [...transformed];
+					this.syncSelectedCategories();
 				},
 				error: (err) => {
 					const error = err.error;
@@ -103,50 +92,46 @@ export class MenuSubcategoriesComponent {
 			});
 	}
 
-  ngOnDestroy(): void {
+	ngOnDestroy(): void {
 		this.destroy$.next();
 		this.destroy$.complete();
 	}
 
-  onFilterSubcategories(): void {
-    const search = this.filter.trim().toLowerCase();
+	onFilterSubcategories(): void {
+		const search = this.filter.trim().toLowerCase();
 
-    this.displaySubcategories = this.subcategories.filter(sub =>
-      !search ||
-      sub.name.toLowerCase().includes(search)
-    );
-  }
+		this.displaySubcategories = this.subcategories.filter((sub) => !search || sub.name.toLowerCase().includes(search));
+	}
 
-  clearSelection(): void {
-    this.subcategories.forEach(sub => sub.checked = false);
-    this.selectedSubcategories = [];
-    this.applySubcategories.emit([]);
-    this.closeMenu();
-  }
+	clearSelection(): void {
+		this.subcategories.forEach((sub) => (sub.checked = false));
+		this.selectedSubcategories = [];
+		this.applySubcategories.emit([]);
+		this.closeMenu();
+	}
 
-  confirmSelection(): void {
-    console.log(this.selectedItems);
-    
-    const selectedIds = this.selectedItems.map(item => item.id);
-    this.selectedSubcategories = selectedIds;
-    
-    this.applySubcategories.emit(selectedIds);
-    this.closeMenu();
-  }
+	confirmSelection(): void {
+		console.log(this.selectedItems);
 
-  get selectedItems(): any[] {
-      return this.subcategories.filter(sub => sub.checked);
-  }
+		const selectedIds = this.selectedItems.map((item) => item.id);
+		this.selectedSubcategories = selectedIds;
 
-  getSelectedNames(): string {
-    return this.selectedItems.map(item => item.name).join(', ');
-  }
+		this.applySubcategories.emit(selectedIds);
+		this.closeMenu();
+	}
 
-  private closeMenu(): void {
-    const element = this.trigger.nativeElement;
-    const dropdown = (window as any).bootstrap.Dropdown.getInstance(element)
-      ?? new (window as any).bootstrap.Dropdown(element);
+	get selectedItems(): any[] {
+		return this.subcategories.filter((sub) => sub.checked);
+	}
 
-    dropdown.hide();
-  }
+	getSelectedNames(): string {
+		return this.selectedItems.map((item) => item.name).join(', ');
+	}
+
+	private closeMenu(): void {
+		const element = this.trigger.nativeElement;
+		const dropdown = (window as any).bootstrap.Dropdown.getInstance(element) ?? new (window as any).bootstrap.Dropdown(element);
+
+		dropdown.hide();
+	}
 }

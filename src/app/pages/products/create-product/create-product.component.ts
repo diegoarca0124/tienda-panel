@@ -13,7 +13,6 @@ import { CategoryService } from '@app/services/category.service';
 import { BrandService } from '@app/services/brand.service';
 import { labels } from '@app/common/constants/labels.constant';
 
-
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { visibilities } from '../constants/visibilities.constant';
 import { statusProduct } from '../constants/status-product.contant';
@@ -68,7 +67,7 @@ import { TextareaAutoresizeDirective } from '@app/common/directives/textarea-aut
 		CharacteristicCreateProductComponent,
 		ValidationPopoverComponent,
 		ModalExitComponent,
-		TextareaAutoresizeDirective
+		TextareaAutoresizeDirective,
 	],
 	schemas: [CUSTOM_ELEMENTS_SCHEMA],
 	templateUrl: './create-product.component.html',
@@ -78,24 +77,24 @@ export class CreateProductComponent {
 	@ViewChild('characteristics') characteristics!: CharacteristicCreateProductComponent;
 	@ViewChild('gallery') gallery!: GalleryCreateProductComponent;
 	@ViewChild('variations') variations!: VariationsCreateProductComponent;
-	
+
 	public product: ProductInterface = createEmptyProduct();
 	private initialProduct = createEmptyProduct();
-	public physical : PhysicalProduct = createEmptyProductPhysical();
-	public shipping : ShippingProduct = createEmptyProductShipping();
+	public physical: PhysicalProduct = createEmptyProductPhysical();
+	public shipping: ShippingProduct = createEmptyProductShipping();
 	public errorsProduct: any = {};
 	public variation = {
 		skuPattern: undefined,
-		name: ''
-	}
+		name: '',
+	};
 	public labelHelper = productFormHelp;
 	private destroy$ = new Subject<void>();
 	public loadBtn = false;
-	public categories : CategoryInterface[] = [];
-	public visibilities : any = visibilities;
-	public statusProduct : any = statusProduct;
-	
-	public subcategories : any = [];
+	public categories: CategoryInterface[] = [];
+	public visibilities: any = visibilities;
+	public statusProduct: any = statusProduct;
+
+	public subcategories: any = [];
 	public brands: any = [];
 	public errorMsmSeverListCategories: string = '';
 	public errorMsmSeverListSubcategories: string = '';
@@ -105,19 +104,19 @@ export class CreateProductComponent {
 	public loadingSubcategories: boolean = false;
 	public whiteListLabels = labels;
 	public whiteListTags = [];
-	public tab : ProductTabInterface = 'general';
-	public attributes : any[] = [];
-	public images : Array<{file: File, preview: string, index: number}> = [];
-	public widthScreen : number = window.innerWidth;
+	public tab: ProductTabInterface = 'general';
+	public attributes: any[] = [];
+	public images: Array<{ file: File; preview: string; index: number }> = [];
+	public widthScreen: number = window.innerWidth;
 	public errorMsmServer: string = '';
 	public msmErrorProduct: any = [];
-	public loadImport : boolean = false;
-	public categorySelected : any = {};
+	public loadImport: boolean = false;
+	public categorySelected: any = {};
 	public formData = new FormData();
 	public showErrors = showErrorsProduct;
-	
+
 	@ViewChildren(NgSelectComponent) selects!: QueryList<NgSelectComponent>;
-	
+
 	constructor(
 		private attributeService: AttributeService,
 		private categoryService: CategoryService,
@@ -128,36 +127,23 @@ export class CreateProductComponent {
 		private _router: Router
 	) {}
 
-	ngOnInit(
-		
-	) {
+	ngOnInit() {
 		const tab = this.route.snapshot.queryParamMap.get('tab');
 
-		const validTabs: ProductTabInterface[] = [
-			'general',
-			'characteristics',
-			'properties',
-			'shipping',
-			'images',
-			'variations',
-			'groups'
-		];
+		const validTabs: ProductTabInterface[] = ['general', 'characteristics', 'properties', 'shipping', 'images', 'variations', 'groups'];
 
-		this.tab = validTabs.includes(tab as ProductTabInterface)
-			? (tab as ProductTabInterface)
-			: 'general';
+		this.tab = validTabs.includes(tab as ProductTabInterface) ? (tab as ProductTabInterface) : 'general';
 
 		this.init_categories();
 		this.init_brands();
-		this.visibilities = this.visibilities.map((v:any) => ({
+		this.visibilities = this.visibilities.map((v: any) => ({
 			...v,
-			icon: this.sanitizer.bypassSecurityTrustHtml(v.icon)
+			icon: this.sanitizer.bypassSecurityTrustHtml(v.icon),
 		}));
-		this.statusProduct = this.statusProduct.map((v:any) => ({
+		this.statusProduct = this.statusProduct.map((v: any) => ({
 			...v,
-			icon: this.sanitizer.bypassSecurityTrustHtml(v.icon)
+			icon: this.sanitizer.bypassSecurityTrustHtml(v.icon),
 		}));
-		
 	}
 
 	hasPendingChanges(): boolean {
@@ -176,7 +162,6 @@ export class CreateProductComponent {
 			event.preventDefault();
 			event.returnValue = '';
 		}
-
 	}
 
 	@HostListener('window:resize', [])
@@ -197,11 +182,11 @@ export class CreateProductComponent {
 				finalize(() => (this.loadingCategories = false))
 			)
 			.subscribe({
-				next: (next: { data: CategoryInterface[], message: string}) => {
+				next: (next: { data: CategoryInterface[]; message: string }) => {
 					this.categories = next.data;
-					this.categories = this.categories.map((v:any) => ({
+					this.categories = this.categories.map((v: any) => ({
 						...v,
-						icon: this.sanitizer.bypassSecurityTrustHtml(v.icon ? v.icon : '')
+						icon: this.sanitizer.bypassSecurityTrustHtml(v.icon ? v.icon : ''),
 					}));
 				},
 				error: (err) => {
@@ -225,7 +210,7 @@ export class CreateProductComponent {
 			.subscribe({
 				next: (next) => {
 					this.brands = next;
-					this.brands = this.brands.map((brand : any) => ({
+					this.brands = this.brands.map((brand: any) => ({
 						...brand,
 						logoUrl: `${environment.s3_public_url}/brands/small/${brand.logoUrl}`,
 					}));
@@ -249,11 +234,11 @@ export class CreateProductComponent {
 				finalize(() => (this.loadingSubcategories = false))
 			)
 			.subscribe({
-				next: (next: {data: SubcategoryInterface[], message: string}) => {
+				next: (next: { data: SubcategoryInterface[]; message: string }) => {
 					this.subcategories = next.data;
-					this.subcategories = this.subcategories.map((v:any) => ({
+					this.subcategories = this.subcategories.map((v: any) => ({
 						...v,
-						icon: this.sanitizer.bypassSecurityTrustHtml(v.icon)
+						icon: this.sanitizer.bypassSecurityTrustHtml(v.icon),
 					}));
 				},
 				error: (err) => {
@@ -264,61 +249,62 @@ export class CreateProductComponent {
 	}
 
 	onSelectCategory() {
-		this.categorySelected = this.categories.find((item:any)=> item.id == this.product.categoryId);
+		this.categorySelected = this.categories.find((item: any) => item.id == this.product.categoryId);
 		this.product.subcategoryId = undefined;
 		this.init_subcategories(this.product.categoryId);
 	}
 
-	refreshCategories(){
+	refreshCategories() {
 		this.init_categories();
-		if(this.product.categoryId) this.init_subcategories(this.product.categoryId);
+		if (this.product.categoryId) this.init_subcategories(this.product.categoryId);
 	}
 
-	refreshSubcategories(){
-		if(this.product.categoryId) this.init_subcategories(this.product.categoryId);
+	refreshSubcategories() {
+		if (this.product.categoryId) this.init_subcategories(this.product.categoryId);
 	}
 
-	refreshBrands(){
+	refreshBrands() {
 		this.init_brands();
 	}
 
-	importProduct(){
-		if(this.product.productGroupId){
+	importProduct() {
+		if (this.product.productGroupId) {
 			this.loadImport = true;
-			this.productService.import_product_for_group(this.product.productGroupId)
-			.pipe(
-				takeUntil(this.destroy$),
-				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
-				finalize(() => (this.loadImport = false))
-			)
-			.subscribe({
-				next: (next)=>{
-					console.log(next);
-					this.init_subcategories(next.product.categoryId);
-					/* loadingValuesAttribute */
-					this.product = {
-						...this.product,  
-						...next.product, 
-					};
+			this.productService
+				.import_product_for_group(this.product.productGroupId)
+				.pipe(
+					takeUntil(this.destroy$),
+					withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
+					finalize(() => (this.loadImport = false))
+				)
+				.subscribe({
+					next: (next) => {
+						console.log(next);
+						this.init_subcategories(next.product.categoryId);
+						/* loadingValuesAttribute */
+						this.product = {
+							...this.product,
+							...next.product,
+						};
 
-					/* if (next.product.description) {
+						/* if (next.product.description) {
 						this.quill.root.innerHTML = next.product.description;
 					} */
 
-					this.physical = {
-						...this.physical,  
-						...next.physical, 
-					};
-				},
-				error: (error)=>{
-					console.log(error);
-				}
-			})
+						this.physical = {
+							...this.physical,
+							...next.physical,
+						};
+					},
+					error: (error) => {
+						console.log(error);
+					},
+				});
 		}
 	}
 
 	private appendIf(formData: FormData, key: string, value: any): void {
-		if (value !== undefined &&value !== null &&value !== '') {
+		if (value !== undefined && value !== null && value !== '') {
 			formData.append(key, String(value));
 		}
 	}
@@ -330,7 +316,6 @@ export class CreateProductComponent {
 	}
 
 	private appendProductData(formData: FormData): void {
-		
 		this.appendIf(formData, 'status', this.product.status);
 		this.appendIf(formData, 'visibility', this.product.visibility);
 		this.appendIf(formData, 'name', this.product.name);
@@ -368,32 +353,29 @@ export class CreateProductComponent {
 
 		this.appendIf(formData, 'isDimensions', this.categorySelected.isDimensions);
 		this.appendIf(formData, 'isTemperature', this.categorySelected.isTemperature);
-		
 	}
 
-	private appendAttributesData(formData: FormData){
-		const attributes = this.characteristics?.getAttributesSelected()
-		.flatMap(group => group.attributes)
-		.filter(attr =>
-			Array.isArray(attr.attributeValueId) &&
-			attr.attributeValueId.length > 0
-		);
+	private appendAttributesData(formData: FormData) {
+		const attributes = this.characteristics
+			?.getAttributesSelected()
+			.flatMap((group) => group.attributes)
+			.filter((attr) => Array.isArray(attr.attributeValueId) && attr.attributeValueId.length > 0);
 
-		const data = attributes?.flatMap(attr =>
-		attr.attributeValueId.map((valueId: string) => ({
-			attributeId: attr.id,
-			attributeValueId: valueId,
-			value:
-			attr.attributeValues.find((v: any) => v.id === valueId)?.value ?? null,
-		}))
-		) ?? [];
+		const data =
+			attributes?.flatMap((attr) =>
+				attr.attributeValueId.map((valueId: string) => ({
+					attributeId: attr.id,
+					attributeValueId: valueId,
+					value: attr.attributeValues.find((v: any) => v.id === valueId)?.value ?? null,
+				}))
+			) ?? [];
 
 		formData.append('attributes', JSON.stringify(data));
 	}
 
 	private appendPhysicalData(formData: FormData): void {
 		console.log(this.physical);
-		
+
 		this.appendIf(formData, 'weight', this.physical.weight);
 		this.appendIf(formData, 'height', this.physical.height);
 		this.appendIf(formData, 'width', this.physical.width);
@@ -414,9 +396,9 @@ export class CreateProductComponent {
 		this.appendIf(formData, 'material', this.physical.material);
 	}
 
-	private appendGalleryData(formData: FormData){
+	private appendGalleryData(formData: FormData) {
 		const gallery = this.gallery?.getImagesSelected();
-		gallery.forEach((file: {file: File, preview: string, index: number}) => {
+		gallery.forEach((file: { file: File; preview: string; index: number }) => {
 			formData.append('gallery', file.file);
 		});
 	}
@@ -434,8 +416,8 @@ export class CreateProductComponent {
 		this.appendJsonIf(formData, 'variations', variations);
 	}
 
-	create() {	
-		this.formData = new FormData();	
+	create() {
+		this.formData = new FormData();
 		this.appendAttributesData(this.formData);
 		this.appendProductData(this.formData);
 		this.appendPhysicalData(this.formData);
@@ -446,39 +428,38 @@ export class CreateProductComponent {
 		const formDataObject = Object.fromEntries(this.formData.entries());
 		console.log(formDataObject);
 		this.loadBtn = true;
-		this.productService.create_product(this.formData)
-		.pipe(
-			withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
-			takeUntil(this.destroy$),
-			finalize(() => (this.loadBtn = false))
-		)
-		.subscribe({
-			next: (next) =>{
-				this.errorsProduct = {};
-				toastr.success(next.message);
-				this._router.navigate(['/products/articles']);
-			},
-			error: (err) =>{
-				this.errorsProduct = {};
-				const error = err.error;
-				this.errorMsmServer = error.message || '¡Error desconocido!';
-				toastr.error(this.errorMsmServer);
-				console.log(error.validation);
-				
-				if (error.validation) {
-					this.errorsProduct = {
-						...this.errorsProduct,
-						...error.validation, 
-					};
-					this.msmErrorProduct = Object.values(this.errorsProduct).flat();
-					this.errorMsmServer = '';
-					for (const key in this.showErrors) {
-						this.showErrors[key as keyof typeof this.showErrors] =
-						!!this.errorsProduct?.[key]?.length;
+		this.productService
+			.create_product(this.formData)
+			.pipe(
+				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
+				takeUntil(this.destroy$),
+				finalize(() => (this.loadBtn = false))
+			)
+			.subscribe({
+				next: (next) => {
+					this.errorsProduct = {};
+					toastr.success(next.message);
+					this._router.navigate(['/products/articles']);
+				},
+				error: (err) => {
+					this.errorsProduct = {};
+					const error = err.error;
+					this.errorMsmServer = error.message || '¡Error desconocido!';
+					toastr.error(this.errorMsmServer);
+					console.log(error.validation);
+
+					if (error.validation) {
+						this.errorsProduct = {
+							...this.errorsProduct,
+							...error.validation,
+						};
+						this.msmErrorProduct = Object.values(this.errorsProduct).flat();
+						this.errorMsmServer = '';
+						for (const key in this.showErrors) {
+							this.showErrors[key as keyof typeof this.showErrors] = !!this.errorsProduct?.[key]?.length;
+						}
 					}
-				}
-			}
-		})
-		
+				},
+			});
 	}
 }

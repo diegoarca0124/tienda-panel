@@ -1,24 +1,24 @@
 export interface PhysicalProduct {
-  weightUnit: any | undefined;
-  dimensionUnit: any | undefined;
+	weightUnit: any | undefined;
+	dimensionUnit: any | undefined;
 
-  height: number | string;
-  width: number | string;
-  length: number | string;
-  weight: number | string;
+	height: number | string;
+	width: number | string;
+	length: number | string;
+	weight: number | string;
 
-  isFragile: boolean;
-  isPerishable: boolean;
-  isEcoFriendly: boolean;
-  isBiodegradable: boolean;
-  isHazardous: boolean;
-  isRequiresRefrigeration: boolean; 
-  isFlammable: boolean;
-  isRequiresAssembly: boolean;
+	isFragile: boolean;
+	isPerishable: boolean;
+	isEcoFriendly: boolean;
+	isBiodegradable: boolean;
+	isHazardous: boolean;
+	isRequiresRefrigeration: boolean;
+	isFlammable: boolean;
+	isRequiresAssembly: boolean;
 
-  material: string | undefined;
+	material: string | undefined;
 
-  storageTempUnit: any | undefined;
-  minStorageTemp?: number | string;
-  maxStorageTemp?: number | string;
+	storageTempUnit: any | undefined;
+	minStorageTemp?: number | string;
+	maxStorageTemp?: number | string;
 }

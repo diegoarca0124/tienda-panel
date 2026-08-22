@@ -11,7 +11,7 @@
 
 							<ul class="breadcrumb breadcrumb-separatorless fs-7 my-0 pt-1">
 								<li class="breadcrumb-item text-muted">
-									<a [routerLink]="['/products/articles']" class="text-muted text-hover-primary"> Articulos </a>
+									<a [routerLink]="['/products/articles']" class="text-muted text-hover-primary">Articulos</a>
 								</li>
 								<li class="breadcrumb-item">
 									<span class="bullet bg-gray-400 w-5px h-2px"></span>
@@ -30,9 +30,13 @@
 									<div class="fv-row">
 										<div class="d-flex align-items-center justify-content-between mb-1">
 											<label class="required fw-500 text-gray-700 fs-6 mb-1">Visibilidad</label>
-											
-											<small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="errorsProduct?.visibility" (click)="showErrors.visibility = !showErrors.visibility">
-												<ion-icon name="information-circle-outline" class="validation-icon"> </ion-icon>
+
+											<small
+												class="text-danger cursor-pointer d-flex align-items-center gap-1"
+												*ngIf="errorsProduct?.visibility"
+												(click)="showErrors.visibility = !showErrors.visibility"
+											>
+												<ion-icon name="information-circle-outline" class="validation-icon"></ion-icon>
 												{{ showErrors.visibility ? 'Ocultar errores' : 'Ver errores' }}
 											</small>
 										</div>
@@ -52,7 +56,7 @@
 												<!-- 🔹 Opción en el dropdown -->
 												<ng-template ng-option-tmp let-item="item">
 													<div class="option-item d-flex gap-3 align-items-center">
-														<div class="d-flex align-items-center" [class]="item.class" [innerHTML]="item.icon" style="color: #9da1bc;"></div>
+														<div class="d-flex align-items-center" [class]="item.class" [innerHTML]="item.icon" style="color: #9da1bc"></div>
 														<span class="fs-1rem">{{ item.name }}</span>
 													</div>
 												</ng-template>
@@ -60,26 +64,25 @@
 												<!-- 🔹 Opción seleccionada en el input -->
 												<ng-template ng-label-tmp let-item="item">
 													<div class="selected-item d-flex gap-3 align-items-center">
-														<div class="d-flex align-items-center" [class]="item.class" [innerHTML]="item.icon" style="color: #9da1bc;"></div>
+														<div class="d-flex align-items-center" [class]="item.class" [innerHTML]="item.icon" style="color: #9da1bc"></div>
 														<span class="fs-1rem">{{ item.name }}</span>
 													</div>
 												</ng-template>
 											</ng-select>
 										</div>
-										
-										<span class="fs-8 text-muted">{{labelHelper.visibility}}</span>
+
+										<span class="fs-8 text-muted">{{ labelHelper.visibility }}</span>
 
 										<div class="validation-wrapper" [class.open]="showErrors.visibility">
-											<app-validation-popover 
-											[errors]="errorsProduct?.visibility"></app-validation-popover>
+											<app-validation-popover [errors]="errorsProduct?.visibility"></app-validation-popover>
 										</div>
 									</div>
 									<div class="fv-row">
 										<div class="d-flex align-items-center justify-content-between mb-1">
 											<label class="required fw-500 text-gray-700 fs-6 mb-1">Estado</label>
-											
+
 											<small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="errorsProduct?.status" (click)="showErrors.status = !showErrors.status">
-												<ion-icon name="information-circle-outline" class="validation-icon"> </ion-icon>
+												<ion-icon name="information-circle-outline" class="validation-icon"></ion-icon>
 												{{ showErrors.status ? 'Ocultar errores' : 'Ver errores' }}
 											</small>
 										</div>
@@ -98,7 +101,7 @@
 												<!-- 🔹 Opción en el dropdown -->
 												<ng-template ng-option-tmp let-item="item">
 													<div class="option-item d-flex gap-3 align-items-center">
-														<div class="d-flex align-items-center" [innerHTML]="item.icon" style="color: #9da1bc;"></div>
+														<div class="d-flex align-items-center" [innerHTML]="item.icon" style="color: #9da1bc"></div>
 														<span class="fs-1rem">{{ item.name }}</span>
 													</div>
 												</ng-template>
@@ -106,42 +109,28 @@
 												<!-- 🔹 Opción seleccionada en el input -->
 												<ng-template ng-label-tmp let-item="item">
 													<div class="selected-item d-flex gap-3 align-items-center">
-														<div class="d-flex align-items-center" [innerHTML]="item.icon" style="color: #9da1bc;"></div>
+														<div class="d-flex align-items-center" [innerHTML]="item.icon" style="color: #9da1bc"></div>
 														<span class="fs-1rem">{{ item.name }}</span>
 													</div>
 												</ng-template>
 											</ng-select>
 										</div>
-										
-										<span class="fs-8 text-muted">{{labelHelper.status}}</span>
+
+										<span class="fs-8 text-muted">{{ labelHelper.status }}</span>
 
 										<div class="validation-wrapper" [class.open]="showErrors.status">
-											<app-validation-popover 
-											[errors]="errorsProduct?.status"></app-validation-popover>
+											<app-validation-popover [errors]="errorsProduct?.status"></app-validation-popover>
 										</div>
 									</div>
 									<div class="row g-2">
 										<div class="col-6">
-											<button
-											type="button"
-											class="btn btn-sm btn-light-dark w-100"
-											>
-												Borrador
-											</button>
+											<button type="button" class="btn btn-sm btn-light-dark w-100">Borrador</button>
 										</div>
 
 										<div class="col-6">
-											<button
-											type="button"
-											class="btn btn-sm btn-dark w-100"
-											[disabled]="loadBtn"
-											(click)="create()"
-											>
-											<span
-												*ngIf="loadBtn"
-												class="spinner-border spinner-border-sm me-1"
-											></span>
-											{{ loadBtn ? 'Procesando' : 'Publicar' }}
+											<button type="button" class="btn btn-sm btn-dark w-100" [disabled]="loadBtn" (click)="create()">
+												<span *ngIf="loadBtn" class="spinner-border spinner-border-sm me-1"></span>
+												{{ loadBtn ? 'Procesando' : 'Publicar' }}
 											</button>
 										</div>
 									</div>
@@ -152,80 +141,80 @@
 									<div class="fv-row">
 										<div class="d-flex align-items-center justify-content-between mb-1">
 											<label class="required fw-500 text-gray-700 fs-6 mb-1">Marca</label>
-											
+
 											<div class="d-flex gap-3">
 												<small class="text-primary cursor-pointer" (click)="refreshBrands()">Recargar</small>
 												<small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="errorsProduct?.brandId" (click)="showErrors.brandId = !showErrors.brandId">
-													<ion-icon name="information-circle-outline" class="validation-icon"> </ion-icon>
+													<ion-icon name="information-circle-outline" class="validation-icon"></ion-icon>
 													{{ showErrors.brandId ? 'Ocultar errores' : 'Ver errores' }}
 												</small>
 											</div>
 										</div>
-										
-										<div [ngClass]="{ 'is-invalid': errorsProduct?.brandId}">
-												<ng-select
-													[items]="brands"
-													bindLabel="name"
-													bindValue="id"
-													[(ngModel)]="product.brandId"
-													placeholder="Buscar por marca"
-													[clearable]="false"
-													[closeOnSelect]="true"
-													class="select-element mb-1"
-													[loading]="loadingBrands"
-													[disabled]="loadingBrands"
-													appendTo="body"
-												>
-													<!-- 🔹 Opción en el dropdown -->
-													<ng-template ng-option-tmp let-item="item">
-														<div class="option-item">
-															<img *ngIf="item.logoUrl" [src]="item.logoUrl" alt="{{ item.name }}" class="brand-image" 
-															fallbackImage/>
-															<span class="fs-1rem">{{ item.name }}</span>
-														</div>
-													</ng-template>
 
-													<!-- 🔹 Opción seleccionada en el input -->
-													<ng-template ng-label-tmp let-item="item">
-														<div class="selected-item">
-															<img *ngIf="item.logoUrl" [src]="item.logoUrl" alt="{{ item.name }}" class="brand-image" 
-															fallbackImage/>
-															<span class="fs-1rem">{{ item.name }}</span>
-														</div>
-													</ng-template>
+										<div [ngClass]="{ 'is-invalid': errorsProduct?.brandId }">
+											<ng-select
+												[items]="brands"
+												bindLabel="name"
+												bindValue="id"
+												[(ngModel)]="product.brandId"
+												placeholder="Buscar por marca"
+												[clearable]="false"
+												[closeOnSelect]="true"
+												class="select-element mb-1"
+												[loading]="loadingBrands"
+												[disabled]="loadingBrands"
+												appendTo="body"
+											>
+												<!-- 🔹 Opción en el dropdown -->
+												<ng-template ng-option-tmp let-item="item">
+													<div class="option-item">
+														<img *ngIf="item.logoUrl" [src]="item.logoUrl" alt="{{ item.name }}" class="brand-image" fallbackImage />
+														<span class="fs-1rem">{{ item.name }}</span>
+													</div>
+												</ng-template>
 
-													<ng-template ng-loading-text>
-														<div class="spinner-container">
-															<span class="spinner-border spinner-border-sm"></span>
-														</div>
-													</ng-template>
-												</ng-select>
+												<!-- 🔹 Opción seleccionada en el input -->
+												<ng-template ng-label-tmp let-item="item">
+													<div class="selected-item">
+														<img *ngIf="item.logoUrl" [src]="item.logoUrl" alt="{{ item.name }}" class="brand-image" fallbackImage />
+														<span class="fs-1rem">{{ item.name }}</span>
+													</div>
+												</ng-template>
+
+												<ng-template ng-loading-text>
+													<div class="spinner-container">
+														<span class="spinner-border spinner-border-sm"></span>
+													</div>
+												</ng-template>
+											</ng-select>
 										</div>
-										
+
 										<span class="fs-8" [ngClass]="errorMsmSeverListBrands ? 'text-danger' : 'text-muted'">
-											{{ (errorMsmSeverListBrands) ? errorMsmSeverListBrands : labelHelper.brandId }}
+											{{ errorMsmSeverListBrands ? errorMsmSeverListBrands : labelHelper.brandId }}
 										</span>
 
 										<div class="validation-wrapper" [class.open]="showErrors.brandId">
-											<app-validation-popover 
-											[errors]="errorsProduct?.brandId"></app-validation-popover>
+											<app-validation-popover [errors]="errorsProduct?.brandId"></app-validation-popover>
 										</div>
 									</div>
 									<div class="fv-row">
-
 										<div class="d-flex align-items-center justify-content-between mb-1">
 											<label class="required fw-500 text-gray-700 fs-6 mb-1">Categoría</label>
-											
+
 											<div class="d-flex gap-3">
 												<small class="text-primary cursor-pointer" (click)="refreshCategories()">Recargar</small>
-												<small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="errorsProduct?.categoryId" (click)="showErrors.categoryId = !showErrors.categoryId">
-													<ion-icon name="information-circle-outline" class="validation-icon"> </ion-icon>
+												<small
+													class="text-danger cursor-pointer d-flex align-items-center gap-1"
+													*ngIf="errorsProduct?.categoryId"
+													(click)="showErrors.categoryId = !showErrors.categoryId"
+												>
+													<ion-icon name="information-circle-outline" class="validation-icon"></ion-icon>
 													{{ showErrors.categoryId ? 'Ocultar errores' : 'Ver errores' }}
 												</small>
 											</div>
 										</div>
-										
-										<div [ngClass]="{ 'is-invalid': errorsProduct?.categoryId}">
+
+										<div [ngClass]="{ 'is-invalid': errorsProduct?.categoryId }">
 											<ng-select
 												[items]="categories"
 												bindLabel="name"
@@ -242,14 +231,14 @@
 											>
 												<ng-template ng-option-tmp let-item="item">
 													<div class="option-item d-flex gap-3 align-items-center">
-														<div class="d-flex align-items-center svg-icon svg-icon-3" [class]="item.class" [innerHTML]="item.icon" style="color: #9da1bc;font-size: 1.4rem;"></div>
+														<div class="d-flex align-items-center svg-icon svg-icon-3" [class]="item.class" [innerHTML]="item.icon" style="color: #9da1bc; font-size: 1.4rem"></div>
 														<span class="text-ellipsis">{{ item.name }}</span>
 													</div>
 												</ng-template>
-												
+
 												<ng-template ng-label-tmp let-item="item">
 													<div class="option-item d-flex gap-3 align-items-center">
-														<div class="d-flex align-items-center svg-icon svg-icon-3" [class]="item.class" [innerHTML]="item.icon" style="color: #9da1bc;font-size: 1.4rem;"></div>
+														<div class="d-flex align-items-center svg-icon svg-icon-3" [class]="item.class" [innerHTML]="item.icon" style="color: #9da1bc; font-size: 1.4rem"></div>
 														<span>{{ item.name }}</span>
 													</div>
 												</ng-template>
@@ -261,29 +250,33 @@
 												</ng-template>
 											</ng-select>
 										</div>
-										
+
 										<span class="fs-8" [ngClass]="errorMsmSeverListCategories ? 'text-danger' : 'text-muted'">
-											{{ (errorMsmSeverListCategories) ? errorMsmSeverListCategories : labelHelper.categoryId }}
+											{{ errorMsmSeverListCategories ? errorMsmSeverListCategories : labelHelper.categoryId }}
 										</span>
 										<div class="validation-wrapper" [class.open]="showErrors.categoryId">
-											<app-validation-popover 
-											[errors]="errorsProduct?.categoryId"></app-validation-popover>
+											<app-validation-popover [errors]="errorsProduct?.categoryId"></app-validation-popover>
 										</div>
 									</div>
 									<div class="fv-row">
 										<div class="d-flex align-items-center justify-content-between mb-1">
 											<label class="required fw-500 text-gray-700 fs-6 mb-1">Subcategoría</label>
-											
+
 											<div class="d-flex gap-3">
-												<small *ngIf="product.categoryId" class="text-primary cursor-pointer" (click)="refreshSubcategories()">Recargar</small> <small *ngIf="!product.categoryId" class="text-muted" style="cursor: not-allowed;">Recargar</small>
-												<small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="errorsProduct?.subcategoryId" (click)="showErrors.subcategoryId = !showErrors.subcategoryId">
-													<ion-icon name="information-circle-outline" class="validation-icon"> </ion-icon>
+												<small *ngIf="product.categoryId" class="text-primary cursor-pointer" (click)="refreshSubcategories()">Recargar</small>
+												<small *ngIf="!product.categoryId" class="text-muted" style="cursor: not-allowed">Recargar</small>
+												<small
+													class="text-danger cursor-pointer d-flex align-items-center gap-1"
+													*ngIf="errorsProduct?.subcategoryId"
+													(click)="showErrors.subcategoryId = !showErrors.subcategoryId"
+												>
+													<ion-icon name="information-circle-outline" class="validation-icon"></ion-icon>
 													{{ showErrors.subcategoryId ? 'Ocultar errores' : 'Ver errores' }}
 												</small>
 											</div>
 										</div>
-										
-										<div [ngClass]="{ 'is-invalid': errorsProduct?.subcategoryId}">
+
+										<div [ngClass]="{ 'is-invalid': errorsProduct?.subcategoryId }">
 											<ng-select
 												[items]="subcategories"
 												bindLabel="name"
@@ -300,16 +293,15 @@
 												<!-- Opción en el dropdown -->
 												<ng-template ng-option-tmp let-item="item">
 													<div class="option-item d-flex gap-3 align-items-center">
-														<div class="d-flex align-items-center svg-icon svg-icon-3" [class]="item.class" [innerHTML]="item.icon" style="color: #9da1bc;font-size: 1.4rem;"></div>
+														<div class="d-flex align-items-center svg-icon svg-icon-3" [class]="item.class" [innerHTML]="item.icon" style="color: #9da1bc; font-size: 1.4rem"></div>
 														<span class="text-ellipsis">{{ item.name }}</span>
 													</div>
 												</ng-template>
-												
 
 												<!-- Opción seleccionada en el input -->
 												<ng-template ng-label-tmp let-item="item">
 													<div class="option-item d-flex gap-3 align-items-center">
-														<div class="d-flex align-items-center svg-icon svg-icon-3" [class]="item.class" [innerHTML]="item.icon" style="color: #9da1bc;font-size: 1.4rem;"></div>
+														<div class="d-flex align-items-center svg-icon svg-icon-3" [class]="item.class" [innerHTML]="item.icon" style="color: #9da1bc; font-size: 1.4rem"></div>
 														<span>{{ item.name }}</span>
 													</div>
 												</ng-template>
@@ -321,85 +313,64 @@
 												</ng-template>
 											</ng-select>
 										</div>
-										
-										<span
-										class="fs-8"
-										[ngClass]="errorMsmSeverListSubcategories ? 'text-danger' : 'text-muted'"
-										>
-										{{ (errorMsmSeverListSubcategories) ? errorMsmSeverListSubcategories : labelHelper.subcategoryId }}
+
+										<span class="fs-8" [ngClass]="errorMsmSeverListSubcategories ? 'text-danger' : 'text-muted'">
+											{{ errorMsmSeverListSubcategories ? errorMsmSeverListSubcategories : labelHelper.subcategoryId }}
 										</span>
 
 										<div class="validation-wrapper" [class.open]="showErrors.subcategoryId">
-											<app-validation-popover 
-											[errors]="errorsProduct?.subcategoryId"></app-validation-popover>
+											<app-validation-popover [errors]="errorsProduct?.subcategoryId"></app-validation-popover>
 										</div>
 									</div>
 								</div>
 							</div>
 						</div>
 						<!--end::Table wrapper-->
-						<div class="flex-fill content" >
-							<div class="card pt-7" style="box-shadow: rgb(0 0 0 / 6%) 0.5rem 0.5rem 1.5rem 0.5rem !important;">
+						<div class="flex-fill content">
+							<div class="card pt-7" style="box-shadow: rgb(0 0 0 / 6%) 0.5rem 0.5rem 1.5rem 0.5rem !important">
 								<div class="card-body pt-1">
-									<app-menu-create-product
-									[tab]="tab"
-									[categorySelected]="categorySelected"
-									[errorsProduct]="errorsProduct"
-									(tabChange)="tab = $event"></app-menu-create-product>
+									<app-menu-create-product [tab]="tab" [categorySelected]="categorySelected" [errorsProduct]="errorsProduct" (tabChange)="tab = $event"></app-menu-create-product>
 								</div>
-								<div class="card-body pt-0" [ngClass]="{'d-none': tab != 'general'}">
+								<div class="card-body pt-0" [ngClass]="{ 'd-none': tab != 'general' }">
 									<app-general-create-product
-									[showErrors]="showErrors"
-									[product]="product"
-									[physical]="physical"
-									[errorsProduct]="errorsProduct"
-									[categorySelected]="categorySelected"
-									[loadProduct]="false"
-									[whiteListTags]="whiteListTags"></app-general-create-product>
+										[showErrors]="showErrors"
+										[product]="product"
+										[physical]="physical"
+										[errorsProduct]="errorsProduct"
+										[categorySelected]="categorySelected"
+										[loadProduct]="false"
+										[whiteListTags]="whiteListTags"
+									></app-general-create-product>
 								</div>
-								<div class="card-body pt-0" [ngClass]="{'d-none': tab != 'characteristics'}">
+								<div class="card-body pt-0" [ngClass]="{ 'd-none': tab != 'characteristics' }">
 									<app-characteristic-create-product
-									[categoryId]="product.categoryId!"
-									#characteristics
-									[errorsProduct]="errorsProduct"
-									[product]="product"></app-characteristic-create-product>
+										[categoryId]="product.categoryId!"
+										#characteristics
+										[errorsProduct]="errorsProduct"
+										[product]="product"
+									></app-characteristic-create-product>
 								</div>
-								<div class="card-body pt-0" [ngClass]="{'d-none': tab != 'properties'}">
+								<div class="card-body pt-0" [ngClass]="{ 'd-none': tab != 'properties' }">
 									<app-property-create-product
-									[showErrors]="showErrors"
-									[product]="product"
-									[physical]="physical"
-									[errorsProduct]="errorsProduct"
-									[loadProduct]="false"
-									[categorySelected]="categorySelected"></app-property-create-product>
+										[showErrors]="showErrors"
+										[product]="product"
+										[physical]="physical"
+										[errorsProduct]="errorsProduct"
+										[loadProduct]="false"
+										[categorySelected]="categorySelected"
+									></app-property-create-product>
 								</div>
-								<div class="card-body pt-0" [ngClass]="{'d-none': tab != 'shipping'}">
-									<app-shipping-create-product
-									[showErrors]="showErrors"
-									[shipping]="shipping"
-									[errorsProduct]="errorsProduct"></app-shipping-create-product>
+								<div class="card-body pt-0" [ngClass]="{ 'd-none': tab != 'shipping' }">
+									<app-shipping-create-product [showErrors]="showErrors" [shipping]="shipping" [errorsProduct]="errorsProduct"></app-shipping-create-product>
 								</div>
-								<div class="card-body pt-0" [ngClass]="{'d-none': tab != 'images'}">
-									<app-gallery-create-product
-									#gallery
-									[showErrors]="showErrors"
-									[product]="product"
-									[errorsProduct]="errorsProduct"
-									[images]="images"></app-gallery-create-product>
-									
+								<div class="card-body pt-0" [ngClass]="{ 'd-none': tab != 'images' }">
+									<app-gallery-create-product #gallery [showErrors]="showErrors" [product]="product" [errorsProduct]="errorsProduct" [images]="images"></app-gallery-create-product>
 								</div>
-								<div class="card-body pt-0" [ngClass]="{'d-none': tab != 'variations'}">
-									<app-variations-create-product
-									#variations
-									[showErrors]="showErrors"
-									[errorsProduct]="errorsProduct"
-									[variation]="variation"></app-variations-create-product>
+								<div class="card-body pt-0" [ngClass]="{ 'd-none': tab != 'variations' }">
+									<app-variations-create-product #variations [showErrors]="showErrors" [errorsProduct]="errorsProduct" [variation]="variation"></app-variations-create-product>
 								</div>
-								<div class="card-body pt-0" [ngClass]="{'d-none': tab != 'groups'}">	
-									<app-group-create-product
-									[categoryId]="product.categoryId!"
-									[errorsProduct]="errorsProduct"
-									[product]="product"></app-group-create-product>
+								<div class="card-body pt-0" [ngClass]="{ 'd-none': tab != 'groups' }">
+									<app-group-create-product [categoryId]="product.categoryId!" [errorsProduct]="errorsProduct" [product]="product"></app-group-create-product>
 								</div>
 							</div>
 						</div>
@@ -409,6 +380,5 @@
 		</div>
 	</div>
 </div>
-
 
 <app-modal-exit></app-modal-exit>

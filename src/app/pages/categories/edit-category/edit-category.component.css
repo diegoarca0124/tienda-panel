@@ -3,19 +3,19 @@
 	z-index: 1050; /* mayor que la tabla */
 }
 
-.active{
-	background-color: #151921 !important
+.active {
+	background-color: #151921 !important;
 }
 
-.nav-link{
-    text-transform: capitalize !important;
+.nav-link {
+	text-transform: capitalize !important;
 	border: 1px solid #ebebeb !important;
 }
 
-.nav-link.active{
+.nav-link.active {
 	color: #fff !important;
 }
 
 .editor-invalid {
-    border-radius: .475rem;
+	border-radius: 0.475rem;
 }

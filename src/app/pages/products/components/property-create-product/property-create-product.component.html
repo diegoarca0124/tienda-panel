@@ -1,651 +1,602 @@
 <div class="d-flex flex-column gap-6">
-    <ng-container>
-        <div class="row">
-            <div class="col-lg-12 mb-5">
-                <h4 class="mb-0">Medidas Fisicas</h4>
-                <span class="text-gray-500 mt-1 fw-400 fs-0-9rem">
-                    Ingresa las medidas y peso reales del producto para mejorar costos de envío y gestión logística.
-                </span>
-            </div>
-            <div class="col-md-6 mb-4">
-                <div class="d-flex align-items-center justify-content-between mb-1">
-                    <label class="required fw-500 text-gray-700 fs-6 mb-1"
-                    [ngClass]="{'required': categorySelected.isDimensions}">Unidad peso</label>
-                    <small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="errorsProduct?.weightUnit" (click)="showErrors.weightUnit = !showErrors.weightUnit">
-                        <ion-icon name="information-circle-outline" class="validation-icon"> </ion-icon>
-                        {{ showErrors.weightUnit ? 'Ocultar errores' : 'Ver errores' }}
-                    </small>
-                </div>
-                @if(!loadProduct  || !id){
-                    <div [ngClass]="{ 'is-invalid': errorsProduct?.weightUnit }">
-                        <ng-select
-                            [items]="weightUnits_"
-                            bindLabel="name"
-                            [(ngModel)]="physical.weightUnit"
-                            placeholder="Unidad de medida"
-                            [clearable]="false"
-                            [closeOnSelect]="true"
-                            class="select-element mb-1"
-                        >
-                            <!-- Opción en el dropdown -->
-                            <ng-template ng-option-tmp let-item="item">
-                                <div class="option-item d-flex gap-3 align-items-center">
-                                    <div class="option-name">{{ item.name }}</div>
-                                    <small class="option-value text-gray-500"> - {{ item.abbr }}</small>
-                                </div>
-                            </ng-template>
+	<ng-container>
+		<div class="row">
+			<div class="col-lg-12 mb-5">
+				<h4 class="mb-0">Medidas Fisicas</h4>
+				<span class="text-gray-500 mt-1 fw-400 fs-0-9rem">Ingresa las medidas y peso reales del producto para mejorar costos de envío y gestión logística.</span>
+			</div>
+			<div class="col-md-6 mb-4">
+				<div class="d-flex align-items-center justify-content-between mb-1">
+					<label class="required fw-500 text-gray-700 fs-6 mb-1" [ngClass]="{ required: categorySelected.isDimensions }">Unidad peso</label>
+					<small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="errorsProduct?.weightUnit" (click)="showErrors.weightUnit = !showErrors.weightUnit">
+						<ion-icon name="information-circle-outline" class="validation-icon"></ion-icon>
+						{{ showErrors.weightUnit ? 'Ocultar errores' : 'Ver errores' }}
+					</small>
+				</div>
+				@if (!loadProduct || !id) {
+					<div [ngClass]="{ 'is-invalid': errorsProduct?.weightUnit }">
+						<ng-select
+							[items]="weightUnits_"
+							bindLabel="name"
+							[(ngModel)]="physical.weightUnit"
+							placeholder="Unidad de medida"
+							[clearable]="false"
+							[closeOnSelect]="true"
+							class="select-element mb-1"
+						>
+							<!-- Opción en el dropdown -->
+							<ng-template ng-option-tmp let-item="item">
+								<div class="option-item d-flex gap-3 align-items-center">
+									<div class="option-name">{{ item.name }}</div>
+									<small class="option-value text-gray-500">- {{ item.abbr }}</small>
+								</div>
+							</ng-template>
 
-                            <!-- Opción seleccionada en el input -->
-                            <ng-template ng-label-tmp let-item="item">
-                                {{ item.name }}
-                            </ng-template>
+							<!-- Opción seleccionada en el input -->
+							<ng-template ng-label-tmp let-item="item">
+								{{ item.name }}
+							</ng-template>
 
-                            <ng-template ng-loading-text>
-                                <div class="spinner-container">
-                                    <span class="spinner-border spinner-border-sm"></span>
-                                </div>
-                            </ng-template>
-                        </ng-select>
-                    </div>
-                }@else {
-                    <div class="skeleton skeleton-input mb-1"></div>
-                }
-                <span class="fs-8 text-muted">{{labelHelper.weightUnit}}</span>
+							<ng-template ng-loading-text>
+								<div class="spinner-container">
+									<span class="spinner-border spinner-border-sm"></span>
+								</div>
+							</ng-template>
+						</ng-select>
+					</div>
+				} @else {
+					<div class="skeleton skeleton-input mb-1"></div>
+				}
+				<span class="fs-8 text-muted">{{ labelHelper.weightUnit }}</span>
 
-                <div class="validation-wrapper" [class.open]="showErrors.weightUnit">
-                    <app-validation-popover 
-                    [errors]="errorsProduct?.weightUnit"></app-validation-popover>
-                </div>
-            </div>
-            <div class="col-md-6 mb-4">
-                 <div class="d-flex align-items-center justify-content-between mb-1">
-                    <label class="fw-500 text-gray-700 fs-6 mb-1" 
-                    [ngClass]="{'required': categorySelected.isDimensions}">Unidad longitud</label>
-                    <small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="errorsProduct?.dimensionUnit" (click)="showErrors.dimensionUnit = !showErrors.dimensionUnit">
-                        <ion-icon name="information-circle-outline" class="validation-icon"> </ion-icon>
-                        {{ showErrors.dimensionUnit ? 'Ocultar errores' : 'Ver errores' }}
-                    </small>
-                </div>
-                @if (!loadProduct  || !id) {
-                    <div [ngClass]="{ 'is-invalid': errorsProduct?.dimensionUnit }">
-                    <ng-select
-                        [items]="dimensiontUnits_"
-                        bindLabel="name"
-                        [(ngModel)]="physical.dimensionUnit"   
-                        placeholder="Unidad de medida"
-                        [clearable]="false"
-                        [closeOnSelect]="true"
-                        class="select-element mb-1"
-                        appendTo="body">
-                            <!-- Opción en el dropdown -->
-                            <ng-template ng-option-tmp let-item="item">
-                                <div class="option-item d-flex gap-3 align-items-center">
-                                    <div class="option-name">{{ item.name }}</div>
-                                    <small class="option-value text-gray-500"> - {{ item.abbr }}</small>
-                                </div>
-                            </ng-template>
+				<div class="validation-wrapper" [class.open]="showErrors.weightUnit">
+					<app-validation-popover [errors]="errorsProduct?.weightUnit"></app-validation-popover>
+				</div>
+			</div>
+			<div class="col-md-6 mb-4">
+				<div class="d-flex align-items-center justify-content-between mb-1">
+					<label class="fw-500 text-gray-700 fs-6 mb-1" [ngClass]="{ required: categorySelected.isDimensions }">Unidad longitud</label>
+					<small
+						class="text-danger cursor-pointer d-flex align-items-center gap-1"
+						*ngIf="errorsProduct?.dimensionUnit"
+						(click)="showErrors.dimensionUnit = !showErrors.dimensionUnit"
+					>
+						<ion-icon name="information-circle-outline" class="validation-icon"></ion-icon>
+						{{ showErrors.dimensionUnit ? 'Ocultar errores' : 'Ver errores' }}
+					</small>
+				</div>
+				@if (!loadProduct || !id) {
+					<div [ngClass]="{ 'is-invalid': errorsProduct?.dimensionUnit }">
+						<ng-select
+							[items]="dimensiontUnits_"
+							bindLabel="name"
+							[(ngModel)]="physical.dimensionUnit"
+							placeholder="Unidad de medida"
+							[clearable]="false"
+							[closeOnSelect]="true"
+							class="select-element mb-1"
+							appendTo="body"
+						>
+							<!-- Opción en el dropdown -->
+							<ng-template ng-option-tmp let-item="item">
+								<div class="option-item d-flex gap-3 align-items-center">
+									<div class="option-name">{{ item.name }}</div>
+									<small class="option-value text-gray-500">- {{ item.abbr }}</small>
+								</div>
+							</ng-template>
 
-                            <!-- Opción seleccionada en el input -->
-                            <ng-template ng-label-tmp let-item="item">
-                                {{ item.name }}
-                            </ng-template>
+							<!-- Opción seleccionada en el input -->
+							<ng-template ng-label-tmp let-item="item">
+								{{ item.name }}
+							</ng-template>
 
-                            <ng-template ng-loading-text>
-                                <div class="spinner-container">
-                                    <span class="spinner-border spinner-border-sm"></span>
-                                </div>
-                            </ng-template>
-                        </ng-select>
-                    </div>
-                }@else {
-                    <div class="skeleton skeleton-input mb-1"></div>
-                }
-                <span class="fs-8 text-muted">{{labelHelper.dimensionUnit}}</span>
+							<ng-template ng-loading-text>
+								<div class="spinner-container">
+									<span class="spinner-border spinner-border-sm"></span>
+								</div>
+							</ng-template>
+						</ng-select>
+					</div>
+				} @else {
+					<div class="skeleton skeleton-input mb-1"></div>
+				}
+				<span class="fs-8 text-muted">{{ labelHelper.dimensionUnit }}</span>
 
-                <div class="validation-wrapper" [class.open]="showErrors.dimensionUnit">
-                    <app-validation-popover 
-                    [errors]="errorsProduct?.dimensionUnit"></app-validation-popover>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <label class="fw-500 text-gray-700 fs-6 mb-2" 
-                [ngClass]="{'required': categorySelected.isDimensions}">Ancho</label>
-                
-                @if (!loadProduct  || !id) {
-                    <input type="number" class="form-control mb-1" placeholder="Ancho" [(ngModel)]="physical.width"
-                    [ngClass]="{ 'is-invalid': errorsProduct?.width }"
-                    [unitMask]="physical.dimensionUnit?.abbr || ''"
-                    [disabled]="!physical.dimensionUnit">
-                }@else {
-                    <div class="skeleton skeleton-input mb-1"></div>
-                }
+				<div class="validation-wrapper" [class.open]="showErrors.dimensionUnit">
+					<app-validation-popover [errors]="errorsProduct?.dimensionUnit"></app-validation-popover>
+				</div>
+			</div>
+			<div class="col-md-3">
+				<label class="fw-500 text-gray-700 fs-6 mb-2" [ngClass]="{ required: categorySelected.isDimensions }">Ancho</label>
 
-                <span class="fs-8 text-muted text-description-form">{{labelHelper.width}}</span>
+				@if (!loadProduct || !id) {
+					<input
+						type="number"
+						class="form-control mb-1"
+						placeholder="Ancho"
+						[(ngModel)]="physical.width"
+						[ngClass]="{ 'is-invalid': errorsProduct?.width }"
+						[unitMask]="physical.dimensionUnit?.abbr || ''"
+						[disabled]="!physical.dimensionUnit"
+					/>
+				} @else {
+					<div class="skeleton skeleton-input mb-1"></div>
+				}
 
-                <div class="validation-wrapper" [class.open]="showErrors.width">
-                    <app-validation-popover 
-                    [errors]="errorsProduct?.width"></app-validation-popover>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <label class="fw-500 text-gray-700 fs-6 mb-2" 
-                [ngClass]="{'required': categorySelected.isDimensions}">Alto</label>
-                
-                @if (!loadProduct  || !id) {
-                    <input type="number" class="form-control mb-1" placeholder="Alto" [(ngModel)]="physical.height"
-                    [ngClass]="{ 'is-invalid': errorsProduct?.height }"
-                    [unitMask]="physical.dimensionUnit?.abbr || ''"
-                    [disabled]="!physical.dimensionUnit">
-                }@else {
-                    <div class="skeleton skeleton-input mb-1"></div>
-                }
-                <span class="fs-8 text-muted text-description-form">{{labelHelper.height}}</span>
+				<span class="fs-8 text-muted text-description-form">{{ labelHelper.width }}</span>
 
-                <div class="validation-wrapper" [class.open]="showErrors.height">
-                    <app-validation-popover 
-                    [errors]="errorsProduct?.height"></app-validation-popover>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <label class="fw-500 text-gray-700 fs-6 mb-2" 
-                [ngClass]="{'required': categorySelected.isDimensions}">Largo</label>
-                @if (!loadProduct  || !id) {
-                    <input type="number" class="form-control mb-1" placeholder="Largo" [(ngModel)]="physical.length"
-                    [ngClass]="{ 'is-invalid': errorsProduct?.length }"
-                    [unitMask]="physical.dimensionUnit?.abbr || ''"
-                    [disabled]="!physical.dimensionUnit">
-                }@else {
-                    <div class="skeleton skeleton-input mb-1"></div>
-                }
-                
-                <span class="fs-8 text-muted text-description-form">{{labelHelper.length}}</span>
+				<div class="validation-wrapper" [class.open]="showErrors.width">
+					<app-validation-popover [errors]="errorsProduct?.width"></app-validation-popover>
+				</div>
+			</div>
+			<div class="col-md-3">
+				<label class="fw-500 text-gray-700 fs-6 mb-2" [ngClass]="{ required: categorySelected.isDimensions }">Alto</label>
 
-                <div class="validation-wrapper" [class.open]="showErrors.length">
-                    <app-validation-popover 
-                    [errors]="errorsProduct?.length"></app-validation-popover>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <label class="fw-500 text-gray-700 fs-6 mb-2" 
-                [ngClass]="{'required': categorySelected.isDimensions}">Peso</label>
-                
-                @if (!loadProduct  || !id) {
-                    <input type="number" class="form-control mb-1" placeholder="Peso" [(ngModel)]="physical.weight"
-                    [ngClass]="{ 'is-invalid': errorsProduct?.weight }"
-                    [unitMask]="physical.weightUnit?.abbr || ''"
-                    [disabled]="!physical.weightUnit">
-                }@else {
-                    <div class="skeleton skeleton-input mb-1"></div>
-                }
-                <span class="fs-8 text-muted text-description-form">{{labelHelper.weight}}</span>
+				@if (!loadProduct || !id) {
+					<input
+						type="number"
+						class="form-control mb-1"
+						placeholder="Alto"
+						[(ngModel)]="physical.height"
+						[ngClass]="{ 'is-invalid': errorsProduct?.height }"
+						[unitMask]="physical.dimensionUnit?.abbr || ''"
+						[disabled]="!physical.dimensionUnit"
+					/>
+				} @else {
+					<div class="skeleton skeleton-input mb-1"></div>
+				}
+				<span class="fs-8 text-muted text-description-form">{{ labelHelper.height }}</span>
 
-                <div class="validation-wrapper" [class.open]="showErrors.weight">
-                    <app-validation-popover 
-                    [errors]="errorsProduct?.weight"></app-validation-popover>
-                </div>
-            </div>
-        </div>
-        <div class="separator separator-dashed my-3"></div>
-    </ng-container>
-    <ng-container>
-        <div class="row">
-            <div class="col-lg-12 mb-5">
-                <h4 class="mb-0">Temperatura y conversación</h4>
-                <span class="text-gray-500 mt-1 fw-400 fs-0-9rem">
-                    Define las condiciones térmicas necesarias para almacenar, transportar o conservar correctamente el producto.
-                </span>
-            </div>
-            <div class="col-md-4">
-                <div class="d-flex align-items-center justify-content-between mb-1">
-                    <label class="fw-500 text-gray-700 fs-6 mb-1"
-                    [ngClass]="{'required': categorySelected.isTemperature}">Unidad de temperatura</label>
-                </div>
-                
-                @if (!loadProduct  || !id) {
-                    <div [ngClass]="{ 'is-invalid': errorsProduct?.storageTempUnit }">
-                        <ng-select
-                            [items]="temperatures_"
-                            bindLabel="name"
-                            [(ngModel)]="physical.storageTempUnit"
-                            placeholder="Selecciona unidad"
-                            [clearable]="false"
-                            class="select-element mb-1"
-                            appendTo="body">
-                        </ng-select>
-                    </div>
-                }@else {
-                    <div class="skeleton skeleton-input mb-1"></div>
-                }
-                <span class="fs-8 text-muted">{{ labelHelper.storageTempUnit }}</span>
+				<div class="validation-wrapper" [class.open]="showErrors.height">
+					<app-validation-popover [errors]="errorsProduct?.height"></app-validation-popover>
+				</div>
+			</div>
+			<div class="col-md-3">
+				<label class="fw-500 text-gray-700 fs-6 mb-2" [ngClass]="{ required: categorySelected.isDimensions }">Largo</label>
+				@if (!loadProduct || !id) {
+					<input
+						type="number"
+						class="form-control mb-1"
+						placeholder="Largo"
+						[(ngModel)]="physical.length"
+						[ngClass]="{ 'is-invalid': errorsProduct?.length }"
+						[unitMask]="physical.dimensionUnit?.abbr || ''"
+						[disabled]="!physical.dimensionUnit"
+					/>
+				} @else {
+					<div class="skeleton skeleton-input mb-1"></div>
+				}
 
-                <div class="validation-wrapper" [class.open]="showErrors.storageTempUnit">
-                    <app-validation-popover 
-                    [errors]="errorsProduct?.storageTempUnit"></app-validation-popover>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="d-flex align-items-center justify-content-between mb-1">
-                    <label class="fw-500 text-gray-700 fs-6 mb-1"
-                    [ngClass]="{'required': categorySelected.isTemperature}">Temperatura mínima</label>
-                </div>
-                @if (!loadProduct  || !id) {
-                    <input
-                    type="number"
-                    class="form-control mb-1"
-                    placeholder="Ej: 2"
-                    [(ngModel)]="physical.minStorageTemp"
-                    [ngClass]="{ 'is-invalid': errorsProduct?.minStorageTemp }"
-                    [unitMask]="physical.storageTempUnit?.abbr || ''"
-                    [disabled]="!physical.storageTempUnit">
-                }@else {
-                    <div class="skeleton skeleton-input mb-1"></div>
-                }
-                
-                <span class="fs-8 text-muted">{{ labelHelper.minStorageTemp }}</span>
+				<span class="fs-8 text-muted text-description-form">{{ labelHelper.length }}</span>
 
-                <div class="validation-wrapper" [class.open]="showErrors.minStorageTemp">
-                    <app-validation-popover 
-                    [errors]="errorsProduct?.minStorageTemp"></app-validation-popover>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="d-flex align-items-center justify-content-between mb-1">
-                    <label class="fw-500 text-gray-700 fs-6 mb-1"
-                    [ngClass]="{'required': categorySelected.isTemperature}">Temperatura máxima</label>
-                </div>
-                @if (!loadProduct  || !id) {
-                    <input
-                    type="number"
-                    class="form-control mb-1"
-                    placeholder="Ej: 8"
-                    [(ngModel)]="physical.maxStorageTemp"
-                    [ngClass]="{ 'is-invalid': errorsProduct?.maxStorageTemp }"
-                    [unitMask]="physical.storageTempUnit?.abbr || ''"
-                    [disabled]="!physical.storageTempUnit">
-                }@else {
-                    <div class="skeleton skeleton-input mb-1"></div>
-                }
-                
+				<div class="validation-wrapper" [class.open]="showErrors.length">
+					<app-validation-popover [errors]="errorsProduct?.length"></app-validation-popover>
+				</div>
+			</div>
+			<div class="col-md-3">
+				<label class="fw-500 text-gray-700 fs-6 mb-2" [ngClass]="{ required: categorySelected.isDimensions }">Peso</label>
 
-                <span class="fs-8 text-muted">{{ labelHelper.maxStorageTemp }}</span>
+				@if (!loadProduct || !id) {
+					<input
+						type="number"
+						class="form-control mb-1"
+						placeholder="Peso"
+						[(ngModel)]="physical.weight"
+						[ngClass]="{ 'is-invalid': errorsProduct?.weight }"
+						[unitMask]="physical.weightUnit?.abbr || ''"
+						[disabled]="!physical.weightUnit"
+					/>
+				} @else {
+					<div class="skeleton skeleton-input mb-1"></div>
+				}
+				<span class="fs-8 text-muted text-description-form">{{ labelHelper.weight }}</span>
 
-                <div class="validation-wrapper" [class.open]="showErrors.maxStorageTemp">
-                    <app-validation-popover 
-                    [errors]="errorsProduct?.maxStorageTemp"></app-validation-popover>
-                </div>
-            </div>
-        </div>
-        <div class="separator separator-dashed my-3"></div>
-    </ng-container>
-    <div class="row">
-        <div class="col-lg-12 mb-4">
-            <h4 class="mb-0">Inventario</h4>
-            <span class="text-gray-500 mt-1 fw-400 fs-0-9rem">
-                Activa opciones promocionales, visibilidad y reglas de venta del producto.
-            </span>
-        </div>
-        <div class="col-md-12 mb-4">
-            <div class="d-flex justify-content-between align-items-center">
-                <label class="form-check form-check-custom form-check-solid align-items-center">
-                    <input class="form-check-input me-3 mt-1" type="checkbox"
-                     [(ngModel)]="product.allowBackorder" [disabled]="loadProduct && !!id"/>
-                    <span class="form-check-label d-flex flex-column">
-                        <span class="fw-500 text-gray-700 fs-6">Permitir backorder</span>
-                        
-                        <small class="text-muted">{{labelHelper.allowBackorder}}</small>
-                    </span>
-                </label>     
-                <small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="errorsProduct?.allowBackorder" (click)="showErrors.allowBackorder = !showErrors.allowBackorder">
-                    <ion-icon name="information-circle-outline" class="validation-icon"> </ion-icon>
-                    {{ showErrors.allowBackorder ? 'Ocultar errores' : 'Ver errores' }}
-                </small>
-            </div>
-            
+				<div class="validation-wrapper" [class.open]="showErrors.weight">
+					<app-validation-popover [errors]="errorsProduct?.weight"></app-validation-popover>
+				</div>
+			</div>
+		</div>
+		<div class="separator separator-dashed my-3"></div>
+	</ng-container>
+	<ng-container>
+		<div class="row">
+			<div class="col-lg-12 mb-5">
+				<h4 class="mb-0">Temperatura y conversación</h4>
+				<span class="text-gray-500 mt-1 fw-400 fs-0-9rem">Define las condiciones térmicas necesarias para almacenar, transportar o conservar correctamente el producto.</span>
+			</div>
+			<div class="col-md-4">
+				<div class="d-flex align-items-center justify-content-between mb-1">
+					<label class="fw-500 text-gray-700 fs-6 mb-1" [ngClass]="{ required: categorySelected.isTemperature }">Unidad de temperatura</label>
+				</div>
 
-            <div class="validation-wrapper" [class.open]="showErrors.allowBackorder">
-                <app-validation-popover 
-                [errors]="errorsProduct?.allowBackorder"></app-validation-popover>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="d-flex align-items-center justify-content-between mb-1">
-                <label class="fw-500 text-gray-700 fs-6 mb-1">Stock Minimo</label>
-                <small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="errorsProduct?.minStock" (click)="showErrors.minStock = !showErrors.minStock">
-                    <ion-icon name="information-circle-outline" class="validation-icon"> </ion-icon>
-                     {{ showErrors.minStock ? 'Ocultar errores' : 'Ver errores' }}
-                </small>
-            </div>
-            @if (!loadProduct  || !id) {
-                <input
-                    type="text"
-                    class="form-control mb-1"
-                    placeholder="Stock Minimo"
-                    name="minStock"
-                    [(ngModel)]="product.minStock"
-                    [ngClass]="{ 'is-invalid': errorsProduct?.minStock}"
-                />
-            }@else {
-                <div class="skeleton skeleton-input mb-1"></div>
-            }
-            
-            <span class="fs-8 text-muted text-description-form">
-                {{labelHelper.minStock}}
-            </span>
+				@if (!loadProduct || !id) {
+					<div [ngClass]="{ 'is-invalid': errorsProduct?.storageTempUnit }">
+						<ng-select
+							[items]="temperatures_"
+							bindLabel="name"
+							[(ngModel)]="physical.storageTempUnit"
+							placeholder="Selecciona unidad"
+							[clearable]="false"
+							class="select-element mb-1"
+							appendTo="body"
+						></ng-select>
+					</div>
+				} @else {
+					<div class="skeleton skeleton-input mb-1"></div>
+				}
+				<span class="fs-8 text-muted">{{ labelHelper.storageTempUnit }}</span>
 
-            <div class="validation-wrapper" [class.open]="showErrors.minStock">
-                <app-validation-popover 
-                [errors]="errorsProduct?.minStock"></app-validation-popover>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="d-flex align-items-center justify-content-between mb-1">
-                <label class="fw-500 text-gray-700 fs-6 mb-1">Stock Maximo</label>
-                <small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="errorsProduct?.maxStock" (click)="showErrors.maxStock = !showErrors.maxStock">
-                    <ion-icon name="information-circle-outline" class="validation-icon"> </ion-icon>
-                     {{ showErrors.maxStock ? 'Ocultar errores' : 'Ver errores' }}
-                </small>
-            </div>
-            @if (!loadProduct  || !id) {
-                <input
-                    type="text"
-                    class="form-control mb-1"
-                    placeholder="Stock Maximo"
-                    name="maxStock"
-                    [(ngModel)]="product.maxStock"
-                    [ngClass]="{ 'is-invalid': errorsProduct?.maxStock}"
-                />
-            }@else {
-                <div class="skeleton skeleton-input mb-1"></div>
-            }
-            
-            <span class="fs-8 text-muted text-description-form">{{labelHelper.maxStock}}</span>
+				<div class="validation-wrapper" [class.open]="showErrors.storageTempUnit">
+					<app-validation-popover [errors]="errorsProduct?.storageTempUnit"></app-validation-popover>
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div class="d-flex align-items-center justify-content-between mb-1">
+					<label class="fw-500 text-gray-700 fs-6 mb-1" [ngClass]="{ required: categorySelected.isTemperature }">Temperatura mínima</label>
+				</div>
+				@if (!loadProduct || !id) {
+					<input
+						type="number"
+						class="form-control mb-1"
+						placeholder="Ej: 2"
+						[(ngModel)]="physical.minStorageTemp"
+						[ngClass]="{ 'is-invalid': errorsProduct?.minStorageTemp }"
+						[unitMask]="physical.storageTempUnit?.abbr || ''"
+						[disabled]="!physical.storageTempUnit"
+					/>
+				} @else {
+					<div class="skeleton skeleton-input mb-1"></div>
+				}
 
-            <div class="validation-wrapper" [class.open]="showErrors.maxStock">
-                <app-validation-popover 
-                [errors]="errorsProduct?.maxStock"></app-validation-popover>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="d-flex align-items-center justify-content-between mb-1">
-                <label class="fw-500 text-gray-700 fs-6 mb-1">Unid. pedido</label>
-                <small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="errorsProduct?.maxOrderLimit" (click)="showErrors.maxOrderLimit = !showErrors.maxOrderLimit">
-                    <ion-icon name="information-circle-outline" class="validation-icon"> </ion-icon>
-                     {{ showErrors.maxOrderLimit ? 'Ocultar errores' : 'Ver errores' }}
-                </small>
-            </div>
-            @if (!loadProduct  || !id) {
-                <input
-                    type="text"
-                    class="form-control mb-1"
-                    placeholder="Limite maximo"
-                    name="maxOrderLimit"
-                    [(ngModel)]="product.maxOrderLimit"
-                    [ngClass]="{ 'is-invalid': errorsProduct?.maxOrderLimit}"
-                />
-            }@else {
-                <div class="skeleton skeleton-input mb-1"></div>
-            }
-            
-            <span class="fs-8 text-muted text-description-form">{{labelHelper.maxOrderLimit}}</span>
+				<span class="fs-8 text-muted">{{ labelHelper.minStorageTemp }}</span>
 
-            <div class="validation-wrapper" [class.open]="showErrors.maxOrderLimit">
-                <app-validation-popover 
-                [errors]="errorsProduct?.maxOrderLimit"></app-validation-popover>
-            </div>
-        </div> 
-    </div>
-    <div class="separator separator-dashed my-3"></div>
-    <div class="row">
-        <div class="col-lg-12 mb-5">
-            <h4 class="mb-0">Marketing</h4>
-            <span class="text-gray-500 mt-1 fw-400 fs-0-9rem">
-                Configura opciones promocionales, destacamiento comercial y reglas especiales de venta para mejorar la exposición del producto.
-            </span>
-        </div>
-        <div class="col-12 col-md-6 my-4">
-            <label class="form-check form-check-custom form-check-solid align-items-center">
-                <input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="product.isBestSeller" [disabled]="loadProduct && !!id"/>
-                <span class="form-check-label d-flex flex-column">
-                    <span class="fw-500 text-gray-700 fs-6">Más vendido</span>
-                    <small class="text-muted">
-                        Destaca productos con alta demanda.
-                    </small>
-                </span>
-            </label>
-            <div class="validation-wrapper" [class.open]="showErrors.isBestSeller">
-                <app-validation-popover 
-                [errors]="errorsProduct?.isBestSeller"></app-validation-popover>
-            </div>
-        </div>
-        <div class="col-12 col-md-6 my-4">
-            <label class="form-check form-check-custom form-check-solid align-items-center">
-                <input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="product.isNewArrival" [disabled]="loadProduct && !!id"/>
-                <span class="form-check-label d-flex flex-column">
-                    <span class="fw-500 text-gray-700 fs-6">Nuevo ingreso</span>
-                    <small class="text-muted">
-                        Indica que fue agregado recientemente.
-                    </small>
-                </span>
-            </label>
-            <div class="validation-wrapper" [class.open]="showErrors.isNewArrival">
-                <app-validation-popover 
-                [errors]="errorsProduct?.isNewArrival"></app-validation-popover>
-            </div>
-        </div>
-        <div class="col-12">
-            <div class="separator separator-dashed"></div>
-        </div>
-        <div class="col-12 col-md-6 my-4">
-            <label class="form-check form-check-custom form-check-solid align-items-center">
-                <input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="product.isFeatured" 
-                [disabled]="loadProduct && !!id"/>
-                <span class="form-check-label d-flex flex-column">
-                    <span class="fw-500 text-gray-700 fs-6">Destacado</span>
-                    <small class="text-muted">
-                        Muestra este producto en zonas preferentes.
-                    </small>
-                </span>
-            </label>
-            <div class="validation-wrapper" [class.open]="showErrors.isFeatured">
-                <app-validation-popover 
-                [errors]="errorsProduct?.isFeatured"></app-validation-popover>
-            </div>
-        </div>
-        <div class="col-12 col-md-6 my-4">
-            <label class="form-check form-check-custom form-check-solid align-items-center">
-                <input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="product.isLimitedEdition" 
-                [disabled]="loadProduct && !!id"/>
-                <span class="form-check-label d-flex flex-column">
-                    <span class="fw-500 text-gray-700 fs-6">Edición limitada</span>
-                    <small class="text-muted">
-                        Producto exclusivo con stock reducido.
-                    </small>
-                </span>
-            </label>
-            <div class="validation-wrapper" [class.open]="showErrors.isLimitedEdition">
-                <app-validation-popover 
-                [errors]="errorsProduct?.isLimitedEdition"></app-validation-popover>
-            </div>
-        </div>
-        <div class="col-12">
-            <div class="separator separator-dashed"></div>
-        </div>
-        <div class="col-12 col-md-6 mt-4">
-            <label class="form-check form-check-custom form-check-solid align-items-center">
-                <input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="product.isPreOrder" 
-                [disabled]="loadProduct && !!id"/>
-                <span class="form-check-label d-flex flex-column">
-                    <span class="fw-500 text-gray-700 fs-6">Preventa</span>
-                    <small class="text-muted">
-                        Permite reservar antes del lanzamiento.
-                    </small>
-                </span>
-            </label>
-            <div class="validation-wrapper" [class.open]="showErrors.isPreOrder">
-                <app-validation-popover 
-                [errors]="errorsProduct?.isPreOrder"></app-validation-popover>
-            </div>
-        </div>
-        <div class="col-12 col-md-6 mt-4">
-            <label class="form-check form-check-custom form-check-solid align-items-center">
-                <input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="product.isExportable" 
-                [disabled]="loadProduct && !!id"/>
-                <span class="form-check-label d-flex flex-column">
-                    <span class="fw-500 text-gray-700 fs-6">Exportable</span>
-                    <small class="text-muted">
-                        Disponible para ventas internacionales.
-                    </small>
-                </span>
-            </label>
-            <div class="validation-wrapper" [class.open]="showErrors.isExportable">
-                <app-validation-popover 
-                [errors]="errorsProduct?.isExportable"></app-validation-popover>
-            </div>
-        </div>
-    </div>
-    <div class="separator separator-dashed my-3"></div>
-    <div class="row">
-        <div class="col-lg-12 mb-5">
-            <h4 class="mb-0">Propiedades físicas</h4>
-            <span class="text-gray-500 mt-1 fw-400 fs-0-9rem">
-                Define características especiales del producto que afectan su almacenamiento, manipulación, transporte, instalación o conservación.
-            </span>
-        </div>
-        <div class="col-12 col-md-6 my-4">
-            <label class="form-check form-check-custom form-check-solid align-items-center">
-                <input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="physical.isFragile" 
-                [disabled]="loadProduct && !!id"/>
-                <span class="form-check-label d-flex flex-column align-items-start">
-                    <span class="fw-500 text-gray-700 fs-6 mb-1">Es frágil</span>
-                    <small class="text-muted">
-                        Requiere manejo cuidadoso para evitar daños.
-                    </small>
-                </span>
-            </label>
-            <div class="validation-wrapper" [class.open]="showErrors.isFragile">
-                <app-validation-popover 
-                [errors]="errorsProduct?.isFragile"></app-validation-popover>
-            </div>
-        </div>
-        <div class="col-12 col-md-6 my-4">
-            <label class="form-check form-check-custom form-check-solid align-items-center">
-                <input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="physical.isPerishable" 
-                [disabled]="loadProduct && !!id"/>
-                <span class="form-check-label d-flex flex-column align-items-start">
-                    <span class="fw-500 text-gray-700 fs-6 mb-1">Es perecible</span>
-                    <small class="text-muted">
-                        Se deteriora con el tiempo o tiene vencimiento.
-                    </small>
-                </span>
-            </label>
-            <div class="validation-wrapper" [class.open]="showErrors.isPerishable">
-                <app-validation-popover 
-                [errors]="errorsProduct?.isPerishable"></app-validation-popover>
-            </div>
-        </div>
-        <div class="col-12">
-            <div class="separator separator-dashed"></div>
-        </div>
-        <div class="col-12 col-md-6 my-4">
-            <label class="form-check form-check-custom form-check-solid align-items-center">
-                <input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="physical.isEcoFriendly" 
-                [disabled]="loadProduct && !!id"/>
-                <span class="form-check-label d-flex flex-column align-items-start">
-                    <span class="fw-500 text-gray-700 fs-6 mb-1">Ecológico</span>
-                    <small class="text-muted">
-                        Producto o empaque reciclable y sostenible.
-                    </small>
-                </span>
-            </label>
-            <div class="validation-wrapper" [class.open]="showErrors.isEcoFriendly">
-                <app-validation-popover 
-                [errors]="errorsProduct?.isEcoFriendly"></app-validation-popover>
-            </div>
-        </div>
-        <div class="col-12 col-md-6 my-4">
-            <label class="form-check form-check-custom form-check-solid align-items-center">
-                <input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="physical.isBiodegradable" 
-                [disabled]="loadProduct && !!id"/>
-                <span class="form-check-label d-flex flex-column align-items-start">
-                    <span class="fw-500 text-gray-700 fs-6 mb-1">Biodegradable</span>
-                    <small class="text-muted">
-                        Puede degradarse naturalmente sin contaminar.
-                    </small>
-                </span>
-            </label>
-            <div class="validation-wrapper" [class.open]="showErrors.isBiodegradable">
-                <app-validation-popover 
-                [errors]="errorsProduct?.isBiodegradable"></app-validation-popover>
-            </div>
-        </div>
-        <div class="col-12">
-            <div class="separator separator-dashed"></div>
-        </div>
-        <div class="col-12 col-md-6 my-4">
-            <label class="form-check form-check-custom form-check-solid align-items-center">
-                <input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="physical.isHazardous" 
-                [disabled]="loadProduct && !!id"/>
-                <span class="form-check-label d-flex flex-column align-items-start">
-                    <span class="fw-500 text-gray-700 fs-6 mb-1">Material peligroso</span>
-                    <small class="text-muted">
-                        Requiere transporte o manejo con precaución.
-                    </small>
-                </span>
-            </label>
-            <div class="validation-wrapper" [class.open]="showErrors.isHazardous">
-                <app-validation-popover 
-                [errors]="errorsProduct?.isHazardous"></app-validation-popover>
-            </div>
-        </div>
-        <div class="col-12 col-md-6 my-4">
-            <label class="form-check form-check-custom form-check-solid align-items-center">
-                <input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="physical.isRequiresRefrigeration" [disabled]="loadProduct && !!id"/>
-                <span class="form-check-label d-flex flex-column align-items-start">
-                    <span class="fw-500 text-gray-700 fs-6 mb-1">Refrigeración</span>
-                    <small class="text-muted">
-                        Necesita cadena de frío o temperatura controlada.
-                    </small>
-                </span>
-            </label>
-            <div class="validation-wrapper" [class.open]="showErrors.isRequiresRefrigeration">
-                <app-validation-popover 
-                [errors]="errorsProduct?.isRequiresRefrigeration"></app-validation-popover>
-            </div>
-        </div>
-        <div class="col-12">
-            <div class="separator separator-dashed"></div>
-        </div>
-        <div class="col-12 col-md-6 my-4">
-            <label class="form-check form-check-custom form-check-solid align-items-center">
-                <input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="physical.isFlammable" 
-                [disabled]="loadProduct && !!id"/>
-                <span class="form-check-label d-flex flex-column align-items-start">
-                    <span class="fw-500 text-gray-700 fs-6 mb-1">Es inflamable</span>
-                    <small class="text-muted">
-                        Puede encenderse fácilmente con calor o chispa.
-                    </small>
-                </span>
-            </label>
-            <div class="validation-wrapper" [class.open]="showErrors.isFlammable">
-                <app-validation-popover 
-                [errors]="errorsProduct?.isFlammable"></app-validation-popover>
-            </div>
-        </div>
-        <div class="col-12 col-md-6 my-4">
-            <label class="form-check form-check-custom form-check-solid align-items-center">
-                <input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="physical.isRequiresAssembly" 
-                [disabled]="loadProduct && !!id"/>
-                <span class="form-check-label d-flex flex-column align-items-start">
-                    <span class="fw-500 text-gray-700 fs-6 mb-1">Requiere ensamblaje</span>
-                    <small class="text-muted">
-                        Debe armarse por cliente o instalador.
-                    </small>
-                </span>
-            </label>
-            <div class="validation-wrapper" [class.open]="showErrors.isRequiresAssembly">
-                <app-validation-popover 
-                [errors]="errorsProduct?.isRequiresAssembly"></app-validation-popover>
-            </div>
-        </div>
-    </div>
+				<div class="validation-wrapper" [class.open]="showErrors.minStorageTemp">
+					<app-validation-popover [errors]="errorsProduct?.minStorageTemp"></app-validation-popover>
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div class="d-flex align-items-center justify-content-between mb-1">
+					<label class="fw-500 text-gray-700 fs-6 mb-1" [ngClass]="{ required: categorySelected.isTemperature }">Temperatura máxima</label>
+				</div>
+				@if (!loadProduct || !id) {
+					<input
+						type="number"
+						class="form-control mb-1"
+						placeholder="Ej: 8"
+						[(ngModel)]="physical.maxStorageTemp"
+						[ngClass]="{ 'is-invalid': errorsProduct?.maxStorageTemp }"
+						[unitMask]="physical.storageTempUnit?.abbr || ''"
+						[disabled]="!physical.storageTempUnit"
+					/>
+				} @else {
+					<div class="skeleton skeleton-input mb-1"></div>
+				}
+
+				<span class="fs-8 text-muted">{{ labelHelper.maxStorageTemp }}</span>
+
+				<div class="validation-wrapper" [class.open]="showErrors.maxStorageTemp">
+					<app-validation-popover [errors]="errorsProduct?.maxStorageTemp"></app-validation-popover>
+				</div>
+			</div>
+		</div>
+		<div class="separator separator-dashed my-3"></div>
+	</ng-container>
+	<div class="row">
+		<div class="col-lg-12 mb-4">
+			<h4 class="mb-0">Inventario</h4>
+			<span class="text-gray-500 mt-1 fw-400 fs-0-9rem">Activa opciones promocionales, visibilidad y reglas de venta del producto.</span>
+		</div>
+		<div class="col-md-12 mb-4">
+			<div class="d-flex justify-content-between align-items-center">
+				<label class="form-check form-check-custom form-check-solid align-items-center">
+					<input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="product.allowBackorder" [disabled]="loadProduct && !!id" />
+					<span class="form-check-label d-flex flex-column">
+						<span class="fw-500 text-gray-700 fs-6">Permitir backorder</span>
+
+						<small class="text-muted">{{ labelHelper.allowBackorder }}</small>
+					</span>
+				</label>
+				<small
+					class="text-danger cursor-pointer d-flex align-items-center gap-1"
+					*ngIf="errorsProduct?.allowBackorder"
+					(click)="showErrors.allowBackorder = !showErrors.allowBackorder"
+				>
+					<ion-icon name="information-circle-outline" class="validation-icon"></ion-icon>
+					{{ showErrors.allowBackorder ? 'Ocultar errores' : 'Ver errores' }}
+				</small>
+			</div>
+
+			<div class="validation-wrapper" [class.open]="showErrors.allowBackorder">
+				<app-validation-popover [errors]="errorsProduct?.allowBackorder"></app-validation-popover>
+			</div>
+		</div>
+		<div class="col-md-4">
+			<div class="d-flex align-items-center justify-content-between mb-1">
+				<label class="fw-500 text-gray-700 fs-6 mb-1">Stock Minimo</label>
+				<small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="errorsProduct?.minStock" (click)="showErrors.minStock = !showErrors.minStock">
+					<ion-icon name="information-circle-outline" class="validation-icon"></ion-icon>
+					{{ showErrors.minStock ? 'Ocultar errores' : 'Ver errores' }}
+				</small>
+			</div>
+			@if (!loadProduct || !id) {
+				<input
+					type="text"
+					class="form-control mb-1"
+					placeholder="Stock Minimo"
+					name="minStock"
+					[(ngModel)]="product.minStock"
+					[ngClass]="{ 'is-invalid': errorsProduct?.minStock }"
+				/>
+			} @else {
+				<div class="skeleton skeleton-input mb-1"></div>
+			}
+
+			<span class="fs-8 text-muted text-description-form">
+				{{ labelHelper.minStock }}
+			</span>
+
+			<div class="validation-wrapper" [class.open]="showErrors.minStock">
+				<app-validation-popover [errors]="errorsProduct?.minStock"></app-validation-popover>
+			</div>
+		</div>
+		<div class="col-md-4">
+			<div class="d-flex align-items-center justify-content-between mb-1">
+				<label class="fw-500 text-gray-700 fs-6 mb-1">Stock Maximo</label>
+				<small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="errorsProduct?.maxStock" (click)="showErrors.maxStock = !showErrors.maxStock">
+					<ion-icon name="information-circle-outline" class="validation-icon"></ion-icon>
+					{{ showErrors.maxStock ? 'Ocultar errores' : 'Ver errores' }}
+				</small>
+			</div>
+			@if (!loadProduct || !id) {
+				<input
+					type="text"
+					class="form-control mb-1"
+					placeholder="Stock Maximo"
+					name="maxStock"
+					[(ngModel)]="product.maxStock"
+					[ngClass]="{ 'is-invalid': errorsProduct?.maxStock }"
+				/>
+			} @else {
+				<div class="skeleton skeleton-input mb-1"></div>
+			}
+
+			<span class="fs-8 text-muted text-description-form">{{ labelHelper.maxStock }}</span>
+
+			<div class="validation-wrapper" [class.open]="showErrors.maxStock">
+				<app-validation-popover [errors]="errorsProduct?.maxStock"></app-validation-popover>
+			</div>
+		</div>
+		<div class="col-md-4">
+			<div class="d-flex align-items-center justify-content-between mb-1">
+				<label class="fw-500 text-gray-700 fs-6 mb-1">Unid. pedido</label>
+				<small
+					class="text-danger cursor-pointer d-flex align-items-center gap-1"
+					*ngIf="errorsProduct?.maxOrderLimit"
+					(click)="showErrors.maxOrderLimit = !showErrors.maxOrderLimit"
+				>
+					<ion-icon name="information-circle-outline" class="validation-icon"></ion-icon>
+					{{ showErrors.maxOrderLimit ? 'Ocultar errores' : 'Ver errores' }}
+				</small>
+			</div>
+			@if (!loadProduct || !id) {
+				<input
+					type="text"
+					class="form-control mb-1"
+					placeholder="Limite maximo"
+					name="maxOrderLimit"
+					[(ngModel)]="product.maxOrderLimit"
+					[ngClass]="{ 'is-invalid': errorsProduct?.maxOrderLimit }"
+				/>
+			} @else {
+				<div class="skeleton skeleton-input mb-1"></div>
+			}
+
+			<span class="fs-8 text-muted text-description-form">{{ labelHelper.maxOrderLimit }}</span>
+
+			<div class="validation-wrapper" [class.open]="showErrors.maxOrderLimit">
+				<app-validation-popover [errors]="errorsProduct?.maxOrderLimit"></app-validation-popover>
+			</div>
+		</div>
+	</div>
+	<div class="separator separator-dashed my-3"></div>
+	<div class="row">
+		<div class="col-lg-12 mb-5">
+			<h4 class="mb-0">Marketing</h4>
+			<span class="text-gray-500 mt-1 fw-400 fs-0-9rem">
+				Configura opciones promocionales, destacamiento comercial y reglas especiales de venta para mejorar la exposición del producto.
+			</span>
+		</div>
+		<div class="col-12 col-md-6 my-4">
+			<label class="form-check form-check-custom form-check-solid align-items-center">
+				<input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="product.isBestSeller" [disabled]="loadProduct && !!id" />
+				<span class="form-check-label d-flex flex-column">
+					<span class="fw-500 text-gray-700 fs-6">Más vendido</span>
+					<small class="text-muted">Destaca productos con alta demanda.</small>
+				</span>
+			</label>
+			<div class="validation-wrapper" [class.open]="showErrors.isBestSeller">
+				<app-validation-popover [errors]="errorsProduct?.isBestSeller"></app-validation-popover>
+			</div>
+		</div>
+		<div class="col-12 col-md-6 my-4">
+			<label class="form-check form-check-custom form-check-solid align-items-center">
+				<input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="product.isNewArrival" [disabled]="loadProduct && !!id" />
+				<span class="form-check-label d-flex flex-column">
+					<span class="fw-500 text-gray-700 fs-6">Nuevo ingreso</span>
+					<small class="text-muted">Indica que fue agregado recientemente.</small>
+				</span>
+			</label>
+			<div class="validation-wrapper" [class.open]="showErrors.isNewArrival">
+				<app-validation-popover [errors]="errorsProduct?.isNewArrival"></app-validation-popover>
+			</div>
+		</div>
+		<div class="col-12">
+			<div class="separator separator-dashed"></div>
+		</div>
+		<div class="col-12 col-md-6 my-4">
+			<label class="form-check form-check-custom form-check-solid align-items-center">
+				<input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="product.isFeatured" [disabled]="loadProduct && !!id" />
+				<span class="form-check-label d-flex flex-column">
+					<span class="fw-500 text-gray-700 fs-6">Destacado</span>
+					<small class="text-muted">Muestra este producto en zonas preferentes.</small>
+				</span>
+			</label>
+			<div class="validation-wrapper" [class.open]="showErrors.isFeatured">
+				<app-validation-popover [errors]="errorsProduct?.isFeatured"></app-validation-popover>
+			</div>
+		</div>
+		<div class="col-12 col-md-6 my-4">
+			<label class="form-check form-check-custom form-check-solid align-items-center">
+				<input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="product.isLimitedEdition" [disabled]="loadProduct && !!id" />
+				<span class="form-check-label d-flex flex-column">
+					<span class="fw-500 text-gray-700 fs-6">Edición limitada</span>
+					<small class="text-muted">Producto exclusivo con stock reducido.</small>
+				</span>
+			</label>
+			<div class="validation-wrapper" [class.open]="showErrors.isLimitedEdition">
+				<app-validation-popover [errors]="errorsProduct?.isLimitedEdition"></app-validation-popover>
+			</div>
+		</div>
+		<div class="col-12">
+			<div class="separator separator-dashed"></div>
+		</div>
+		<div class="col-12 col-md-6 mt-4">
+			<label class="form-check form-check-custom form-check-solid align-items-center">
+				<input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="product.isPreOrder" [disabled]="loadProduct && !!id" />
+				<span class="form-check-label d-flex flex-column">
+					<span class="fw-500 text-gray-700 fs-6">Preventa</span>
+					<small class="text-muted">Permite reservar antes del lanzamiento.</small>
+				</span>
+			</label>
+			<div class="validation-wrapper" [class.open]="showErrors.isPreOrder">
+				<app-validation-popover [errors]="errorsProduct?.isPreOrder"></app-validation-popover>
+			</div>
+		</div>
+		<div class="col-12 col-md-6 mt-4">
+			<label class="form-check form-check-custom form-check-solid align-items-center">
+				<input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="product.isExportable" [disabled]="loadProduct && !!id" />
+				<span class="form-check-label d-flex flex-column">
+					<span class="fw-500 text-gray-700 fs-6">Exportable</span>
+					<small class="text-muted">Disponible para ventas internacionales.</small>
+				</span>
+			</label>
+			<div class="validation-wrapper" [class.open]="showErrors.isExportable">
+				<app-validation-popover [errors]="errorsProduct?.isExportable"></app-validation-popover>
+			</div>
+		</div>
+	</div>
+	<div class="separator separator-dashed my-3"></div>
+	<div class="row">
+		<div class="col-lg-12 mb-5">
+			<h4 class="mb-0">Propiedades físicas</h4>
+			<span class="text-gray-500 mt-1 fw-400 fs-0-9rem">
+				Define características especiales del producto que afectan su almacenamiento, manipulación, transporte, instalación o conservación.
+			</span>
+		</div>
+		<div class="col-12 col-md-6 my-4">
+			<label class="form-check form-check-custom form-check-solid align-items-center">
+				<input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="physical.isFragile" [disabled]="loadProduct && !!id" />
+				<span class="form-check-label d-flex flex-column align-items-start">
+					<span class="fw-500 text-gray-700 fs-6 mb-1">Es frágil</span>
+					<small class="text-muted">Requiere manejo cuidadoso para evitar daños.</small>
+				</span>
+			</label>
+			<div class="validation-wrapper" [class.open]="showErrors.isFragile">
+				<app-validation-popover [errors]="errorsProduct?.isFragile"></app-validation-popover>
+			</div>
+		</div>
+		<div class="col-12 col-md-6 my-4">
+			<label class="form-check form-check-custom form-check-solid align-items-center">
+				<input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="physical.isPerishable" [disabled]="loadProduct && !!id" />
+				<span class="form-check-label d-flex flex-column align-items-start">
+					<span class="fw-500 text-gray-700 fs-6 mb-1">Es perecible</span>
+					<small class="text-muted">Se deteriora con el tiempo o tiene vencimiento.</small>
+				</span>
+			</label>
+			<div class="validation-wrapper" [class.open]="showErrors.isPerishable">
+				<app-validation-popover [errors]="errorsProduct?.isPerishable"></app-validation-popover>
+			</div>
+		</div>
+		<div class="col-12">
+			<div class="separator separator-dashed"></div>
+		</div>
+		<div class="col-12 col-md-6 my-4">
+			<label class="form-check form-check-custom form-check-solid align-items-center">
+				<input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="physical.isEcoFriendly" [disabled]="loadProduct && !!id" />
+				<span class="form-check-label d-flex flex-column align-items-start">
+					<span class="fw-500 text-gray-700 fs-6 mb-1">Ecológico</span>
+					<small class="text-muted">Producto o empaque reciclable y sostenible.</small>
+				</span>
+			</label>
+			<div class="validation-wrapper" [class.open]="showErrors.isEcoFriendly">
+				<app-validation-popover [errors]="errorsProduct?.isEcoFriendly"></app-validation-popover>
+			</div>
+		</div>
+		<div class="col-12 col-md-6 my-4">
+			<label class="form-check form-check-custom form-check-solid align-items-center">
+				<input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="physical.isBiodegradable" [disabled]="loadProduct && !!id" />
+				<span class="form-check-label d-flex flex-column align-items-start">
+					<span class="fw-500 text-gray-700 fs-6 mb-1">Biodegradable</span>
+					<small class="text-muted">Puede degradarse naturalmente sin contaminar.</small>
+				</span>
+			</label>
+			<div class="validation-wrapper" [class.open]="showErrors.isBiodegradable">
+				<app-validation-popover [errors]="errorsProduct?.isBiodegradable"></app-validation-popover>
+			</div>
+		</div>
+		<div class="col-12">
+			<div class="separator separator-dashed"></div>
+		</div>
+		<div class="col-12 col-md-6 my-4">
+			<label class="form-check form-check-custom form-check-solid align-items-center">
+				<input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="physical.isHazardous" [disabled]="loadProduct && !!id" />
+				<span class="form-check-label d-flex flex-column align-items-start">
+					<span class="fw-500 text-gray-700 fs-6 mb-1">Material peligroso</span>
+					<small class="text-muted">Requiere transporte o manejo con precaución.</small>
+				</span>
+			</label>
+			<div class="validation-wrapper" [class.open]="showErrors.isHazardous">
+				<app-validation-popover [errors]="errorsProduct?.isHazardous"></app-validation-popover>
+			</div>
+		</div>
+		<div class="col-12 col-md-6 my-4">
+			<label class="form-check form-check-custom form-check-solid align-items-center">
+				<input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="physical.isRequiresRefrigeration" [disabled]="loadProduct && !!id" />
+				<span class="form-check-label d-flex flex-column align-items-start">
+					<span class="fw-500 text-gray-700 fs-6 mb-1">Refrigeración</span>
+					<small class="text-muted">Necesita cadena de frío o temperatura controlada.</small>
+				</span>
+			</label>
+			<div class="validation-wrapper" [class.open]="showErrors.isRequiresRefrigeration">
+				<app-validation-popover [errors]="errorsProduct?.isRequiresRefrigeration"></app-validation-popover>
+			</div>
+		</div>
+		<div class="col-12">
+			<div class="separator separator-dashed"></div>
+		</div>
+		<div class="col-12 col-md-6 my-4">
+			<label class="form-check form-check-custom form-check-solid align-items-center">
+				<input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="physical.isFlammable" [disabled]="loadProduct && !!id" />
+				<span class="form-check-label d-flex flex-column align-items-start">
+					<span class="fw-500 text-gray-700 fs-6 mb-1">Es inflamable</span>
+					<small class="text-muted">Puede encenderse fácilmente con calor o chispa.</small>
+				</span>
+			</label>
+			<div class="validation-wrapper" [class.open]="showErrors.isFlammable">
+				<app-validation-popover [errors]="errorsProduct?.isFlammable"></app-validation-popover>
+			</div>
+		</div>
+		<div class="col-12 col-md-6 my-4">
+			<label class="form-check form-check-custom form-check-solid align-items-center">
+				<input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="physical.isRequiresAssembly" [disabled]="loadProduct && !!id" />
+				<span class="form-check-label d-flex flex-column align-items-start">
+					<span class="fw-500 text-gray-700 fs-6 mb-1">Requiere ensamblaje</span>
+					<small class="text-muted">Debe armarse por cliente o instalador.</small>
+				</span>
+			</label>
+			<div class="validation-wrapper" [class.open]="showErrors.isRequiresAssembly">
+				<app-validation-popover [errors]="errorsProduct?.isRequiresAssembly"></app-validation-popover>
+			</div>
+		</div>
+	</div>
 </div>

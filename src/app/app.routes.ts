@@ -18,32 +18,27 @@ export const routes: Routes = [
 			{
 				path: '',
 				canActivate: [AuthGuard],
-				loadComponent: () =>
-					import('./pages/users/collaborators/index-collaborator/index-collaborator.component').then((m) => m.IndexCollaboratorComponent),
+				loadComponent: () => import('./pages/users/collaborators/index-collaborator/index-collaborator.component').then((m) => m.IndexCollaboratorComponent),
 			},
 			{
 				path: 'create',
 				canActivate: [AuthGuard],
-				loadComponent: () =>
-					import('./pages/users/collaborators/create-collaborator/create-collaborator.component').then((m) => m.CreateCollaboratorComponent),
+				loadComponent: () => import('./pages/users/collaborators/create-collaborator/create-collaborator.component').then((m) => m.CreateCollaboratorComponent),
 			},
 			{
 				path: ':id/edit',
 				canActivate: [AuthGuard],
-				loadComponent: () =>
-					import('./pages/users/collaborators/edit-collaborator/edit-collaborator.component').then((m) => m.EditCollaboratorComponent),
+				loadComponent: () => import('./pages/users/collaborators/edit-collaborator/edit-collaborator.component').then((m) => m.EditCollaboratorComponent),
 			},
 			{
 				path: 'import',
 				canActivate: [AuthGuard],
-				loadComponent: () =>
-					import('./pages/users/collaborators/import-collaborator/import-collaborator.component').then((m) => m.ImportCollaboratorComponent),
+				loadComponent: () => import('./pages/users/collaborators/import-collaborator/import-collaborator.component').then((m) => m.ImportCollaboratorComponent),
 			},
 			{
 				path: 'export',
 				canActivate: [AuthGuard],
-				loadComponent: () =>
-					import('./pages/users/collaborators/export-collaborator/export-collaborator.component').then((m) => m.ExportCollaboratorComponent),
+				loadComponent: () => import('./pages/users/collaborators/export-collaborator/export-collaborator.component').then((m) => m.ExportCollaboratorComponent),
 			},
 		],
 	},
@@ -74,7 +69,7 @@ export const routes: Routes = [
 				path: 'mapping',
 				canActivate: [AuthGuard],
 				loadComponent: () => import('./pages/categories/mapping-category/mapping-category.component').then((m) => m.MappingCategoryComponent),
-			}
+			},
 		],
 	},
 	{
@@ -135,7 +130,6 @@ export const routes: Routes = [
 				canActivate: [AuthGuard],
 				loadComponent: () => import('./pages/attributes/edit-attribute/edit-attribute.component').then((m) => m.EditAttributeComponent),
 			},
-			
 		],
 	},
 	{

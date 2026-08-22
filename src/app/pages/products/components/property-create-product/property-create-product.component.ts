@@ -11,28 +11,22 @@ import { temperatures } from '@app/common/constants/temperatures.cosntant';
 import { ValidationPopoverComponent } from '@app/shared/validation-popover/validation-popover.component';
 
 @Component({
-  selector: 'app-property-create-product',
-  imports: [
-    NgSelectModule,
-    CommonModule,
-    FormsModule,
-    UnitMaskDirective,
-    ValidationPopoverComponent
-  ],
-  templateUrl: './property-create-product.component.html',
-  styleUrl: './property-create-product.component.css',
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+	selector: 'app-property-create-product',
+	imports: [NgSelectModule, CommonModule, FormsModule, UnitMaskDirective, ValidationPopoverComponent],
+	templateUrl: './property-create-product.component.html',
+	styleUrl: './property-create-product.component.css',
+	schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class PropertyCreateProductComponent {
-  @Input({ required: true }) product!: ProductInterface;
-  @Input({ required: true}) physical!: PhysicalProductInterface;
-  @Input({ required: true}) errorsProduct! : any;
-  @Input({ required: false}) loadProduct : boolean = true;
-  @Input() showErrors: any = {};
-  @Input() categorySelected : any;
-  @Input() id : string = '';
-  public weightUnits_ = unitsOfMeasure.filter(item=> item.group == 'Peso');
-	public dimensiontUnits_ = unitsOfMeasure.filter(item=> item.group == 'Longitud');
-  public labelHelper = productFormHelp;
-  public temperatures_ : any = temperatures;
+	@Input({ required: true }) product!: ProductInterface;
+	@Input({ required: true }) physical!: PhysicalProductInterface;
+	@Input({ required: true }) errorsProduct!: any;
+	@Input({ required: false }) loadProduct: boolean = true;
+	@Input() showErrors: any = {};
+	@Input() categorySelected: any;
+	@Input() id: string = '';
+	public weightUnits_ = unitsOfMeasure.filter((item) => item.group == 'Peso');
+	public dimensiontUnits_ = unitsOfMeasure.filter((item) => item.group == 'Longitud');
+	public labelHelper = productFormHelp;
+	public temperatures_: any = temperatures;
 }

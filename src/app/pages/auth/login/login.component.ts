@@ -60,7 +60,7 @@ export class LoginComponent {
 				finalize(() => (this.loading = false))
 			)
 			.subscribe({
-				next: (next: {data: { accessToken: string; collaborator: CollaboratorInterface }, message: string}) => {
+				next: (next: { data: { accessToken: string; collaborator: CollaboratorInterface }; message: string }) => {
 					localStorage.setItem('token', next.data.accessToken);
 					this.store.dispatch(setUserAuth({ user: next.data.collaborator }));
 					toastr.success(next.message);

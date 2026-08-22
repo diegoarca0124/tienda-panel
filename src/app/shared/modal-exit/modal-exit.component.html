@@ -1,11 +1,4 @@
-<div
-	class="modal fade"
-	id="modal-exit"
-	tabindex="-1"
-	aria-hidden="true"
-	style="display:none;"
->
-
+<div class="modal fade" id="modal-exit" tabindex="-1" aria-hidden="true" style="display: none">
 	<div class="modal-dialog modal-dialog-centered mw-500px">
 		<div class="modal-content">
 			<div class="modal-header pb-0 border-0 justify-content-end">
@@ -16,38 +9,23 @@
 					</svg>
 				</span>
 			</div>
-			<div class="modal-body mx-5 mx-xl-18 pt-0 pb-15" style="overflow-x:hidden">
+			<div class="modal-body mx-5 mx-xl-18 pt-0 pb-15" style="overflow-x: hidden">
 				<div class="text-center mb-7">
-					<h3 class="mb-5 text-uppercase fw-bold">
-						¿Salir sin guardar?
-					</h3>
+					<h3 class="mb-5 text-uppercase fw-bold">¿Salir sin guardar?</h3>
 					<div class="text-gray-600 fs-6">
-						<b>Tienes cambios pendientes</b>. Si abandonas esta página perderás la información no guardada.
+						<b>Tienes cambios pendientes</b>
+						. Si abandonas esta página perderás la información no guardada.
 					</div>
 				</div>
 				<div class="row g-3">
-                    
-
-                    <div class="col">
-                        <button
-                            type="button"
-                            class="btn btn-sm btn-light-dark w-100"
-                            (click)="cancelExit()"
-                        >
-                            Permanecer
-                        </button>
-                    </div>
+					<div class="col">
+						<button type="button" class="btn btn-sm btn-light-dark w-100" (click)="cancelExit()">Permanecer</button>
+					</div>
 
 					<div class="col">
-                        <button
-                            type="button"
-                            class="btn btn-sm btn-dark w-100"
-                            (click)="confirmExit()"
-                        >
-                            Salir
-                        </button>
-                    </div>
-                </div>
+						<button type="button" class="btn btn-sm btn-dark w-100" (click)="confirmExit()">Salir</button>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>

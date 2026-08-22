@@ -1,6 +1,6 @@
-export interface SubcategoryInterface{
-    id: string;
-    name: string;
-    icon: string;
-    status: boolean;
+export interface SubcategoryInterface {
+	id: string;
+	name: string;
+	icon: string;
+	status: boolean;
 }

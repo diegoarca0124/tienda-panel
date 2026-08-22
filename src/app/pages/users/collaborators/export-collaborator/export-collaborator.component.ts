@@ -13,57 +13,43 @@ import { ExportCollaboratorsCsvUtil } from '../utils/export-collaborators-csv.ut
 import { FieldExportColumns } from '../interfaces/validation.interface';
 import { HttpErrorResponse } from '@angular/common/http';
 import { fieldsExportOptions, sortOptions } from '../constants/selectors.constants';
-declare const toastr:any;
+declare const toastr: any;
 
 @Component({
-  selector: 'app-export-collaborator',
-  imports: [
-    CommonModule,
-    SidebarComponent,
-    TopbarComponent,
-    RouterModule,
-    FormsModule
-  ],
-  templateUrl: './export-collaborator.component.html',
-  styleUrl: './export-collaborator.component.css',
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+	selector: 'app-export-collaborator',
+	imports: [CommonModule, SidebarComponent, TopbarComponent, RouterModule, FormsModule],
+	templateUrl: './export-collaborator.component.html',
+	styleUrl: './export-collaborator.component.css',
+	schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class ExportCollaboratorComponent {
-
-  	public fieldsExport : FieldExportColumns[] = fieldsExportOptions;
+	public fieldsExport: FieldExportColumns[] = fieldsExportOptions;
 	public exportOptions = {
 		format: 'xlsx',
 		maskData: false,
 		scope: 'all',
 		sort: 'Predeterminado',
 		data: [] as any,
-		ids: [] as any
-	}
-	public isExportCollaboratorLoading : boolean = false;
+		ids: [] as any,
+	};
+	public isExportCollaboratorLoading: boolean = false;
 	public validationCollaboratioError: any = {};
 	public sortOptions = sortOptions;
 	private destroy$ = new Subject<void>();
-  
 
-	constructor(
-		private collaboratorService: CollaboratorService
-	){
+	constructor(private collaboratorService: CollaboratorService) {}
 
-	}
+	ngOnInit() {}
 
-	ngOnInit(){
-
-	}
-
-  	ngOnDestroy(): void {
+	ngOnDestroy(): void {
 		this.destroy$.next();
 		this.destroy$.complete();
 	}
 
-  	onExport(){
-		this.exportOptions.data = this.fieldsExport.map(prev => ({
+	onExport() {
+		this.exportOptions.data = this.fieldsExport.map((prev) => ({
 			field: prev.key,
-			checked: prev.checked
+			checked: prev.checked,
 		}));
 		this.isExportCollaboratorLoading = true;
 		this.exportOptions.ids = [];
@@ -75,7 +61,7 @@ export class ExportCollaboratorComponent {
 				finalize(() => (this.isExportCollaboratorLoading = false))
 			)
 			.subscribe({
-				next: (next: { data: any[]}) => {
+				next: (next: { data: any[] }) => {
 					if (this.exportOptions.format === 'xlsx') {
 						ExportCollaboratorsXlsxUtil(next.data, {
 							fileName: 'IMP-COLLABORATORS',
@@ -110,16 +96,11 @@ export class ExportCollaboratorComponent {
 					if (errorParsed.validation) {
 						this.validationCollaboratioError = errorParsed.validation;
 						if (this.validationCollaboratioError.ids) {
-							this.validationCollaboratioError.scope = [
-								...(this.validationCollaboratioError.scope || []),
-								...this.validationCollaboratioError.ids
-							];
+							this.validationCollaboratioError.scope = [...(this.validationCollaboratioError.scope || []), ...this.validationCollaboratioError.ids];
 						}
 					}
 					console.log(this.validationCollaboratioError);
-					
 				},
 			});
-			
 	}
 }

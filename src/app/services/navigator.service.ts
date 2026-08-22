@@ -1,60 +1,55 @@
 import { Injectable } from '@angular/core';
-declare const $:any;
+declare const $: any;
 
 @Injectable({
-  providedIn: 'root'
+	providedIn: 'root',
 })
 export class NavigatorService {
+	private resolver?: (value: boolean) => void;
 
-  private resolver?: (value: boolean) => void;
+	open(): Promise<boolean> {
+		const modal = document.getElementById('modal-exit');
 
-  open(): Promise<boolean> {
+		if (modal) {
+			modal.classList.add('show');
+			modal.style.display = 'block';
+			document.body.classList.add('modal-open');
 
-    const modal = document.getElementById('modal-exit');
+			const backdrop = document.createElement('div');
 
-    if (modal) {
-      modal.classList.add('show');
-      modal.style.display = 'block';
-      document.body.classList.add('modal-open');
+			backdrop.className = 'modal-backdrop fade show';
+			backdrop.id = 'modal-exit-backdrop';
 
-      const backdrop = document.createElement('div');
+			document.body.appendChild(backdrop);
+		}
 
-      backdrop.className = 'modal-backdrop fade show';
-      backdrop.id = 'modal-exit-backdrop';
+		return new Promise<boolean>((resolve) => {
+			this.resolver = resolve;
+		});
+	}
 
-      document.body.appendChild(backdrop);
-    }
+	confirm() {
+		this.closeModal();
+		this.resolver?.(true);
+	}
 
-    return new Promise<boolean>((resolve) => {
-      this.resolver = resolve;
-    });
-  }
+	cancel() {
+		this.closeModal();
+		this.resolver?.(false);
+	}
 
-  confirm() {
-    this.closeModal();
-    this.resolver?.(true);
-  }
+	private closeModal() {
+		const modal = document.getElementById('modal-exit');
 
-  cancel() {
-    this.closeModal();
-    this.resolver?.(false);
-  }
+		if (modal) {
+			modal.classList.remove('show');
+			modal.style.display = 'none';
+		}
 
-  private closeModal() {
+		document.body.classList.remove('modal-open');
 
-    const modal = document.getElementById('modal-exit');
+		const backdrop = document.getElementById('modal-exit-backdrop');
 
-    if (modal) {
-      modal.classList.remove('show');
-      modal.style.display = 'none';
-    }
-
-    document.body.classList.remove('modal-open');
-
-    const backdrop = document.getElementById(
-      'modal-exit-backdrop'
-    );
-
-    backdrop?.remove();
-  }
+		backdrop?.remove();
+	}
 }

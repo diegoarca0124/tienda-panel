@@ -1,58 +1,58 @@
 .upload-file-control {
-    display: flex;
-    align-items: center;
-    width: 100%;
-    cursor: pointer;
-    overflow: hidden;
+	display: flex;
+	align-items: center;
+	width: 100%;
+	cursor: pointer;
+	overflow: hidden;
 }
 
 .upload-file-content {
-    display: flex;
-    min-width: 0;
-    align-items: center;
-    gap: 0.625rem;
+	display: flex;
+	min-width: 0;
+	align-items: center;
+	gap: 0.625rem;
 }
 
 .upload-file-icon {
-    width: 1.5rem;
-    height: 1.5rem;
-    flex: 0 0 1.5rem;
-    object-fit: contain;
+	width: 1.5rem;
+	height: 1.5rem;
+	flex: 0 0 1.5rem;
+	object-fit: contain;
 }
 
 .upload-file-name {
-    display: block;
-    min-width: 0;
-    overflow: hidden;
-    color: #344054;
-    font-size: 0.8125rem;
-    font-weight: 500;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+	display: block;
+	min-width: 0;
+	overflow: hidden;
+	color: #344054;
+	font-size: 0.8125rem;
+	font-weight: 500;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 .upload-file-clear {
-    position: absolute;
-    top: 50%;
-    right: 0.75rem;
-    z-index: 2;
+	position: absolute;
+	top: 50%;
+	right: 0.75rem;
+	z-index: 2;
 
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
 
-    padding: 0;
-    border: 0;
-    color: #98a2b3;
-    background: transparent;
+	padding: 0;
+	border: 0;
+	color: #98a2b3;
+	background: transparent;
 
-    font-size: 1.1rem;
-    line-height: 1;
+	font-size: 1.1rem;
+	line-height: 1;
 
-    cursor: pointer;
-    transform: translateY(-50%);
+	cursor: pointer;
+	transform: translateY(-50%);
 }
 
 .upload-file-clear:hover {
-    color: #f04438;
+	color: #f04438;
 }

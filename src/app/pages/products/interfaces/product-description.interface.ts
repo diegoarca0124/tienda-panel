@@ -1,6 +1,6 @@
 export interface ProductDescriptionInterface {
-    attributeId?: string, 
-    attributeValueId?: string, 
-    value?: string,
-    productId?: string
+	attributeId?: string;
+	attributeValueId?: string;
+	value?: string;
+	productId?: string;
 }

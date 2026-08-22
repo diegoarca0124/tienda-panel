@@ -11,7 +11,7 @@
 
 							<ul class="breadcrumb breadcrumb-separatorless fs-7 my-0 pt-1">
 								<li class="breadcrumb-item text-muted">
-									<a [routerLink]="['/products/brands']" class="text-muted text-hover-primary"> Marcas </a>
+									<a [routerLink]="['/products/brands']" class="text-muted text-hover-primary">Marcas</a>
 								</li>
 								<li class="breadcrumb-item">
 									<span class="bullet bg-gray-400 w-5px h-2px"></span>
@@ -24,16 +24,13 @@
 				</div>
 				<div class="app-content flex-column-fluid">
 					<div class="app-container container">
-		
 						<div class="card mb-10">
 							<!--begin::Card header-->
-							<div class="card-header" style="background-color: #f1f5f9;">
+							<div class="card-header" style="background-color: #f1f5f9">
 								<!--begin::Heading-->
 								<h4 class="card-title m-0 d-flex flex-column">
 									<span class="fs-5 fw-600">Nuevo Marca</span>
-									<span class="text-gray-600 mt-1 fw-400 fs-0-9rem">
-										Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eligendi, quaerat..
-									</span>
+									<span class="text-gray-600 mt-1 fw-400 fs-0-9rem">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eligendi, quaerat..</span>
 								</h4>
 								<!--end::Heading-->
 							</div>
@@ -42,68 +39,70 @@
 							<!--begin::Card body-->
 							<div class="card-body">
 								<div class="row">
-                                    <div class="col-lg-5">
-                                        <div class="d-flex flex-column mb-5 fv-row fv-plugins-icon-container">
-                                            <div class="d-flex align-items-center justify-content-between mb-1">
+									<div class="col-lg-5">
+										<div class="d-flex flex-column mb-5 fv-row fv-plugins-icon-container">
+											<div class="d-flex align-items-center justify-content-between mb-1">
 												<label class="required fw-500 text-gray-700 fs-6 mb-1">Nombre</label>
 												<small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="errorsBrand?.name" (click)="showErrors.name = !showErrors.name">
-													<ion-icon name="information-circle-outline" class="validation-icon"> </ion-icon>
+													<ion-icon name="information-circle-outline" class="validation-icon"></ion-icon>
 													{{ showErrors.name ? 'Ocultar errores' : 'Ver errores' }}
 												</small>
 											</div>
 
-                                            <input type="text" 
-                                            class="form-control mb-1" 
-                                            placeholder="The North Face"
-                                            name="name" 
-                                            [(ngModel)]="brand.name"
-                                            [ngClass]="{'is-invalid': errorsBrand?.name}">
+											<input
+												type="text"
+												class="form-control mb-1"
+												placeholder="The North Face"
+												name="name"
+												[(ngModel)]="brand.name"
+												[ngClass]="{ 'is-invalid': errorsBrand?.name }"
+											/>
 
-                                            <span class="fs-8 text-muted">Nombre de la marca.</span>
+											<span class="fs-8 text-muted">Nombre de la marca.</span>
 
 											<div class="validation-wrapper" [class.open]="showErrors.name">
-												<app-validation-popover 
-												[errors]="errorsBrand?.name"></app-validation-popover>
+												<app-validation-popover [errors]="errorsBrand?.name"></app-validation-popover>
 											</div>
-                                        </div>
-                                    </div>
+										</div>
+									</div>
 									<div class="col-lg-3">
-                                        <div class="d-flex flex-column mb-5 fv-row fv-plugins-icon-container">
-                                            <div class="d-flex align-items-center justify-content-between mb-1">
+										<div class="d-flex flex-column mb-5 fv-row fv-plugins-icon-container">
+											<div class="d-flex align-items-center justify-content-between mb-1">
 												<label class="required fw-500 text-gray-700 fs-6 mb-1">Prefijo</label>
 												<small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="errorsBrand?.prefix" (click)="showErrors.prefix = !showErrors.prefix">
-													<ion-icon name="information-circle-outline" class="validation-icon"> </ion-icon>
+													<ion-icon name="information-circle-outline" class="validation-icon"></ion-icon>
 													{{ showErrors.prefix ? 'Ocultar errores' : 'Ver errores' }}
 												</small>
 											</div>
 
-                                            <input type="text" 
-											class="form-control mb-1" 
-											placeholder="AZ"
-											name="prefix" 
-											[(ngModel)]="brand.prefix"
-											[ngClass]="{'is-invalid': errorsBrand?.prefix}"
-											[imask]="prefixMask">
+											<input
+												type="text"
+												class="form-control mb-1"
+												placeholder="AZ"
+												name="prefix"
+												[(ngModel)]="brand.prefix"
+												[ngClass]="{ 'is-invalid': errorsBrand?.prefix }"
+												[imask]="prefixMask"
+											/>
 
-                                            <span class="fs-8 text-muted">Dos caracteres representativos.</span>
+											<span class="fs-8 text-muted">Dos caracteres representativos.</span>
 
 											<div class="validation-wrapper" [class.open]="showErrors.prefix">
-												<app-validation-popover 
-												[errors]="errorsBrand?.prefix"></app-validation-popover>
+												<app-validation-popover [errors]="errorsBrand?.prefix"></app-validation-popover>
 											</div>
-                                        </div>
-                                    </div>
+										</div>
+									</div>
 									<div class="col-lg-4">
-                                        <div class="d-flex flex-column mb-5 fv-row fv-plugins-icon-container">
+										<div class="d-flex flex-column mb-5 fv-row fv-plugins-icon-container">
 											<div class="d-flex align-items-center justify-content-between mb-1">
 												<label class="required fw-500 text-gray-700 fs-6 mb-1">País de origen</label>
 												<small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="errorsBrand?.country" (click)="showErrors.country = !showErrors.country">
-													<ion-icon name="information-circle-outline" class="validation-icon"> </ion-icon>
+													<ion-icon name="information-circle-outline" class="validation-icon"></ion-icon>
 													{{ showErrors.country ? 'Ocultar errores' : 'Ver errores' }}
 												</small>
 											</div>
 
-                                            <div [ngClass]="{ 'is-invalid': errorsBrand?.country }">
+											<div [ngClass]="{ 'is-invalid': errorsBrand?.country }">
 												<ng-select
 													[items]="countries"
 													bindLabel="country"
@@ -127,27 +126,30 @@
 												</ng-select>
 											</div>
 
-                                            <span class="fs-8 text-muted">País de la marca.</span>
+											<span class="fs-8 text-muted">País de la marca.</span>
 
 											<div class="validation-wrapper" [class.open]="showErrors.country">
-												<app-validation-popover 
-												[errors]="errorsBrand?.country"></app-validation-popover>
+												<app-validation-popover [errors]="errorsBrand?.country"></app-validation-popover>
 											</div>
-                                        </div>
-                                    </div>
-                                </div>
+										</div>
+									</div>
+								</div>
 								<div class="row">
-                                    <div class="col-lg-12">
-                                        <div class="d-flex flex-column mb-5 fv-row fv-plugins-icon-container">  
+									<div class="col-lg-12">
+										<div class="d-flex flex-column mb-5 fv-row fv-plugins-icon-container">
 											<div class="d-flex align-items-center justify-content-between mb-1">
 												<label class="fw-500 text-gray-700 fs-6 mb-1">Sitio Web</label>
-												<small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="errorsBrand?.websiteUrl" (click)="showErrors.websiteUrl = !showErrors.websiteUrl">
-													<ion-icon name="information-circle-outline" class="validation-icon"> </ion-icon>
+												<small
+													class="text-danger cursor-pointer d-flex align-items-center gap-1"
+													*ngIf="errorsBrand?.websiteUrl"
+													(click)="showErrors.websiteUrl = !showErrors.websiteUrl"
+												>
+													<ion-icon name="information-circle-outline" class="validation-icon"></ion-icon>
 													{{ showErrors.websiteUrl ? 'Ocultar errores' : 'Ver errores' }}
 												</small>
 											</div>
 
-                                            <input
+											<input
 												type="text"
 												class="form-control mb-1 text-primary"
 												placeholder="https://www.thenorthface.com"
@@ -156,27 +158,30 @@
 												[ngClass]="{ 'is-invalid': errorsBrand?.websiteUrl }"
 											/>
 
-                                            <span class="fs-8 text-muted">Enlace web de la marca.</span>
+											<span class="fs-8 text-muted">Enlace web de la marca.</span>
 
 											<div class="validation-wrapper" [class.open]="showErrors.websiteUrl">
-												<app-validation-popover 
-												[errors]="errorsBrand?.websiteUrl"></app-validation-popover>
+												<app-validation-popover [errors]="errorsBrand?.websiteUrl"></app-validation-popover>
 											</div>
-                                        </div>
-                                    </div>
-                                </div>
+										</div>
+									</div>
+								</div>
 								<div class="row">
-                                    <div class="col-lg-12">
-                                        <div class="d-flex flex-column mb-5 fv-row fv-plugins-icon-container">
+									<div class="col-lg-12">
+										<div class="d-flex flex-column mb-5 fv-row fv-plugins-icon-container">
 											<div class="d-flex align-items-center justify-content-between mb-1">
 												<label class="fw-500 text-gray-700 fs-6 mb-1">Descripción</label>
-												<small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="errorsBrand?.description" (click)="showErrors.description = !showErrors.description">
-													<ion-icon name="information-circle-outline" class="validation-icon"> </ion-icon>
+												<small
+													class="text-danger cursor-pointer d-flex align-items-center gap-1"
+													*ngIf="errorsBrand?.description"
+													(click)="showErrors.description = !showErrors.description"
+												>
+													<ion-icon name="information-circle-outline" class="validation-icon"></ion-icon>
 													{{ showErrors.description ? 'Ocultar errores' : 'Ver errores' }}
 												</small>
 											</div>
 
-                                            <textarea
+											<textarea
 												type="text"
 												class="form-control mb-1"
 												placeholder="Descripción de la marca"
@@ -184,32 +189,34 @@
 												[(ngModel)]="brand.description"
 												[ngClass]="{ 'is-invalid': errorsBrand?.description }"
 												textAreaAutoResize
-                								rows="3"
+												rows="3"
 											></textarea>
 
-                                            <span class="fs-8 text-muted">Descripción de la marca.</span>
+											<span class="fs-8 text-muted">Descripción de la marca.</span>
 
 											<div class="validation-wrapper" [class.open]="showErrors.description">
-												<app-validation-popover 
-												[errors]="errorsBrand?.description"></app-validation-popover>
+												<app-validation-popover [errors]="errorsBrand?.description"></app-validation-popover>
 											</div>
-                                        </div>
-                                    </div>
-                                </div>
+										</div>
+									</div>
+								</div>
 								<div class="row">
-                                    <div class="col-lg-6">
-                                        <div class="d-flex flex-column fv-row fv-plugins-icon-container">
-                                            <div class="d-flex align-items-center justify-content-between mb-1">
+									<div class="col-lg-6">
+										<div class="d-flex flex-column fv-row fv-plugins-icon-container">
+											<div class="d-flex align-items-center justify-content-between mb-1">
 												<label class="required fw-500 text-gray-700 fs-6 mb-1">Logo</label>
-											
-												<small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="errorsBrand?.logoUrl.length >= 1" (click)="showErrors.logoUrl = !showErrors.logoUrl">
-													<ion-icon name="information-circle-outline" class="validation-icon"> </ion-icon>
+
+												<small
+													class="text-danger cursor-pointer d-flex align-items-center gap-1"
+													*ngIf="errorsBrand?.logoUrl.length >= 1"
+													(click)="showErrors.logoUrl = !showErrors.logoUrl"
+												>
+													<ion-icon name="information-circle-outline" class="validation-icon"></ion-icon>
 													{{ showErrors.logoUrl ? 'Ocultar errores' : 'Ver errores' }}
 												</small>
 											</div>
 
-
-                                            <div class="mb-1">
+											<div class="mb-1">
 												<app-upload-image
 													(fileSelected)="brand.logoUrl = $event ? $event : undefined"
 													(validationError)="setErrorLogo($event)"
@@ -219,25 +226,28 @@
 												></app-upload-image>
 											</div>
 
-                                            <span class="fs-8 text-muted">Logo de la marca en 1:1.</span>
+											<span class="fs-8 text-muted">Logo de la marca en 1:1.</span>
 
 											<div class="validation-wrapper" [class.open]="showErrors.logoUrl">
-												<app-validation-popover 
-												[errors]="errorsBrand?.logoUrl"></app-validation-popover>
+												<app-validation-popover [errors]="errorsBrand?.logoUrl"></app-validation-popover>
 											</div>
-                                        </div>
-                                    </div>
+										</div>
+									</div>
 									<div class="col-lg-6">
-                                        <div class="d-flex flex-column fv-row fv-plugins-icon-container">
-                                             <div class="d-flex align-items-center justify-content-between mb-1">
+										<div class="d-flex flex-column fv-row fv-plugins-icon-container">
+											<div class="d-flex align-items-center justify-content-between mb-1">
 												<label class="required fw-500 text-gray-700 fs-6 mb-1">Banner</label>
-												<small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="errorsBrand?.bannerUrl.length >= 1" (click)="showErrors.bannerUrl = !showErrors.bannerUrl">
-													<ion-icon name="information-circle-outline" class="validation-icon"> </ion-icon>
+												<small
+													class="text-danger cursor-pointer d-flex align-items-center gap-1"
+													*ngIf="errorsBrand?.bannerUrl.length >= 1"
+													(click)="showErrors.bannerUrl = !showErrors.bannerUrl"
+												>
+													<ion-icon name="information-circle-outline" class="validation-icon"></ion-icon>
 													{{ showErrors.bannerUrl ? 'Ocultar errores' : 'Ver errores' }}
 												</small>
 											</div>
 
-                                            <div class="mb-1">
+											<div class="mb-1">
 												<app-upload-image
 													(fileSelected)="brand.bannerUrl = $event ? $event : undefined"
 													(validationError)="setErrorBanner($event)"
@@ -247,34 +257,24 @@
 												></app-upload-image>
 											</div>
 
-                                            <span class="fs-8 text-muted">Banner horizontal en 2:1.</span>
+											<span class="fs-8 text-muted">Banner horizontal en 2:1.</span>
 
 											<div class="validation-wrapper" [class.open]="showErrors.bannerUrl">
-												<app-validation-popover 
-												[errors]="errorsBrand?.bannerUrl"></app-validation-popover>
+												<app-validation-popover [errors]="errorsBrand?.bannerUrl"></app-validation-popover>
 											</div>
-                                        </div>
-                                    </div>
-                                </div>
+										</div>
+									</div>
+								</div>
 							</div>
 
 							<!--end::Card body-->
-							<div class="card-footer" style="background-color: #f1f5f9;">
-								<a
-									*ngIf="!loadBtn"
-									class="btn btn-sm btn-primary my-1 cursor-pointer d-inline-flex align-items-center gap-1"
-									(click)="create()"
-								>
+							<div class="card-footer" style="background-color: #f1f5f9">
+								<a *ngIf="!loadBtn" class="btn btn-sm btn-primary my-1 cursor-pointer d-inline-flex align-items-center gap-1" (click)="create()">
 									<i class="bi bi-award"></i>
 									Crear marca
 								</a>
 
-								<button
-									*ngIf="loadBtn"
-									class="btn btn-sm btn-primary my-1 cursor-pointer d-inline-flex align-items-center"
-									type="button"
-									disabled
-								>
+								<button *ngIf="loadBtn" class="btn btn-sm btn-primary my-1 cursor-pointer d-inline-flex align-items-center" type="button" disabled>
 									<span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
 									<span role="status">Procesando...</span>
 								</button>

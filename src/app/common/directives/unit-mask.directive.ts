@@ -1,92 +1,55 @@
-import {
-  Directive,
-  ElementRef,
-  Input,
-  Renderer2,
-  AfterViewInit,
-  OnChanges,
-  SimpleChanges
-} from '@angular/core';
+import { Directive, ElementRef, Input, Renderer2, AfterViewInit, OnChanges, SimpleChanges } from '@angular/core';
 
 @Directive({
-  selector: '[unitMask]',
-  standalone: true
+	selector: '[unitMask]',
+	standalone: true,
 })
-export class UnitMaskDirective
-  implements AfterViewInit, OnChanges {
+export class UnitMaskDirective implements AfterViewInit, OnChanges {
+	@Input() unitMask = '';
 
-  @Input() unitMask = '';
+	private suffixElement!: HTMLElement;
 
-  private suffixElement!: HTMLElement;
+	constructor(
+		private el: ElementRef<HTMLInputElement>,
+		private renderer: Renderer2
+	) {}
 
-  constructor(
-    private el: ElementRef<HTMLInputElement>,
-    private renderer: Renderer2
-  ) {}
+	ngAfterViewInit(): void {
+		const input = this.el.nativeElement;
 
-  ngAfterViewInit(): void {
+		const wrapper = this.renderer.createElement('div');
 
-    const input = this.el.nativeElement;
+		this.renderer.setStyle(wrapper, 'position', 'relative');
+		this.renderer.setStyle(wrapper, 'width', '100%');
 
-    const wrapper = this.renderer.createElement('div');
+		const parent = input.parentNode;
 
-    this.renderer.setStyle(wrapper, 'position', 'relative');
-    this.renderer.setStyle(wrapper, 'width', '100%');
+		if (!parent) return;
 
-    const parent = input.parentNode;
+		parent.insertBefore(wrapper, input);
 
-    if (!parent) return;
+		wrapper.appendChild(input);
 
-    parent.insertBefore(wrapper, input);
+		this.suffixElement = this.renderer.createElement('span');
 
-    wrapper.appendChild(input);
+		this.renderer.setStyle(this.suffixElement, 'position', 'absolute');
+		this.renderer.setStyle(this.suffixElement, 'right', '12px');
+		this.renderer.setStyle(this.suffixElement, 'top', '50%');
+		this.renderer.setStyle(this.suffixElement, 'transform', 'translateY(-50%)');
+		this.renderer.setStyle(this.suffixElement, 'pointer-events', 'none');
+		this.renderer.setStyle(this.suffixElement, 'color', '#6c757d');
+		this.renderer.setStyle(this.suffixElement, 'font-size', '1rem');
 
-    this.suffixElement = this.renderer.createElement('span');
+		this.suffixElement.innerText = this.unitMask;
 
-    this.renderer.setStyle(this.suffixElement, 'position', 'absolute');
-    this.renderer.setStyle(this.suffixElement, 'right', '12px');
-    this.renderer.setStyle(this.suffixElement, 'top', '50%');
-    this.renderer.setStyle(
-      this.suffixElement,
-      'transform',
-      'translateY(-50%)'
-    );
-    this.renderer.setStyle(
-      this.suffixElement,
-      'pointer-events',
-      'none'
-    );
-    this.renderer.setStyle(
-      this.suffixElement,
-      'color',
-      '#6c757d'
-    );
-    this.renderer.setStyle(
-      this.suffixElement,
-      'font-size',
-      '1rem'
-    );
+		wrapper.appendChild(this.suffixElement);
 
-    this.suffixElement.innerText = this.unitMask;
+		this.renderer.setStyle(input, 'padding-right', '50px');
+	}
 
-    wrapper.appendChild(this.suffixElement);
-
-    this.renderer.setStyle(
-      input,
-      'padding-right',
-      '50px'
-    );
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-
-    if (
-      changes['unitMask'] &&
-      this.suffixElement
-    ) {
-      this.suffixElement.innerText =
-        this.unitMask || '';
-    }
-
-  }
+	ngOnChanges(changes: SimpleChanges): void {
+		if (changes['unitMask'] && this.suffixElement) {
+			this.suffixElement.innerText = this.unitMask || '';
+		}
+	}
 }

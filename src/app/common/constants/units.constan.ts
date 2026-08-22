@@ -33,5 +33,5 @@ export const unitsOfMeasure = [
 	// === UNIDADES DE ÁREA ===
 	{ group: 'Área', name: 'Metro cuadrado', abbr: 'm²' },
 	{ group: 'Área', name: 'Centímetro cuadrado', abbr: 'cm²' },
-	{ group: 'Área', name: 'Pie cuadrado', abbr: 'ft²' }
+	{ group: 'Área', name: 'Pie cuadrado', abbr: 'ft²' },
 ];

@@ -26,35 +26,35 @@ declare const toastr: any;
 @Component({
 	selector: 'app-create-attribute',
 	imports: [
-		TopbarComponent, 
-		SidebarComponent, 
-		CommonModule, 
-		FormsModule, 
-		RouterModule, 
-		NgSelectModule, 
+		TopbarComponent,
+		SidebarComponent,
+		CommonModule,
+		FormsModule,
+		RouterModule,
+		NgSelectModule,
 		AlertComponent,
 		NotFoundComponent,
 		ValidationPopoverComponent,
-		TextareaAutoresizeDirective
+		TextareaAutoresizeDirective,
 	],
 	templateUrl: './create-attribute.component.html',
 	styleUrl: './create-attribute.component.css',
-	schemas: [CUSTOM_ELEMENTS_SCHEMA]
+	schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class CreateAttributeComponent {
 	public errorsAtribute: any = {};
 	public groupAttribute: AttributeGroupInterface = createEmptyGroupAttribute();
 	private destroy$ = new Subject<void>();
-	public loading : boolean = true;
+	public loading: boolean = true;
 	public loadBtn: boolean = false;
-	public id : string = '';
+	public id: string = '';
 	public attribute: AttributeInterface = createEmptyAttribute();
 	public values: Array<{ value: string }> = [];
 	public value: string = '';
 	public errorMsmServerGetGroupAttribute: string = '';
 	public msmErrorAttribute: any = [];
 	public showErrors = showErrorsAttribute;
-	public valuesDefault : Array<{name?: string, value?: string}> = valuesDefault;
+	public valuesDefault: Array<{ name?: string; value?: string }> = valuesDefault;
 	public valuesDefaultSelected: string | null = null;
 
 	constructor(
@@ -66,31 +66,32 @@ export class CreateAttributeComponent {
 
 	ngOnInit() {
 		this._route.params
-		.pipe(
-			takeUntil(this.destroy$),
-			switchMap((params) => {
-				this.id = params['id'];
-				this.attribute.attributeGroupId = this.id;
-				this.loading = true;
-				this.errorMsmServerGetGroupAttribute = '';
-				return forkJoin({
-					groupAttribute: this.attributeService.get_attribute_group(this.id)
-				}).pipe(
-				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
-				finalize(() => this.loading = false ))
-			})
-		)
-		.subscribe({
-			next: ({ groupAttribute }: any) => {
-				console.log(groupAttribute);
-				
-				this.groupAttribute = groupAttribute;
-			},
-			error: (err) => {
-				const error = err.error;
-				this.errorMsmServerGetGroupAttribute = error;
-			},
-		});
+			.pipe(
+				takeUntil(this.destroy$),
+				switchMap((params) => {
+					this.id = params['id'];
+					this.attribute.attributeGroupId = this.id;
+					this.loading = true;
+					this.errorMsmServerGetGroupAttribute = '';
+					return forkJoin({
+						groupAttribute: this.attributeService.get_attribute_group(this.id),
+					}).pipe(
+						withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
+						finalize(() => (this.loading = false))
+					);
+				})
+			)
+			.subscribe({
+				next: ({ groupAttribute }: any) => {
+					console.log(groupAttribute);
+
+					this.groupAttribute = groupAttribute;
+				},
+				error: (err) => {
+					const error = err.error;
+					this.errorMsmServerGetGroupAttribute = error;
+				},
+			});
 	}
 
 	add() {
@@ -102,9 +103,9 @@ export class CreateAttributeComponent {
 		if (this.valuesDefaultSelected) {
 			const defaultValues = this.valuesDefaultSelected
 				.split(',')
-				.map(v => v.trim())
-				.filter(v => v.length > 0)
-				.map(v => ({ value: v }));
+				.map((v) => v.trim())
+				.filter((v) => v.length > 0)
+				.map((v) => ({ value: v }));
 
 			this.values.push(...defaultValues);
 
@@ -114,9 +115,7 @@ export class CreateAttributeComponent {
 
 		// Agregar valor manual
 		if (this.value?.trim()) {
-			const val = this.attribute.unit
-				? `${this.value.trim()}${this.attribute.unit}`
-				: this.value.trim();
+			const val = this.attribute.unit ? `${this.value.trim()}${this.attribute.unit}` : this.value.trim();
 
 			this.values.push({ value: val });
 
@@ -126,11 +125,9 @@ export class CreateAttributeComponent {
 
 		// Validar
 		if (!added) {
-			this.errorsAtribute.values = [
-				'Ingrese un valor o seleccione un conjunto de valores por defecto.'
-			];
+			this.errorsAtribute.values = ['Ingrese un valor o seleccione un conjunto de valores por defecto.'];
 		}
-}
+	}
 
 	remove(index: number) {
 		if (index >= 0) {
@@ -145,29 +142,28 @@ export class CreateAttributeComponent {
 		if (!this.attribute.unit) delete this.attribute.unit;
 		console.log(this.attribute);
 		this.attributeService
-		.create_attribute(this.attribute)
-		.pipe(
-			takeUntil(this.destroy$),
-			withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
-			finalize(() => (this.loadBtn = false))
-		)
-		.subscribe({
-			next: (next: {message: string, attribute: AttributeInterface}) => {
-				this.errorsAtribute = {};
-				toastr.success(next.message);
-				this._router.navigate([`/products/attributes/groups/${this.id}/attributes`]);
-			},
-			error: (err) => {
-				const error = err.error;
-				toastr.error(error.message || '¡Error desconocido!');
-				if (error.validation) {
-					this.errorsAtribute = error.validation;
-					this.msmErrorAttribute = Object.values(this.errorsAtribute).flat();
-					this.showErrors = buildShowErrors(this.showErrors,this.errorsAtribute);
-					this.showErrors.value = true;
-					
-				}
-			},
-		});
+			.create_attribute(this.attribute)
+			.pipe(
+				takeUntil(this.destroy$),
+				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
+				finalize(() => (this.loadBtn = false))
+			)
+			.subscribe({
+				next: (next: { message: string; attribute: AttributeInterface }) => {
+					this.errorsAtribute = {};
+					toastr.success(next.message);
+					this._router.navigate([`/products/attributes/groups/${this.id}/attributes`]);
+				},
+				error: (err) => {
+					const error = err.error;
+					toastr.error(error.message || '¡Error desconocido!');
+					if (error.validation) {
+						this.errorsAtribute = error.validation;
+						this.msmErrorAttribute = Object.values(this.errorsAtribute).flat();
+						this.showErrors = buildShowErrors(this.showErrors, this.errorsAtribute);
+						this.showErrors.value = true;
+					}
+				},
+			});
 	}
 }

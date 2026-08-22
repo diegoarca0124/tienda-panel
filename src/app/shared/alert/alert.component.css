@@ -1,31 +1,29 @@
 .message-container {
-  width: 100%;
+	width: 100%;
 }
 
-.border-alert{
-  border-style: dashed !important;
-  border-color: #ccc !important;
+.border-alert {
+	border-style: dashed !important;
+	border-color: #ccc !important;
 }
 
 .msg-wrapper {
-  text-align: justify;
-  font-size: 0; /* elimina espacios entre inline-blocks */
+	text-align: justify;
+	font-size: 0; /* elimina espacios entre inline-blocks */
 }
 
 .msg-wrapper::after {
-  content: "";
-  display: inline-block;
-  width: 100%;
-  height: 0;
+	content: '';
+	display: inline-block;
+	width: 100%;
+	height: 0;
 }
 
 .msg-item {
-  display: inline-block;
-  font-size: 14px;
-  vertical-align: middle;
-  margin-right: 0.6rem;
-  margin-bottom: 0.4rem;
-  line-height: 1.2; /* equilibrio perfecto de altura */
+	display: inline-block;
+	font-size: 14px;
+	vertical-align: middle;
+	margin-right: 0.6rem;
+	margin-bottom: 0.4rem;
+	line-height: 1.2; /* equilibrio perfecto de altura */
 }
-
-

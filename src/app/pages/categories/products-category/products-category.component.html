@@ -10,22 +10,14 @@
 							<h1 class="page-heading d-flex text-gray-700 fs-3 flex justify-content-start my-0 align-items-center text-uppercase ls-1px fw-700">
 								Categorías
 
-								<span *ngIf="!isCategoryLoading && !categoryLoadError && category?.name">
-									&nbsp; | &nbsp;{{ category.name }}
-								</span>
+								<span *ngIf="!isCategoryLoading && !categoryLoadError && category?.name">&nbsp; | &nbsp;{{ category.name }}</span>
 
-								<div
-									*ngIf="isCategoryLoading"
-									class="skeleton skeleton-text"
-									style="width: 120px; height: 15px; margin-left: .9rem !important">
-								</div>
+								<div *ngIf="isCategoryLoading" class="skeleton skeleton-text" style="width: 120px; height: 15px; margin-left: 0.9rem !important"></div>
 							</h1>
 
 							<ul class="breadcrumb breadcrumb-separatorless fw-semibold fs-7 my-0 pt-1">
 								<li class="breadcrumb-item text-muted">
-									<a [routerLink]="['/products/categories']" class="text-muted text-hover-primary">
-										Categorías
-									</a>
+									<a [routerLink]="['/products/categories']" class="text-muted text-hover-primary">Categorías</a>
 								</li>
 								<li class="breadcrumb-item">
 									<span class="bullet bg-gray-400 w-5px h-2px"></span>
@@ -37,14 +29,12 @@
 				</div>
 				<div class="app-content flex-column-fluid">
 					<div class="app-container container-fluid">
-
 						<div class="row g-3 g-lg-4">
 							<div class="col-12">
 								<div class="d-flex justify-content-between align-items-center flex-nowrap gap-2 mt-5">
 									<div class="d-flex gap-5">
 										<div>
 											<div class="d-flex align-items-center gap-2">
-												
 												<!-- Input Search -->
 												<div class="position-relative">
 													<input
@@ -56,11 +46,7 @@
 														(keyup.enter)="applyFilters()"
 													/>
 
-													<i
-														class="bi bi-search position-absolute cursor-pointer"
-														style="right: 15px; top: 50%; transform: translateY(-50%)"
-														(click)="applyFilters()"
-													></i>
+													<i class="bi bi-search position-absolute cursor-pointer" style="right: 15px; top: 50%; transform: translateY(-50%)" (click)="applyFilters()"></i>
 												</div>
 
 												<button
@@ -69,24 +55,14 @@
 													(click)="resetFilters()"
 													[disabled]="isProductsLoading"
 												>
-													<span
-														*ngIf="isProductsLoading"
-														class="spinner-border spinner-border-sm"
-														role="status"
-														aria-hidden="true"
-													></span>
-													<i
-														*ngIf="!isProductsLoading"
-														class="bi bi-arrow-clockwise fs-5"
-													></i>
+													<span *ngIf="isProductsLoading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+													<i *ngIf="!isProductsLoading" class="bi bi-arrow-clockwise fs-5"></i>
 												</button>
 											</div>
 										</div>
 									</div>
 									<div class="d-flex gap-3">
-										
 										<button
-											
 											class="btn btn-light-primary btn-sm d-flex align-items-center gap-2 my-1"
 											type="button"
 											data-bs-toggle="modal"
@@ -111,11 +87,7 @@
 											</button>
 											<ul class="dropdown-menu menu-state-bg-light-primary" aria-labelledby="dropdownMenuButton">
 												<li>
-													<a
-														class="dropdown-item cursor-pointer d-flex align-items-center gap-2"
-														data-bs-toggle="modal"
-														[attr.data-bs-target]="'#modalMove'"
-													>
+													<a class="dropdown-item cursor-pointer d-flex align-items-center gap-2" data-bs-toggle="modal" [attr.data-bs-target]="'#modalMove'">
 														<ion-icon name="folder-outline" class="text-primary"></ion-icon>
 														Mover productos
 													</a>
@@ -130,7 +102,7 @@
 										<div class="filter-item">
 											<div class="d-flex flex-column mb-1 gap-1">
 												<div class="d-flex align-items-center">
-													<span class="text-gray-700 ls-1px" style="font-size: .7rem;">ESTADO</span>
+													<span class="text-gray-700 ls-1px" style="font-size: 0.7rem">ESTADO</span>
 												</div>
 												<ng-select
 													[items]="statusFilters"
@@ -166,7 +138,7 @@
 										<div class="filter-item">
 											<div class="d-flex flex-column mb-1 gap-1">
 												<div class="d-flex align-items-center">
-													<span class="text-gray-700 ls-1px" style="font-size: .7rem;">ORDEN</span>
+													<span class="text-gray-700 ls-1px" style="font-size: 0.7rem">ORDEN</span>
 												</div>
 												<ng-select
 													[items]="sortFilters"
@@ -200,19 +172,19 @@
 											</div>
 										</div>
 										<div class="filter-item">
-											<app-menu-select-subcategories 
-											(applySubcategories)="onSubcategoriesChange($event)"
-											[selectedSubcategories]="selectedSubcategoryIds"
-											[title]="'Subcategorías'"
-											[placeholder]="'Filtrar por subcategoría'"
-											[sizeClass]="'sm'"
-											[categoryId]="id">
-											</app-menu-select-subcategories>
+											<app-menu-select-subcategories
+												(applySubcategories)="onSubcategoriesChange($event)"
+												[selectedSubcategories]="selectedSubcategoryIds"
+												[title]="'Subcategorías'"
+												[placeholder]="'Filtrar por subcategoría'"
+												[sizeClass]="'sm'"
+												[categoryId]="id"
+											></app-menu-select-subcategories>
 										</div>
 										<div class="filter-item">
 											<div class="d-flex flex-column mb-1 gap-1">
 												<div class="d-flex align-items-center">
-													<span class="text-gray-700 ls-1px" style="font-size: .7rem;">CALIDAD</span>
+													<span class="text-gray-700 ls-1px" style="font-size: 0.7rem">CALIDAD</span>
 												</div>
 												<ng-select
 													[items]="qualityFilters"
@@ -248,30 +220,19 @@
 										<div class="filter-item">
 											<div class="d-flex flex-column mb-1 gap-1">
 												<div class="d-flex align-items-center">
-													<span class="text-gray-700 ls-1px" style="font-size: .7rem;">PRECIOS</span>
+													<span class="text-gray-700 ls-1px" style="font-size: 0.7rem">PRECIOS</span>
 												</div>
 												<div class="d-flex gap-5">
-													<app-input-dialer
-													[value]="minPrice"
-													(valueChange)="onMinPriceChange($event)"
-													placeholder="Mín"
-													[step]="5">
-													</app-input-dialer>
+													<app-input-dialer [value]="minPrice" (valueChange)="onMinPriceChange($event)" placeholder="Mín" [step]="5"></app-input-dialer>
 
-													<app-input-dialer
-													[value]="maxPrice"
-													(valueChange)="onMaxPriceChange($event)"
-													placeholder="Máx"
-													[step]="5">
-													</app-input-dialer>
+													<app-input-dialer [value]="maxPrice" (valueChange)="onMaxPriceChange($event)" placeholder="Máx" [step]="5"></app-input-dialer>
 												</div>
 											</div>
-											
 										</div>
 										<div class="filter-item">
 											<div class="d-flex flex-column mb-1 gap-1">
 												<div class="d-flex align-items-center">
-													<span class="text-gray-700 ls-1px" style="font-size: .7rem;">VISIBILIDAD</span>
+													<span class="text-gray-700 ls-1px" style="font-size: 0.7rem">VISIBILIDAD</span>
 												</div>
 												<ng-select
 													[items]="visibilityFilters"
@@ -288,7 +249,7 @@
 													<!-- 🔹 Opción en el dropdown -->
 													<ng-template ng-option-tmp let-item="item">
 														<div class="option-item d-flex gap-3 align-items-center">
-															<div class="d-flex align-items-center" [class]="item.class" [innerHTML]="item.icon" style="color: #9da1bc;font-size: 1.2rem;"></div>
+															<div class="d-flex align-items-center" [class]="item.class" [innerHTML]="item.icon" style="color: #9da1bc; font-size: 1.2rem"></div>
 															<span>{{ item.name }}</span>
 														</div>
 													</ng-template>
@@ -296,7 +257,7 @@
 													<!-- 🔹 Opción seleccionada en el input -->
 													<ng-template ng-label-tmp let-item="item">
 														<div class="selected-item d-flex gap-3 align-items-center">
-															<div class="d-flex align-items-center" [class]="item.class" [innerHTML]="item.icon" style="color: #9da1bc;font-size: 1.2rem;"></div>
+															<div class="d-flex align-items-center" [class]="item.class" [innerHTML]="item.icon" style="color: #9da1bc; font-size: 1.2rem"></div>
 															<span>{{ item.name }}</span>
 														</div>
 													</ng-template>
@@ -304,11 +265,7 @@
 											</div>
 										</div>
 									</div>
-									<button
-										class="btn btn-xs bg-light-primary my-3 d-inline-flex align-items-center gap-2"
-										(click)="applyFilters()"
-										[disabled]="isProductsLoading"
-									>
+									<button class="btn btn-xs bg-light-primary my-3 d-inline-flex align-items-center gap-2" (click)="applyFilters()" [disabled]="isProductsLoading">
 										<ng-container *ngIf="!isProductsLoading; else loadingTpl">
 											<ion-icon name="search-outline" class="fs-6 text-primary"></ion-icon>
 											<span class="text-primary">Buscar</span>
@@ -327,78 +284,58 @@
 											<tr>
 												<th class="fixed-xs text-center p-0">
 													<label class="form-check form-check-customs form-check-sm m-0 d-flex align-items-center justify-content-center h-100">
-													<input
-														class="form-check-input cursor-pointer"
-														type="checkbox"
-														disabled
-													/>
+														<input class="form-check-input cursor-pointer" type="checkbox" disabled />
 													</label>
 												</th>
-												<th class="fixed-column min-w-250px">
-													Producto
-												</th>
-												<th class="fixed-sm">
-													Calidad
-												</th>
-												<th class="fixed-md">
-													Precio
-												</th>
-												<th class="fixed-md">
-													Marca
-												</th>
-												<th class="fixed-md">
-													Subcategorìa
-												</th>
-												<th class="fixed-sm">
-													Stock
-												</th>
-												<th class="fixed-sm">
-													Estado
-												</th>
-												<th class="fixed-xs text-center text-center">
-													
-												</th>
+												<th class="fixed-column min-w-250px">Producto</th>
+												<th class="fixed-sm">Calidad</th>
+												<th class="fixed-md">Precio</th>
+												<th class="fixed-md">Marca</th>
+												<th class="fixed-md">Subcategorìa</th>
+												<th class="fixed-sm">Stock</th>
+												<th class="fixed-sm">Estado</th>
+												<th class="fixed-xs text-center text-center"></th>
 											</tr>
 										</thead>
 										<tbody>
 											@if (isProductsLoading) {
-												<tr *ngFor="let item of [1,2,3,4,5,6]">
+												<tr *ngFor="let item of [1, 2, 3, 4, 5, 6]">
 													<td class="fixed-xs text-center p-0">
 														<div class="skeleton skeleton-check"></div>
 													</td>
 													<td class="flex-column fw-medium">
 														<div class="d-flex align-items-center gap-4">
-															<div class="skeleton" style="max-width:33.67px !important; height:33.67px;min-width:33.67px !important"></div>
+															<div class="skeleton" style="max-width: 33.67px !important; height: 33.67px; min-width: 33.67px !important"></div>
 
-															<div class="d-flex flex-column gap-2" style="width:100%; max-width:250px">
-																<div class="skeleton skeleton-text" style="width:60%;"></div>
-																<div class="skeleton skeleton-text" style="width:40%;"></div>
+															<div class="d-flex flex-column gap-2" style="width: 100%; max-width: 250px">
+																<div class="skeleton skeleton-text" style="width: 60%"></div>
+																<div class="skeleton skeleton-text" style="width: 40%"></div>
 															</div>
 														</div>
 													</td>
 													<td class="fixed-sm">
-														<div class="skeleton skeleton-text" style="width:60%;"></div>
+														<div class="skeleton skeleton-text" style="width: 60%"></div>
 													</td>
 													<td class="fixed-md">
-														<div class="skeleton skeleton-text" style="width:60%;"></div>
+														<div class="skeleton skeleton-text" style="width: 60%"></div>
 													</td>
 													<td class="fixed-md">
 														<div class="d-flex align-items-center gap-4">
-															<div class="skeleton" style="max-width:25px !important; height:25px;min-width:25px !important"></div>
+															<div class="skeleton" style="max-width: 25px !important; height: 25px; min-width: 25px !important"></div>
 
-															<div class="d-flex flex-column gap-2" style="width:100%; max-width:250px">
-																<div class="skeleton skeleton-text" style="width:60%;"></div>
+															<div class="d-flex flex-column gap-2" style="width: 100%; max-width: 250px">
+																<div class="skeleton skeleton-text" style="width: 60%"></div>
 															</div>
 														</div>
 													</td>
 													<td class="fixed-md">
-														<div class="d-flex flex-column gap-2" style="width:100%; max-width:250px">
-															<div class="skeleton skeleton-text" style="width:60%;"></div>
-															<div class="skeleton skeleton-text" style="width:40%;"></div>
+														<div class="d-flex flex-column gap-2" style="width: 100%; max-width: 250px">
+															<div class="skeleton skeleton-text" style="width: 60%"></div>
+															<div class="skeleton skeleton-text" style="width: 40%"></div>
 														</div>
 													</td>
 													<td class="fixed-sm">
-														<div class="skeleton skeleton-text" style="width:60%;"></div>
+														<div class="skeleton skeleton-text" style="width: 60%"></div>
 													</td>
 													<td class="fixed-sm">
 														<div class="skeleton skeleton-badge"></div>
@@ -407,41 +344,38 @@
 														<div class="skeleton skeleton-btn"></div>
 													</td>
 												</tr>
-											}@else if (productsLoadError) {
+											} @else if (productsLoadError) {
 												<tr>
 													<td colspan="6">
 														<app-not-found [error]="productsLoadError"></app-not-found>
 													</td>
 												</tr>
-											}@else if (products.length >= 1) {
+											} @else if (products.length >= 1) {
 												<tr *ngFor="let item of products">
 													<td class="fixed-xs text-center p-0">
 														<label class="form-check form-check-customs form-check-sm m-0 d-flex align-items-center justify-content-center h-100">
-														<input
-															class="form-check-input cursor-pointer"
-															type="checkbox"
-															[checked]="selectedProductsIds.has(item.id!)"
-															(change)="onProductSelectionChange(item.id!, $event)"
-														/>
+															<input
+																class="form-check-input cursor-pointer"
+																type="checkbox"
+																[checked]="selectedProductsIds.has(item.id!)"
+																(change)="onProductSelectionChange(item.id!, $event)"
+															/>
 														</label>
 													</td>
 													<td class="flex-column fw-medium">
-														<div class="d-flex align-items-center gap-4" style="min-width:0;">		
+														<div class="d-flex align-items-center gap-4" style="min-width: 0">
 															<div>
 																<div class="symbol" style="height: 35px !important; width: 35px !important; border: 1px dashed #e3e3e3">
-																	<img [src]="item.cover" 
-																	class="h-100 w-100" 
-																	style="object-fit: cover;" 
-																	fallbackImage/>
+																	<img [src]="item.cover" class="h-100 w-100" style="object-fit: cover" fallbackImage />
 																</div>
 															</div>
-															<div class="d-flex flex-column" style="min-width:0;">
+															<div class="d-flex flex-column" style="min-width: 0">
 																<a class="text-gray-700 fs-8 fw-500 text-truncate-1">
 																	{{ item.name }}
 																</a>
 
 																<small class="text-primary fw-400 text-truncate-1 fs-8">
-																	<span class="text-gray-600">SKU: </span>
+																	<span class="text-gray-600">SKU:</span>
 																	<span class="text-primary">5FDS65E9W98WE9</span>
 																</small>
 															</div>
@@ -455,9 +389,9 @@
 																[ngClass]="{
 																	'bg-danger': item.quality_label == 'low',
 																	'bg-warning': item.quality_label == 'medium',
-																	'bg-success': item.quality_label == 'high'
-																}">
-															</span>
+																	'bg-success': item.quality_label == 'high',
+																}"
+															></span>
 
 															<span class="text-gray-700 fs-8 fw-500 text-truncate-1">
 																{{ qualityLabels[item.quality_label!] }}
@@ -466,30 +400,29 @@
 													</td>
 													<td class="fixed-md">
 														<div class="d-flex gap-2 align-items-center">
-															<span class="fs-7 fw-500 text-truncate-1"
+															<span
+																class="fs-7 fw-500 text-truncate-1"
 																[ngClass]="{
 																	'text-danger': item.priceDiscount > 0,
-																	'text-gray-700': !(item.priceDiscount > 0)
-																}">
+																	'text-gray-700': !(item.priceDiscount > 0),
+																}"
+															>
 																{{ 'PE' | currencySymbol }}
-																{{ (item.priceDiscount > 0 ? item.priceDiscount : item.priceRegular) | number:'1.2-2' }}
+																{{ (item.priceDiscount > 0 ? item.priceDiscount : item.priceRegular) | number: '1.2-2' }}
 															</span>
 
 															@if (item.priceDiscount > 0) {
 																<span class="text-decoration-line-through text-muted fs-9">
 																	{{ 'PE' | currencySymbol }}
-																	{{ item.priceRegular | number:'1.2-2' }}
+																	{{ item.priceRegular | number: '1.2-2' }}
 																</span>
 															}
 														</div>
 													</td>
 													<td class="fixed-md">
 														<div class="d-flex align-items-center gap-2">
-															<div class="symbol me-2" 
-																style="height:25px; width:25px; border:1px dashed #e3e3e3; flex-shrink:0;">
-																<img [src]="item.brand.logoUrl" 
-																class="h-100 w-100"  
-																fallbackImage/>
+															<div class="symbol me-2" style="height: 25px; width: 25px; border: 1px dashed #e3e3e3; flex-shrink: 0">
+																<img [src]="item.brand.logoUrl" class="h-100 w-100" fallbackImage />
 															</div>
 															<span class="text-gray-700 fs-8 fw-600">
 																{{ item.brand.name }}
@@ -501,40 +434,35 @@
 															<a class="text-gray-600 fw-400 fs-8 text-truncate-1">
 																{{ item.subcategory.name }}
 															</a>
-															<span class="text-gray-700 fs-8 fw-500 text-truncate-1">
-																{{ item.subcategory.prefix}}-{{ item.subcategory.code | padCode : 6}}
-															</span>
+															<span class="text-gray-700 fs-8 fw-500 text-truncate-1">{{ item.subcategory.prefix }}-{{ item.subcategory.code | padCode: 6 }}</span>
 														</div>
 													</td>
 													<td class="fixed-sm">
-														<span class="text-gray-700 fs-8 fw-500 text-truncate-1">
-															0
-														</span>
+														<span class="text-gray-700 fs-8 fw-500 text-truncate-1">0</span>
 													</td>
 													<td class="fixed-sm">
-														<span class="badge rounded-pill text-gray-700 fw-800"
-															[ngClass]="{ 'bg-outline-warning': item.status == 'draft', 'bg-outline-success': item.status == 'published' }">
-															<span class="d-inline-block rounded-circle me-1"
-																	style="width: 8px; height: 8px"
-																	[ngClass]="{ 'bg-warning': item.status == 'draft', 'bg-success': item.status == 'published' }"></span>
-																{{ item.status == 'published' ? 'Publicado' : 'Borrador' }}
+														<span
+															class="badge rounded-pill text-gray-700 fw-800"
+															[ngClass]="{ 'bg-outline-warning': item.status == 'draft', 'bg-outline-success': item.status == 'published' }"
+														>
+															<span
+																class="d-inline-block rounded-circle me-1"
+																style="width: 8px; height: 8px"
+																[ngClass]="{ 'bg-warning': item.status == 'draft', 'bg-success': item.status == 'published' }"
+															></span>
+															{{ item.status == 'published' ? 'Publicado' : 'Borrador' }}
 														</span>
 													</td>
 													<td class="fixed-xs text-center p-0">
 														<div class="dropdown">
-															<button 
-																disabled
-																class="icon-btn btn-action dropdown-toggle d-flex align-items-center justify-content-center mx-auto"
-																data-bs-toggle="dropdown">
+															<button disabled class="icon-btn btn-action dropdown-toggle d-flex align-items-center justify-content-center mx-auto" data-bs-toggle="dropdown">
 																<i class="bi bi-three-dots"></i>
 															</button>
-															<div class="dropdown-menu menu-state-bg-light-primary" data-bs-display="static">
-															
-															</div>
+															<div class="dropdown-menu menu-state-bg-light-primary" data-bs-display="static"></div>
 														</div>
 													</td>
 												</tr>
-											}@else {
+											} @else {
 												<tr>
 													<td colspan="6">
 														<app-not-found [error]="{ message: 'No se encontraron registros.', statusCode: 404 }"></app-not-found>
@@ -542,9 +470,7 @@
 												</tr>
 											}
 										</tbody>
-
 									</table>
-
 								</div>
 
 								<div class="d-flex justify-content-between pb-10" *ngIf="products.length >= 1">
@@ -558,7 +484,7 @@
 										Por pagina
 									</div>
 									<div class="d-flex align-items-center gap-3">
-										<app-pagination [currentPage]="currentPage" [totalPages]="totalPages" (pageChanged)="onPageChange($event)"> </app-pagination>
+										<app-pagination [currentPage]="currentPage" [totalPages]="totalPages" (pageChanged)="onPageChange($event)"></app-pagination>
 									</div>
 								</div>
 							</div>
@@ -570,18 +496,14 @@
 	</div>
 </div>
 
-
 <div class="modal fade" id="modalMove" tabindex="-1" aria-hidden="true">
 	<div class="modal-dialog modal-dialog-centered mw-650px">
 		<div class="modal-content rounded">
-			
 			<div class="modal-header pb-0 border-0 justify-content-end">
 				<span class="svg-icon svg-icon-muted svg-icon-1 cursor-pointer" data-bs-dismiss="modal">
 					<svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-						<rect opacity="0.5" x="6" y="17.3137" width="16" height="2" rx="1"
-							transform="rotate(-45 6 17.3137)" fill="currentColor" />
-						<rect x="7.41422" y="6" width="16" height="2" rx="1"
-							transform="rotate(45 7.41422 6)" fill="currentColor" />
+						<rect opacity="0.5" x="6" y="17.3137" width="16" height="2" rx="1" transform="rotate(-45 6 17.3137)" fill="currentColor" />
+						<rect x="7.41422" y="6" width="16" height="2" rx="1" transform="rotate(45 7.41422 6)" fill="currentColor" />
 					</svg>
 				</span>
 			</div>
@@ -590,64 +512,48 @@
 				<form class="form">
 					<div class="text-center">
 						<h1 class="mb-3">Mover Productos</h1>
-						<div class="text-gray-600 mt-1 fw-400 fs-0-9rem">
-							Organiza los productos seleccionados asignándolos a una nueva categoría o subcategoría.
-						</div>
+						<div class="text-gray-600 mt-1 fw-400 fs-0-9rem">Organiza los productos seleccionados asignándolos a una nueva categoría o subcategoría.</div>
 					</div>
-					
+
 					<div class="d-flex justify-content-end">
-						<button
-							type="button"
-							class="btn btn-sm btn-light-primary my-5"
-							(click)="!isCategoriesLoading ? initCategories() : null"
-							[disabled]="isCategoriesLoading"
-						>
+						<button type="button" class="btn btn-sm btn-light-primary my-5" (click)="!isCategoriesLoading ? initCategories() : null" [disabled]="isCategoriesLoading">
 							<ng-container *ngIf="!isCategoriesLoading">
 								<i class="bi bi-arrow-clockwise me-1"></i>
 								Refrescar
 							</ng-container>
 							<ng-container *ngIf="isCategoriesLoading">
-								<span
-									class="spinner-border spinner-border-sm me-2"
-									aria-hidden="true"
-								></span>
-								<span role="status">
-									Procesando...
-								</span>
+								<span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
+								<span role="status">Procesando...</span>
 							</ng-container>
 						</button>
 					</div>
 
-					<div class="accordion-container mb-5" style="margin-right: 0px !important;">
+					<div class="accordion-container mb-5" style="margin-right: 0px !important">
 						<div class="category-accordion-container min-h-card">
-							@if(isCategoriesLoading){
-								<div class="category-card" *ngFor="let category of [1,2,3,4,5,6]; let i = index">
-									<div class="category-header" style="background-color: white !important;">
+							@if (isCategoriesLoading) {
+								<div class="category-card" *ngFor="let category of [1, 2, 3, 4, 5, 6]; let i = index">
+									<div class="category-header" style="background-color: white !important">
 										<div class="d-flex align-items-center gap-3 min-w-0">
-											<div class="skeleton skeleton-text" style="width: 30px !important;height: 30px;border-radius:12px;"></div>
+											<div class="skeleton skeleton-text" style="width: 30px !important; height: 30px; border-radius: 12px"></div>
 											<div class="d-flex align-items-center">
-												<div class="d-flex flex-column min-w-0 me-3 gap-2" style="width: 200px;">
-													<div class="skeleton skeleton-text" style="width: 60% !important;"></div>
-													<div class="skeleton skeleton-text" style="width: 40% !important;"></div>
+												<div class="d-flex flex-column min-w-0 me-3 gap-2" style="width: 200px">
+													<div class="skeleton skeleton-text" style="width: 60% !important"></div>
+													<div class="skeleton skeleton-text" style="width: 40% !important"></div>
 												</div>
 											</div>
 										</div>
 									</div>
 								</div>
-							}@else if (categoriesLoadError) {
+							} @else if (categoriesLoadError) {
 								<app-not-found [error]="categoriesLoadError"></app-not-found>
-							}@else if (categories.length >= 1) {
+							} @else if (categories.length >= 1) {
 								<div class="category-card" *ngFor="let category of categories; let i = index">
 									<div class="category-header" (click)="category.subcategories.length >= 1 ? toggleCategory(i) : null">
 										<div class="d-flex align-items-center gap-3 min-w-0">
 											<div class="category-icon">
 												<ng-container *ngIf="category.icon">
 													<div class="symbol">
-														<span
-														class="symbol-label fw-bold"
-														style="height:30px; width:30px; border:1px dashed #e3e3e3"
-														[innerHTML]="category.safeIcon">
-														</span>
+														<span class="symbol-label fw-bold" style="height: 30px; width: 30px; border: 1px dashed #e3e3e3" [innerHTML]="category.safeIcon"></span>
 													</div>
 												</ng-container>
 												<ng-container *ngIf="!category.icon">
@@ -666,15 +572,10 @@
 									</div>
 									<div class="subcategory-container" [class.open]="expandedCategoryIndex === i">
 										<div>
-											<div
-												class="subcategory-item"
-												*ngFor="let subcategory of category.subcategories"
-											>
+											<div class="subcategory-item" *ngFor="let subcategory of category.subcategories">
 												<div class="d-flex align-items-center gap-3">
 													<div class="subcategory-tree-icon">
-														<ion-icon
-															name="return-down-forward-outline"
-														></ion-icon>
+														<ion-icon name="return-down-forward-outline"></ion-icon>
 													</div>
 													<div class="d-flex gap-3 align-items-center">
 														<span class="subcategory-name text-gray-700 fs-8 fw-400">
@@ -682,15 +583,13 @@
 														</span>
 													</div>
 												</div>
-												<span class="btn btn-dark btn-sm d-flex align-items-center gap-2"
-													style="border: 1px solid #f0f0f0;padding: 5px 10px;"
-													(click)="moveSelectedProductsTo(category, subcategory)">
+												<span
+													class="btn btn-dark btn-sm d-flex align-items-center gap-2"
+													style="border: 1px solid #f0f0f0; padding: 5px 10px"
+													(click)="moveSelectedProductsTo(category, subcategory)"
+												>
 													<ng-container *ngIf="isMovingProducts && movingToSubcategoryId == subcategory.id; else defaultTpl">
-														<span class="spinner-border spinner-border-sm"
-															role="status"
-															aria-hidden="true"
-															style="width:14px;height:14px;border-width:2px;">
-														</span>
+														<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="width: 14px; height: 14px; border-width: 2px"></span>
 														<span class="fs-8">Moviendo</span>
 													</ng-container>
 													<ng-template #defaultTpl>
@@ -702,14 +601,17 @@
 										</div>
 									</div>
 								</div>
-							}@else {
+							} @else {
 								<app-not-found [error]="{ message: 'No se encontraron registros.', statusCode: 404 }"></app-not-found>
 							}
 						</div>
 					</div>
 
-					<div class="text-center" style="line-height: 1.25;">
-						<small class="text-muted">El cambio de categoría o subcategoría actualizará automáticamente el estado de los productos a borrador, permitiendo validar atributos, información y configuración según la nueva estructura del catálogo.</small>
+					<div class="text-center" style="line-height: 1.25">
+						<small class="text-muted">
+							El cambio de categoría o subcategoría actualizará automáticamente el estado de los productos a borrador, permitiendo validar atributos, información y configuración
+							según la nueva estructura del catálogo.
+						</small>
 					</div>
 				</form>
 			</div>

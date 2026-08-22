@@ -1,8 +1,6 @@
-
-
 export const showErrorsSubcategory = {
-    name: false,
+	name: false,
 	icon: false,
 	description: false,
 	prefix: false,
-}
+};

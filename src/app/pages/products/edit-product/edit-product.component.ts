@@ -36,32 +36,32 @@ import { environment } from 'environments/environment.dev';
 import { GLOBAL } from '@app/services/GLOBAL';
 import { NotFoundComponent } from '@app/shared/not-found/not-found.component';
 import { ProductInterface } from '../interfaces/product.interface';
-declare const toastr:any;
+declare const toastr: any;
 
 @Component({
-  selector: 'app-edit-product',
-  imports: [
-	SidebarComponent,
-	TopbarComponent,
-	RouterModule,
-	CommonModule,
-	FormsModule,
-	NgSelectModule,
-	FallbackImageDirective,
-	GeneralCreateProductComponent,
-	PropertyCreateProductComponent,
-	ShippingCreateProductComponent,
-	GalleryCreateProductComponent,
-	VariationsCreateProductComponent,
-	GroupCreateProductComponent,
-	MenuCreateProductComponent,
-	CharacteristicCreateProductComponent,
-	ValidationPopoverComponent,
-	NotFoundComponent
-  ],
-  templateUrl: './edit-product.component.html',
-  styleUrl: './edit-product.component.css',
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+	selector: 'app-edit-product',
+	imports: [
+		SidebarComponent,
+		TopbarComponent,
+		RouterModule,
+		CommonModule,
+		FormsModule,
+		NgSelectModule,
+		FallbackImageDirective,
+		GeneralCreateProductComponent,
+		PropertyCreateProductComponent,
+		ShippingCreateProductComponent,
+		GalleryCreateProductComponent,
+		VariationsCreateProductComponent,
+		GroupCreateProductComponent,
+		MenuCreateProductComponent,
+		CharacteristicCreateProductComponent,
+		ValidationPopoverComponent,
+		NotFoundComponent,
+	],
+	templateUrl: './edit-product.component.html',
+	styleUrl: './edit-product.component.css',
+	schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class EditProductComponent {
 	@ViewChild('characteristics') characteristics!: CharacteristicCreateProductComponent;
@@ -69,26 +69,26 @@ export class EditProductComponent {
 	@ViewChild('variations') variations!: VariationsCreateProductComponent;
 	public product: ProductInterface = createEmptyProduct();
 	public product_const: ProductInterface = createEmptyProduct();
-	public physical : PhysicalProduct = createEmptyProductPhysical();
-	public shipping : ShippingProduct = createEmptyProductShipping();
+	public physical: PhysicalProduct = createEmptyProductPhysical();
+	public shipping: ShippingProduct = createEmptyProductShipping();
 	public errorsProduct: any = {};
 	public variation = {
 		skuPattern: undefined,
-		name: ''
-	}
-	public loadProduct : boolean = true;
+		name: '',
+	};
+	public loadProduct: boolean = true;
 	public labelHelper = productFormHelp;
 	private destroy$ = new Subject<void>();
 	public loadBtn = false;
-	public categories : any = [];
-	public visibilities : any = visibilities;
-	public statusProduct : any = statusProduct;
+	public categories: any = [];
+	public visibilities: any = visibilities;
+	public statusProduct: any = statusProduct;
 	public showErrors = showErrorsProduct;
-	public categorySelected : any = {};
-	public tab : any = 'general';
-	public images : Array<{file: File, preview: string, index: number}> = [];
+	public categorySelected: any = {};
+	public tab: any = 'general';
+	public images: Array<{ file: File; preview: string; index: number }> = [];
 
-	public subcategories : any = [];
+	public subcategories: any = [];
 	public brands: any = [];
 	public errorMsmSeverListCategories: string = '';
 	public errorMsmSeverListSubcategories: string = '';
@@ -98,10 +98,10 @@ export class EditProductComponent {
 	public loadingSubcategories: boolean = false;
 	public whiteListLabels = labels;
 	public whiteListTags = [];
-	public loadImport : boolean = false;
+	public loadImport: boolean = false;
 	public id: string = '';
 	public msmErrorProduct: any = [];
-	public errorMsmServerGetProduct : string = '';
+	public errorMsmServerGetProduct: string = '';
 	readonly qualityLabels: Record<string, string> = {
 		low: 'Baja',
 		medium: 'Media',
@@ -109,47 +109,45 @@ export class EditProductComponent {
 	};
 
 	constructor(
-		private _route : ActivatedRoute,
-		private router : Router,
-		private productService : ProductService,
-		private categoryService : CategoryService,
-		private brandService : BrandService,
-		private sanitizer: DomSanitizer,
-	){
-	
-	}
+		private _route: ActivatedRoute,
+		private router: Router,
+		private productService: ProductService,
+		private categoryService: CategoryService,
+		private brandService: BrandService,
+		private sanitizer: DomSanitizer
+	) {}
 
 	ngOnInit() {
-		this._route.paramMap.pipe(
-			map(params => ({
-				id: params.get('id')!,
-				tab: this._route.snapshot.queryParamMap.get('tab') ?? 'general'
-			})),
+		this._route.paramMap
+			.pipe(
+				map((params) => ({
+					id: params.get('id')!,
+					tab: this._route.snapshot.queryParamMap.get('tab') ?? 'general',
+				})),
 
-			tap(({ id, tab }) => {
-				this.loadProduct = true;
-				this.id = id;
-				this.tab = tab;
-			}),
+				tap(({ id, tab }) => {
+					this.loadProduct = true;
+					this.id = id;
+					this.tab = tab;
+				}),
 
-			switchMap(({ id, tab }) =>
-				this.loadProductData$(id).pipe(
-					tap(product => this.assignBaseData(product)),
-					switchMap(data =>
-						forkJoin({
-							categories: this.init_categories$(),
-							subcategories: this.init_subcategories$(data.product.categoryId),
-							brands: this.init_brands$(),
-						}).pipe(
-							map(() => data)
-						)
-					),
-					finalize(() => this.loadProduct = false)
-				)
-			),
+				switchMap(({ id, tab }) =>
+					this.loadProductData$(id).pipe(
+						tap((product) => this.assignBaseData(product)),
+						switchMap((data) =>
+							forkJoin({
+								categories: this.init_categories$(),
+								subcategories: this.init_subcategories$(data.product.categoryId),
+								brands: this.init_brands$(),
+							}).pipe(map(() => data))
+						),
+						finalize(() => (this.loadProduct = false))
+					)
+				),
 
-			takeUntil(this.destroy$)
-		).subscribe();
+				takeUntil(this.destroy$)
+			)
+			.subscribe();
 	}
 
 	/* @HostListener('window:beforeunload', ['$event'])
@@ -162,7 +160,7 @@ export class EditProductComponent {
 		this.errorMsmServerGetProduct = '';
 		return this.productService.get_product(id).pipe(
 			withMinLoadingTime(400),
-			catchError(err => {
+			catchError((err) => {
 				const error = err.error;
 				this.errorMsmServerGetProduct = error;
 				return EMPTY;
@@ -176,22 +174,21 @@ export class EditProductComponent {
 		this.categories = [];
 
 		return this.categoryService.get_categories_by_select().pipe(
-			tap((next: {data: CategoryInterface[], message: string}) => {
-				this.categories = next.data.map((v:any) => ({
+			tap((next: { data: CategoryInterface[]; message: string }) => {
+				this.categories = next.data.map((v: any) => ({
 					...v,
-					iconSafe: this.sanitizer.bypassSecurityTrustHtml(v.icon)
+					iconSafe: this.sanitizer.bypassSecurityTrustHtml(v.icon),
 				}));
 				console.log(this.categories);
-				
-				this.categorySelected = this.categories.find((item:any)=> item.id == this.product.categoryId);	
+
+				this.categorySelected = this.categories.find((item: any) => item.id == this.product.categoryId);
 			}),
-			catchError(err => {
-				this.errorMsmSeverListCategories =
-					err?.error?.message || 'Error cargando categorías';
+			catchError((err) => {
+				this.errorMsmSeverListCategories = err?.error?.message || 'Error cargando categorías';
 
 				return of([]);
 			}),
-			finalize(() => this.loadingCategories = false)
+			finalize(() => (this.loadingCategories = false))
 		);
 	}
 
@@ -200,22 +197,21 @@ export class EditProductComponent {
 		this.errorMsmSeverListSubcategories = '';
 		this.subcategories = [];
 		return this.categoryService.get_subcategories_by_select(id).pipe(
-			tap((next: {data: SubcategoryInterface[], message: string}) => {
+			tap((next: { data: SubcategoryInterface[]; message: string }) => {
 				this.subcategories = next.data;
-				this.subcategories = this.subcategories.map((v:any) => ({
+				this.subcategories = this.subcategories.map((v: any) => ({
 					...v,
-					iconSafe: this.sanitizer.bypassSecurityTrustHtml(v.icon)
+					iconSafe: this.sanitizer.bypassSecurityTrustHtml(v.icon),
 				}));
 			}),
 
-			catchError(err => {
-				this.errorMsmSeverListSubcategories =
-					err?.error?.message || 'Error cargando caracteristicas';
+			catchError((err) => {
+				this.errorMsmSeverListSubcategories = err?.error?.message || 'Error cargando caracteristicas';
 
 				return of([]);
 			}),
 
-			finalize(() => this.loadingSubcategories = false)
+			finalize(() => (this.loadingSubcategories = false))
 		);
 	}
 
@@ -224,38 +220,35 @@ export class EditProductComponent {
 		this.errorMsmSeverListBrands = '';
 		this.brands = [];
 		return this.brandService.get_brands_by_select().pipe(
-			tap((data : BrandInterface[]) => {
+			tap((data: BrandInterface[]) => {
 				this.brands = data;
-				this.brands = this.brands.map((brand : any) => ({
+				this.brands = this.brands.map((brand: any) => ({
 					...brand,
 					logoUrl: `${environment.s3_public_url}/brands/small/${brand.logoUrl}`,
 				}));
 			}),
 
-			catchError(err => {
-				this.errorMsmSeverListBrands =
-					err?.error?.message || 'Error cargando subcategorías';
+			catchError((err) => {
+				this.errorMsmSeverListBrands = err?.error?.message || 'Error cargando subcategorías';
 				return of([]);
 			}),
 
-			finalize(() => this.loadingBrands = false)
+			finalize(() => (this.loadingBrands = false))
 		);
 	}
 
 	private assignBaseData({ product, physical, shipping }: any): void {
 		this.product = product;
 		this.product.cover_preview = `${environment.s3_public_url}/products/small/${product.cover}`;
-		this.product_const = {...this.product};
+		this.product_const = { ...this.product };
 		this.physical = physical;
 		this.shipping = shipping;
-		
 	}
 
-
-	update(){
+	update() {
 		const product = {
 			id: this.product.id,
-			visibility : this.product.visibility,
+			visibility: this.product.visibility,
 			status: this.product.status,
 			name: this.product.name,
 			unitOfMeasure: this.product.unitOfMeasure,
@@ -281,7 +274,7 @@ export class EditProductComponent {
 			isLimitedEdition: this.product.isLimitedEdition,
 			isPreOrder: this.product.isPreOrder,
 			isExportable: this.product.isExportable,
-		}
+		};
 		const physical = {
 			dimensionUnit: this.physical.dimensionUnit,
 			weightUnit: this.physical.weightUnit,
@@ -301,87 +294,79 @@ export class EditProductComponent {
 			isRequiresAssembly: this.physical.isRequiresAssembly,
 			isHazardous: this.physical.isHazardous,
 			isFlammable: this.physical.isFlammable,
-		}
+		};
 		const shipping = {
 			packageType: this.shipping.packageType,
 			pickupInStore: this.shipping.pickupInStore,
 			freeShipping: this.shipping.freeShipping,
 			handlingDays: this.shipping.handlingDays,
 			specialInstructions: this.shipping.specialInstructions,
-		}
+		};
 
 		const data = {
 			...product,
 			...physical,
-			...shipping
-		}
+			...shipping,
+		};
 		this.loadBtn = true;
-		this.productService.update_product(this.id,data)
-		.pipe(
-			withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
-			takeUntil(this.destroy$),
-			finalize(() => (this.loadBtn = false))
-		)
-		.subscribe({
-			next: (next) =>{
-				this.errorsProduct = {};
-				toastr.success(next.message);
-			},
-			error: (err) =>{
-				this.errorsProduct = {};
-				const error = err.error;
-				toastr.error(error.message || '¡Error desconocido!');
-				console.log(error.validation);
-				if (error.validation) {
-					this.errorsProduct = {
-						...this.errorsProduct,
-						...error.validation, 
-					};
-					this.msmErrorProduct = Object.values(this.errorsProduct).flat();
-					for (const key in this.showErrors) {
-						this.showErrors[key as keyof typeof this.showErrors] =
-						!!this.errorsProduct?.[key]?.length;
+		this.productService
+			.update_product(this.id, data)
+			.pipe(
+				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
+				takeUntil(this.destroy$),
+				finalize(() => (this.loadBtn = false))
+			)
+			.subscribe({
+				next: (next) => {
+					this.errorsProduct = {};
+					toastr.success(next.message);
+				},
+				error: (err) => {
+					this.errorsProduct = {};
+					const error = err.error;
+					toastr.error(error.message || '¡Error desconocido!');
+					console.log(error.validation);
+					if (error.validation) {
+						this.errorsProduct = {
+							...this.errorsProduct,
+							...error.validation,
+						};
+						this.msmErrorProduct = Object.values(this.errorsProduct).flat();
+						for (const key in this.showErrors) {
+							this.showErrors[key as keyof typeof this.showErrors] = !!this.errorsProduct?.[key]?.length;
+						}
 					}
-				}
-			}
-		})
-		
+				},
+			});
 	}
 
 	refreshBrands(): void {
-		this.init_brands$()
-			.pipe(takeUntil(this.destroy$))
+		this.init_brands$().pipe(takeUntil(this.destroy$)).subscribe();
+	}
+
+	refreshCategories() {
+		this.init_categories$()
+			.pipe(
+				switchMap(() => {
+					if (!this.product.categoryId) return of([]);
+					return this.init_subcategories$(this.product.categoryId);
+				}),
+				takeUntil(this.destroy$)
+			)
 			.subscribe();
 	}
 
-	refreshCategories(){
-		this.init_categories$().pipe(
-			switchMap(() => {
-				if (!this.product.categoryId) return of([]);
-				return this.init_subcategories$(this.product.categoryId);
-			}),
-			takeUntil(this.destroy$)
-		).subscribe();
-	}
-
-	refreshSubcategories(){
-		if(this.product.categoryId){
-			this.init_subcategories$(this.product.categoryId!)
-			.pipe(takeUntil(this.destroy$))
-			.subscribe();
-		} 
+	refreshSubcategories() {
+		if (this.product.categoryId) {
+			this.init_subcategories$(this.product.categoryId!).pipe(takeUntil(this.destroy$)).subscribe();
+		}
 	}
 
 	onSelectCategory() {
-		this.categorySelected = this.categories.find((item:any)=> item.id == this.product.categoryId);
+		this.categorySelected = this.categories.find((item: any) => item.id == this.product.categoryId);
 		this.product.subcategoryId = undefined;
-		this.init_subcategories$(this.product.categoryId!)
-			.pipe(takeUntil(this.destroy$))
-			.subscribe();
+		this.init_subcategories$(this.product.categoryId!).pipe(takeUntil(this.destroy$)).subscribe();
 	}
 
-	importProduct(){
-
-	}
+	importProduct() {}
 }
-

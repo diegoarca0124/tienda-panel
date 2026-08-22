@@ -22,14 +22,14 @@ export interface CollaboratorFieldErrors {
 }
 
 export interface FieldExportColumns {
-	key: string, 
-	checked: boolean,
-	label: string, 
-	description: string
+	key: string;
+	checked: boolean;
+	label: string;
+	description: string;
 }
 
 export interface ImportInterface {
-    file: File | undefined
-    mode: 'upsert' | 'insert' | 'update',
-    identifyBy: 'email' | 'number_document',
+	file: File | undefined;
+	mode: 'upsert' | 'insert' | 'update';
+	identifyBy: 'email' | 'number_document';
 }

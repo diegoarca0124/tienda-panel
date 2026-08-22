@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { urlToImage } from '@app/common/utils/url-to-image.util';
 import { FallbackImageDirective } from '@app/common/directives/fallback-image.directive';
 declare const toastr: any;
-declare const $:any;
+declare const $: any;
 
 @Component({
 	selector: 'app-upload-image',
@@ -82,7 +82,7 @@ export class UploadImageComponent {
 		this.fileSelected.emit(null);
 		this.validationError.emit(null);
 		this.hasError = false;
-		$('#'+this.inputId).val('');
+		$('#' + this.inputId).val('');
 	}
 
 	private setError(message: string) {

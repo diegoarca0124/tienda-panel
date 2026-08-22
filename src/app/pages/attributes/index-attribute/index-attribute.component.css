@@ -4,10 +4,10 @@
 }
 
 .badge-light-primary {
-    border: 1px dashed #7882b4;
-    padding: 5px 10px;
+	border: 1px dashed #7882b4;
+	padding: 5px 10px;
 }
 
-li::marker{
-    color:#000;
+li::marker {
+	color: #000;
 }

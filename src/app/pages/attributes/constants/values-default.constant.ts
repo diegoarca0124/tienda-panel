@@ -15,5 +15,5 @@ export const valuesDefault = [
 
 	{ name: 'Incluye, No incluye', value: 'Incluye, No incluye' },
 
-	{ name: 'Compatible, No compatible', value: 'Compatible, No compatible' }
+	{ name: 'Compatible, No compatible', value: 'Compatible, No compatible' },
 ];

@@ -26,7 +26,7 @@ export class BrandService {
 			Authorization: `Bearer ${token}`,
 		});
 	}
-	
+
 	constructor(
 		private http: HttpClient,
 		private authService: AuthService
@@ -41,7 +41,7 @@ export class BrandService {
 		data.append('logoUrl', brand.logoUrl);
 		data.append('prefix', brand.prefix);
 		data.append('bannerUrl', brand.bannerUrl);
-		return this.http.post(`${this.apiUrl}/brand/create_brand`, data, { headers: this.getHeaders(data)});
+		return this.http.post(`${this.apiUrl}/brand/create_brand`, data, { headers: this.getHeaders(data) });
 	}
 
 	get_brands(filter: string, page: number, limit: number, status: string, countries: string, sort: string): Observable<any> {
@@ -77,23 +77,22 @@ export class BrandService {
 		return this.http.put(`${this.apiUrl}/brand/update_brand/${id}`, data, { headers: this.getHeaders(data) });
 	}
 
-	get_product_by_brand(
-		id: string, 
-		qp: {filter: string,page: number,limit: number,status: string, sort: string,subcategoryIds: string}
-	): Observable<any> {
+	get_product_by_brand(id: string, qp: { filter: string; page: number; limit: number; status: string; sort: string; subcategoryIds: string }): Observable<any> {
 		console.log(qp);
-		
-		return this.http.get(`${this.apiUrl}/brand/get_product_by_brand/${id}?filter=${qp.filter}&page=${qp.page}&limit=${qp.limit}&status=${qp.status}&sort=${qp.sort}&subcategoryIds=${qp.subcategoryIds}`, {
-			headers: this.getHeaders(),
-		});
-	}
 
+		return this.http.get(
+			`${this.apiUrl}/brand/get_product_by_brand/${id}?filter=${qp.filter}&page=${qp.page}&limit=${qp.limit}&status=${qp.status}&sort=${qp.sort}&subcategoryIds=${qp.subcategoryIds}`,
+			{
+				headers: this.getHeaders(),
+			}
+		);
+	}
 
 	get_brands_by_select(): Observable<any> {
 		return this.http.get(`${this.apiUrl}/brand/get_brands_by_select`, { headers: this.getHeaders() });
 	}
 
-	update_status_brands(data: {ids: Array<string>, status: boolean}): Observable<any> {
+	update_status_brands(data: { ids: Array<string>; status: boolean }): Observable<any> {
 		return this.http.post(`${this.apiUrl}/brand/update_status_brands`, data, { headers: this.getHeaders() });
 	}
 }

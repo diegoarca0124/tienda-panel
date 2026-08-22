@@ -14,11 +14,7 @@
 							</ul>
 						</div>
 						<div class="d-flex align-items-center gap-2 gap-lg-3">
-							<a
-							[routerLink]="['/products/articles/create']"
-							routerLinkActive="router-link-active"
-							class="btn btn-sm fw-bold btn-primary d-inline-flex align-items-center gap-1"
-							>
+							<a [routerLink]="['/products/articles/create']" routerLinkActive="router-link-active" class="btn btn-sm fw-bold btn-primary d-inline-flex align-items-center gap-1">
 								<i class="bi bi-box-seam"></i>
 								Nueva Articulo
 							</a>
@@ -42,11 +38,7 @@
 													(keyup.enter)="redirect()"
 												/>
 
-												<i
-													class="bi bi-search position-absolute cursor-pointer"
-													style="right: 15px; top: 50%; transform: translateY(-50%)"
-													(click)="redirect()"
-												></i>
+												<i class="bi bi-search position-absolute cursor-pointer" style="right: 15px; top: 50%; transform: translateY(-50%)" (click)="redirect()"></i>
 											</div>
 											<button
 												type="button"
@@ -54,23 +46,18 @@
 												(click)="resetFilters()"
 												[disabled]="loading"
 											>
-												<span
-													*ngIf="loading"
-													class="spinner-border spinner-border-sm"
-													role="status"
-													aria-hidden="true"
-												></span>
-												<i
-													*ngIf="!loading"
-													class="bi bi-arrow-clockwise fs-5"
-												></i>
+												<span *ngIf="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+												<i *ngIf="!loading" class="bi bi-arrow-clockwise fs-5"></i>
 											</button>
 											<a
 												class="btn btn-light-primary btn-sm dropdown-toggle my-1"
 												type="button"
-												data-bs-toggle="collapse" data-bs-target="#kt_advanced_search_form" aria-expanded="true"
+												data-bs-toggle="collapse"
+												data-bs-target="#kt_advanced_search_form"
+												aria-expanded="true"
 											>
-												<i class="bi bi-funnel-fill"></i> Filtro Avanzado
+												<i class="bi bi-funnel-fill"></i>
+												Filtro Avanzado
 											</a>
 										</div>
 									</div>
@@ -105,49 +92,49 @@
 										<div class="filter-item">
 											<div class="d-flex flex-column mb-1 gap-1">
 												<div class="d-flex align-items-center">
-													<span class="text-gray-700 ls-1px" style="font-size: .7rem;">CATEGORÍA</span>
+													<span class="text-gray-700 ls-1px" style="font-size: 0.7rem">CATEGORÍA</span>
 												</div>
-												<app-menu-select-categories 
-												(applyCategories)="getCategories($event)"
-												[selectedCategories]="categories"
-												[title]="'Categorías'"
-												[placeholder]="'Filtrar por categoría'"
-												[sizeClass]="'sm'">
-												</app-menu-select-categories>
+												<app-menu-select-categories
+													(applyCategories)="getCategories($event)"
+													[selectedCategories]="categories"
+													[title]="'Categorías'"
+													[placeholder]="'Filtrar por categoría'"
+													[sizeClass]="'sm'"
+												></app-menu-select-categories>
 											</div>
 										</div>
 										<div class="filter-item">
 											<div class="d-flex flex-column mb-1 gap-1">
 												<div class="d-flex align-items-center">
-													<span class="text-gray-700 ls-1px" style="font-size: .7rem;">MARCA</span>
+													<span class="text-gray-700 ls-1px" style="font-size: 0.7rem">MARCA</span>
 												</div>
-												<app-menu-select-brands 
-												(applyBrands)="getBrands($event)"
-												[selectedBrands]="brands"
-												[title]="'Marcas'"
-												[placeholder]="'Filtrar por marca'"
-												[sizeClass]="'sm'">
-												</app-menu-select-brands>
+												<app-menu-select-brands
+													(applyBrands)="getBrands($event)"
+													[selectedBrands]="brands"
+													[title]="'Marcas'"
+													[placeholder]="'Filtrar por marca'"
+													[sizeClass]="'sm'"
+												></app-menu-select-brands>
 											</div>
 										</div>
 										<div class="filter-item">
 											<div class="d-flex flex-column mb-1 gap-1">
 												<div class="d-flex align-items-center">
-													<span class="text-gray-700 ls-1px" style="font-size: .7rem;">PAÍS</span>
+													<span class="text-gray-700 ls-1px" style="font-size: 0.7rem">PAÍS</span>
 												</div>
-												<app-menu-select-countries 
-												(applyCountries)="getCountries($event)"
-												[selectedCountries]="countries"
-												[title]="'Paises'"
-												[placeholder]="'Filtrar por paises'"
-												[sizeClass]="'sm'">
-												</app-menu-select-countries>
+												<app-menu-select-countries
+													(applyCountries)="getCountries($event)"
+													[selectedCountries]="countries"
+													[title]="'Paises'"
+													[placeholder]="'Filtrar por paises'"
+													[sizeClass]="'sm'"
+												></app-menu-select-countries>
 											</div>
 										</div>
 										<div class="filter-item">
 											<div class="d-flex flex-column mb-1 gap-1">
 												<div class="d-flex align-items-center">
-													<span class="text-gray-700 ls-1px" style="font-size: .7rem;">VISIBILIDAD</span>
+													<span class="text-gray-700 ls-1px" style="font-size: 0.7rem">VISIBILIDAD</span>
 												</div>
 												<ng-select
 													[items]="visibilityTable"
@@ -164,7 +151,7 @@
 													<!-- 🔹 Opción en el dropdown -->
 													<ng-template ng-option-tmp let-item="item">
 														<div class="option-item d-flex gap-3 align-items-center">
-															<div class="d-flex align-items-center" [class]="item.class" [innerHTML]="item.icon" style="color: #9da1bc;font-size: 1.2rem;"></div>
+															<div class="d-flex align-items-center" [class]="item.class" [innerHTML]="item.icon" style="color: #9da1bc; font-size: 1.2rem"></div>
 															<span>{{ item.name }}</span>
 														</div>
 													</ng-template>
@@ -172,7 +159,7 @@
 													<!-- 🔹 Opción seleccionada en el input -->
 													<ng-template ng-label-tmp let-item="item">
 														<div class="selected-item d-flex gap-3 align-items-center">
-															<div class="d-flex align-items-center" [class]="item.class" [innerHTML]="item.icon" style="color: #9da1bc;font-size: 1.2rem;"></div>
+															<div class="d-flex align-items-center" [class]="item.class" [innerHTML]="item.icon" style="color: #9da1bc; font-size: 1.2rem"></div>
 															<span>{{ item.name }}</span>
 														</div>
 													</ng-template>
@@ -182,7 +169,7 @@
 										<div class="filter-item">
 											<div class="d-flex flex-column mb-1 gap-1">
 												<div class="d-flex align-items-center">
-													<span class="text-gray-700 ls-1px" style="font-size: .7rem;">ESTADO</span>
+													<span class="text-gray-700 ls-1px" style="font-size: 0.7rem">ESTADO</span>
 												</div>
 												<ng-select
 													[items]="statusTable"
@@ -218,30 +205,19 @@
 										<div class="filter-item">
 											<div class="d-flex flex-column mb-1 gap-1">
 												<div class="d-flex align-items-center">
-													<span class="text-gray-700 ls-1px" style="font-size: .7rem;">PRECIOS</span>
+													<span class="text-gray-700 ls-1px" style="font-size: 0.7rem">PRECIOS</span>
 												</div>
 												<div class="d-flex gap-5">
-													<app-input-dialer
-													[value]="minPrice"
-													(valueChange)="getMinPrice($event)"
-													placeholder="Mín"
-													[step]="5">
-													</app-input-dialer>
+													<app-input-dialer [value]="minPrice" (valueChange)="getMinPrice($event)" placeholder="Mín" [step]="5"></app-input-dialer>
 
-													<app-input-dialer
-													[value]="maxPrice"
-													(valueChange)="getMaxPrice($event)"
-													placeholder="Máx"
-													[step]="5">
-													</app-input-dialer>
+													<app-input-dialer [value]="maxPrice" (valueChange)="getMaxPrice($event)" placeholder="Máx" [step]="5"></app-input-dialer>
 												</div>
 											</div>
-											
 										</div>
 										<div class="filter-item">
 											<div class="d-flex flex-column mb-1 gap-1">
 												<div class="d-flex align-items-center">
-													<span class="text-gray-700 ls-1px" style="font-size: .7rem;">CALIDAD</span>
+													<span class="text-gray-700 ls-1px" style="font-size: 0.7rem">CALIDAD</span>
 												</div>
 												<ng-select
 													[items]="qualityTable"
@@ -288,69 +264,51 @@
 											<tr>
 												<th class="fixed-xs text-center p-0">
 													<label class="form-check form-check-customs form-check-sm m-0 d-flex align-items-center justify-content-center h-100">
-													<input
-														class="form-check-input cursor-pointer"
-														type="checkbox"
-														disabled
-													/>
+														<input class="form-check-input cursor-pointer" type="checkbox" disabled />
 													</label>
 												</th>
-												<th class="flex-column">
-													Producto
-												</th>
-												<th class="fixed-md">
-													Marca
-												</th>
-												<th class="fixed-sm">
-													Calidad
-												</th>
-												<th class="fixed-md">
-													Precio
-												</th>
-												<th class="fixed-sm">
-													Stock
-												</th>
-												<th class="fixed-sm">
-													Estado
-												</th>
-												<th class="fixed-xs text-center text-center">
-													
-												</th>
+												<th class="flex-column">Producto</th>
+												<th class="fixed-md">Marca</th>
+												<th class="fixed-sm">Calidad</th>
+												<th class="fixed-md">Precio</th>
+												<th class="fixed-sm">Stock</th>
+												<th class="fixed-sm">Estado</th>
+												<th class="fixed-xs text-center text-center"></th>
 											</tr>
 										</thead>
 										<tbody>
 											<ng-container *ngIf="loading">
-												<tr *ngFor="let item of [1,2,3,4,5,6]">
+												<tr *ngFor="let item of [1, 2, 3, 4, 5, 6]">
 													<td class="fixed-xs text-center p-0">
 														<div class="skeleton skeleton-check"></div>
 													</td>
 													<td class="flex-column fw-medium">
 														<div class="d-flex align-items-center gap-4">
-															<div class="skeleton" style="max-width:30px !important; height:30px;min-width:30px !important"></div>
+															<div class="skeleton" style="max-width: 30px !important; height: 30px; min-width: 30px !important"></div>
 
-															<div class="d-flex flex-column gap-2" style="width:100%; max-width:250px">
-																<div class="skeleton skeleton-text" style="width:60%;"></div>
-																<div class="skeleton skeleton-text" style="width:40%;"></div>
+															<div class="d-flex flex-column gap-2" style="width: 100%; max-width: 250px">
+																<div class="skeleton skeleton-text" style="width: 60%"></div>
+																<div class="skeleton skeleton-text" style="width: 40%"></div>
 															</div>
 														</div>
 													</td>
 													<td class="fixed-md">
 														<div class="d-flex align-items-center gap-4">
-															<div class="skeleton" style="max-width:25px !important; height:25px;min-width:25px !important"></div>
+															<div class="skeleton" style="max-width: 25px !important; height: 25px; min-width: 25px !important"></div>
 
-															<div class="d-flex flex-column gap-2" style="width:100%; max-width:250px">
-																<div class="skeleton skeleton-text" style="width:60%;"></div>
+															<div class="d-flex flex-column gap-2" style="width: 100%; max-width: 250px">
+																<div class="skeleton skeleton-text" style="width: 60%"></div>
 															</div>
 														</div>
 													</td>
 													<td class="fixed-sm">
-														<div class="skeleton skeleton-text" style="width:60%;"></div>
+														<div class="skeleton skeleton-text" style="width: 60%"></div>
 													</td>
 													<td class="fixed-md">
-														<div class="skeleton skeleton-text" style="width:60%;"></div>
+														<div class="skeleton skeleton-text" style="width: 60%"></div>
 													</td>
 													<td class="fixed-sm">
-														<div class="skeleton skeleton-text" style="width:60%;"></div>
+														<div class="skeleton skeleton-text" style="width: 60%"></div>
 													</td>
 													<td class="fixed-sm">
 														<div class="skeleton skeleton-badge"></div>
@@ -364,40 +322,26 @@
 												<tr *ngFor="let item of products">
 													<td class="fixed-xs text-center p-0">
 														<label class="form-check form-check-customs form-check-sm m-0 d-flex align-items-center justify-content-center h-100">
-														<input
-															class="form-check-input cursor-pointer"
-															type="checkbox"
-															[checked]="selectedIds.has(item.id!)"
-															(change)="toggleItem(item.id!, $event)"
-														/>
+															<input class="form-check-input cursor-pointer" type="checkbox" [checked]="selectedIds.has(item.id!)" (change)="toggleItem(item.id!, $event)" />
 														</label>
 													</td>
 													<td class="flex-column fw-medium">
-														<div class="d-flex align-items-center gap-2" style="min-width:0;">
-															<div class="symbol me-3" 
-																style="height:30px; width:30px; border:1px dashed #e3e3e3; flex-shrink:0;">
-																<img [src]="item.miniature" 
-																class="h-100 w-100"  
-																fallbackImage/>
+														<div class="d-flex align-items-center gap-2" style="min-width: 0">
+															<div class="symbol me-3" style="height: 30px; width: 30px; border: 1px dashed #e3e3e3; flex-shrink: 0">
+																<img [src]="item.miniature" class="h-100 w-100" fallbackImage />
 															</div>
-															<div class="d-flex flex-column" style="min-width:0;">
-																<a class="text-gray-700 fs-8 fw-500 text-truncate-1"
-																>
+															<div class="d-flex flex-column" style="min-width: 0">
+																<a class="text-gray-700 fs-8 fw-500 text-truncate-1">
 																	{{ item.name }}
 																</a>
-																<small class="text-primary fw-400 text-truncate-1 fs-8">
-																	{{ item.category.name }} - {{ item.subcategory.name }}
-																</small>
+																<small class="text-primary fw-400 text-truncate-1 fs-8">{{ item.category.name }} - {{ item.subcategory.name }}</small>
 															</div>
 														</div>
 													</td>
 													<td class="fixed-md">
 														<div class="d-flex align-items-center gap-2">
-															<div class="symbol me-1" 
-																style="height:25px; width:25px; border:1px dashed #e3e3e3; flex-shrink:0;">
-																<img [src]="item.brand.logoUrl" 
-																class="h-100 w-100"  
-																fallbackImage/>
+															<div class="symbol me-1" style="height: 25px; width: 25px; border: 1px dashed #e3e3e3; flex-shrink: 0">
+																<img [src]="item.brand.logoUrl" class="h-100 w-100" fallbackImage />
 															</div>
 															<span class="text-gray-700 fs-8 fw-500 text-truncate-1">
 																{{ item.brand.name }}
@@ -412,9 +356,9 @@
 																[ngClass]="{
 																	'bg-danger': item.quality_label == 'low',
 																	'bg-warning': item.quality_label == 'medium',
-																	'bg-success': item.quality_label == 'high'
-																}">
-															</span>
+																	'bg-success': item.quality_label == 'high',
+																}"
+															></span>
 
 															<span class="text-gray-700 fs-8 fw-500 text-truncate-1">
 																{{ qualityLabels[item.quality_label!] }}
@@ -423,68 +367,63 @@
 													</td>
 													<td class="fixed-md">
 														<div class="d-flex gap-2 align-items-center">
-															<span class="fs-7 fw-500 text-truncate-1"
+															<span
+																class="fs-7 fw-500 text-truncate-1"
 																[ngClass]="{
 																	'text-danger': item.priceDiscount > 0,
-																	'text-gray-700': !(item.priceDiscount > 0)
-																}">
+																	'text-gray-700': !(item.priceDiscount > 0),
+																}"
+															>
 																{{ 'PE' | currencySymbol }}
-																{{ (item.priceDiscount > 0 ? item.priceDiscount : item.priceRegular) | number:'1.2-2' }}
+																{{ (item.priceDiscount > 0 ? item.priceDiscount : item.priceRegular) | number: '1.2-2' }}
 															</span>
 
 															@if (item.priceDiscount > 0) {
 																<span class="text-decoration-line-through text-muted fs-9">
 																	{{ 'PE' | currencySymbol }}
-																	{{ item.priceRegular | number:'1.2-2' }}
+																	{{ item.priceRegular | number: '1.2-2' }}
 																</span>
 															}
 														</div>
 													</td>
 													<td class="fixed-sm">
-														<span class="text-gray-700 fs-8 fw-500 text-truncate-1">
-															0
-														</span>
+														<span class="text-gray-700 fs-8 fw-500 text-truncate-1">0</span>
 													</td>
 													<td class="fixed-sm">
 														<span
 															class="badge rounded-pill text-gray-700"
 															[ngClass]="{
 																'bg-outline-success': item.status === 'published',
-																'bg-outline-secondary': item.status === 'draft'
-															}">
-
+																'bg-outline-secondary': item.status === 'draft',
+															}"
+														>
 															<span
 																class="d-inline-block rounded-circle me-1"
 																style="width: 6px; height: 6px"
 																[ngClass]="{
 																	'bg-success': item.status === 'published',
-																	'bg-secondary': item.status === 'draft'
-																}">
-															</span>
+																	'bg-secondary': item.status === 'draft',
+																}"
+															></span>
 
 															{{ item.status === 'published' ? 'Publicado' : 'Borrador' }}
 														</span>
 													</td>
 													<td class="fixed-xs text-center p-0">
 														<div class="dropdown">
-															<button 
-																class="btn-action icon-btn dropdown-toggle d-flex align-items-center justify-content-center mx-auto"
-																data-bs-toggle="dropdown">
+															<button class="btn-action icon-btn dropdown-toggle d-flex align-items-center justify-content-center mx-auto" data-bs-toggle="dropdown">
 																<i class="bi bi-three-dots"></i>
 															</button>
 															<div class="dropdown-menu menu-state-bg-light-primary" data-bs-display="static">
-																<a class="dropdown-item d-flex align-items-center gap-2 cursor-pointer"
-																[routerLink]="['/products/articles/' + item?.id + '/edit']">
-																	<ion-icon name="create-outline"></ion-icon>	
+																<a class="dropdown-item d-flex align-items-center gap-2 cursor-pointer" [routerLink]="['/products/articles/' + item?.id + '/edit']">
+																	<ion-icon name="create-outline"></ion-icon>
 																	Editar
 																</a>
 
-																<a class="dropdown-item d-flex align-items-center gap-2 cursor-pointer"
-																[routerLink]="['/products/brands/' + item?.id + '/products']">
+																<a class="dropdown-item d-flex align-items-center gap-2 cursor-pointer" [routerLink]="['/products/brands/' + item?.id + '/products']">
 																	<ion-icon name="cube-outline"></ion-icon>
 																	Ver productos
 																</a>
-
 															</div>
 														</div>
 													</td>
@@ -505,9 +444,7 @@
 												</tr>
 											</ng-container>
 										</tbody>
-
 									</table>
-
 								</div>
 							</div>
 						</div>
@@ -517,4 +454,3 @@
 		</div>
 	</div>
 </div>
-

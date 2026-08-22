@@ -7,4 +7,3 @@ export const conditions = [
 	{ name: 'Con defectos', color: 'danger' },
 	{ name: 'Solo partes', color: 'dark' },
 ];
-

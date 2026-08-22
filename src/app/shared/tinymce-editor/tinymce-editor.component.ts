@@ -4,26 +4,22 @@ import { EditorModule } from '@tinymce/tinymce-angular';
 import { environment } from 'environments/environment.dev';
 
 @Component({
-  selector: 'app-tinymce-editor',
-  imports: [
-    EditorModule,
-    FormsModule
-  ],
-  templateUrl: './tinymce-editor.component.html',
-  styleUrl: './tinymce-editor.component.css'
+	selector: 'app-tinymce-editor',
+	imports: [EditorModule, FormsModule],
+	templateUrl: './tinymce-editor.component.html',
+	styleUrl: './tinymce-editor.component.css',
 })
 export class TinymceEditorComponent {
-  @Input() properties = {};
-  public apiKeyTinymce = environment.apiKeyTinymce;
-  @Input() content: string = '';
-  @Output() contentChange = new EventEmitter<string>();
-  
-  ngOnInit(){
-    console.log(this.apiKeyTinymce);
-    
-  }
+	@Input() properties = {};
+	public apiKeyTinymce = environment.apiKeyTinymce;
+	@Input() content: string = '';
+	@Output() contentChange = new EventEmitter<string>();
 
-  onEditorChange(event: any) {
-    this.contentChange.emit(this.content);
-  }
+	ngOnInit() {
+		console.log(this.apiKeyTinymce);
+	}
+
+	onEditorChange(event: any) {
+		this.contentChange.emit(this.content);
+	}
 }

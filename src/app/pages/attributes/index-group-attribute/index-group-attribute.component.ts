@@ -17,28 +17,17 @@ import { GLOBAL } from '@app/services/GLOBAL';
 import { sortColumnsAttributes } from '../constants/sortColumnsAttributes.constant';
 import { ValidateQPGroupsAttribute } from '../utils/validate-qp-groups-attributes.util';
 import { closeModal } from '@app/common/utils/close-modal.util';
-declare const toastr:any;
+declare const toastr: any;
 
 @Component({
-  selector: 'app-index-group-attribute',
-  imports: [
-    TopbarComponent,
-	SidebarComponent,
-	CommonModule,
-	RouterModule,
-	FormsModule,
-	PaginationComponent,
-	NotFoundComponent,
-	ModalDeleteComponent,
-	NgSelectModule,
-  ],
-  templateUrl: './index-group-attribute.component.html',
-  styleUrl: './index-group-attribute.component.css',
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+	selector: 'app-index-group-attribute',
+	imports: [TopbarComponent, SidebarComponent, CommonModule, RouterModule, FormsModule, PaginationComponent, NotFoundComponent, ModalDeleteComponent, NgSelectModule],
+	templateUrl: './index-group-attribute.component.html',
+	styleUrl: './index-group-attribute.component.css',
+	schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class IndexGroupAttributeComponent {
-
-  public loadBtnDelete: WritableSignal<boolean> = signal(false);
+	public loadBtnDelete: WritableSignal<boolean> = signal(false);
 	public loadBtnMultipleStatus: WritableSignal<boolean> = signal(false);
 	public filter: string = '';
 	public status: string = 'Todos';
@@ -60,29 +49,21 @@ export class IndexGroupAttributeComponent {
 	constructor(
 		private _router: Router,
 		private attributeService: AttributeService,
-		private categoryService:CategoryService,
+		private categoryService: CategoryService,
 		private _route: ActivatedRoute
-	){
+	) {}
 
-	}
-
-	ngOnInit(){
+	ngOnInit() {
 		this._route.queryParams
-		.pipe(
-			takeUntil(this.destroy$),
-			filter((params) => {
-				const sortArrStr = sortColumnsAttributes.map(item => item.value);
-				const isValid = ValidateQPGroupsAttribute(
-					this._route,
-					params,
-					this._router,
-					sortArrStr
-				);
-				return isValid;
-			})
-		)
-		.subscribe(
-			(params) => {
+			.pipe(
+				takeUntil(this.destroy$),
+				filter((params) => {
+					const sortArrStr = sortColumnsAttributes.map((item) => item.value);
+					const isValid = ValidateQPGroupsAttribute(this._route, params, this._router, sortArrStr);
+					return isValid;
+				})
+			)
+			.subscribe((params) => {
 				const queryCategory = params['categories'] ?? 'Todos';
 				this.filter = params['filter'] || '';
 				this.currentPage = Number(params['page']) || 1;
@@ -105,8 +86,7 @@ export class IndexGroupAttributeComponent {
 
 				// ✅ Cargar datos independientes
 				this.init_groups(this.filter, this.currentPage, this.status, this.limit, this.categories, this.sort);
-			}
-		);
+			});
 	}
 
 	hasSelectedGroups(): boolean {
@@ -124,7 +104,7 @@ export class IndexGroupAttributeComponent {
 				finalize(() => (this.loading = false))
 			)
 			.subscribe({
-				next: (next: { attributeGroups: AttributeGroupInterface[]; meta: any}) => {
+				next: (next: { attributeGroups: AttributeGroupInterface[]; meta: any }) => {
 					this.currentPage = next.meta.currentPage;
 					this.totalPages = next.meta.totalPages;
 					this.attributeGroups = next.attributeGroups;
@@ -169,9 +149,7 @@ export class IndexGroupAttributeComponent {
 				finalize(() => this.loadBtnDelete.set(false))
 			)
 			.subscribe({
-				next: (next: {data: AttributeGroupInterface, message: true}) => {
-					
-					
+				next: (next: { data: AttributeGroupInterface; message: true }) => {
 					this.attributeGroups = this.attributeGroups.map((prev: any) => {
 						if (next.data.id === prev.id) {
 							return { ...prev, status: next.data.status };
@@ -187,7 +165,7 @@ export class IndexGroupAttributeComponent {
 			});
 	}
 
-	resetFilters(){
+	resetFilters() {
 		this.filter = '';
 		this.status = 'Todos';
 		this.sort = 'Predeterminado';
@@ -215,61 +193,60 @@ export class IndexGroupAttributeComponent {
 				limit: this.limit,
 				status: this.status,
 				sort: this.sort,
-				categories: this.categories
+				categories: this.categories,
 			},
 		});
 	}
 
 	setLimit() {
-			this.currentPage = 1;
-			this.redirect();
-		}
+		this.currentPage = 1;
+		this.redirect();
+	}
 
 	onPageChange(newPage: number) {
 		this.currentPage = newPage;
 		this.redirect(); // o init_collaborators()
 	}
 
-
-	getCategories(categories: any){
+	getCategories(categories: any) {
 		this.currentPage = 1;
 		let selectedIds = categories.filter((c: any) => c.checked).map((c: any) => c.id);
-		this.categories = selectedIds.join(',')
-		if(selectedIds.length >= 1){
+		this.categories = selectedIds.join(',');
+		if (selectedIds.length >= 1) {
 			this.categories = selectedIds.join(',');
-		}else{
+		} else {
 			this.categories = 'Todos';
 		}
 		this.redirect();
 	}
 
-	onUpdateStatusMultiple(status: boolean){
+	onUpdateStatusMultiple(status: boolean) {
 		this.loadBtnMultipleStatus.set(true);
 		this.attributeService
-		.update_status_group_attributes({
-			ids: this.getSelectedIds(),
-			status
-		})
-		.pipe(
-			takeUntil(this.destroy$),
-			withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
-			finalize(() => this.loadBtnMultipleStatus.set(false))
-		)
-		.subscribe({
-			next: (next: {data: string[], message: string}) => {
-				this.attributeGroups = this.attributeGroups.map((prev: AttributeGroupInterface) => {
-					if (next.data.includes(prev.id!)) {
-						return { ...prev, status: status };
-					}
-					return prev;
-				});
-				toastr.success(next.message);
-				closeModal(status ? 'modalMultipleActive' : 'modalMultipleDisabled');
-				this.selectedIds.clear();
-			},
-			error: (error: any) => {
-				toastr.error(error.error.message);
-			},
-		});
+			.update_status_group_attributes({
+				ids: this.getSelectedIds(),
+				status,
+			})
+			.pipe(
+				takeUntil(this.destroy$),
+				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
+				finalize(() => this.loadBtnMultipleStatus.set(false))
+			)
+			.subscribe({
+				next: (next: { data: string[]; message: string }) => {
+					this.attributeGroups = this.attributeGroups.map((prev: AttributeGroupInterface) => {
+						if (next.data.includes(prev.id!)) {
+							return { ...prev, status: status };
+						}
+						return prev;
+					});
+					toastr.success(next.message);
+					closeModal(status ? 'modalMultipleActive' : 'modalMultipleDisabled');
+					this.selectedIds.clear();
+				},
+				error: (error: any) => {
+					toastr.error(error.error.message);
+				},
+			});
 	}
 }

@@ -1,4 +1,4 @@
-import { CollaboratorInterface } from "./collaborator.interface";
+import { CollaboratorInterface } from './collaborator.interface';
 
 export interface GetCollaboratorsRESI {
 	collaborators: CollaboratorInterface[];
@@ -17,25 +17,25 @@ export interface GetCollaboratorsRESI {
 
 export interface GetCollaboratorRESI {
 	data: CollaboratorInterface;
-	message: string
+	message: string;
 }
 
 export interface UpdateCollaboratorRESI {
 	data: CollaboratorInterface;
-	message: string
+	message: string;
 }
 
 export interface UpdateCollaboratorStatusRESI {
 	data: CollaboratorInterface;
-	message: string
+	message: string;
 }
 
 export interface UpdateCollaboratorsStatusRESI {
 	data: string[];
-	message: string
+	message: string;
 }
 
 export interface CreateCollaboratorRESI {
 	data: CollaboratorInterface;
-	message: string
+	message: string;
 }

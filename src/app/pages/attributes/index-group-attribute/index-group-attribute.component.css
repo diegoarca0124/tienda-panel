@@ -3,7 +3,7 @@
 	z-index: 1050; /* mayor que la tabla */
 }
 
-.underline-dashed-primary{
+.underline-dashed-primary {
 	text-transform: uppercase;
-	font-size: .85rem;
+	font-size: 0.85rem;
 }

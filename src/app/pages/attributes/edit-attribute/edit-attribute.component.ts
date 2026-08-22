@@ -26,11 +26,23 @@ declare const toastr: any;
 
 @Component({
 	selector: 'app-edit-attribute',
-	imports: [TopbarComponent, SidebarComponent, CommonModule, FormsModule, RouterModule, NgSelectModule, 
-		IconCheckComponent, NotFoundComponent, AlertComponent, ModalDeleteComponent, ValidationPopoverComponent, TextareaAutoresizeDirective],
+	imports: [
+		TopbarComponent,
+		SidebarComponent,
+		CommonModule,
+		FormsModule,
+		RouterModule,
+		NgSelectModule,
+		IconCheckComponent,
+		NotFoundComponent,
+		AlertComponent,
+		ModalDeleteComponent,
+		ValidationPopoverComponent,
+		TextareaAutoresizeDirective,
+	],
 	templateUrl: './edit-attribute.component.html',
 	styleUrl: './edit-attribute.component.css',
-	schemas: [CUSTOM_ELEMENTS_SCHEMA]
+	schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class EditAttributeComponent {
 	public loadBtnDelete: WritableSignal<boolean> = signal(false);
@@ -42,53 +54,51 @@ export class EditAttributeComponent {
 	public msmErrorAttribute: any = [];
 	public loading: boolean = true;
 	public loadingValues: boolean = true;
-	public values: Array<{ id: string, value: string }> = [];
+	public values: Array<{ id: string; value: string }> = [];
 	public value: string = '';
 	public id: string = '';
 	public idAttribute: string = '';
 	public showErrors = showErrorsAttribute;
-	public errorMsmServerGetAttribute : string = '';
+	public errorMsmServerGetAttribute: string = '';
 
 	constructor(
 		private _route: ActivatedRoute,
 		private attributeService: AttributeService,
-		private categoryService: CategoryService,
+		private categoryService: CategoryService
 	) {}
 
 	ngOnInit() {
 		this._route.params
-		.pipe(
-			takeUntil(this.destroy$),
-			switchMap((params) => {
-				this.id = params['id'];
-				this.idAttribute = params['idAttribute'];
-				this.loading = true;
-				this.loadingValues = true;
-				return forkJoin({
-					next: this.attributeService.get_attribute(this.idAttribute),
-					values: this.attributeService.get_values_attribute(this.idAttribute)
-				}).pipe(
-					withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
-					finalize(() => {
-						this.loading = false;
-						this.loadingValues = false;
-					})
-				);
-			})
-		)
-		.subscribe({
-			next: ({ next, values }: any) => {
-				this.attribute = next.data;
-				this.values = values.data;
-			},
-			error: (err) => {
-				const error = err.error;
-				this.errorMsmServerGetAttribute = error;
-			},
-		});
-
+			.pipe(
+				takeUntil(this.destroy$),
+				switchMap((params) => {
+					this.id = params['id'];
+					this.idAttribute = params['idAttribute'];
+					this.loading = true;
+					this.loadingValues = true;
+					return forkJoin({
+						next: this.attributeService.get_attribute(this.idAttribute),
+						values: this.attributeService.get_values_attribute(this.idAttribute),
+					}).pipe(
+						withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
+						finalize(() => {
+							this.loading = false;
+							this.loadingValues = false;
+						})
+					);
+				})
+			)
+			.subscribe({
+				next: ({ next, values }: any) => {
+					this.attribute = next.data;
+					this.values = values.data;
+				},
+				error: (err) => {
+					const error = err.error;
+					this.errorMsmServerGetAttribute = error;
+				},
+			});
 	}
-
 
 	init_values(id: string) {
 		this.loadingValues = true;
@@ -126,9 +136,9 @@ export class EditAttributeComponent {
 				finalize(() => (this.loadValueBtn = false))
 			)
 			.subscribe({
-				next: (next: { data: any, message: boolean}) => {
+				next: (next: { data: any; message: boolean }) => {
 					console.log(next);
-					
+
 					this.values.push(next.data);
 					this.value = '';
 					toastr.success(next.message);
@@ -147,33 +157,34 @@ export class EditAttributeComponent {
 		this.loadBtn = true;
 		if (!this.attribute.unit) delete this.attribute.unit;
 		this.msmErrorAttribute = '';
-		
-		this.attributeService.update_attribute(this.idAttribute, this.attribute)
-		.pipe(
-			withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
-			takeUntil(this.destroy$),
-			finalize(() => (this.loadBtn = false))
-		)
-		.subscribe({
-			next: (next: { data: any, message: boolean}) => {
-				console.log(next.data);
-				
-				this.errorsAtribute = {};
-				this.attribute = next.data;
-				toastr.success(next.message);
-			},
-			error: (err) => {
-				const error = err.error;
-				toastr.error(error.message || '¡Error desconocido!');
 
-				if (error.validation) {
-					this.errorsAtribute = error.validation;
-					this.msmErrorAttribute =Object.values(this.errorsAtribute).flat();
-					this.showErrors = buildShowErrors(this.showErrors,this.errorsAtribute);
-					this.showErrors.value = true;
-				}
-			},
-		});
+		this.attributeService
+			.update_attribute(this.idAttribute, this.attribute)
+			.pipe(
+				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
+				takeUntil(this.destroy$),
+				finalize(() => (this.loadBtn = false))
+			)
+			.subscribe({
+				next: (next: { data: any; message: boolean }) => {
+					console.log(next.data);
+
+					this.errorsAtribute = {};
+					this.attribute = next.data;
+					toastr.success(next.message);
+				},
+				error: (err) => {
+					const error = err.error;
+					toastr.error(error.message || '¡Error desconocido!');
+
+					if (error.validation) {
+						this.errorsAtribute = error.validation;
+						this.msmErrorAttribute = Object.values(this.errorsAtribute).flat();
+						this.showErrors = buildShowErrors(this.showErrors, this.errorsAtribute);
+						this.showErrors.value = true;
+					}
+				},
+			});
 	}
 
 	onDeleteValue(id: string) {
@@ -186,10 +197,10 @@ export class EditAttributeComponent {
 				finalize(() => this.loadBtnDelete.set(false))
 			)
 			.subscribe({
-				next: (next: {data: any, message: string}) => {
-					this.values = this.values.filter(item=> item.id != id);
+				next: (next: { data: any; message: string }) => {
+					this.values = this.values.filter((item) => item.id != id);
 					toastr.success(next.message);
-					closeModal('modalDelete-'+id);
+					closeModal('modalDelete-' + id);
 				},
 				error: (error: any) => {
 					toastr.error(error.error.message);

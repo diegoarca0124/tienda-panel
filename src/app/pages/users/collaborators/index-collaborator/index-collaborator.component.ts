@@ -21,15 +21,13 @@ import { Subject } from 'rxjs/internal/Subject';
 import { CollaboratorInterface } from '../interfaces/collaborator.interface';
 import { validateCollaboratorsQueryParams } from '../utils/validate-collaborators-query-params.util';
 import { HttpErrorResponse } from '@angular/common/http';
-import { PaginationMetaInterface } from '@app/common/interface/pagination-meta.interface'
+import { PaginationMetaInterface } from '@app/common/interface/pagination-meta.interface';
 import { GetCollaboratorsQPI } from '../interfaces/query-params.interface';
 import { GetCollaboratorsRESI, UpdateCollaboratorsStatusRESI, UpdateCollaboratorStatusRESI } from '../interfaces/responses.interface';
 import { sortOptions, statusOptions } from '../constants/selectors.constants';
 declare const toastr: any;
 
-type CollaboratorsLoadResult =
-	| { data: GetCollaboratorsRESI; error: null }
-	| { data: null; error: HttpErrorResponse };
+type CollaboratorsLoadResult = { data: GetCollaboratorsRESI; error: null } | { data: null; error: HttpErrorResponse };
 
 @Component({
 	selector: 'app-index-collaborator',
@@ -38,7 +36,6 @@ type CollaboratorsLoadResult =
 	templateUrl: './index-collaborator.component.html',
 	styleUrl: './index-collaborator.component.css',
 })
-
 export class IndexCollaboratorComponent {
 	private destroy$ = new Subject<void>();
 	private readonly collaboratorsQuery$ = new Subject<GetCollaboratorsQPI>();
@@ -60,10 +57,10 @@ export class IndexCollaboratorComponent {
 
 	public isUpdatingSingleStatus: WritableSignal<boolean> = signal(false);
 	public isUpdatingMultipleStatuses: WritableSignal<boolean> = signal(false);
-	
-	public collaborators : CollaboratorInterface[] = [];
-	public screenHeight : number= window.innerHeight;
-	public readonly sortValues = sortOptions.map(item => item.value);
+
+	public collaborators: CollaboratorInterface[] = [];
+	public screenHeight: number = window.innerHeight;
+	public readonly sortValues = sortOptions.map((item) => item.value);
 
 	constructor(
 		private router: Router,
@@ -73,19 +70,12 @@ export class IndexCollaboratorComponent {
 
 	ngOnInit(): void {
 		this.listenCollaboratorsQueries();
-		this.route.queryParams
-			.pipe(takeUntil(this.destroy$))
-			.subscribe((params) => {
-				const validParams = validateCollaboratorsQueryParams(
-					this.route,
-					params,
-					this.router,
-					this.sortValues,
-				);
-				if (!validParams) return;
-				this.loadQueryParams(params);
-				this.loadCollaborators();
-			});
+		this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params) => {
+			const validParams = validateCollaboratorsQueryParams(this.route, params, this.router, this.sortValues);
+			if (!validParams) return;
+			this.loadQueryParams(params);
+			this.loadCollaborators();
+		});
 	}
 
 	@HostListener('window:resize', [])
@@ -128,17 +118,17 @@ export class IndexCollaboratorComponent {
 							(data): CollaboratorsLoadResult => ({
 								data,
 								error: null,
-							}),
+							})
 						),
 						catchError((error: HttpErrorResponse) =>
 							of<CollaboratorsLoadResult>({
 								data: null,
 								error,
-							}),
-						),
+							})
+						)
 					);
 				}),
-				takeUntil(this.destroy$),
+				takeUntil(this.destroy$)
 			)
 			.subscribe(({ data, error }) => {
 				this.isCollaboratorsLoading = false;
@@ -233,12 +223,12 @@ export class IndexCollaboratorComponent {
 			)
 			.subscribe({
 				next: (next: UpdateCollaboratorStatusRESI) => {
-					const collaborator = this.collaborators.find(c => c.id === next.data.id);
+					const collaborator = this.collaborators.find((c) => c.id === next.data.id);
 					if (collaborator) {
 						collaborator.status = next.data.status;
 					}
 					toastr.success(next.message);
-					closeModal('modalDelete-'+id);
+					closeModal('modalDelete-' + id);
 				},
 				error: (error: HttpErrorResponse) => {
 					toastr.error(error.error.message);
@@ -257,11 +247,11 @@ export class IndexCollaboratorComponent {
 		this.applyFilters(false);
 	}
 
-	onResetCurrentPage(){
+	onResetCurrentPage() {
 		this.currentPage = 1;
 	}
 
-	resetFilters(){
+	resetFilters() {
 		this.filter = '';
 		this.selectedStatus = 'Todos';
 		this.selectedSort = 'Predeterminado';
@@ -292,39 +282,39 @@ export class IndexCollaboratorComponent {
 		return this.selectedCollaboratorsIds.size > 0;
 	}
 
-	onUpdateStatusMultiple(status: boolean){
+	onUpdateStatusMultiple(status: boolean) {
 		this.isUpdatingMultipleStatuses.set(true);
 		this.collaboratorService
-		.updateCollaboratorsStatus({
-			ids: [...this.selectedCollaboratorsIds],
-			status
-		})
-		.pipe(
-			takeUntil(this.destroy$),
-			withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
-			finalize(() => this.isUpdatingMultipleStatuses.set(false))
-		)
-		.subscribe({
-			next: (next: UpdateCollaboratorsStatusRESI) => {
-				console.log(next);
-				
-				const updatedIds = new Set(next.data);
-				this.collaborators = this.collaborators.map(prev => {
-					if (updatedIds.has(prev.id!)) {
-						return {
-							...prev,
-							status: status
-						};
-					}
-					return prev;
-				});
-				toastr.success(next.message);
-				closeModal(status ? 'modalMultipleActive' : 'modalMultipleDisabled');
-				this.selectedCollaboratorsIds.clear();
-			},
-			error: (error: HttpErrorResponse) => {
-				toastr.error(error.error.message);
-			},
-		});
+			.updateCollaboratorsStatus({
+				ids: [...this.selectedCollaboratorsIds],
+				status,
+			})
+			.pipe(
+				takeUntil(this.destroy$),
+				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
+				finalize(() => this.isUpdatingMultipleStatuses.set(false))
+			)
+			.subscribe({
+				next: (next: UpdateCollaboratorsStatusRESI) => {
+					console.log(next);
+
+					const updatedIds = new Set(next.data);
+					this.collaborators = this.collaborators.map((prev) => {
+						if (updatedIds.has(prev.id!)) {
+							return {
+								...prev,
+								status: status,
+							};
+						}
+						return prev;
+					});
+					toastr.success(next.message);
+					closeModal(status ? 'modalMultipleActive' : 'modalMultipleDisabled');
+					this.selectedCollaboratorsIds.clear();
+				},
+				error: (error: HttpErrorResponse) => {
+					toastr.error(error.error.message);
+				},
+			});
 	}
 }

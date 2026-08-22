@@ -21,318 +21,301 @@ import { ImportInterface } from '../interfaces/validation.interface';
 declare const toastr: any;
 
 interface ImportColumn {
-  index: number;
-  key: string;
-  label: string;
-  inputType: string;
-  inputValues: any[] | undefined;
+	index: number;
+	key: string;
+	label: string;
+	inputType: string;
+	inputValues: any[] | undefined;
 }
 
 @Component({
-  selector: 'app-import-collaborator',
-  imports: [
-    AlertComponent,
-    CommonModule,
-    FormsModule,
-    NgbPopover,
-    NgbTooltipModule,
-    NgClearButtonTemplateDirective,
-    NotFoundComponent,
-    RouterModule,
-    SidebarComponent,
-    TopbarComponent,
-    UploadFileImportComponent,
-  ],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  templateUrl: './import-collaborator.component.html',
-  styleUrl: './import-collaborator.component.css',
+	selector: 'app-import-collaborator',
+	imports: [
+		AlertComponent,
+		CommonModule,
+		FormsModule,
+		NgbPopover,
+		NgbTooltipModule,
+		NgClearButtonTemplateDirective,
+		NotFoundComponent,
+		RouterModule,
+		SidebarComponent,
+		TopbarComponent,
+		UploadFileImportComponent,
+	],
+	schemas: [CUSTOM_ELEMENTS_SCHEMA],
+	templateUrl: './import-collaborator.component.html',
+	styleUrl: './import-collaborator.component.css',
 })
 export class ImportCollaboratorComponent implements OnDestroy {
-  public importConfiguration: ImportInterface = {
-    file: undefined,
-    mode: 'upsert',
-    identifyBy: 'number_document',
-  };
-  public importValidationErrors: any = {
-    file: [],
-  };
-  
-  public importedRows: any[] = [];
-  public importedColumns: ImportColumn[] = [];
-  public isFileLoading = false;
-  public availableFields = fieldImportOptions.map(({ index, key, label, inputType, inputValues }) => ({
-    index,
-    key,
-    label,
-    inputType,
-    inputValues,
-    status: false,
-  }));
-  public dataValidationErrors: any = { data: [] };
-  public selectedRowIndexes: number[] = [];
-  public isMappingColumns = false;
-  public draggedColumnIndex: number | null = null;
-  public dragOverColumnIndex: number | null = null;
-  public validationSummary = { total: 0, errors: 0 };
-  public isImportLoading = false;
-  public validationSucceeded = false;
-  public isImporting = false;
+	public importConfiguration: ImportInterface = {
+		file: undefined,
+		mode: 'upsert',
+		identifyBy: 'number_document',
+	};
+	public importValidationErrors: any = {
+		file: [],
+	};
 
-  private readonly destroy$ = new Subject<void>();
+	public importedRows: any[] = [];
+	public importedColumns: ImportColumn[] = [];
+	public isFileLoading = false;
+	public availableFields = fieldImportOptions.map(({ index, key, label, inputType, inputValues }) => ({
+		index,
+		key,
+		label,
+		inputType,
+		inputValues,
+		status: false,
+	}));
+	public dataValidationErrors: any = { data: [] };
+	public selectedRowIndexes: number[] = [];
+	public isMappingColumns = false;
+	public draggedColumnIndex: number | null = null;
+	public dragOverColumnIndex: number | null = null;
+	public validationSummary = { total: 0, errors: 0 };
+	public isImportLoading = false;
+	public validationSucceeded = false;
+	public isImporting = false;
 
-  constructor(private collaboratorService: CollaboratorService) {}
+	private readonly destroy$ = new Subject<void>();
 
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
-  }
+	constructor(private collaboratorService: CollaboratorService) {}
 
-  onFileSelected(file: File | null): void {
-    this.importConfiguration.file = file ?? undefined;
-    if (!this.importConfiguration.file) return;
+	ngOnDestroy(): void {
+		this.destroy$.next();
+		this.destroy$.complete();
+	}
 
-    const extension = file!.name.split('.').pop()?.toLowerCase();
-    const fileReader = new FileReader();
+	onFileSelected(file: File | null): void {
+		this.importConfiguration.file = file ?? undefined;
+		if (!this.importConfiguration.file) return;
 
-    fileReader.onload = (event: ProgressEvent<FileReader>) => {
-      const fileContent = event.target?.result;
-      const workbook = extension === 'csv'
-        ? XLSX.read(fileContent, { type: 'string' })
-        : XLSX.read(new Uint8Array(fileContent as ArrayBuffer), { type: 'array' });
-      const firstSheetName = workbook.SheetNames[0];
-      const firstWorksheet = workbook.Sheets[firstSheetName];
-      const worksheetRows = XLSX.utils.sheet_to_json(firstWorksheet, { defval: '' });
+		const extension = file!.name.split('.').pop()?.toLowerCase();
+		const fileReader = new FileReader();
 
-      this.importedRows = worksheetRows.map((row, index) => ({
-        ...(row as object),
-        index: index + 1,
-      }));
-      this.importedColumns = Object.keys(worksheetRows[0] || {}).map((label, index) => ({
-        index: index + 1,
-        key: '',
-        label,
-        inputType: '',
-        inputValues: [],
-      }));
-    };
+		fileReader.onload = (event: ProgressEvent<FileReader>) => {
+			const fileContent = event.target?.result;
+			const workbook = extension === 'csv' ? XLSX.read(fileContent, { type: 'string' }) : XLSX.read(new Uint8Array(fileContent as ArrayBuffer), { type: 'array' });
+			const firstSheetName = workbook.SheetNames[0];
+			const firstWorksheet = workbook.Sheets[firstSheetName];
+			const worksheetRows = XLSX.utils.sheet_to_json(firstWorksheet, { defval: '' });
 
-    if (extension === 'csv') {
-      fileReader.readAsText(this.importConfiguration.file, 'UTF-8');
-      return;
-    }
+			this.importedRows = worksheetRows.map((row, index) => ({
+				...(row as object),
+				index: index + 1,
+			}));
+			this.importedColumns = Object.keys(worksheetRows[0] || {}).map((label, index) => ({
+				index: index + 1,
+				key: '',
+				label,
+				inputType: '',
+				inputValues: [],
+			}));
+		};
 
-    fileReader.readAsArrayBuffer(this.importConfiguration.file);
-  }
+		if (extension === 'csv') {
+			fileReader.readAsText(this.importConfiguration.file, 'UTF-8');
+			return;
+		}
 
-  selectColumnField(
-      column: ImportColumn,
-      fieldKey: string,
-  ): void {
-      if (!fieldKey) {
-          column.key = '';
-          column.inputType = '';
-          column.inputValues = [];
+		fileReader.readAsArrayBuffer(this.importConfiguration.file);
+	}
 
-          return;
-      }
+	selectColumnField(column: ImportColumn, fieldKey: string): void {
+		if (!fieldKey) {
+			column.key = '';
+			column.inputType = '';
+			column.inputValues = [];
 
-      const field = this.availableFields.find(
-          (item) => item.key === fieldKey,
-      );
+			return;
+		}
 
-      if (!field) {
-          return;
-      }
+		const field = this.availableFields.find((item) => item.key === fieldKey);
 
-      this.applyFieldToColumn(column, field);
-  }
+		if (!field) {
+			return;
+		}
 
-  hasCellError(rowIndex: number, fieldKey: string): boolean {
-    const validationRows = this.dataValidationErrors?.data?.[0] || [];
-    const rowErrors = validationRows.find((item: any) => item[rowIndex]);
-    return !!rowErrors?.[rowIndex]?.[fieldKey];
-  }
+		this.applyFieldToColumn(column, field);
+	}
 
-  getCellErrors(rowIndex: number, fieldKey: string): string[] {
-    const validationRows = this.dataValidationErrors?.data?.[0] || [];
-    const rowErrors = validationRows.find((item: any) => item[rowIndex]);
-    const fieldErrors = rowErrors?.[rowIndex]?.[fieldKey];
-    if (!fieldErrors) return [];
-    return Array.isArray(fieldErrors) ? fieldErrors : [fieldErrors];
-  }
+	hasCellError(rowIndex: number, fieldKey: string): boolean {
+		const validationRows = this.dataValidationErrors?.data?.[0] || [];
+		const rowErrors = validationRows.find((item: any) => item[rowIndex]);
+		return !!rowErrors?.[rowIndex]?.[fieldKey];
+	}
 
-  hasFieldMapping(fieldKey: string): boolean {
-    return this.importedColumns.some((column) => column.key === fieldKey);
-  }
+	getCellErrors(rowIndex: number, fieldKey: string): string[] {
+		const validationRows = this.dataValidationErrors?.data?.[0] || [];
+		const rowErrors = validationRows.find((item: any) => item[rowIndex]);
+		const fieldErrors = rowErrors?.[rowIndex]?.[fieldKey];
+		if (!fieldErrors) return [];
+		return Array.isArray(fieldErrors) ? fieldErrors : [fieldErrors];
+	}
 
-  hasImportedColumn(fieldKey: string): boolean {
-    return this.importedColumns.some((column) => column.key === fieldKey);
-  }
+	hasFieldMapping(fieldKey: string): boolean {
+		return this.importedColumns.some((column) => column.key === fieldKey);
+	}
 
-  isFieldSelected(fieldKey: string): boolean {
-    return this.importedColumns.some((column) => column.key === fieldKey);
-  }
+	hasImportedColumn(fieldKey: string): boolean {
+		return this.importedColumns.some((column) => column.key === fieldKey);
+	}
 
-  selectColumnMapping(selectedColumn: ImportColumn, event: Event, dropdownButton?: HTMLElement): void {
-    const selectedFieldKey = (event.target as HTMLSelectElement).value;
-    const selectedField = this.availableFields.find((field) => field.key === selectedFieldKey)!;
-    const column = this.importedColumns.find((item) => item.index === selectedColumn.index)!;
-    this.applyFieldToColumn(column, selectedField);
+	isFieldSelected(fieldKey: string): boolean {
+		return this.importedColumns.some((column) => column.key === fieldKey);
+	}
 
-    if (dropdownButton) {
-      const dropdown = (window as any).bootstrap.Dropdown.getInstance(dropdownButton)
-        || new (window as any).bootstrap.Dropdown(dropdownButton);
-      dropdown.hide();
-    }
-  }
+	selectColumnMapping(selectedColumn: ImportColumn, event: Event, dropdownButton?: HTMLElement): void {
+		const selectedFieldKey = (event.target as HTMLSelectElement).value;
+		const selectedField = this.availableFields.find((field) => field.key === selectedFieldKey)!;
+		const column = this.importedColumns.find((item) => item.index === selectedColumn.index)!;
+		this.applyFieldToColumn(column, selectedField);
 
-  removeSelectedRows(): void {
-    this.importedRows = this.importedRows.filter(
-      (_, index) => !this.selectedRowIndexes.includes(index),
-    );
-    this.selectedRowIndexes = [];
-  }
+		if (dropdownButton) {
+			const dropdown = (window as any).bootstrap.Dropdown.getInstance(dropdownButton) || new (window as any).bootstrap.Dropdown(dropdownButton);
+			dropdown.hide();
+		}
+	}
 
-  addRow(): void {
-    const newRow: any = {};
-    this.importedColumns.forEach((column) => {
-      newRow[column.label] = '';
-    });
-    this.importedRows.push(newRow);
-  }
+	removeSelectedRows(): void {
+		this.importedRows = this.importedRows.filter((_, index) => !this.selectedRowIndexes.includes(index));
+		this.selectedRowIndexes = [];
+	}
 
-  removeColumn(columnIndex: number): void {
-    this.importedColumns = this.importedColumns.filter(
-      (column) => column.index !== columnIndex,
-    );
-  }
+	addRow(): void {
+		const newRow: any = {};
+		this.importedColumns.forEach((column) => {
+			newRow[column.label] = '';
+		});
+		this.importedRows.push(newRow);
+	}
 
-  addColumn(fieldKey: string): void {
-    const importField = this.availableFields.find((field) => field.key === fieldKey)!;
-    this.importedColumns.push({
-      index: this.importedColumns.length + 1,
-      key: fieldKey,
-      label: importField.label,
-      inputType: importField.inputType,
-      inputValues: importField.inputValues,
-    });
-  }
+	removeColumn(columnIndex: number): void {
+		this.importedColumns = this.importedColumns.filter((column) => column.index !== columnIndex);
+	}
 
-  toggleRowSelection(event: Event, rowIndex: number): void {
-    const isSelected = (event.target as HTMLInputElement).checked;
+	addColumn(fieldKey: string): void {
+		const importField = this.availableFields.find((field) => field.key === fieldKey)!;
+		this.importedColumns.push({
+			index: this.importedColumns.length + 1,
+			key: fieldKey,
+			label: importField.label,
+			inputType: importField.inputType,
+			inputValues: importField.inputValues,
+		});
+	}
 
-    if (isSelected && !this.selectedRowIndexes.includes(rowIndex)) {
-      this.selectedRowIndexes.push(rowIndex);
-      return;
-    }
+	toggleRowSelection(event: Event, rowIndex: number): void {
+		const isSelected = (event.target as HTMLInputElement).checked;
 
-    if (!isSelected) {
-      this.selectedRowIndexes = this.selectedRowIndexes.filter(
-        (index) => index !== rowIndex,
-      );
-    }
-  }
+		if (isSelected && !this.selectedRowIndexes.includes(rowIndex)) {
+			this.selectedRowIndexes.push(rowIndex);
+			return;
+		}
 
-  startColumnDrag(columnIndex: number): void {
-    this.draggedColumnIndex = columnIndex;
-  }
+		if (!isSelected) {
+			this.selectedRowIndexes = this.selectedRowIndexes.filter((index) => index !== rowIndex);
+		}
+	}
 
-  dragOverColumn(event: DragEvent, columnIndex: number): void {
-    event.preventDefault();
-    this.dragOverColumnIndex = columnIndex;
-  }
+	startColumnDrag(columnIndex: number): void {
+		this.draggedColumnIndex = columnIndex;
+	}
 
-  dropColumn(targetIndex: number): void {
-    if (this.draggedColumnIndex === null) return;
+	dragOverColumn(event: DragEvent, columnIndex: number): void {
+		event.preventDefault();
+		this.dragOverColumnIndex = columnIndex;
+	}
 
-    const draggedColumn = this.importedColumns[this.draggedColumnIndex];
-    this.importedColumns.splice(this.draggedColumnIndex, 1);
-    this.importedColumns.splice(targetIndex, 0, draggedColumn);
-    this.draggedColumnIndex = null;
-    this.dragOverColumnIndex = null;
-  }
+	dropColumn(targetIndex: number): void {
+		if (this.draggedColumnIndex === null) return;
 
-  importCollaborators(): void {
-    this.validationSummary = { total: 0, errors: 0 };
-    const mappedRows = this.mapRowsToSystemFields(true);
-    this.isImportLoading = true;
+		const draggedColumn = this.importedColumns[this.draggedColumnIndex];
+		this.importedColumns.splice(this.draggedColumnIndex, 1);
+		this.importedColumns.splice(targetIndex, 0, draggedColumn);
+		this.draggedColumnIndex = null;
+		this.dragOverColumnIndex = null;
+	}
 
-    const importRequest = {
-      data: mappedRows,
-      mode: this.importConfiguration.mode,
-      identifyBy: this.importConfiguration.identifyBy,
-    };
+	importCollaborators(): void {
+		this.validationSummary = { total: 0, errors: 0 };
+		const mappedRows = this.mapRowsToSystemFields(true);
+		this.isImportLoading = true;
 
-    this.collaboratorService.importCollaborators(importRequest).pipe(
-      takeUntil(this.destroy$),
-      withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
-      finalize(() => (this.isImportLoading = false)),
-    ).subscribe({
-      next: (response: {
-        message: string;
-        created: number;
-        updated: number;
-        ignored: number;
-      }) => {
-        this.validationSucceeded = true;
-        this.dataValidationErrors = { data: [] };
-        toastr.success(response.message);
-      },
-      error: (httpError) => {
-        const error = httpError.error;
-        toastr.error(error.message || '¡Error desconocido!');
+		const importRequest = {
+			data: mappedRows,
+			mode: this.importConfiguration.mode,
+			identifyBy: this.importConfiguration.identifyBy,
+		};
 
-        if (error.validation) {
-          this.dataValidationErrors = error.validation;
-        }
+		this.collaboratorService
+			.importCollaborators(importRequest)
+			.pipe(
+				takeUntil(this.destroy$),
+				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
+				finalize(() => (this.isImportLoading = false))
+			)
+			.subscribe({
+				next: (response: { message: string; created: number; updated: number; ignored: number }) => {
+					this.validationSucceeded = true;
+					this.dataValidationErrors = { data: [] };
+					toastr.success(response.message);
+				},
+				error: (httpError) => {
+					const error = httpError.error;
+					toastr.error(error.message || '¡Error desconocido!');
 
-        this.validationSummary.total = this.dataValidationErrors.total[0];
-        this.validationSummary.errors = this.dataValidationErrors.errors[0];
-      },
-    });
-  }
+					if (error.validation) {
+						this.dataValidationErrors = error.validation;
+					}
 
-  mapSystemField(event: Event, fieldKey: string): void {
-    const columnLabel = (event.target as HTMLSelectElement).value;
-    const column = this.importedColumns.find((item) => item.label === columnLabel)!;
-    const field = this.availableFields.find((item) => item.key === fieldKey)!;
-    this.applyFieldToColumn(column, field);
-  }
+					this.validationSummary.total = this.dataValidationErrors.total[0];
+					this.validationSummary.errors = this.dataValidationErrors.errors[0];
+				},
+			});
+	}
 
-  exportCollaborators(): void {
-    const mappedRows = this.mapRowsToSystemFields(false);
-    ExportCollaboratorsXlsxUtil(mappedRows, {
-      fileName: 'EXP-COLLABORATORS',
-      sheetName: 'COLLABORATORS',
-    });
-  }
+	mapSystemField(event: Event, fieldKey: string): void {
+		const columnLabel = (event.target as HTMLSelectElement).value;
+		const column = this.importedColumns.find((item) => item.label === columnLabel)!;
+		const field = this.availableFields.find((item) => item.key === fieldKey)!;
+		this.applyFieldToColumn(column, field);
+	}
 
-  private applyFieldToColumn(
-    column: ImportColumn,
-    field: (typeof this.availableFields)[number],
-  ): void {
-    column.key = field.key;
-    const mappedColumn = this.importedColumns.find((item) => item.key === field.key)!;
-    mappedColumn.inputType = field.inputType;
-    mappedColumn.inputValues = field.inputValues;
-  }
+	exportCollaborators(): void {
+		const mappedRows = this.mapRowsToSystemFields(false);
+		ExportCollaboratorsXlsxUtil(mappedRows, {
+			fileName: 'EXP-COLLABORATORS',
+			sheetName: 'COLLABORATORS',
+		});
+	}
 
-  private mapRowsToSystemFields(includeRowIndex: boolean): any[] {
-    return this.importedRows.map((row) =>
-      Object.fromEntries(
-        Object.entries(row)
-          .map(([columnLabel, value]) => {
-            if (includeRowIndex && columnLabel === 'index') {
-              return [columnLabel, value];
-            }
+	private applyFieldToColumn(column: ImportColumn, field: (typeof this.availableFields)[number]): void {
+		column.key = field.key;
+		const mappedColumn = this.importedColumns.find((item) => item.key === field.key)!;
+		mappedColumn.inputType = field.inputType;
+		mappedColumn.inputValues = field.inputValues;
+	}
 
-            const mappedColumn = this.importedColumns.find(
-              (column) => column.label === columnLabel && column.key,
-            );
-            return mappedColumn ? [mappedColumn.key, value] : null;
-          })
-          .filter(Boolean) as [string, any][],
-      ),
-    );
-  }
+	private mapRowsToSystemFields(includeRowIndex: boolean): any[] {
+		return this.importedRows.map((row) =>
+			Object.fromEntries(
+				Object.entries(row)
+					.map(([columnLabel, value]) => {
+						if (includeRowIndex && columnLabel === 'index') {
+							return [columnLabel, value];
+						}
+
+						const mappedColumn = this.importedColumns.find((column) => column.label === columnLabel && column.key);
+						return mappedColumn ? [mappedColumn.key, value] : null;
+					})
+					.filter(Boolean) as [string, any][]
+			)
+		);
+	}
+
+	getFieldLabel(fieldKey: string): string {
+		return this.availableFields.find((field) => field.key === fieldKey)?.label ?? '';
+	}
 }

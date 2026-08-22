@@ -24,10 +24,22 @@ declare const toastr: any;
 
 @Component({
 	selector: 'app-create-brand',
-	imports: [TopbarComponent, SidebarComponent, CommonModule, FormsModule, RouterModule, NgSelectModule, UploadImageComponent, AlertComponent, IMaskModule, ValidationPopoverComponent, TextareaAutoresizeDirective],
+	imports: [
+		TopbarComponent,
+		SidebarComponent,
+		CommonModule,
+		FormsModule,
+		RouterModule,
+		NgSelectModule,
+		UploadImageComponent,
+		AlertComponent,
+		IMaskModule,
+		ValidationPopoverComponent,
+		TextareaAutoresizeDirective,
+	],
 	templateUrl: './create-brand.component.html',
 	styleUrl: './create-brand.component.css',
-	schemas: [CUSTOM_ELEMENTS_SCHEMA]
+	schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class CreateBrandComponent {
 	public brand: BrandInterface = createEmptyBrand();
@@ -42,7 +54,7 @@ export class CreateBrandComponent {
 	};
 	public prefixMask = {
 		mask: /^[A-Z]{0,3}$/,
-		prepare: (str: string) => str.toUpperCase()
+		prepare: (str: string) => str.toUpperCase(),
 	};
 	public showErrors = showErrorsBrand;
 
@@ -51,21 +63,20 @@ export class CreateBrandComponent {
 		private _router: Router
 	) {}
 
-	ngOnInit() {
-	}
+	ngOnInit() {}
 
 	ngOnDestroy(): void {
 		this.destroy$.next();
 		this.destroy$.complete();
 	}
 
-	setErrorLogo(event: any){
+	setErrorLogo(event: any) {
 		if (event) {
 			this.errorsBrand.logoUrl[0] = event;
 		}
 	}
 
-	setErrorBanner(event: any){
+	setErrorBanner(event: any) {
 		if (event) {
 			this.errorsBrand.bannerUrl[0] = event;
 		}
@@ -82,7 +93,7 @@ export class CreateBrandComponent {
 				finalize(() => (this.loadBtn = false))
 			)
 			.subscribe({
-				next: (next: {data: BrandInterface, message: string}) => {
+				next: (next: { data: BrandInterface; message: string }) => {
 					this.errorsBrand = {
 						logoUrl: [],
 						bannerUrl: [],
@@ -100,11 +111,11 @@ export class CreateBrandComponent {
 
 					if (error.validation) {
 						this.errorsBrand = {
-							...this.errorsBrand, 
-							...error.validation, 
+							...this.errorsBrand,
+							...error.validation,
 						};
 						this.msmErrorBrand = Object.values(this.errorsBrand).flat();
-						this.showErrors = buildShowErrors(this.showErrors,this.errorsBrand);
+						this.showErrors = buildShowErrors(this.showErrors, this.errorsBrand);
 					}
 				},
 			});

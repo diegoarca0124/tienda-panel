@@ -21,194 +21,194 @@ import { filter, finalize, Subject, takeUntil } from 'rxjs';
 import { ValidateQPProducts } from '../utils/validate-qp-products.util';
 import { FallbackImageDirective } from '@app/common/directives/fallback-image.directive';
 import { environment } from 'environments/environment.dev';
-import { CurrencySymbolPipe } from "../../../common/pipes/currency-symbol.pipe";
+import { CurrencySymbolPipe } from '../../../common/pipes/currency-symbol.pipe';
 import { qualityProduct } from '../constants/quality-product.consta';
 
-
 @Component({
-  selector: 'app-index-product',
-  imports: [TopbarComponent, SidebarComponent, RouterModule, CommonModule, FormsModule, NgSelectModule, ModalDeleteComponent, NotFoundComponent, InputDialerComponent, FallbackImageDirective, CurrencySymbolPipe],
-  templateUrl: './index-product.component.html',
-  styleUrl: './index-product.component.css',
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+	selector: 'app-index-product',
+	imports: [
+		TopbarComponent,
+		SidebarComponent,
+		RouterModule,
+		CommonModule,
+		FormsModule,
+		NgSelectModule,
+		ModalDeleteComponent,
+		NotFoundComponent,
+		InputDialerComponent,
+		FallbackImageDirective,
+		CurrencySymbolPipe,
+	],
+	templateUrl: './index-product.component.html',
+	styleUrl: './index-product.component.css',
+	schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class IndexProductComponent {
-
-  public loadBtnDelete: WritableSignal<boolean> = signal(false);
-  private destroy$ = new Subject<void>();
-  public filter: string = '';
+	public loadBtnDelete: WritableSignal<boolean> = signal(false);
+	private destroy$ = new Subject<void>();
+	public filter: string = '';
 	public status: string = 'Todos';
-  public visibility: string = 'Todos';
-  public quality: string = 'Todos';
-  public minPrice : any = null;
-  public maxPrice : any = null;
+	public visibility: string = 'Todos';
+	public quality: string = 'Todos';
+	public minPrice: any = null;
+	public maxPrice: any = null;
 	public currentPage: number = 1;
 	public limit: number = 10;
 	public totalPages: number = 0;
 	public loading: boolean = true;
 
-  public categories: any = '';
+	public categories: any = '';
 	public categoriesSelected: any = [];
-  public errorMsmServerListProducts: string = '';
-  public products: any[] = [];
-  public statusTable = statusProducts;
-  public visibilityTable = visibilityProducts;
-  public qualityTable = qualityProduct;
+	public errorMsmServerListProducts: string = '';
+	public products: any[] = [];
+	public statusTable = statusProducts;
+	public visibilityTable = visibilityProducts;
+	public qualityTable = qualityProduct;
 
-  public brands: any = '';
+	public brands: any = '';
 	public brandsSelected: any = [];
 
-  public countries: any = '';
+	public countries: any = '';
 	public countriesSelected: any = [];
 
-  public columns = [
+	public columns = [
 		{ key: 'name', label: 'Producto', classCol: 'col-w-xs-200 col-w-md-250' },
-    { key: 'brand', label: 'Marca', classCol: 'col-w-xs-100 col-w-md-150' },
-    { key: 'priceRegular', label: 'Precio', classCol: 'col-w-xs-100' },
+		{ key: 'brand', label: 'Marca', classCol: 'col-w-xs-100 col-w-md-150' },
+		{ key: 'priceRegular', label: 'Precio', classCol: 'col-w-xs-100' },
 		{ key: 'status', label: 'Estado', classCol: 'col-w-xs-100' },
 	];
-  public pageLimit = pageLimit;
-  public selectedIds = new Set<string>();
+	public pageLimit = pageLimit;
+	public selectedIds = new Set<string>();
 
-  readonly qualityLabels: Record<string, string> = {
+	readonly qualityLabels: Record<string, string> = {
 		low: 'Baja',
 		medium: 'Media',
 		high: 'Alta',
 	};
 
-  constructor(
-    private productService: ProductService,
-    private _router: Router,
+	constructor(
+		private productService: ProductService,
+		private _router: Router,
 		private _route: ActivatedRoute,
-    private sanitizer: DomSanitizer,
-  ) {
-    
-    this.visibilityTable = this.visibilityTable.map((v:any) => ({
+		private sanitizer: DomSanitizer
+	) {
+		this.visibilityTable = this.visibilityTable.map((v: any) => ({
 			...v,
-			icon: this.sanitizer.bypassSecurityTrustHtml(v.icon)
+			icon: this.sanitizer.bypassSecurityTrustHtml(v.icon),
 		}));
-  }
-
-  ngOnInit(): void {
-    this._route.queryParams
-    .pipe(
-      takeUntil(this.destroy$),
-      filter((params) => ValidateQPProducts(this._route, params, this._router))
-    )
-    .subscribe((params) => {
-      // ✅ Prepara parámetros con fallback
-      const queryCategory = params['categories'] ?? 'Todos';
-      const queryBrands = params['brands'] ?? 'Todos';
-      const queryCountries = params['countries'] ?? 'Todos';
-      this.filter = params['filter'] || '';
-      this.currentPage = Number(params['page']) || 1;
-      this.limit = Number(params['limit']) || 10;
-      this.status = params['status'] ?? '';
-      this.visibility = params['visibility'] ?? '';
-      this.quality = params['quality'] ?? '';
-      this.minPrice = params['minPrice'] ?? '';
-      this.maxPrice = params['maxPrice'] ?? '';
-      
-
-      let shouldNavigate = false;
-      const newQueryParams = { ...params };
-
-      // ✅ Categories
-      if (this.categories !== queryCategory) {
-        this.categories = queryCategory;
-        newQueryParams['categories'] = this.categories;
-        shouldNavigate = true;
-      } else {
-        this.categories = queryCategory;
-      }
-
-      // ✅ Brands (MISMA lógica)
-      if (this.brands !== queryBrands) {
-        console.log(1);
-        
-        this.brands = queryBrands;
-        newQueryParams['brands'] = this.brands;
-        shouldNavigate = true;
-      } else {
-         console.log(2);
-        this.brands = queryBrands;
-      }
-
-      if (this.countries !== queryCountries) {
-        this.countries = queryCountries;
-        newQueryParams['countries'] = this.countries;
-        shouldNavigate = true;
-      } else {
-        this.countries = queryCountries;
-      }
-
-      // ✅ Evita bucle de navegación
-      if (shouldNavigate) {
-        this._router.navigate([], {
-          relativeTo: this._route,
-          queryParams: newQueryParams,
-          queryParamsHandling: 'merge',
-          replaceUrl: true,
-        });
-      }
-
-      // ✅ Cargar datos
-      this.init_products(
-        this.filter,
-        this.currentPage,
-        this.status,
-        this.visibility,
-        this.limit,
-        this.categories,
-        this.brands,
-        this.countries,
-        this.minPrice,
-        this.maxPrice,
-        this.quality
-      );
-    });
-  }
-
-  
-
-  getCategories(categories: any){
-    this.currentPage = 1;
-		this.categoriesSelected = categories
-		.filter((c: any) => c.checked)
-		.map((c: any) => c.id);
 	}
 
-  getBrands(brands: any){
-    this.currentPage = 1;
-		this.brandsSelected = brands
-		.filter((c: any) => c.checked)
-		.map((c: any) => c.id);
+	ngOnInit(): void {
+		this._route.queryParams
+			.pipe(
+				takeUntil(this.destroy$),
+				filter((params) => ValidateQPProducts(this._route, params, this._router))
+			)
+			.subscribe((params) => {
+				// ✅ Prepara parámetros con fallback
+				const queryCategory = params['categories'] ?? 'Todos';
+				const queryBrands = params['brands'] ?? 'Todos';
+				const queryCountries = params['countries'] ?? 'Todos';
+				this.filter = params['filter'] || '';
+				this.currentPage = Number(params['page']) || 1;
+				this.limit = Number(params['limit']) || 10;
+				this.status = params['status'] ?? '';
+				this.visibility = params['visibility'] ?? '';
+				this.quality = params['quality'] ?? '';
+				this.minPrice = params['minPrice'] ?? '';
+				this.maxPrice = params['maxPrice'] ?? '';
+
+				let shouldNavigate = false;
+				const newQueryParams = { ...params };
+
+				// ✅ Categories
+				if (this.categories !== queryCategory) {
+					this.categories = queryCategory;
+					newQueryParams['categories'] = this.categories;
+					shouldNavigate = true;
+				} else {
+					this.categories = queryCategory;
+				}
+
+				// ✅ Brands (MISMA lógica)
+				if (this.brands !== queryBrands) {
+					console.log(1);
+
+					this.brands = queryBrands;
+					newQueryParams['brands'] = this.brands;
+					shouldNavigate = true;
+				} else {
+					console.log(2);
+					this.brands = queryBrands;
+				}
+
+				if (this.countries !== queryCountries) {
+					this.countries = queryCountries;
+					newQueryParams['countries'] = this.countries;
+					shouldNavigate = true;
+				} else {
+					this.countries = queryCountries;
+				}
+
+				// ✅ Evita bucle de navegación
+				if (shouldNavigate) {
+					this._router.navigate([], {
+						relativeTo: this._route,
+						queryParams: newQueryParams,
+						queryParamsHandling: 'merge',
+						replaceUrl: true,
+					});
+				}
+
+				// ✅ Cargar datos
+				this.init_products(
+					this.filter,
+					this.currentPage,
+					this.status,
+					this.visibility,
+					this.limit,
+					this.categories,
+					this.brands,
+					this.countries,
+					this.minPrice,
+					this.maxPrice,
+					this.quality
+				);
+			});
 	}
 
-  getCountries(countries: any){
-    this.currentPage = 1;
-		this.countriesSelected = countries
-		.filter((c: any) => c.checked)
-		.map((c: any) => c.code);
+	getCategories(categories: any) {
+		this.currentPage = 1;
+		this.categoriesSelected = categories.filter((c: any) => c.checked).map((c: any) => c.id);
 	}
 
-  getMinPrice(price: any){
-    if(price != null){
-      this.minPrice = parseFloat(price);
-    }else{
-      this.minPrice = '';
-    }
-  }
+	getBrands(brands: any) {
+		this.currentPage = 1;
+		this.brandsSelected = brands.filter((c: any) => c.checked).map((c: any) => c.id);
+	}
 
-  getMaxPrice(price: any){
-    if(price != null){
-      this.maxPrice = parseFloat(price);
-    }else{
-      this.maxPrice = '';
-    }
-  }
+	getCountries(countries: any) {
+		this.currentPage = 1;
+		this.countriesSelected = countries.filter((c: any) => c.checked).map((c: any) => c.code);
+	}
 
-  toggleItem(id: string, event: Event) {
+	getMinPrice(price: any) {
+		if (price != null) {
+			this.minPrice = parseFloat(price);
+		} else {
+			this.minPrice = '';
+		}
+	}
+
+	getMaxPrice(price: any) {
+		if (price != null) {
+			this.maxPrice = parseFloat(price);
+		} else {
+			this.maxPrice = '';
+		}
+	}
+
+	toggleItem(id: string, event: Event) {
 		const checked = (event.target as HTMLInputElement).checked;
 		if (checked) {
 			this.selectedIds.add(id);
@@ -221,85 +221,96 @@ export class IndexProductComponent {
 		return [...this.selectedIds];
 	}
 
-  init_products(filter: string, page: number, status: string, visibility: string, limit: number, categories: string, brands: string, countries: string,minPrice: number | null, maxPrice: number| null, quality: string) {
-    this.loading = true;
-    this.errorMsmServerListProducts = '';
-    
-    this.productService
-      .get_products(filter, page, limit, status, visibility, categories, brands, countries, minPrice ,maxPrice, quality)
-      .pipe(
-        takeUntil(this.destroy$),
-        withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
-        finalize(() => (this.loading = false))
-      )
-      .subscribe({
-        next: (next: { products: any[]; currentPage: number; totaProducts: number; totalPages: number }) => {
-          console.log(next);
-          this.products = next.products;
-          this.products = this.products.map((product) => ({
-            ...product,
-            miniature: `${environment.s3_public_url}/products/small/${product.miniature}`,
-            brand: {
-                ...product.brand,
-                logoUrl: `${environment.s3_public_url}/brands/small/${product.brand.logoUrl}`
-            }
-          }));
-          console.log(this.products);
-          
-          this.totalPages = next.totalPages;
-        },
-        error: (err) => {
-          const error = err.error;
-          this.errorMsmServerListProducts = error;
-        },
-      });
-  }
+	init_products(
+		filter: string,
+		page: number,
+		status: string,
+		visibility: string,
+		limit: number,
+		categories: string,
+		brands: string,
+		countries: string,
+		minPrice: number | null,
+		maxPrice: number | null,
+		quality: string
+	) {
+		this.loading = true;
+		this.errorMsmServerListProducts = '';
 
-  ngOnDestroy(): void {
+		this.productService
+			.get_products(filter, page, limit, status, visibility, categories, brands, countries, minPrice, maxPrice, quality)
+			.pipe(
+				takeUntil(this.destroy$),
+				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
+				finalize(() => (this.loading = false))
+			)
+			.subscribe({
+				next: (next: { products: any[]; currentPage: number; totaProducts: number; totalPages: number }) => {
+					console.log(next);
+					this.products = next.products;
+					this.products = this.products.map((product) => ({
+						...product,
+						miniature: `${environment.s3_public_url}/products/small/${product.miniature}`,
+						brand: {
+							...product.brand,
+							logoUrl: `${environment.s3_public_url}/brands/small/${product.brand.logoUrl}`,
+						},
+					}));
+					console.log(this.products);
+
+					this.totalPages = next.totalPages;
+				},
+				error: (err) => {
+					const error = err.error;
+					this.errorMsmServerListProducts = error;
+				},
+			});
+	}
+
+	ngOnDestroy(): void {
 		this.destroy$.next();
 		this.destroy$.complete();
 	}
 
-  onFilterStatusChange(value: string) {
-    this.status = value;
-  }
+	onFilterStatusChange(value: string) {
+		this.status = value;
+	}
 
-  redirect() {
-    console.log(this.categoriesSelected);
-    
-    this.currentPage = 1;
-    this._router.navigate(['/products/articles'], {
+	redirect() {
+		console.log(this.categoriesSelected);
+
+		this.currentPage = 1;
+		this._router.navigate(['/products/articles'], {
 			queryParams: {
 				filter: this.filter,
 				page: this.currentPage,
 				limit: this.limit,
 				status: this.status,
-        visibility: this.visibility,
+				visibility: this.visibility,
 				categories: this.categoriesSelected.join(','),
-        brands: this.brandsSelected.join(','),
-        countries: this.countriesSelected.join(','),
-        minPrice: this.minPrice,
-        maxPrice: this.maxPrice,
-        quality: this.quality
+				brands: this.brandsSelected.join(','),
+				countries: this.countriesSelected.join(','),
+				minPrice: this.minPrice,
+				maxPrice: this.maxPrice,
+				quality: this.quality,
 			},
 		});
 	}
 
-  resetFilters(){
-    this.filter = '';
-    this.currentPage = 1;
-    this.limit = 10;
-    this.status = 'Todos';
-    this.visibility = 'Todos';
-    this.categoriesSelected = [];
-    this.brands = '';
-    this.brandsSelected = [];
-    this.countriesSelected = [];
-    this.minPrice = null;
-    this.maxPrice = null;
-    this.redirect();
-  }
+	resetFilters() {
+		this.filter = '';
+		this.currentPage = 1;
+		this.limit = 10;
+		this.status = 'Todos';
+		this.visibility = 'Todos';
+		this.categoriesSelected = [];
+		this.brands = '';
+		this.brandsSelected = [];
+		this.countriesSelected = [];
+		this.minPrice = null;
+		this.maxPrice = null;
+		this.redirect();
+	}
 
-  setStatus(id: string, status: boolean) {}
-
+	setStatus(id: string, status: boolean) {}
 }

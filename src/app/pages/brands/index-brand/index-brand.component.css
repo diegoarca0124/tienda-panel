@@ -3,9 +3,8 @@
 	z-index: 1050; /* mayor que la tabla */
 }
 
-.dropdown-item.disabled{
-	opacity: .5;
+.dropdown-item.disabled {
+	opacity: 0.5;
 	pointer-events: none;
 	cursor: not-allowed !important;
 }
-

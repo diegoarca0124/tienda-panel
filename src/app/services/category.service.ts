@@ -28,11 +28,7 @@ export class CategoryService {
 	) {}
 
 	create_category(category: CategoryInterface): Observable<any> {
-		return this.http.post(
-			`${this.apiUrl}/category/create_category`, 
-			category, 
-			{ headers: this.getHeaders() }
-		);
+		return this.http.post(`${this.apiUrl}/category/create_category`, category, { headers: this.getHeaders() });
 	}
 
 	getCategories(query: GetCategoriesQPI): Observable<GetCategoriessRESI> {
@@ -44,27 +40,15 @@ export class CategoryService {
 			.set('sort', query.sort)
 			.set('configurations', query.configurations);
 
-		return this.http.get<GetCategoriessRESI>(
-			`${this.apiUrl}/category/getCategories`,
-			{ headers: this.getHeaders(), params },
-		);
-
+		return this.http.get<GetCategoriessRESI>(`${this.apiUrl}/category/getCategories`, { headers: this.getHeaders(), params });
 	}
 
 	updateCategoryStatus(id: string, data: UpdateCategoryStatusREQI): Observable<UpdateCategoryStatusRESI> {
-		return this.http.put<UpdateCategoryStatusRESI>(
-			`${this.apiUrl}/category/updateCategoryStatus/${id}`, 
-			data, 
-			{ headers: this.getHeaders() }
-		);
+		return this.http.put<UpdateCategoryStatusRESI>(`${this.apiUrl}/category/updateCategoryStatus/${id}`, data, { headers: this.getHeaders() });
 	}
 
 	updateCategoriesStatus(data: UpdateCategoriesStatusREQI): Observable<UpdateCategoriesStatusRESI> {
-		return this.http.post<UpdateCategoriesStatusRESI>(
-			`${this.apiUrl}/category/updateCategoriesStatus`, 
-			data, 
-			{ headers: this.getHeaders() }
-		);
+		return this.http.post<UpdateCategoriesStatusRESI>(`${this.apiUrl}/category/updateCategoriesStatus`, data, { headers: this.getHeaders() });
 	}
 
 	get_category(id: string): Observable<any> {
@@ -106,7 +90,6 @@ export class CategoryService {
 			maxPrice: number | null;
 		}
 	): Observable<any> {
-
 		let params = new HttpParams()
 			.set('filter', qp.filter)
 			.set('page', qp.page)
@@ -125,10 +108,7 @@ export class CategoryService {
 			params = params.set('maxPrice', qp.maxPrice);
 		}
 
-		return this.http.get(
-			`${this.apiUrl}/category/findCategoryProducts/${id}`,
-			{ params, headers: this.getHeaders() }
-		);
+		return this.http.get(`${this.apiUrl}/category/findCategoryProducts/${id}`, { params, headers: this.getHeaders() });
 	}
 
 	get_categories_with_subcategories(): Observable<any> {
@@ -141,20 +121,19 @@ export class CategoryService {
 		return this.http.post(`${this.apiUrl}/category/update_catsubcat_products`, data, { headers: this.getHeaders() });
 	}
 
-
 	get_categories_by_select(): Observable<any> {
-		return this.http.get(`${this.apiUrl}/category/get_categories_by_select`, { headers : this.getHeaders() });
+		return this.http.get(`${this.apiUrl}/category/get_categories_by_select`, { headers: this.getHeaders() });
 	}
 
 	get_subcat_by_select(): Observable<any> {
-		return this.http.get(`${this.apiUrl}/category/get_subcat_by_select`, { headers : this.getHeaders() });
+		return this.http.get(`${this.apiUrl}/category/get_subcat_by_select`, { headers: this.getHeaders() });
 	}
 
 	get_subcategories_by_select(id: string): Observable<any> {
-		return this.http.get(`${this.apiUrl}/category/get_subcategories_by_select/${id}`, { headers : this.getHeaders() });
+		return this.http.get(`${this.apiUrl}/category/get_subcategories_by_select/${id}`, { headers: this.getHeaders() });
 	}
 
-	update_status_subcategories(data: {ids: Array<string>, status: boolean}): Observable<any> {
+	update_status_subcategories(data: { ids: Array<string>; status: boolean }): Observable<any> {
 		return this.http.post(`${this.apiUrl}/category/update_status_subcategories`, data, { headers: this.getHeaders() });
 	}
 

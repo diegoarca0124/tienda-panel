@@ -26,20 +26,10 @@ declare const $: any;
 
 @Component({
 	selector: 'app-index-attribute',
-	imports: [
-		TopbarComponent,
-		SidebarComponent,
-		CommonModule,
-		RouterModule,
-		FormsModule,
-		PaginationComponent,
-		NotFoundComponent,
-		ModalDeleteComponent,
-		NgSelectModule,
-	],
+	imports: [TopbarComponent, SidebarComponent, CommonModule, RouterModule, FormsModule, PaginationComponent, NotFoundComponent, ModalDeleteComponent, NgSelectModule],
 	templateUrl: './index-attribute.component.html',
 	styleUrl: './index-attribute.component.css',
-	schemas: [CUSTOM_ELEMENTS_SCHEMA]
+	schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class IndexAttributeComponent {
 	public loadBtnDelete: WritableSignal<boolean> = signal(false);
@@ -51,10 +41,10 @@ export class IndexAttributeComponent {
 	public sort: string = 'Predeterminado';
 	public totalPages: number = 0;
 	public loading: boolean = true;
-	public loadAttributeGroup : boolean = true;
-	public groupAttribute : AttributeGroupInterface = createEmptyGroupAttribute();
-	public categories : CategoryInterface[] = [];
-	
+	public loadAttributeGroup: boolean = true;
+	public groupAttribute: AttributeGroupInterface = createEmptyGroupAttribute();
+	public categories: CategoryInterface[] = [];
+
 	private destroy$ = new Subject<void>();
 	public errorMsmServerListAttributes: string = '';
 	public errorMsmServerGroup: string = '';
@@ -69,12 +59,12 @@ export class IndexAttributeComponent {
 	public statusTable = [];
 	public sortColumns = sortColumnsAttributes;
 	public selectedIds = new Set<string>();
-	public id : string = '';
-	
+	public id: string = '';
+
 	constructor(
 		private _router: Router,
 		private attributeService: AttributeService,
-		private categoryService:CategoryService,
+		private categoryService: CategoryService,
 		private _route: ActivatedRoute
 	) {}
 
@@ -84,31 +74,29 @@ export class IndexAttributeComponent {
 
 	initGroup(): void {
 		this._route.params
-		.pipe(
-			takeUntil(this.destroy$),
-			switchMap(params => {
-				this.id = params['id'];
-				this.loadAttributeGroup = true;
+			.pipe(
+				takeUntil(this.destroy$),
+				switchMap((params) => {
+					this.id = params['id'];
+					this.loadAttributeGroup = true;
 
-				return this.attributeService
-					.get_attribute_and_categories(this.id)
-					.pipe(
+					return this.attributeService.get_attribute_and_categories(this.id).pipe(
 						withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
-						finalize(() => this.loadAttributeGroup = false)
+						finalize(() => (this.loadAttributeGroup = false))
 					);
-			})
-		)
-		.subscribe({
-			next: (resp: any) => {
-				this.groupAttribute = resp.data.attributeGroup;
-				this.categories = resp.data.categories;
-				this.initAttributes();
-			},
-			error: (err) => {
-				this.loading = false;
-				this.errorMsmServerGroup = err.error;
-			}
-		});
+				})
+			)
+			.subscribe({
+				next: (resp: any) => {
+					this.groupAttribute = resp.data.attributeGroup;
+					this.categories = resp.data.categories;
+					this.initAttributes();
+				},
+				error: (err) => {
+					this.loading = false;
+					this.errorMsmServerGroup = err.error;
+				},
+			});
 	}
 
 	initAttributes(): void {
@@ -116,16 +104,11 @@ export class IndexAttributeComponent {
 			.pipe(
 				takeUntil(this.destroy$),
 				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
-				filter(queryParams => {
-					const sortArrStr = sortColumnsAttributes.map(item => item.value);
-					return ValidateQPAttributes(
-						this._route,
-						queryParams,
-						this._router,
-						sortArrStr
-					);
+				filter((queryParams) => {
+					const sortArrStr = sortColumnsAttributes.map((item) => item.value);
+					return ValidateQPAttributes(this._route, queryParams, this._router, sortArrStr);
 				}),
-				switchMap(queryParams => {
+				switchMap((queryParams) => {
 					this.filter = queryParams['filter'] || '';
 					this.currentPage = Number(queryParams['page']) || 1;
 					this.status = queryParams['status'] || 'Todos';
@@ -140,16 +123,9 @@ export class IndexAttributeComponent {
 					this.totalPages = 1;
 					this.errorMsmServerListAttributes = '';
 
-					return this.attributeService.get_attributes(
-						this.id,
-						this.filter,
-						this.currentPage,
-						this.status,
-						this.limit,
-						this.sort
-					).pipe(
+					return this.attributeService.get_attributes(this.id, this.filter, this.currentPage, this.status, this.limit, this.sort).pipe(
 						withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
-						finalize(() => this.loading = false)
+						finalize(() => (this.loading = false))
 					);
 				})
 			)
@@ -161,10 +137,9 @@ export class IndexAttributeComponent {
 				},
 				error: (err) => {
 					this.errorMsmServerListAttributes = err.error;
-				}
+				},
 			});
 	}
-
 
 	onFilterOrStatusChange() {
 		this.currentPage = 1;
@@ -187,7 +162,7 @@ export class IndexAttributeComponent {
 				page: this.currentPage,
 				limit: this.limit,
 				status: this.status,
-				sort: this.sort
+				sort: this.sort,
 			},
 		});
 	}
@@ -212,7 +187,7 @@ export class IndexAttributeComponent {
 				finalize(() => this.loadBtnDelete.set(false))
 			)
 			.subscribe({
-				next: (next: {data: AttributeInterface, message: string}) => {
+				next: (next: { data: AttributeInterface; message: string }) => {
 					this.attributes = this.attributes.map((prev: any) => {
 						if (next.data.id === prev.id) {
 							return { ...prev, status: next.data.status };
@@ -229,7 +204,7 @@ export class IndexAttributeComponent {
 			});
 	}
 
-	resetFilters(){
+	resetFilters() {
 		this.filter = '';
 		this.status = 'Todos';
 		this.sort = 'Predeterminado';
@@ -263,36 +238,36 @@ export class IndexAttributeComponent {
 		return [...this.selectedIds];
 	}
 
-	onUpdateStatusMultiple(status: boolean){
+	onUpdateStatusMultiple(status: boolean) {
 		this.loadBtnMultipleStatus.set(true);
 		this.attributeService
-		.update_status_attributes({
-			ids: this.getSelectedIds(),
-			status
-		})
-		.pipe(
-			takeUntil(this.destroy$),
-			withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
-			finalize(() => this.loadBtnMultipleStatus.set(false))
-		)
-		.subscribe({
-			next: (next: {data: any, message: string}) => {
-				console.log(next);
-				
-				this.attributes = this.attributes.map((prev: AttributeInterface) => {
-					if (next.data.includes(prev.id)) {
-						return { ...prev, status: status };
-					}
-					return prev;
-				});
+			.update_status_attributes({
+				ids: this.getSelectedIds(),
+				status,
+			})
+			.pipe(
+				takeUntil(this.destroy$),
+				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
+				finalize(() => this.loadBtnMultipleStatus.set(false))
+			)
+			.subscribe({
+				next: (next: { data: any; message: string }) => {
+					console.log(next);
 
-				toastr.success(next.message);
-				closeModal(status ? 'modalMultipleActive' : 'modalMultipleDisabled');
-				this.selectedIds.clear();
-			},
-			error: (error: any) => {
-				toastr.error(error.error.message);
-			},
-		});
+					this.attributes = this.attributes.map((prev: AttributeInterface) => {
+						if (next.data.includes(prev.id)) {
+							return { ...prev, status: status };
+						}
+						return prev;
+					});
+
+					toastr.success(next.message);
+					closeModal(status ? 'modalMultipleActive' : 'modalMultipleDisabled');
+					this.selectedIds.clear();
+				},
+				error: (error: any) => {
+					toastr.error(error.error.message);
+				},
+			});
 	}
 }

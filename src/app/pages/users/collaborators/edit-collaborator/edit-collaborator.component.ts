@@ -27,7 +27,7 @@ declare const toastr: any;
 	imports: [SidebarComponent, TopbarComponent, CommonModule, RouterModule, FormsModule, IMaskModule, NotFoundComponent, NgSelectModule, AlertComponent, ValidationPopoverComponent],
 	templateUrl: './edit-collaborator.component.html',
 	styleUrl: './edit-collaborator.component.css',
-	schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
+	schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class EditCollaboratorComponent {
 	private destroy$ = new Subject<void>();
@@ -39,7 +39,7 @@ export class EditCollaboratorComponent {
 	public collaboratorLoadError: string = '';
 	public rolesOptions = rolesOptions;
 	public documentsOptions = documentsOptions;
-	public fieldErrors : CollaboratorFieldErrors  = createEmptyFieldErrors();
+	public fieldErrors: CollaboratorFieldErrors = createEmptyFieldErrors();
 
 	constructor(
 		private collaboratorService: CollaboratorService,
@@ -116,7 +116,7 @@ export class EditCollaboratorComponent {
 
 					if (error.validation) {
 						this.validationCollaboratioError = error.validation;
-						this.fieldErrors = buildShowErrors(this.fieldErrors,this.validationCollaboratioError);
+						this.fieldErrors = buildShowErrors(this.fieldErrors, this.validationCollaboratioError);
 					}
 				},
 			});

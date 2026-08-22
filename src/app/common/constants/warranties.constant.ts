@@ -7,5 +7,5 @@ export const warranties = [
 	{ name: '1 año', value: '1_year', color: 'success' },
 	{ name: '2 años', value: '2_years', color: 'success' },
 	{ name: 'Garantía del fabricante', value: 'manufacturer', color: 'dark' },
-	{ name: 'Garantía de por vida', value: 'lifetime', color: 'dark' }
+	{ name: 'Garantía de por vida', value: 'lifetime', color: 'dark' },
 ];

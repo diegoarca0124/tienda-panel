@@ -1,19 +1,16 @@
-<div class="alert alert-dismissible border-alert d-flex flex-sm-row w-100 p-5 gap-3 mb-0" style="border-radius: 0px !important;"
-[ngClass]="classAlert">
-    <app-icon-alert [classIcon]="`${classIcon}`"></app-icon-alert>
-    <div class="d-flex flex-column pe-0 pe-sm-10 flex-grow-1">
-        <h5 class="mb-0 text-gray-800 mb-2" *ngIf="title">{{title || '¡Ocurrió un problema!'}}</h5>
-        <div class="message-container" *ngIf="type == 'errors'">
-          <div class="msg-wrapper">
-            <ng-container *ngFor="let field of description | keyvalue">
-              <ng-container *ngIf="field.value?.length">
-                <span class="msg-item text-gray-700">■ {{ field.value[0] }}</span>
-              </ng-container>
-            </ng-container>
-          </div>
-        </div>
-        <div class="text-gray-700" *ngIf="type == 'information'" [innerHtml]="text">
-        </div>
-    </div>
+<div class="alert alert-dismissible border-alert d-flex flex-sm-row w-100 p-5 gap-3 mb-0" style="border-radius: 0px !important" [ngClass]="classAlert">
+	<app-icon-alert [classIcon]="`${classIcon}`"></app-icon-alert>
+	<div class="d-flex flex-column pe-0 pe-sm-10 flex-grow-1">
+		<h5 class="mb-0 text-gray-800 mb-2" *ngIf="title">{{ title || '¡Ocurrió un problema!' }}</h5>
+		<div class="message-container" *ngIf="type == 'errors'">
+			<div class="msg-wrapper">
+				<ng-container *ngFor="let field of description | keyvalue">
+					<ng-container *ngIf="field.value?.length">
+						<span class="msg-item text-gray-700">■ {{ field.value[0] }}</span>
+					</ng-container>
+				</ng-container>
+			</div>
+		</div>
+		<div class="text-gray-700" *ngIf="type == 'information'" [innerHtml]="text"></div>
+	</div>
 </div>
-

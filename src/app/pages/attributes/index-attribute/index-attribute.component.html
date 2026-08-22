@@ -10,20 +10,14 @@
 							<h1 class="page-heading d-flex text-gray-700 fs-3 flex justify-content-start my-0 align-items-center text-uppercase ls-1px fw-700">
 								Atributos
 
-								<span *ngIf="!loadAttributeGroup && !errorMsmServerGroup && groupAttribute?.name">
-									&nbsp; | &nbsp;{{ groupAttribute.name }}
-								</span>
+								<span *ngIf="!loadAttributeGroup && !errorMsmServerGroup && groupAttribute?.name">&nbsp; | &nbsp;{{ groupAttribute.name }}</span>
 
-								<div
-									*ngIf="loadAttributeGroup"
-									class="skeleton skeleton-text"
-									style="width: 120px; height: 15px; margin-left: .9rem !important">
-								</div>
+								<div *ngIf="loadAttributeGroup" class="skeleton skeleton-text" style="width: 120px; height: 15px; margin-left: 0.9rem !important"></div>
 							</h1>
 
 							<ul class="breadcrumb breadcrumb-separatorless fs-7 my-0 pt-1">
 								<li class="breadcrumb-item text-muted">
-									<a [routerLink]="['/products/attributes/groups']" class="text-muted text-hover-primary"> Grupos </a>
+									<a [routerLink]="['/products/attributes/groups']" class="text-muted text-hover-primary">Grupos</a>
 								</li>
 								<li class="breadcrumb-item">
 									<span class="bullet bg-gray-400 w-5px h-2px"></span>
@@ -34,20 +28,18 @@
 						<div class="d-flex align-items-center gap-2 gap-lg-3">
 							<button
 								[disabled]="loadAttributeGroup || !!errorMsmServerGroup || !groupAttribute?.id"
-								[routerLink]="['/products/attributes/groups/'+id+'/attributes/create']"
+								[routerLink]="['/products/attributes/groups/' + id + '/attributes/create']"
 								routerLinkActive="router-link-active"
 								class="btn btn-sm fw-bold btn-primary d-inline-flex align-items-center gap-1"
 							>
 								<i class="bi bi-sliders"></i>
 								<span>Nuevo atributo</span>
 							</button>
-							
 						</div>
 					</div>
 				</div>
 				<div class="app-content flex-column-fluid">
 					<div class="app-container container-fluid">
-
 						<div class="d-flex justify-content-between align-items-center flex-nowrap gap-2 mt-5">
 							<div class="d-flex gap-2">
 								<div>
@@ -62,11 +54,7 @@
 												(keyup.enter)="onFilterOrStatusChange()"
 											/>
 
-											<i
-												class="bi bi-search position-absolute cursor-pointer"
-												style="right: 15px; top: 50%; transform: translateY(-50%)"
-												(click)="onFilterOrStatusChange()"
-											></i>
+											<i class="bi bi-search position-absolute cursor-pointer" style="right: 15px; top: 50%; transform: translateY(-50%)" (click)="onFilterOrStatusChange()"></i>
 										</div>
 										<button
 											type="button"
@@ -74,16 +62,8 @@
 											(click)="resetFilters()"
 											[disabled]="loading"
 										>
-											<span
-												*ngIf="loading"
-												class="spinner-border spinner-border-sm"
-												role="status"
-												aria-hidden="true"
-											></span>
-											<i
-												*ngIf="!loading"
-												class="bi bi-arrow-clockwise fs-5"
-											></i>
+											<span *ngIf="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+											<i *ngIf="!loading" class="bi bi-arrow-clockwise fs-5"></i>
 										</button>
 									</div>
 								</div>
@@ -101,20 +81,16 @@
 									<span>Opciones</span>
 									<ion-icon name="chevron-down-outline" class="fs-6"></ion-icon>
 								</button>
-								<ul class="dropdown-menu menu-state-bg-light-primary" aria-labelledby="dropdownMenuButton">
-							
-									
-								</ul>
+								<ul class="dropdown-menu menu-state-bg-light-primary" aria-labelledby="dropdownMenuButton"></ul>
 							</div>
-							
 						</div>
 
 						<div class="my-7">
 							@if (loadAttributeGroup || (!errorMsmServerGroup && categories?.length)) {
 								<div class="d-flex gap-3">
 									@if (loadAttributeGroup) {
-										@for (item of [1,2,3,4,5,6]; track $index) {
-											<div class="skeleton skeleton-text" style="width:64.16px; height:22.39px;"></div>
+										@for (item of [1, 2, 3, 4, 5, 6]; track $index) {
+											<div class="skeleton skeleton-text" style="width: 64.16px; height: 22.39px"></div>
 										}
 									} @else {
 										@for (item of categories; track $index) {
@@ -131,7 +107,7 @@
 							<div class="filter-item">
 								<div class="d-flex flex-column mb-1 gap-1">
 									<div class="d-flex align-items-center">
-										<span class="text-gray-700 ls-1px" style="font-size: .7rem;">ESTADO</span>
+										<span class="text-gray-700 ls-1px" style="font-size: 0.7rem">ESTADO</span>
 									</div>
 									<ng-select
 										[items]="statusTable"
@@ -168,7 +144,7 @@
 							<div class="filter-item">
 								<div class="d-flex flex-column mb-1 gap-1">
 									<div class="d-flex align-items-center">
-										<span class="text-gray-700 ls-1px" style="font-size: .7rem;">ORDEN</span>
+										<span class="text-gray-700 ls-1px" style="font-size: 0.7rem">ORDEN</span>
 									</div>
 									<ng-select
 										[items]="sortColumns"
@@ -208,38 +184,42 @@
 							<table class="table custom-table align-middle mb-0">
 								<thead>
 									<tr>
-										<th class="fixed-xs text-center p-0" style="position: unset !important;">
+										<th class="fixed-xs text-center p-0" style="position: unset !important">
 											<div class="dropdown">
-												<button 
+												<button
 													class="btn btn-icon btn-dark h-25px w-25px"
 													type="button"
-													placement="top" 
+													placement="top"
 													tooltipClass="tooltip-dark"
 													container="body"
 													[disabled]="!hasSelectedAttributes()"
 													id="dropdownTable"
 													data-bs-toggle="dropdown"
-													aria-expanded="false">
+													aria-expanded="false"
+												>
 													<ion-icon name="settings-outline" class="fs-5"></ion-icon>
 												</button>
-												<ul class="dropdown-menu menu-state-bg-light-primary" 
-												aria-labelledby="dropdownTable">
+												<ul class="dropdown-menu menu-state-bg-light-primary" aria-labelledby="dropdownTable">
 													<li>
-														<a class="dropdown-item cursor-pointer d-flex align-items-center gap-2 fs-7"
-														[class.disabled]="selectedIds.size === 0"
-														[attr.data-bs-toggle]="selectedIds.size > 0? 'modal': null"
-														[attr.data-bs-target]="selectedIds.size > 0? '#modalMultipleActive': null"
-														style="text-transform: capitalize !important;">
+														<a
+															class="dropdown-item cursor-pointer d-flex align-items-center gap-2 fs-7"
+															[class.disabled]="selectedIds.size === 0"
+															[attr.data-bs-toggle]="selectedIds.size > 0 ? 'modal' : null"
+															[attr.data-bs-target]="selectedIds.size > 0 ? '#modalMultipleActive' : null"
+															style="text-transform: capitalize !important"
+														>
 															<ion-icon name="checkmark-circle-outline" class="text-primary"></ion-icon>
 															Activar
 														</a>
 													</li>
 													<li>
-														<a class="dropdown-item cursor-pointer d-flex align-items-center gap-2 fs-7"
-														[class.disabled]="selectedIds.size === 0"
-														[attr.data-bs-toggle]="selectedIds.size > 0? 'modal': null"
-														[attr.data-bs-target]="selectedIds.size > 0? '#modalMultipleDisabled': null"
-														style="text-transform: capitalize !important;">
+														<a
+															class="dropdown-item cursor-pointer d-flex align-items-center gap-2 fs-7"
+															[class.disabled]="selectedIds.size === 0"
+															[attr.data-bs-toggle]="selectedIds.size > 0 ? 'modal' : null"
+															[attr.data-bs-target]="selectedIds.size > 0 ? '#modalMultipleDisabled' : null"
+															style="text-transform: capitalize !important"
+														>
 															<ion-icon name="close-circle-outline" class="text-danger"></ion-icon>
 															Desactivar
 														</a>
@@ -247,27 +227,21 @@
 												</ul>
 											</div>
 										</th>
-										<th class="flex-column">
-											Atributo
-										</th>
-										<th class="fixed-md">
-											Estado
-										</th>
-										<th class="fixed-xs text-center text-center">
-											
-										</th>
+										<th class="flex-column">Atributo</th>
+										<th class="fixed-md">Estado</th>
+										<th class="fixed-xs text-center text-center"></th>
 									</tr>
 								</thead>
 								<tbody>
 									<ng-container *ngIf="loading">
-										<tr *ngFor="let item of [1,2,3,4,5,6]">
+										<tr *ngFor="let item of [1, 2, 3, 4, 5, 6]">
 											<td class="fixed-xs text-center p-0">
 												<div class="skeleton skeleton-check"></div>
 											</td>
 											<td class="flex-column fw-medium">
-												<div class="d-flex flex-column gap-2" style="width:100%; max-width:250px">
-													<div class="skeleton skeleton-text" style="width:60%;"></div>
-													<div class="skeleton skeleton-text" style="width:40%;"></div>
+												<div class="d-flex flex-column gap-2" style="width: 100%; max-width: 250px">
+													<div class="skeleton skeleton-text" style="width: 60%"></div>
+													<div class="skeleton skeleton-text" style="width: 40%"></div>
 												</div>
 											</td>
 											<td class="fixed-md">
@@ -282,17 +256,12 @@
 										<tr *ngFor="let item of attributes">
 											<td class="fixed-xs text-center p-0">
 												<label class="form-check form-check-customs form-check-sm m-0 d-flex align-items-center justify-content-center h-100">
-												<input
-													class="form-check-input cursor-pointer"
-													type="checkbox"
-													[checked]="selectedIds.has(item.id!)"
-													(change)="toggleItem(item.id!, $event)"
-												/>
+													<input class="form-check-input cursor-pointer" type="checkbox" [checked]="selectedIds.has(item.id!)" (change)="toggleItem(item.id!, $event)" />
 												</label>
 											</td>
 											<td class="flex-column fw-medium">
-												<div class="d-flex align-items-center gap-2" style="min-width:0;">
-													<div class="d-flex flex-column" style="min-width:0;">
+												<div class="d-flex align-items-center gap-2" style="min-width: 0">
+													<div class="d-flex flex-column" style="min-width: 0">
 														<a class="text-gray-700 fs-8 fw-500 text-truncate-1">
 															{{ item.name }}
 														</a>
@@ -308,26 +277,23 @@
 												</div>
 											</td>
 											<td class="fixed-md">
-												<span class="badge rounded-pill text-gray-700"
-												[ngClass]="{ 'bg-outline-danger': !item.status, 'bg-outline-success': item.status }">
-													<span class="d-inline-block rounded-circle me-1"
+												<span class="badge rounded-pill text-gray-700" [ngClass]="{ 'bg-outline-danger': !item.status, 'bg-outline-success': item.status }">
+													<span
+														class="d-inline-block rounded-circle me-1"
 														style="width: 6px; height: 6px"
-														[ngClass]="{ 'bg-danger': !item.status, 'bg-success': item.status }"></span>
-														{{ item.status ? 'Activo' : 'Inactivo' }}
+														[ngClass]="{ 'bg-danger': !item.status, 'bg-success': item.status }"
+													></span>
+													{{ item.status ? 'Activo' : 'Inactivo' }}
 												</span>
 											</td>
 											<td class="fixed-xs text-center p-0">
 												<div class="dropdown">
-													<button 
-														class="icon-btn btn-action dropdown-toggle d-flex align-items-center justify-content-center mx-auto"
-														data-bs-toggle="dropdown">
+													<button class="icon-btn btn-action dropdown-toggle d-flex align-items-center justify-content-center mx-auto" data-bs-toggle="dropdown">
 														<i class="bi bi-three-dots"></i>
 													</button>
 													<app-modal-delete
 														[id]="'modalDelete-' + item.id"
-														[title]="item.status 
-															? 'Desactivar colaborador' 
-															: 'Activar colaborador'"
+														[title]="item.status ? 'Desactivar colaborador' : 'Activar colaborador'"
 														[description]="
 															item.status
 																? `El colaborador <b>${item.name}</b> dejará de tener acceso y quedará deshabilitado temporalmente.`
@@ -335,22 +301,18 @@
 														"
 														[textButton]="item.status ? 'Desactivar' : 'Activar'"
 														(actionConfirmed)="setStatus(item.id!, item.status!)"
-														[loadBtnDelete]="loadBtnDelete">
-													</app-modal-delete>
+														[loadBtnDelete]="loadBtnDelete"
+													></app-modal-delete>
 													<div class="dropdown-menu menu-state-bg-light-primary" data-bs-display="static">
-														<a class="dropdown-item d-flex align-items-center gap-2 cursor-pointer"
-														[routerLink]="[`/products/attributes/groups/${id}/attributes/${item.id}/edit`]">
+														<a class="dropdown-item d-flex align-items-center gap-2 cursor-pointer" [routerLink]="[`/products/attributes/groups/${id}/attributes/${item.id}/edit`]">
 															<ion-icon name="create-outline"></ion-icon>
 															Editar
 														</a>
 
-														<a class="dropdown-item d-flex align-items-center gap-2 cursor-pointer"
-														data-bs-toggle="modal"
-														[attr.data-bs-target]="'#modalDelete-' + item?.id">
+														<a class="dropdown-item d-flex align-items-center gap-2 cursor-pointer" data-bs-toggle="modal" [attr.data-bs-target]="'#modalDelete-' + item?.id">
 															<ion-icon [name]="item?.status ? 'close-circle-outline' : 'checkmark-circle-outline'"></ion-icon>
 															{{ item?.status ? 'Desactivar' : 'Activar' }}
 														</a>
-
 													</div>
 												</div>
 											</td>
@@ -371,12 +333,10 @@
 										</tr>
 									</ng-container>
 								</tbody>
-
 							</table>
-
 						</div>
 
-						<div class="d-flex justify-content-between " *ngIf="attributes.length >= 1">
+						<div class="d-flex justify-content-between" *ngIf="attributes.length >= 1">
 							<div class="d-flex align-items-center gap-2 text-gray-600 fs-8 text-uppercase ls-1px">
 								Ver
 								<select class="form-select form-select-sm w-auto" name="limit" [(ngModel)]="limit" (change)="setLimit()">
@@ -387,7 +347,7 @@
 								Por pagina
 							</div>
 							<div class="d-flex align-items-center gap-3">
-								<app-pagination [currentPage]="currentPage" [totalPages]="totalPages" (pageChanged)="onPageChange($event)"> </app-pagination>
+								<app-pagination [currentPage]="currentPage" [totalPages]="totalPages" (pageChanged)="onPageChange($event)"></app-pagination>
 							</div>
 						</div>
 					</div>
@@ -397,7 +357,6 @@
 	</div>
 </div>
 
-
 <app-modal-delete
 	[id]="'modalMultipleActive'"
 	[title]="'Activación Multiple'"
@@ -405,8 +364,7 @@
 	[textButton]="'Activar'"
 	(actionConfirmed)="onUpdateStatusMultiple(true)"
 	[loadBtnDelete]="loadBtnMultipleStatus"
->
-</app-modal-delete>
+></app-modal-delete>
 
 <app-modal-delete
 	[id]="'modalMultipleDisabled'"
@@ -415,5 +373,4 @@
 	[textButton]="'Desactivar'"
 	(actionConfirmed)="onUpdateStatusMultiple(false)"
 	[loadBtnDelete]="loadBtnMultipleStatus"
->
-</app-modal-delete>
+></app-modal-delete>

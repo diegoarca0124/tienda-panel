@@ -8,17 +8,17 @@ export interface CategoryInterface {
 	prefix: string;
 	safeIcon?: any;
 
-	isDimensions?: boolean,
-	isCharacteristics?: boolean,
-	isConditiom?: boolean,
-	isWarranty?: boolean,
-	isCountryOfOrigin?: boolean,
-	isMaterial?: boolean,
-	isTemperature?: boolean,
-	totalProducts?: number,
-	latestProducts?: Array<any>,
-	moreProducts?: number,
-	subcategories?: any,
+	isDimensions?: boolean;
+	isCharacteristics?: boolean;
+	isConditiom?: boolean;
+	isWarranty?: boolean;
+	isCountryOfOrigin?: boolean;
+	isMaterial?: boolean;
+	isTemperature?: boolean;
+	totalProducts?: number;
+	latestProducts?: Array<any>;
+	moreProducts?: number;
+	subcategories?: any;
 
 	status?: boolean;
 	createdAt?: Date;

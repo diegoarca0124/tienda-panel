@@ -1,7 +1,4 @@
-<nav
-	class="pagination-container"
-	aria-label="Navegación de páginas"
->
+<nav class="pagination-container" aria-label="Navegación de páginas">
 	<ul class="pagination-list">
 		<!-- Primera página -->
 		<li class="pagination-item navigation-edge">
@@ -13,27 +10,9 @@
 				aria-label="Ir a la primera página"
 				title="Primera página"
 			>
-				<svg
-					viewBox="0 0 24 24"
-					aria-hidden="true"
-					focusable="false"
-				>
-					<path
-						d="M11 6L5 12L11 18"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="2"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-					/>
-					<path
-						d="M18 6L12 12L18 18"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="2"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-					/>
+				<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+					<path d="M11 6L5 12L11 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+					<path d="M18 6L12 12L18 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
 				</svg>
 
 				<span class="edge-label">Primera</span>
@@ -50,27 +29,14 @@
 				aria-label="Ir a la página anterior"
 				title="Página anterior"
 			>
-				<svg
-					viewBox="0 0 24 24"
-					aria-hidden="true"
-					focusable="false"
-				>
-					<path
-						d="M15 6L9 12L15 18"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="2"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-					/>
+				<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+					<path d="M15 6L9 12L15 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
 				</svg>
 			</button>
 		</li>
 
 		<!-- Números -->
-		<ng-container
-			*ngFor="let page of pages; trackBy: trackByPage"
-		>
+		<ng-container *ngFor="let page of pages; trackBy: trackByPage">
 			<li class="pagination-item">
 				<button
 					*ngIf="page !== '...'; else ellipsis"
@@ -78,21 +44,14 @@
 					class="pagination-control page-number"
 					[class.page-number-active]="page === currentPage"
 					(click)="changePageIfNumber(page)"
-					[attr.aria-current]="
-						page === currentPage ? 'page' : null
-					"
+					[attr.aria-current]="page === currentPage ? 'page' : null"
 					[attr.aria-label]="'Ir a la página ' + page"
 				>
 					{{ page }}
 				</button>
 
 				<ng-template #ellipsis>
-					<span
-						class="pagination-ellipsis"
-						aria-hidden="true"
-					>
-						&hellip;
-					</span>
+					<span class="pagination-ellipsis" aria-hidden="true">&hellip;</span>
 				</ng-template>
 			</li>
 		</ng-container>
@@ -107,19 +66,8 @@
 				aria-label="Ir a la página siguiente"
 				title="Página siguiente"
 			>
-				<svg
-					viewBox="0 0 24 24"
-					aria-hidden="true"
-					focusable="false"
-				>
-					<path
-						d="M9 6L15 12L9 18"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="2"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-					/>
+				<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+					<path d="M9 6L15 12L9 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
 				</svg>
 			</button>
 		</li>
@@ -136,27 +84,9 @@
 			>
 				<span class="edge-label">Última</span>
 
-				<svg
-					viewBox="0 0 24 24"
-					aria-hidden="true"
-					focusable="false"
-				>
-					<path
-						d="M6 6L12 12L6 18"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="2"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-					/>
-					<path
-						d="M13 6L19 12L13 18"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="2"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-					/>
+				<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+					<path d="M6 6L12 12L6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+					<path d="M13 6L19 12L13 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
 				</svg>
 			</button>
 		</li>

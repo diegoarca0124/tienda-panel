@@ -1,41 +1,35 @@
-import { Pipe, PipeTransform } from "@angular/core";
+import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
-    name: 'currencySymbol',
-    standalone: true
+	name: 'currencySymbol',
+	standalone: true,
 })
 export class CurrencySymbolPipe implements PipeTransform {
+	transform(country: string): string {
+		switch (country) {
+			case 'PE':
+				return 'S/';
 
-    transform(country: string): string {
+			case 'US':
+				return '$';
 
-        switch (country) {
+			case 'MX':
+				return '$';
 
-            case 'PE':
-                return 'S/';
+			case 'CL':
+				return '$';
 
-            case 'US':
-                return '$';
+			case 'CO':
+				return '$';
 
-            case 'MX':
-                return '$';
+			case 'AR':
+				return '$';
 
-            case 'CL':
-                return '$';
+			case 'ES':
+				return '€';
 
-            case 'CO':
-                return '$';
-
-            case 'AR':
-                return '$';
-
-            case 'ES':
-                return '€';
-
-            default:
-                return '$';
-
-        }
-
-    }
-
+			default:
+				return '$';
+		}
+	}
 }

@@ -1,24 +1,23 @@
-.icon-round{
-    background: #d6dee9;
-    border-radius: 50%;
-    cursor: pointer;
+.icon-round {
+	background: #d6dee9;
+	border-radius: 50%;
+	cursor: pointer;
 }
 
-.btn-icon-xs{
-    width:10px !important;
-    height:10px !important;
-    min-width:10px !important;
-    min-height:10px !important;
-    padding:0 !important;
+.btn-icon-xs {
+	width: 10px !important;
+	height: 10px !important;
+	min-width: 10px !important;
+	min-height: 10px !important;
+	padding: 0 !important;
 }
 
-input::placeholder{
-    text-align: center;
+input::placeholder {
+	text-align: center;
 }
 
-
-input{
-    caret-color: transparent !important;
-    -webkit-appearance: none;
-    margin: 0;
+input {
+	caret-color: transparent !important;
+	-webkit-appearance: none;
+	margin: 0;
 }

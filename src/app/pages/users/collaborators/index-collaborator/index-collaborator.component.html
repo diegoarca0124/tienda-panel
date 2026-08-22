@@ -5,71 +5,63 @@
 		<div class="app-main flex-column flex-row-fluid">
 			<div class="d-flex flex-column flex-column-fluid">
 				<div id="kt_app_toolbar" class="app-toolbar page-header py-5 py-lg-6">
-					<div
-						id="kt_app_toolbar_container"
-						class="app-container container-fluid page-header-layout"
-					>
+					<div id="kt_app_toolbar_container" class="app-container container-fluid page-header-layout">
 						<div class="page-header-content">
 							<nav aria-label="Migas de pan">
 								<ol class="page-header-breadcrumb">
-									<li
-										class="page-header-breadcrumb-item page-header-breadcrumb-active"
-										aria-current="page"
-									>
-										Colaboradores
-									</li>
+									<li class="page-header-breadcrumb-item page-header-breadcrumb-active" aria-current="page">Colaboradores</li>
 								</ol>
 							</nav>
 
 							<h1 class="page-header-title">Colaboradores</h1>
 						</div>
 
-						<a
-							[routerLink]="['/users/collaborators/create']"
-							class="btn btn-sm btn-primary page-header-action"
-							aria-label="Crear nuevo colaborador"
-							title="Nuevo colaborador"
-						>
-							<ion-icon
-								name="person-add-outline"
-								aria-hidden="true"
-							></ion-icon>
+						<a [routerLink]="['/users/collaborators/create']" class="btn btn-sm btn-primary page-header-action" aria-label="Crear nuevo colaborador" title="Nuevo colaborador">
+							<ion-icon name="person-add-outline" aria-hidden="true"></ion-icon>
 
-							<span class="page-header-action-text">
-								Nuevo colaborador
-							</span>
+							<span class="page-header-action-text">Nuevo colaborador</span>
 						</a>
 					</div>
 				</div>
-				
+
 				<div class="app-content flex-column-fluid mt-5">
 					<div class="app-container container-fluid">
 						<div class="list-toolbar">
 							<!-- Buscador -->
 							<div class="list-toolbar-search">
 								<div class="list-toolbar-search-field">
-									<input type="search" class="form-control form-control-sm" placeholder="Buscar colaborador"
-										name="filter" [(ngModel)]="filter" (keyup.enter)="applyFilters()" [disabled]="isCollaboratorsLoading"
-										/>
-									<i class="bi bi-search list-toolbar-input-icon" aria-hidden="true" ></i>
+									<input
+										type="search"
+										class="form-control form-control-sm"
+										placeholder="Buscar colaborador"
+										name="filter"
+										[(ngModel)]="filter"
+										(keyup.enter)="applyFilters()"
+										[disabled]="isCollaboratorsLoading"
+									/>
+									<i class="bi bi-search list-toolbar-input-icon" aria-hidden="true"></i>
 								</div>
 								<!-- Restablecer -->
-								<button type="button"
+								<button
+									type="button"
 									class="btn btn-sm btn-icon btn-light-primary"
 									(click)="resetFilters()"
 									[disabled]="isCollaboratorsLoading"
 									aria-label="Restablecer filtros"
-									title="Restablecer filtros">
+									title="Restablecer filtros"
+								>
 									<i *ngIf="!isCollaboratorsLoading" class="bi bi-arrow-clockwise"></i>
 									<span *ngIf="isCollaboratorsLoading" class="spinner-border spinner-border-sm" aria-hidden="true"></span>
 								</button>
 								<!-- Buscar -->
-								<button type="button"
+								<button
+									type="button"
 									class="btn btn-sm btn-icon btn-primary"
 									(click)="applyFilters()"
 									[disabled]="isCollaboratorsLoading"
 									aria-label="Buscar colaborador"
-									title="Buscar colaborador">
+									title="Buscar colaborador"
+								>
 									<i *ngIf="!isCollaboratorsLoading" class="bi bi-search"></i>
 									<span *ngIf="isCollaboratorsLoading" class="spinner-border spinner-border-sm" aria-hidden="true"></span>
 								</button>
@@ -77,32 +69,33 @@
 							<!-- Acciones del lado derecho -->
 							<div class="list-toolbar-actions">
 								<div class="dropdown action-dropdown">
-									<button id="collaboratorOptionsButton"
+									<button
+										id="collaboratorOptionsButton"
 										type="button"
 										class="btn btn-sm btn-dark"
 										data-bs-toggle="dropdown"
 										data-bs-offset="0,10"
 										aria-expanded="false"
 										aria-label="Opciones"
-										title="Opciones">
+										title="Opciones"
+									>
 										<ion-icon name="settings-outline" aria-hidden="true"></ion-icon>
 										<span class="app-btn-label">Opciones</span>
 										<ion-icon name="chevron-down-outline" class="app-btn-chevron" aria-hidden="true"></ion-icon>
 									</button>
-									<ul class="dropdown-menu dropdown-menu-end action-dropdown-menu"
-										aria-labelledby="collaboratorOptionsButton" >
+									<ul class="dropdown-menu dropdown-menu-end action-dropdown-menu" aria-labelledby="collaboratorOptionsButton">
 										<li>
-											<a class="dropdown-item action-dropdown-item action-dropdown-item-compact" [routerLink]="['/users/collaborators/export']" >
+											<a class="dropdown-item action-dropdown-item action-dropdown-item-compact" [routerLink]="['/users/collaborators/export']">
 												<span class="action-dropdown-item-icon">
-													<ion-icon class="fs-4" name="document-outline" aria-hidden="true" ></ion-icon>
+													<ion-icon class="fs-4" name="document-outline" aria-hidden="true"></ion-icon>
 												</span>
 												<span class="action-dropdown-item-title">Exportar</span>
 											</a>
 										</li>
 										<li>
-											<a class="dropdown-item action-dropdown-item action-dropdown-item-compact" [routerLink]="['/users/collaborators/import']" >
+											<a class="dropdown-item action-dropdown-item action-dropdown-item-compact" [routerLink]="['/users/collaborators/import']">
 												<span class="action-dropdown-item-icon">
-													<ion-icon class="fs-4" name="folder-open-outline" aria-hidden="true" ></ion-icon>
+													<ion-icon class="fs-4" name="folder-open-outline" aria-hidden="true"></ion-icon>
 												</span>
 												<span class="action-dropdown-item-title">Importar</span>
 											</a>
@@ -115,20 +108,32 @@
 							<!-- Estado -->
 							<div class="list-filter-item">
 								<label class="list-filter-label" for="collaboratorStatus">Estado</label>
-								<ng-select id="collaboratorStatus" [items]="statusFilters" bindLabel="name" bindValue="value"
-									name="selectedStatus" [(ngModel)]="selectedStatus" placeholder="Seleccionar estado" [clearable]="false"
-									[closeOnSelect]="true" [searchable]="false" [disabled]="isCollaboratorsLoading" appendTo="body"
-									dropdownPanelClass="app-select-panel" class="app-select app-select-sm" >
+								<ng-select
+									id="collaboratorStatus"
+									[items]="statusFilters"
+									bindLabel="name"
+									bindValue="value"
+									name="selectedStatus"
+									[(ngModel)]="selectedStatus"
+									placeholder="Seleccionar estado"
+									[clearable]="false"
+									[closeOnSelect]="true"
+									[searchable]="false"
+									[disabled]="isCollaboratorsLoading"
+									appendTo="body"
+									dropdownPanelClass="app-select-panel"
+									class="app-select app-select-sm"
+								>
 									<ng-template ng-option-tmp let-item="item">
 										<div class="app-select-option">
-											<span class="app-select-dot" [ngClass]="'bg-' + item.color" ></span>
+											<span class="app-select-dot" [ngClass]="'bg-' + item.color"></span>
 											<span class="app-select-option-text">{{ item.name }}</span>
-											<ion-icon name="checkmark-outline" class="app-select-check" aria-hidden="true" ></ion-icon>
+											<ion-icon name="checkmark-outline" class="app-select-check" aria-hidden="true"></ion-icon>
 										</div>
 									</ng-template>
 									<ng-template ng-label-tmp let-item="item">
 										<div class="app-select-value">
-											<span class="app-select-dot" [ngClass]="'bg-' + item.color" ></span>
+											<span class="app-select-dot" [ngClass]="'bg-' + item.color"></span>
 											<span class="app-select-value-text">{{ item.name }}</span>
 										</div>
 									</ng-template>
@@ -137,54 +142,79 @@
 							<!-- Orden -->
 							<div class="list-filter-item list-filter-sort">
 								<label class="list-filter-label" for="collaboratorSort">Orden</label>
-								<ng-select id="collaboratorSort" [items]="sortFilters" bindLabel="name" bindValue="value"
-									name="selectedSort" [(ngModel)]="selectedSort" placeholder="Seleccionar orden" [clearable]="false"
-									[closeOnSelect]="true" [searchable]="false" [disabled]="isCollaboratorsLoading" appendTo="body"
-									dropdownPanelClass="app-select-panel" class="app-select app-select-sm" >
+								<ng-select
+									id="collaboratorSort"
+									[items]="sortFilters"
+									bindLabel="name"
+									bindValue="value"
+									name="selectedSort"
+									[(ngModel)]="selectedSort"
+									placeholder="Seleccionar orden"
+									[clearable]="false"
+									[closeOnSelect]="true"
+									[searchable]="false"
+									[disabled]="isCollaboratorsLoading"
+									appendTo="body"
+									dropdownPanelClass="app-select-panel"
+									class="app-select app-select-sm"
+								>
 									<ng-template ng-option-tmp let-item="item">
 										<div class="app-select-option">
-											<ion-icon [name]="item.icon" class="app-select-option-icon" aria-hidden="true" ></ion-icon>
+											<ion-icon [name]="item.icon" class="app-select-option-icon" aria-hidden="true"></ion-icon>
 											<span class="app-select-option-text">{{ item.name }}</span>
-											<ion-icon name="checkmark-outline" class="app-select-check" aria-hidden="true" ></ion-icon>
+											<ion-icon name="checkmark-outline" class="app-select-check" aria-hidden="true"></ion-icon>
 										</div>
 									</ng-template>
 									<ng-template ng-label-tmp let-item="item">
 										<div class="app-select-value">
-											<ion-icon [name]="item.icon" class="app-select-value-icon" aria-hidden="true" ></ion-icon>
+											<ion-icon [name]="item.icon" class="app-select-value-icon" aria-hidden="true"></ion-icon>
 											<span class="app-select-value-text">{{ item.name }}</span>
 										</div>
 									</ng-template>
 								</ng-select>
 							</div>
 						</div>
-						<div class="table-wrapper  mb-7">
+						<div class="table-wrapper mb-7">
 							<table class="table custom-table align-middle mb-0">
 								<thead>
 									<tr>
-										<th class="fixed-xs text-center p-0" style="position: unset !important;">
+										<th class="fixed-xs text-center p-0" style="position: unset !important">
 											<div class="dropdown">
-												<button class="btn btn-icon btn-dark h-25px w-25px" type="button" placement="top"
-													tooltipClass="tooltip-dark" container="body"
-													[disabled]="!hasSelectedCollaborators || isCollaboratorsLoading" id="dropdownTable"
-													data-bs-toggle="dropdown" aria-expanded="false">
+												<button
+													class="btn btn-icon btn-dark h-25px w-25px"
+													type="button"
+													placement="top"
+													tooltipClass="tooltip-dark"
+													container="body"
+													[disabled]="!hasSelectedCollaborators || isCollaboratorsLoading"
+													id="dropdownTable"
+													data-bs-toggle="dropdown"
+													aria-expanded="false"
+												>
 													<ion-icon name="settings-outline" class="fs-5"></ion-icon>
 												</button>
-												<div class="dropdown-menu dropdown-menu-end action-dropdown-menu action-dropdown-menu-compact"
-													aria-labelledby="dropdownTable">
-													<a class="dropdown-item action-dropdown-item action-dropdown-item-compact" [class.disabled]="selectedCollaboratorsIds.size === 0" [attr.data-bs-toggle]="selectedCollaboratorsIds.size > 0? 'modal': null"
-													[attr.data-bs-target]="selectedCollaboratorsIds.size > 0? '#modalMultipleActive': null"
-													style="text-transform: capitalize !important;">
+												<div class="dropdown-menu dropdown-menu-end action-dropdown-menu action-dropdown-menu-compact" aria-labelledby="dropdownTable">
+													<a
+														class="dropdown-item action-dropdown-item action-dropdown-item-compact"
+														[class.disabled]="selectedCollaboratorsIds.size === 0"
+														[attr.data-bs-toggle]="selectedCollaboratorsIds.size > 0 ? 'modal' : null"
+														[attr.data-bs-target]="selectedCollaboratorsIds.size > 0 ? '#modalMultipleActive' : null"
+														style="text-transform: capitalize !important"
+													>
 														<span class="action-dropdown-item-icon">
-															<ion-icon class="fs-4 text-primary" name="checkmark-circle-outline" aria-hidden="true"
-																></ion-icon>
+															<ion-icon class="fs-4 text-primary" name="checkmark-circle-outline" aria-hidden="true"></ion-icon>
 														</span>
 														<span class="action-dropdown-item-title text-primary">Activar</span>
 													</a>
-													<a class="dropdown-item action-dropdown-item action-dropdown-item-compact" [class.disabled]="selectedCollaboratorsIds.size === 0" [attr.data-bs-toggle]="selectedCollaboratorsIds.size > 0? 'modal': null"
-													[attr.data-bs-target]="selectedCollaboratorsIds.size > 0? '#modalMultipleDisabled': null"
-													style="text-transform: capitalize !important;">
+													<a
+														class="dropdown-item action-dropdown-item action-dropdown-item-compact"
+														[class.disabled]="selectedCollaboratorsIds.size === 0"
+														[attr.data-bs-toggle]="selectedCollaboratorsIds.size > 0 ? 'modal' : null"
+														[attr.data-bs-target]="selectedCollaboratorsIds.size > 0 ? '#modalMultipleDisabled' : null"
+														style="text-transform: capitalize !important"
+													>
 														<span class="action-dropdown-item-icon">
-															<ion-icon class="fs-4 text-danger" name="close-circle-outline" aria-hidden="true" ></ion-icon>
+															<ion-icon class="fs-4 text-danger" name="close-circle-outline" aria-hidden="true"></ion-icon>
 														</span>
 														<span class="action-dropdown-item-title text-danger">Desactivar</span>
 													</a>
@@ -195,12 +225,11 @@
 										<th class="fixed-md">Telefono</th>
 										<th class="fixed-md">Documento</th>
 										<th class="fixed-sm">Estado</th>
-										<th class="fixed-xs text-center text-center">
-										</th>
+										<th class="fixed-xs text-center text-center"></th>
 									</tr>
 								</thead>
 								<tbody>
-									@if(isCollaboratorsLoading){
+									@if (isCollaboratorsLoading) {
 										<tr *ngFor="let item of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]">
 											<td class="fixed-xs text-center p-0">
 												<div class="skeleton skeleton-check"></div>
@@ -236,120 +265,141 @@
 												<div class="skeleton skeleton-btn"></div>
 											</td>
 										</tr>
-									}@else if (collaboratorsLoadError) {
+									} @else if (collaboratorsLoadError) {
 										<tr>
 											<td colspan="6">
 												<app-not-found [error]="collaboratorsLoadError"></app-not-found>
 											</td>
 										</tr>
-									}@else if (collaborators.length >= 1) {
+									} @else if (collaborators.length >= 1) {
 										<tr *ngFor="let item of collaborators">
 											<td class="fixed-xs text-center p-0">
-												<label
-													class="form-check form-check-customs form-check-sm m-0 d-flex align-items-center justify-content-center h-100">
-												<input class="form-check-input cursor-pointer" type="checkbox"
-													[checked]="selectedCollaboratorsIds.has(item.id!)"
-													(change)="onCollaboratorSelectionChange(item.id!, $any($event.target).checked)" />
+												<label class="form-check form-check-customs form-check-sm m-0 d-flex align-items-center justify-content-center h-100">
+													<input
+														class="form-check-input cursor-pointer"
+														type="checkbox"
+														[checked]="selectedCollaboratorsIds.has(item.id!)"
+														(change)="onCollaboratorSelectionChange(item.id!, $any($event.target).checked)"
+													/>
 												</label>
 											</td>
 											<td class="flex-col fw-medium">
-												<div class="d-flex align-items-center gap-2" style="min-width:0;">
-													<div class="symbol me-3" style="flex-shrink:0;">
-														<span class="symbol-label fw-bold" style="height:30px; width:30px"
-															[ngClass]="getAvatarColor(item.names)">{{ item.names.charAt(0).toUpperCase() }}</span>
+												<div class="d-flex align-items-center gap-2" style="min-width: 0">
+													<div class="symbol me-3" style="flex-shrink: 0">
+														<span class="symbol-label fw-bold" style="height: 30px; width: 30px" [ngClass]="getAvatarColor(item.names)">
+															{{ item.names.charAt(0).toUpperCase() }}
+														</span>
 													</div>
-													<div class="d-flex flex-column" style="min-width:0;">
-														<span class="table-cell-title text-truncate-1">{{ item.fullnames ? item.fullnames : `${item.names}
-															${item.surname}` }}</span>
+													<div class="d-flex flex-column" style="min-width: 0">
+														<span class="table-cell-title text-truncate-1">
+															{{
+																item.fullnames
+																	? item.fullnames
+																	: `${item.names}
+															${item.surname}`
+															}}
+														</span>
 														<small class="table-cell-secondary text-truncate-1">{{ item.email }}</small>
 													</div>
 												</div>
 											</td>
 											<td class="fixed-md">
 												<div class="d-flex flex-column">
-												<div class="table-phone">
-													<span class="table-phone-prefix">{{ item.prefix }}</span>
-													<span class="table-cell-title text-truncate-1">{{ item.phone }}</span>
-												</div>
+													<div class="table-phone">
+														<span class="table-phone-prefix">{{ item.prefix }}</span>
+														<span class="table-cell-title text-truncate-1">{{ item.phone }}</span>
+													</div>
 												</div>
 											</td>
 											<td class="fixed-md">
 												<div class="d-flex flex-column">
-												<span class="table-cell-title text-truncate-1">{{item.number_document}}</span>
-												<span class="table-cell-secondary text-truncate-1">{{ item.type_document || 'Sin tipo de documento'
-													}}</span>
+													<span class="table-cell-title text-truncate-1">{{ item.number_document }}</span>
+													<span class="table-cell-secondary text-truncate-1">{{ item.type_document || 'Sin tipo de documento' }}</span>
 												</div>
 											</td>
 											<td class="fixed-sm">
-												<span class="badge rounded-pill text-gray-700 fw-800"
-													[ngClass]="{ 'bg-outline-danger': !item.status, 'bg-outline-success': item.status }">
-												<span class="d-inline-block rounded-circle me-1" style="width: 6px; height: 6px"
-													[ngClass]="{ 'bg-danger': !item.status, 'bg-success': item.status }"></span>
-												{{ item.status ? 'Activo' : 'Inactivo' }}
+												<span class="badge rounded-pill text-gray-700 fw-800" [ngClass]="{ 'bg-outline-danger': !item.status, 'bg-outline-success': item.status }">
+													<span
+														class="d-inline-block rounded-circle me-1"
+														style="width: 6px; height: 6px"
+														[ngClass]="{ 'bg-danger': !item.status, 'bg-success': item.status }"
+													></span>
+													{{ item.status ? 'Activo' : 'Inactivo' }}
 												</span>
 											</td>
 											<td class="fixed-xs text-center p-0">
 												<div class="dropdown">
-													<button type="button"
+													<button
+														type="button"
 														class="icon-btn btn-action dropdown-toggle dropdown-toggle-no-arrow d-flex align-items-center justify-content-center mx-auto"
-														data-bs-toggle="dropdown" data-bs-offset="0,7" aria-expanded="false"
-														aria-label="Opciones del colaborador" title="Opciones" >
+														data-bs-toggle="dropdown"
+														data-bs-offset="0,7"
+														aria-expanded="false"
+														aria-label="Opciones del colaborador"
+														title="Opciones"
+													>
 														<i class="bi bi-three-dots"></i>
 													</button>
-													<app-modal-delete [id]="'modalDelete-' + item.id" [title]=" item.status ? 'Desactivar colaborador' : 'Activar colaborador' " [description]=" item.status ? `El colaborador <b>${item.names} ${item.surname}</b> dejará de tener acceso y quedará deshabilitado temporalmente.`
+													<app-modal-delete
+														[id]="'modalDelete-' + item.id"
+														[title]="item.status ? 'Desactivar colaborador' : 'Activar colaborador'"
+														[description]="
+															item.status
+																? `El colaborador <b>${item.names} ${item.surname}</b> dejará de tener acceso y quedará deshabilitado temporalmente.`
 																: `El colaborador <b>${item.names} ${item.surname}</b> volverá a estar activo y podrá acceder nuevamente al sistema.`
 														"
 														[textButton]="item.status ? 'Desactivar' : 'Activar'"
 														(actionConfirmed)="onUpdateStatus(item.id!, item.status!)"
 														[loadBtnDelete]="isUpdatingMultipleStatuses"
-													>
-													</app-modal-delete>
-													<div class="dropdown-menu dropdown-menu-end action-dropdown-menu action-dropdown-menu-compact" >
-														<a class="dropdown-item action-dropdown-item action-dropdown-item-compact"
-															[routerLink]="['/users/collaborators/' + item.id + '/edit']" >
+													></app-modal-delete>
+													<div class="dropdown-menu dropdown-menu-end action-dropdown-menu action-dropdown-menu-compact">
+														<a class="dropdown-item action-dropdown-item action-dropdown-item-compact" [routerLink]="['/users/collaborators/' + item.id + '/edit']">
 															<span class="action-dropdown-item-icon">
-																<ion-icon class="fs-4" name="create-outline" aria-hidden="true" ></ion-icon>
+																<ion-icon class="fs-4" name="create-outline" aria-hidden="true"></ion-icon>
 															</span>
 															<span class="action-dropdown-item-title">Editar</span>
 														</a>
-														<a class="dropdown-item action-dropdown-item action-dropdown-item-compact cursor-pointer"
-															(click)="sendCollaboratorByWhatsApp(item)" >
+														<a class="dropdown-item action-dropdown-item action-dropdown-item-compact cursor-pointer" (click)="sendCollaboratorByWhatsApp(item)">
 															<span class="action-dropdown-item-icon">
-																<ion-icon class="fs-4" name="logo-whatsapp" aria-hidden="true" ></ion-icon>
+																<ion-icon class="fs-4" name="logo-whatsapp" aria-hidden="true"></ion-icon>
 															</span>
 															<span class="action-dropdown-item-title">Enviar a WhatsApp</span>
 														</a>
-														<a class="dropdown-item action-dropdown-item action-dropdown-item-compact cursor-pointer"
-															(click)="copyCollaboratorToClipboard(item)" >
+														<a class="dropdown-item action-dropdown-item action-dropdown-item-compact cursor-pointer" (click)="copyCollaboratorToClipboard(item)">
 															<span class="action-dropdown-item-icon">
-																<ion-icon class="fs-4" name="copy-outline" aria-hidden="true" ></ion-icon>
+																<ion-icon class="fs-4" name="copy-outline" aria-hidden="true"></ion-icon>
 															</span>
 															<span class="action-dropdown-item-title">Copiar información</span>
 														</a>
 														<div class="action-dropdown-divider"></div>
-														<a class="dropdown-item action-dropdown-item action-dropdown-item-compact"
-															[routerLink]="['/users/collaborators/' + item.id + '/logs']" >
+														<a class="dropdown-item action-dropdown-item action-dropdown-item-compact" [routerLink]="['/users/collaborators/' + item.id + '/logs']">
 															<span class="action-dropdown-item-icon">
-																<ion-icon class="fs-4" name="document-text-outline" aria-hidden="true" ></ion-icon>
+																<ion-icon class="fs-4" name="document-text-outline" aria-hidden="true"></ion-icon>
 															</span>
 															<span class="action-dropdown-item-title">Ver actividad</span>
 														</a>
-														<a class="dropdown-item action-dropdown-item action-dropdown-item-compact"
-															[routerLink]="['/users/collaborators/' + item.id + '/rols']" >
+														<a class="dropdown-item action-dropdown-item action-dropdown-item-compact" [routerLink]="['/users/collaborators/' + item.id + '/rols']">
 															<span class="action-dropdown-item-icon">
-																<ion-icon class="fs-4" name="shield-checkmark-outline" aria-hidden="true" ></ion-icon>
+																<ion-icon class="fs-4" name="shield-checkmark-outline" aria-hidden="true"></ion-icon>
 															</span>
 															<span class="action-dropdown-item-title">Permisos</span>
 														</a>
 														<div class="action-dropdown-divider"></div>
-														<a class="dropdown-item action-dropdown-item action-dropdown-item-compact cursor-pointer"
-															[class.action-dropdown-item-danger]="item.status" [class.text-primary]="!item.status"
-															data-bs-toggle="modal" [attr.data-bs-target]="'#modalDelete-' + item.id" >
+														<a
+															class="dropdown-item action-dropdown-item action-dropdown-item-compact cursor-pointer"
+															[class.action-dropdown-item-danger]="item.status"
+															[class.text-primary]="!item.status"
+															data-bs-toggle="modal"
+															[attr.data-bs-target]="'#modalDelete-' + item.id"
+														>
 															<span class="action-dropdown-item-icon">
-																<ion-icon class="fs-4" [class.action-dropdown-item-danger]="item.status"
+																<ion-icon
+																	class="fs-4"
+																	[class.action-dropdown-item-danger]="item.status"
 																	[class.text-primary]="!item.status"
-																	[name]=" item.status ? 'close-circle-outline' : 'checkmark-circle-outline' " aria-hidden="true"
-																	></ion-icon>
+																	[name]="item.status ? 'close-circle-outline' : 'checkmark-circle-outline'"
+																	aria-hidden="true"
+																></ion-icon>
 															</span>
 															<span class="action-dropdown-item-title">{{ item.status ? 'Desactivar' : 'Activar' }}</span>
 														</a>
@@ -357,11 +407,10 @@
 												</div>
 											</td>
 										</tr>
-									}@else {
+									} @else {
 										<tr>
 											<td colspan="6">
-												<app-not-found
-													[error]="{ message: 'No se encontraron registros.'}"></app-not-found>
+												<app-not-found [error]="{ message: 'No se encontraron registros.' }"></app-not-found>
 											</td>
 										</tr>
 									}
@@ -371,8 +420,14 @@
 						<div class="d-flex justify-content-between pb-10">
 							<label class="page-size-control">
 								<span>Mostrar</span>
-								<select class="form-select page-size-select" name="limit" [(ngModel)]="limit" (change)="onLimitChange()"
-									[disabled]="isCollaboratorsLoading" aria-label="Cantidad de registros por página" >
+								<select
+									class="form-select page-size-select"
+									name="limit"
+									[(ngModel)]="limit"
+									(change)="onLimitChange()"
+									[disabled]="isCollaboratorsLoading"
+									aria-label="Cantidad de registros por página"
+								>
 									<option [ngValue]="10">10</option>
 									<option [ngValue]="20">20</option>
 									<option [ngValue]="25">25</option>
@@ -380,9 +435,7 @@
 								<span>por página</span>
 							</label>
 							<div class="d-flex align-items-center gap-3">
-								<app-pagination [currentPage]="currentPage" [totalPages]="totalPages"
-									(pageChanged)="onPageChange($event)">
-								</app-pagination>
+								<app-pagination [currentPage]="currentPage" [totalPages]="totalPages" (pageChanged)="onPageChange($event)"></app-pagination>
 							</div>
 						</div>
 					</div>
@@ -391,13 +444,19 @@
 		</div>
 	</div>
 </div>
-<app-modal-delete [id]="'modalMultipleActive'" [title]="'Activación Multiple'"
+<app-modal-delete
+	[id]="'modalMultipleActive'"
+	[title]="'Activación Multiple'"
 	[description]="'El estado de los usuarios seleccionados será actualizado. Verifica tu selección antes de continuar, ya que este cambio se aplicará a todos.'"
-	[textButton]="'Activar'" (actionConfirmed)="onUpdateStatusMultiple(true)"
-	[loadBtnDelete]="isUpdatingMultipleStatuses" >
-</app-modal-delete>
-<app-modal-delete [id]="'modalMultipleDisabled'" [title]="'Desactivación Multiple'"
+	[textButton]="'Activar'"
+	(actionConfirmed)="onUpdateStatusMultiple(true)"
+	[loadBtnDelete]="isUpdatingMultipleStatuses"
+></app-modal-delete>
+<app-modal-delete
+	[id]="'modalMultipleDisabled'"
+	[title]="'Desactivación Multiple'"
 	[description]="'El estado de los usuarios seleccionados será actualizado. Verifica tu selección antes de continuar, ya que este cambio se aplicará a todos.'"
-	[textButton]="'Desactivar'" (actionConfirmed)="onUpdateStatusMultiple(false)"
-	[loadBtnDelete]="isUpdatingMultipleStatuses" >
-</app-modal-delete>
+	[textButton]="'Desactivar'"
+	(actionConfirmed)="onUpdateStatusMultiple(false)"
+	[loadBtnDelete]="isUpdatingMultipleStatuses"
+></app-modal-delete>

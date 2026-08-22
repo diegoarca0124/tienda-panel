@@ -5,42 +5,53 @@ import { AuthService } from './auth.service';
 import { Observable } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+	providedIn: 'root',
 })
 export class ProductService {
-
 	private apiUrl = environment.apiUrl;
-		private getHeaders(body?: any): HttpHeaders {
-			const token = this.authService.getToken() || '';
+	private getHeaders(body?: any): HttpHeaders {
+		const token = this.authService.getToken() || '';
 
-			if (body instanceof FormData) {
-				return new HttpHeaders({
-					Authorization: `Bearer ${token}`,
-				});
-			}
+		if (body instanceof FormData) {
 			return new HttpHeaders({
-				'Content-Type': 'application/json',
 				Authorization: `Bearer ${token}`,
 			});
 		}
+		return new HttpHeaders({
+			'Content-Type': 'application/json',
+			Authorization: `Bearer ${token}`,
+		});
+	}
 
 	constructor(
 		private http: HttpClient,
-			private authService: AuthService
-	) { }
+		private authService: AuthService
+	) {}
 
 	create_product(product: any): Observable<any> {
-		return this.http.post(`${this.apiUrl}/product/create_product`, product, { headers: this.getHeaders(product)});
+		return this.http.post(`${this.apiUrl}/product/create_product`, product, { headers: this.getHeaders(product) });
 	}
 
 	update_product(id: string, product: any): Observable<any> {
-		return this.http.put(`${this.apiUrl}/product/update_product/${id}`, product, { headers: this.getHeaders(product)});
+		return this.http.put(`${this.apiUrl}/product/update_product/${id}`, product, { headers: this.getHeaders(product) });
 	}
 
-  	get_products(filter: string, page: number, limit: number, status: string, visibility: string, categories: string,brands: string, countries: string, minPrice: number | null, maxPrice: number | null, quality: string): Observable<any> {
+	get_products(
+		filter: string,
+		page: number,
+		limit: number,
+		status: string,
+		visibility: string,
+		categories: string,
+		brands: string,
+		countries: string,
+		minPrice: number | null,
+		maxPrice: number | null,
+		quality: string
+	): Observable<any> {
 		return this.http.get(
 			`${this.apiUrl}/product/get_products?filter=${filter}&page=${page}&limit=${limit}&status=${status}&visibility=${visibility}&categories=${categories}&brands=${brands}&countries=${countries}&minPrice=${minPrice}&maxPrice=${maxPrice}&quality=${quality}`,
-			{ headers : this.getHeaders() }
+			{ headers: this.getHeaders() }
 		);
 	}
 
@@ -48,17 +59,13 @@ export class ProductService {
 		return this.http.put(`${this.apiUrl}/product/update_feature_attribute/${id}`, data, { headers: this.getHeaders() });
 	}
 
-	get_groups_for_create_product(productId: string,categoryId: string,filter: string): Observable<any> {
-		return this.http.get(
-			`${this.apiUrl}/product/get_groups_for_create_product/${categoryId}?filter=${filter}&productId=${productId}`,
-			{ headers : this.getHeaders() }
-		);
+	get_groups_for_create_product(productId: string, categoryId: string, filter: string): Observable<any> {
+		return this.http.get(`${this.apiUrl}/product/get_groups_for_create_product/${categoryId}?filter=${filter}&productId=${productId}`, { headers: this.getHeaders() });
 	}
 
 	import_product_for_group(id: string): Observable<any> {
 		return this.http.get(`${this.apiUrl}/product/import_product_for_group/${id}`, { headers: this.getHeaders() });
 	}
-
 
 	get_product(id: string): Observable<any> {
 		return this.http.get(`${this.apiUrl}/product/get_product/${id}`, { headers: this.getHeaders() });
@@ -67,7 +74,7 @@ export class ProductService {
 	update_product_description(productDescription: any): Observable<any> {
 		return this.http.post(`${this.apiUrl}/product/update_product_description`, productDescription, { headers: this.getHeaders() });
 	}
-	
+
 	create_product_description(productDescription: any): Observable<any> {
 		return this.http.post(`${this.apiUrl}/product/create_product_description`, productDescription, { headers: this.getHeaders() });
 	}
@@ -77,7 +84,7 @@ export class ProductService {
 	}
 
 	upload_images_product(product: any): Observable<any> {
-		return this.http.post(`${this.apiUrl}/product/upload_images_product`, product, { headers: this.getHeaders(product)});
+		return this.http.post(`${this.apiUrl}/product/upload_images_product`, product, { headers: this.getHeaders(product) });
 	}
 
 	set_cover_product(id: string, product: any): Observable<any> {
@@ -121,6 +128,6 @@ export class ProductService {
 	}
 
 	find_products_to_copy(id: string, name?: string): Observable<any> {
-		return this.http.get(`${this.apiUrl}/product/find_products_to_copy/${id}?name=${name}`, { headers : this.getHeaders() });
+		return this.http.get(`${this.apiUrl}/product/find_products_to_copy/${id}?name=${name}`, { headers: this.getHeaders() });
 	}
 }

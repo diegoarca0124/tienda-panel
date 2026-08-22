@@ -9,16 +9,12 @@
 
 			<h1 class="login-title">Iniciar sesión</h1>
 
-			<p class="login-description">
-				Ingresa tus credenciales para acceder al panel administrativo.
-			</p>
+			<p class="login-description">Ingresa tus credenciales para acceder al panel administrativo.</p>
 		</header>
 
 		<div class="login-form">
 			<div class="login-field">
-				<label for="loginEmail" class="login-label">
-					Correo electrónico
-				</label>
+				<label for="loginEmail" class="login-label">Correo electrónico</label>
 
 				<input
 					id="loginEmail"
@@ -31,25 +27,18 @@
 					[(ngModel)]="auth.email"
 					(keyup.enter)="login()"
 					[disabled]="loading"
-				>
+				/>
 
-				<div
-					*ngIf="errorsLogin?.email"
-					class="invalid-feedback d-block"
-				>
+				<div *ngIf="errorsLogin?.email" class="invalid-feedback d-block">
 					{{ errorsLogin.email[0] || ' ' }}
 				</div>
 			</div>
 
 			<div class="login-field">
 				<div class="d-flex align-items-center justify-content-between gap-3">
-					<label for="loginPassword" class="login-label">
-						Contraseña
-					</label>
+					<label for="loginPassword" class="login-label">Contraseña</label>
 
-					<a class="login-recovery">
-						¿Olvidaste tu contraseña?
-					</a>
+					<a class="login-recovery">¿Olvidaste tu contraseña?</a>
 				</div>
 
 				<input
@@ -63,27 +52,15 @@
 					[(ngModel)]="auth.password"
 					(keyup.enter)="login()"
 					[disabled]="loading"
-				>
+				/>
 
-				<div
-					*ngIf="errorsLogin?.password"
-					class="invalid-feedback d-block"
-				>
+				<div *ngIf="errorsLogin?.password" class="invalid-feedback d-block">
 					{{ errorsLogin.password[0] || ' ' }}
 				</div>
 			</div>
 
-			<button
-				type="button"
-				class="btn btn-primary btn-md w-100 mt-2"
-				[disabled]="loading"
-				(click)="!loading && login()"
-			>
-				<span
-					*ngIf="loading"
-					class="spinner-border spinner-border-sm"
-					aria-hidden="true"
-				></span>
+			<button type="button" class="btn btn-primary btn-md w-100 mt-2" [disabled]="loading" (click)="!loading && login()">
+				<span *ngIf="loading" class="spinner-border spinner-border-sm" aria-hidden="true"></span>
 
 				<span>
 					{{ loading ? 'Ingresando...' : 'Iniciar sesión' }}
@@ -91,8 +68,6 @@
 			</button>
 		</div>
 
-		<footer class="login-footer">
-			Acceso exclusivo para usuarios autorizados
-		</footer>
+		<footer class="login-footer">Acceso exclusivo para usuarios autorizados</footer>
 	</main>
 </div>

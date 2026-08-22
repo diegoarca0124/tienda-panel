@@ -1,58 +1,57 @@
 .upload-container {
-  border: 1px solid #ebebeb;
-  padding: 20px;
-  text-align: center;
-  justify-content: center;
-  cursor: pointer;
-  background-color: #f9fafc;
-  transition: all 0.25s ease;
-  margin: auto;
+	border: 1px solid #ebebeb;
+	padding: 20px;
+	text-align: center;
+	justify-content: center;
+	cursor: pointer;
+	background-color: #f9fafc;
+	transition: all 0.25s ease;
+	margin: auto;
 }
 
 .upload-container.dragover {
-  background-color: #eef7ff;
-  border-color: #3b82f6;
+	background-color: #eef7ff;
+	border-color: #3b82f6;
 }
 
 .upload-label {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
+	display: flex;
+	align-items: center;
+	gap: 1rem;
 }
 
 .preview {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 20px;
-  justify-content: center;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	margin-top: 20px;
+	justify-content: center;
 }
 
 .preview img {
-  width: 100px;
-  height: 100px;
-  object-fit: cover;
-  border-radius: 8px;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s ease;
+	width: 100px;
+	height: 100px;
+	object-fit: cover;
+	border-radius: 8px;
+	box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+	transition: transform 0.2s ease;
 }
 
 .preview img:hover {
-  transform: scale(1.05);
+	transform: scale(1.05);
 }
 
 .upload-container {
-  position: relative; /* 🔥 SIN ESTO NO SE VE EL SPINNER */
+	position: relative; /* 🔥 SIN ESTO NO SE VE EL SPINNER */
 }
 
-
 .loading-overlay {
-  position: absolute;
-  inset: 0;
-  background: #f9fafc;
-  border-radius: 12px;
-  z-index: 15;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+	position: absolute;
+	inset: 0;
+	background: #f9fafc;
+	border-radius: 12px;
+	z-index: 15;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }

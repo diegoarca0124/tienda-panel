@@ -1,17 +1,18 @@
-import { CollaboratorInterface } from "../interfaces/collaborator.interface";
-import { CollaboratorFieldErrors } from "../interfaces/validation.interface";
+import { CollaboratorInterface } from '../interfaces/collaborator.interface';
+import { CollaboratorFieldErrors } from '../interfaces/validation.interface';
 
-export const createEmptyCollaborator = (): CollaboratorInterface => ({
-	names: '',
-	surname: '',
-	type_document: undefined,
-	number_document: '',
-	role: undefined,
-	email: '',
-	password: '',
-	phone: '',
-	prefix: '',
-} satisfies CollaboratorInterface);
+export const createEmptyCollaborator = (): CollaboratorInterface =>
+	({
+		names: '',
+		surname: '',
+		type_document: undefined,
+		number_document: '',
+		role: undefined,
+		email: '',
+		password: '',
+		phone: '',
+		prefix: '',
+	}) satisfies CollaboratorInterface;
 
 export const createEmptyFieldErrors = (): CollaboratorFieldErrors => ({
 	names: false,

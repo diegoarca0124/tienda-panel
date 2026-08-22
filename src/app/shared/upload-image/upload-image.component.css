@@ -16,7 +16,7 @@
 	font-family: 'Lexend' !important;
 	color: #4b5675 !important;
 	font-weight: 500;
-	overflow: hidden; 
+	overflow: hidden;
 }
 
 .flex-content {
@@ -45,7 +45,7 @@
 }
 
 .btn-clear {
-	flex-shrink: 0; 
+	flex-shrink: 0;
 	background: transparent;
 	border: none;
 	color: #dc3545;
@@ -67,5 +67,3 @@
 	text-overflow: ellipsis; /* agrega "..." al final */
 	vertical-align: middle; /* opcional, para alinear bien */
 }
-
-

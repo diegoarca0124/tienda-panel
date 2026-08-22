@@ -26,10 +26,23 @@ declare const $: any;
 
 @Component({
 	selector: 'app-edit-brand',
-	imports: [TopbarComponent, SidebarComponent, CommonModule, FormsModule, RouterModule, NgSelectModule, UploadImageComponent, NotFoundComponent, AlertComponent, IMaskModule, ValidationPopoverComponent, TextareaAutoresizeDirective],
+	imports: [
+		TopbarComponent,
+		SidebarComponent,
+		CommonModule,
+		FormsModule,
+		RouterModule,
+		NgSelectModule,
+		UploadImageComponent,
+		NotFoundComponent,
+		AlertComponent,
+		IMaskModule,
+		ValidationPopoverComponent,
+		TextareaAutoresizeDirective,
+	],
 	templateUrl: './edit-brand.component.html',
 	styleUrl: './edit-brand.component.css',
-	schemas: [CUSTOM_ELEMENTS_SCHEMA]
+	schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class EditBrandComponent {
 	public brand: BrandInterface = {
@@ -57,7 +70,7 @@ export class EditBrandComponent {
 	};
 	public prefixMask = {
 		mask: /^[A-Z]{0,3}$/,
-		prepare: (str: string) => str.toUpperCase()
+		prepare: (str: string) => str.toUpperCase(),
 	};
 	public showErrors = showErrorsBrand;
 
@@ -92,7 +105,7 @@ export class EditBrandComponent {
 				finalize(() => (this.loading = false))
 			)
 			.subscribe({
-				next: (next: {data: BrandInterface, message: string}) => {
+				next: (next: { data: BrandInterface; message: string }) => {
 					this.brand = next.data;
 					this.logoUrlEdit = `${environment.s3_public_url}/brands/small/${this.brand.logoUrl}`;
 					this.bannerUrlEdit = `${environment.s3_public_url}/brands/small/${this.brand.bannerUrl}`;
@@ -114,7 +127,7 @@ export class EditBrandComponent {
 			bannerUrl: [],
 		};
 		console.log(this.brand);
-		
+
 		this.brandService
 			.update_brand(this.id, this.brand)
 			.pipe(
@@ -123,7 +136,7 @@ export class EditBrandComponent {
 				finalize(() => (this.loadBtn = false))
 			)
 			.subscribe({
-				next: (next: { data: BrandInterface, message: string}) => {
+				next: (next: { data: BrandInterface; message: string }) => {
 					this.brand = next.data;
 					this.logoUrlEdit = `${environment.s3_public_url}/brands/small/${next.data.logoUrl}`;
 					this.bannerUrlEdit = `${environment.s3_public_url}/brands/small/${next.data.bannerUrl}`;
@@ -138,7 +151,7 @@ export class EditBrandComponent {
 				},
 				error: (err: HttpErrorResponse) => {
 					console.log(err);
-					
+
 					this.errorsBrand = {
 						logoUrl: [],
 						bannerUrl: [],
@@ -153,10 +166,9 @@ export class EditBrandComponent {
 						};
 						this.msmErrorBrand = Object.values(this.errorsBrand).flat();
 						for (const key in this.showErrors) {
-							this.showErrors[key as keyof typeof this.showErrors] =
-							!!this.errorsBrand?.[key]?.length;
+							this.showErrors[key as keyof typeof this.showErrors] = !!this.errorsBrand?.[key]?.length;
 						}
-					}	
+					}
 				},
 			});
 	}

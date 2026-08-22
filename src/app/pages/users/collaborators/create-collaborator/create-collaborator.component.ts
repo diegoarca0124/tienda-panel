@@ -27,7 +27,7 @@ declare const toastr: any;
 	imports: [SidebarComponent, TopbarComponent, CommonModule, FormsModule, RouterModule, IMaskModule, NgSelectModule, ValidationPopoverComponent],
 	templateUrl: './create-collaborator.component.html',
 	styleUrl: './create-collaborator.component.css',
-	schemas: [CUSTOM_ELEMENTS_SCHEMA]
+	schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class CreateCollaboratorComponent {
 	public collaborator: CollaboratorInterface = createEmptyCollaborator();
@@ -36,7 +36,7 @@ export class CreateCollaboratorComponent {
 	public isCreateCollaboratorLoading: boolean = false;
 	public rolesOptions = rolesOptions;
 	public documentsOptions = documentsOptions;
-	public fieldErrors : CollaboratorFieldErrors  = createEmptyFieldErrors();
+	public fieldErrors: CollaboratorFieldErrors = createEmptyFieldErrors();
 
 	constructor(
 		private authService: AuthService,
@@ -81,10 +81,10 @@ export class CreateCollaboratorComponent {
 				error: (err: HttpErrorResponse) => {
 					const error = err?.error ?? {};
 					toastr.error(error.message || '¡Error desconocido!');
-					
+
 					if (error.validation) {
 						this.validationCollaboratorError = error.validation;
-						this.fieldErrors = buildShowErrors(this.fieldErrors,this.validationCollaboratorError);
+						this.fieldErrors = buildShowErrors(this.fieldErrors, this.validationCollaboratorError);
 					}
 				},
 			});

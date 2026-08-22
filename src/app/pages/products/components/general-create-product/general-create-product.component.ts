@@ -18,91 +18,79 @@ import { countries } from '@app/common/constants/countries.constant';
 import Quill from 'quill';
 import { CategoryInterface } from '@app/pages/categories/interfaces/category.interface';
 import { ValidationPopoverComponent } from '@app/shared/validation-popover/validation-popover.component';
-import { ɵɵDir } from "@angular/cdk/scrolling";
+import { ɵɵDir } from '@angular/cdk/scrolling';
 import { catchError, finalize, tap } from 'rxjs';
 import { CharacteristicInterface } from '../../interfaces/characteristic.interface';
 import { createEmptyCharacteristic } from '../../utils/empties.util';
 import { TextareaAutoresizeDirective } from '@app/common/directives/textarea-autoresize.directive';
 
-
 @Component({
-  selector: 'app-general-create-product',
-  imports: [
-    CommonModule,
-    NgSelectModule,
-    FormsModule,
-    TagifyInputComponent,
-    NgbTooltipModule,
-    NgxCurrencyDirective,
-    ValidationPopoverComponent,
-    TextareaAutoresizeDirective
-],
-  templateUrl: './general-create-product.component.html',
-  styleUrl: './general-create-product.component.css',
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+	selector: 'app-general-create-product',
+	imports: [CommonModule, NgSelectModule, FormsModule, TagifyInputComponent, NgbTooltipModule, NgxCurrencyDirective, ValidationPopoverComponent, TextareaAutoresizeDirective],
+	templateUrl: './general-create-product.component.html',
+	styleUrl: './general-create-product.component.css',
+	schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class GeneralCreateProductComponent {
-    @Input({ required: true }) product!: ProductInterface;
-    @Input({ required: true}) physical!: PhysicalProductInterface;
-    @Input({ required: true}) errorsProduct! : any;
-    @Input({ required: false}) loadProduct : boolean = true;
-    @Input() categorySelected : CategoryInterface | undefined;
-    @Input() whiteListTags : any[] = [];
-    @Input() showErrors: any = {};
-    @Input() id : string = '';
-    public labelHelper = productFormHelp;
-    public units_ = unitsOfMeasure;
-    public materials_ = materials;
-    public conditions_ = conditions;
-    public currencyOptions = currencyOptionsConstant;
-    public warranties_ = warranties;
-    public countries = countries;
-    private quill!: Quill;
-    @ViewChild('editor') editorRef!: ElementRef;
-    public characteristics: CharacteristicInterface[] = [createEmptyCharacteristic()];
+	@Input({ required: true }) product!: ProductInterface;
+	@Input({ required: true }) physical!: PhysicalProductInterface;
+	@Input({ required: true }) errorsProduct!: any;
+	@Input({ required: false }) loadProduct: boolean = true;
+	@Input() categorySelected: CategoryInterface | undefined;
+	@Input() whiteListTags: any[] = [];
+	@Input() showErrors: any = {};
+	@Input() id: string = '';
+	public labelHelper = productFormHelp;
+	public units_ = unitsOfMeasure;
+	public materials_ = materials;
+	public conditions_ = conditions;
+	public currencyOptions = currencyOptionsConstant;
+	public warranties_ = warranties;
+	public countries = countries;
+	private quill!: Quill;
+	@ViewChild('editor') editorRef!: ElementRef;
+	public characteristics: CharacteristicInterface[] = [createEmptyCharacteristic()];
 
-    constructor(){
-    }
+	constructor() {}
 
+	ngOnChanges(changes: SimpleChanges): void {
+		if (changes['product']) {
+			this.setEditorContent();
+		}
+	}
 
-    ngOnChanges(changes: SimpleChanges): void {
-        if (changes['product']) {
-            this.setEditorContent();
-        }
-    }
+	ngAfterViewInit(): void {
+		this.initEditor(this.editorRef);
+	}
 
-    ngAfterViewInit(): void {
-        this.initEditor(this.editorRef);
-    }
+	private initEditor(editor: ElementRef): void {
+		this.quill = new Quill(editor.nativeElement, {
+			theme: 'snow',
+		});
 
-    private initEditor(editor: ElementRef): void {
-        this.quill = new Quill(editor.nativeElement, {
-            theme: 'snow'
-        });
+		this.setEditorContent();
 
-        this.setEditorContent();
+		this.quill.on('text-change', () => {
+			this.product.description = this.quill.root.innerHTML;
+		});
+	}
 
-        this.quill.on('text-change', () => {
-            this.product.description = this.quill.root.innerHTML;
-        });
-    }
+	private setEditorContent(): void {
+		if (!this.quill || !this.product) {
+			return;
+		}
 
-    private setEditorContent(): void {
-        if (!this.quill || !this.product) {
-            return;
-        }
+		const html = this.product.description ?? '';
 
-        const html = this.product.description ?? '';
+		if (this.quill.root.innerHTML !== html) {
+			const selection = this.quill.getSelection();
+			this.quill.clipboard.dangerouslyPasteHTML(html);
 
-        if (this.quill.root.innerHTML !== html) {
-            const selection = this.quill.getSelection();
-            this.quill.clipboard.dangerouslyPasteHTML(html);
+			if (selection) {
+				this.quill.setSelection(selection);
+			}
+		}
+	}
 
-            if (selection) {
-                this.quill.setSelection(selection);
-            }
-        }
-    }
-
-    onTagsChange = (tags: string[]) => this.product.tags = tags;
+	onTagsChange = (tags: string[]) => (this.product.tags = tags);
 }

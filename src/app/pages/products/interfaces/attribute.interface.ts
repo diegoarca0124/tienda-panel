@@ -1,5 +1,5 @@
 export interface AttributeInterface {
-  id: string;
-  name: string;
-  status: boolean;
+	id: string;
+	name: string;
+	status: boolean;
 }

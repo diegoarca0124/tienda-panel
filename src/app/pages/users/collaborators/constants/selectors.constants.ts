@@ -1,63 +1,63 @@
-import { prefixNumbers } from "@app/common/constants/prefixNumbers.constant";
+import { prefixNumbers } from '@app/common/constants/prefixNumbers.constant';
 
 export const sortOptions = [
-  {
-    name: "Predeterminado",
-    value: "Predeterminado",
-    icon: "swap-vertical-outline",
-  },
+	{
+		name: 'Predeterminado',
+		value: 'Predeterminado',
+		icon: 'swap-vertical-outline',
+	},
 
-  {
-    name: "Nombres ASC",
-    value: "names:asc",
-    icon: "arrow-up-outline",
-  },
-  {
-    name: "Nombres DES",
-    value: "names:desc",
-    icon: "arrow-down-outline",
-  },
+	{
+		name: 'Nombres ASC',
+		value: 'names:asc',
+		icon: 'arrow-up-outline',
+	},
+	{
+		name: 'Nombres DES',
+		value: 'names:desc',
+		icon: 'arrow-down-outline',
+	},
 
-  {
-    name: "Email ASC",
-    value: "email:asc",
-    icon: "arrow-up-outline",
-  },
-  {
-    name: "Email DES",
-    value: "email:desc",
-    icon: "arrow-down-outline",
-  },
+	{
+		name: 'Email ASC',
+		value: 'email:asc',
+		icon: 'arrow-up-outline',
+	},
+	{
+		name: 'Email DES',
+		value: 'email:desc',
+		icon: 'arrow-down-outline',
+	},
 
-  {
-    name: "Documento ID ASC",
-    value: "number_document:asc",
-    icon: "arrow-up-outline",
-  },
-  {
-    name: "Documento ID DES",
-    value: "number_document:desc",
-    icon: "arrow-down-outline",
-  },
+	{
+		name: 'Documento ID ASC',
+		value: 'number_document:asc',
+		icon: 'arrow-up-outline',
+	},
+	{
+		name: 'Documento ID DES',
+		value: 'number_document:desc',
+		icon: 'arrow-down-outline',
+	},
 ];
 
 export const statusOptions = [
-    { name: 'Todos', value: 'Todos', color: 'primary' },
-    { name: 'Activos', value: 'Activos', color: 'success' },
-    { name: 'Inactivos', value: 'Inactivos', color: 'danger' }
+	{ name: 'Todos', value: 'Todos', color: 'primary' },
+	{ name: 'Activos', value: 'Activos', color: 'success' },
+	{ name: 'Inactivos', value: 'Inactivos', color: 'danger' },
 ];
 
 export const rolesOptions = [
-    { name: 'Admin', value: 'Admin' },
-    { name: 'Editor', value: 'Editor' },
-    { name: 'DEFAULT', value: 'DEFAULT' }
+	{ name: 'Admin', value: 'Admin' },
+	{ name: 'Editor', value: 'Editor' },
+	{ name: 'DEFAULT', value: 'DEFAULT' },
 ];
 
 export const documentsOptions = [
-  { name: 'DNI', value: 'DNI' },
-  { name: 'CE - Carné de Extranjería', value: 'CE - Carné de Extranjería' },
-  { name: 'Pasaporte', value: 'Pasaporte' },
-]
+	{ name: 'DNI', value: 'DNI' },
+	{ name: 'CE - Carné de Extranjería', value: 'CE - Carné de Extranjería' },
+	{ name: 'Pasaporte', value: 'Pasaporte' },
+];
 
 export const fieldsExportOptions = [
 	{
@@ -161,7 +161,7 @@ export const fieldImportOptions = [
 		label: 'Tipo de documento',
 		description: 'Tipo de identificación del colaborador',
 		inputType: 'select',
-		inputValues: documentsOptions.map(prev=>({...prev, value: prev.name}))
+		inputValues: documentsOptions.map((prev) => ({ ...prev, value: prev.name })),
 	},
 	{
 		index: 4,
@@ -183,7 +183,7 @@ export const fieldImportOptions = [
 		label: 'Prefijo Telefónico',
 		description: 'Prefijo del país',
 		inputType: 'select',
-		inputValues: prefixNumbers
+		inputValues: prefixNumbers,
 	},
 	{
 		index: 7,
@@ -200,7 +200,7 @@ export const fieldImportOptions = [
 		inputType: 'select',
 		inputValues: rolesOptions,
 	},
-    {
+	{
 		index: 9,
 		key: 'status',
 		label: 'Estado',
@@ -208,7 +208,7 @@ export const fieldImportOptions = [
 		inputType: 'select',
 		inputValues: [
 			{ name: 'Activo', value: true },
-			{ name: 'Inactivo', value: false }
-		]
+			{ name: 'Inactivo', value: false },
+		],
 	},
 ];

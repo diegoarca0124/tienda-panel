@@ -1,18 +1,18 @@
 .validation-wrapper {
-    display: grid;
-    grid-template-rows: 0fr;
-    opacity: 0;
-    transition:
-        grid-template-rows .25s ease,
-        opacity .20s ease;
-    margin-top: 0;
+	display: grid;
+	grid-template-rows: 0fr;
+	opacity: 0;
+	transition:
+		grid-template-rows 0.25s ease,
+		opacity 0.2s ease;
+	margin-top: 0;
 }
 
 .validation-wrapper.open {
-    grid-template-rows: 1fr;
-    opacity: 1;
+	grid-template-rows: 1fr;
+	opacity: 1;
 }
 
 .validation-wrapper > * {
-    overflow: hidden;
+	overflow: hidden;
 }

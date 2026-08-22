@@ -20,7 +20,7 @@ import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { ValidateQPBrands } from '../utils/validate-pq-brands.util';
 import { FallbackImageDirective } from '@app/common/directives/fallback-image.directive';
 import { environment } from 'environments/environment.dev';
-import { PadCodePipe } from "../../../common/pipes/pad-code.pipe";
+import { PadCodePipe } from '../../../common/pipes/pad-code.pipe';
 import { countries } from '@app/common/constants/countries.constant';
 import { HttpErrorResponse } from '@angular/common/http';
 declare const toastr: any;
@@ -29,22 +29,22 @@ declare const $: any;
 @Component({
 	selector: 'app-index-brand',
 	imports: [
-    TopbarComponent,
-    SidebarComponent,
-    RouterModule,
-    CommonModule,
-    FormsModule,
-    ModalDeleteComponent,
-    PaginationComponent,
-    NotFoundComponent,
-    NgSelectModule,
-    NgbTooltipModule,
-    FallbackImageDirective,
-    PadCodePipe,
-],
+		TopbarComponent,
+		SidebarComponent,
+		RouterModule,
+		CommonModule,
+		FormsModule,
+		ModalDeleteComponent,
+		PaginationComponent,
+		NotFoundComponent,
+		NgSelectModule,
+		NgbTooltipModule,
+		FallbackImageDirective,
+		PadCodePipe,
+	],
 	templateUrl: './index-brand.component.html',
 	styleUrl: './index-brand.component.css',
-	schemas: [CUSTOM_ELEMENTS_SCHEMA]
+	schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class IndexBrandComponent {
 	public loadBtnDelete: WritableSignal<boolean> = signal(false);
@@ -69,11 +69,11 @@ export class IndexBrandComponent {
 	public statusTable = [];
 	public sortColumns = sortColumnsBrands;
 	public selectedIds = new Set<string>();
-	
+
 	public countries: any = '';
 
-	public readonly sortValues = sortColumnsBrands.map(item => item.value);
-	public readonly filterCountries = countries.map(item => item.code);
+	public readonly sortValues = sortColumnsBrands.map((item) => item.value);
+	public readonly filterCountries = countries.map((item) => item.code);
 
 	constructor(
 		private _router: Router,
@@ -89,7 +89,7 @@ export class IndexBrandComponent {
 	ngOnInit() {
 		this._route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params) => {
 			if (!ValidateQPBrands(this._route, params, this._router, this.sortValues, this.filterCountries)) return;
-			
+
 			this.loadQueryParams(params);
 			this.init_brands(this.filter, this.currentPage, this.status, this.countries, this.limit, this.sort);
 		});
@@ -109,10 +109,10 @@ export class IndexBrandComponent {
 		this.redirect();
 	}
 
-	getCountries(countries: any){
-		if(countries.length >= 1){
+	getCountries(countries: any) {
+		if (countries.length >= 1) {
 			this.countries = countries.join(',');
-		}else{
+		} else {
 			this.countries = 'Todos';
 		}
 	}
@@ -146,7 +146,7 @@ export class IndexBrandComponent {
 				finalize(() => (this.loading = false))
 			)
 			.subscribe({
-				next: (next: { brands: BrandInterface[]; meta: any}) => {
+				next: (next: { brands: BrandInterface[]; meta: any }) => {
 					this.brands = this.mapBrands(next.brands);
 					this.currentPage = next.meta.currentPage;
 					this.totalPages = next.meta.totalPages;
@@ -159,10 +159,10 @@ export class IndexBrandComponent {
 	}
 
 	private mapBrands(brands: BrandInterface[]): BrandInterface[] {
-		return brands.map(brand => ({
+		return brands.map((brand) => ({
 			...brand,
 			logoUrl: `${environment.s3_public_url}/brands/small/${brand.logoUrl}`,
-			productsPreview: (brand.productsPreview ?? []).map(product => ({
+			productsPreview: (brand.productsPreview ?? []).map((product) => ({
 				...product,
 				cover: `${environment.s3_public_url}/products/small/${product.cover}`,
 			})),
@@ -170,14 +170,13 @@ export class IndexBrandComponent {
 	}
 
 	redirect() {
-
 		const queryParams = {
 			filter: this.filter,
 			page: this.currentPage,
 			limit: this.limit,
 			status: this.status,
 			sort: this.sort,
-			countries: this.countries
+			countries: this.countries,
 		};
 
 		const current: any = this._route.snapshot.queryParams;
@@ -191,14 +190,7 @@ export class IndexBrandComponent {
 			(current.countries ?? 'Todos') === queryParams.countries;
 
 		if (same) {
-			this.init_brands(
-				this.filter,
-				this.currentPage,
-				this.status,
-				this.countries,
-				this.limit,
-				this.sort
-			);
+			this.init_brands(this.filter, this.currentPage, this.status, this.countries, this.limit, this.sort);
 			return;
 		}
 
@@ -217,13 +209,13 @@ export class IndexBrandComponent {
 				finalize(() => this.loadBtnDelete.set(false))
 			)
 			.subscribe({
-				next: (next: {data: BrandInterface, message: string}) => {
-					const brand = this.brands.find(c => c.id === next.data.id);
+				next: (next: { data: BrandInterface; message: string }) => {
+					const brand = this.brands.find((c) => c.id === next.data.id);
 					if (brand) {
 						brand.status = next.data.status;
 					}
 					toastr.success(next.message);
-					closeModal('modalDelete-'+id);
+					closeModal('modalDelete-' + id);
 				},
 				error: (error: HttpErrorResponse) => {
 					toastr.error(error.error.message);
@@ -241,7 +233,7 @@ export class IndexBrandComponent {
 		this.redirect(); // o init_collaborators()
 	}
 
-	resetFilters(){
+	resetFilters() {
 		this.filter = '';
 		this.status = 'Todos';
 		this.countries = 'Todos';
@@ -256,45 +248,44 @@ export class IndexBrandComponent {
 				limit: 10,
 				status: null,
 				sort: null,
-				countries: null
+				countries: null,
 			},
 			queryParamsHandling: 'merge',
 		});
 	}
 
-	onUpdateStatusMultiple(status: boolean){
+	onUpdateStatusMultiple(status: boolean) {
 		this.loadBtnMultipleStatus.set(true);
 		this.brandService
-		.update_status_brands({
-			ids: this.getSelectedIds(),
-			status
-		})
-		.pipe(
-			takeUntil(this.destroy$),
-			withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
-			finalize(() => this.loadBtnMultipleStatus.set(false))
-		)
-		.subscribe({
-			next: (next: {data: string[], message: string}) => {
-				console.log(next);
-				const updatedIds = new Set(next.data);
-				this.brands = this.brands.map(prev => {
-					if (updatedIds.has(prev.id!)) {
-						return {
-							...prev,
-							status
-						};
-					}
-					return prev;
-				});
-				toastr.success(next.message);
-				closeModal(status ? 'modalMultipleActive' : 'modalMultipleDisabled');
-				this.selectedIds.clear();
-			},
-			error: (error: HttpErrorResponse) => {
-				toastr.error(error.error.message);
-			},
-		});
+			.update_status_brands({
+				ids: this.getSelectedIds(),
+				status,
+			})
+			.pipe(
+				takeUntil(this.destroy$),
+				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
+				finalize(() => this.loadBtnMultipleStatus.set(false))
+			)
+			.subscribe({
+				next: (next: { data: string[]; message: string }) => {
+					console.log(next);
+					const updatedIds = new Set(next.data);
+					this.brands = this.brands.map((prev) => {
+						if (updatedIds.has(prev.id!)) {
+							return {
+								...prev,
+								status,
+							};
+						}
+						return prev;
+					});
+					toastr.success(next.message);
+					closeModal(status ? 'modalMultipleActive' : 'modalMultipleDisabled');
+					this.selectedIds.clear();
+				},
+				error: (error: HttpErrorResponse) => {
+					toastr.error(error.error.message);
+				},
+			});
 	}
 }
-

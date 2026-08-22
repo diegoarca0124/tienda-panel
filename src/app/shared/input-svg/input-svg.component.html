@@ -1,26 +1,13 @@
 <div class="row g-4 align-items-start">
-    <div class="col-12 col-md-3">
-        <div class="svg-preview-card">
-            <div
-                class="svg-placeholder"
-                *ngIf="!svgPreview">
-                PREVIEW SVG
-            </div>
-            <div
-                class="svg-preview-body"
-                [innerHTML]="svgPreview">
-            </div>
-        </div>
-    </div>
-    <div class="col-12 col-md-9">
-        <div class="mb-1" [class.editor-invalid]="errors?.icon">
-            <ngx-monaco-editor
-                class="editor-svg"
-                style="height:250px"
-                [options]="editorOptions"
-                [(ngModel)]="data.icon"
-                (ngModelChange)="updatePreview($event)">
-            </ngx-monaco-editor>
-        </div>
-    </div>
+	<div class="col-12 col-md-3">
+		<div class="svg-preview-card">
+			<div class="svg-placeholder" *ngIf="!svgPreview">PREVIEW SVG</div>
+			<div class="svg-preview-body" [innerHTML]="svgPreview"></div>
+		</div>
+	</div>
+	<div class="col-12 col-md-9">
+		<div class="mb-1" [class.editor-invalid]="errors?.icon">
+			<ngx-monaco-editor class="editor-svg" style="height: 250px" [options]="editorOptions" [(ngModel)]="data.icon" (ngModelChange)="updatePreview($event)"></ngx-monaco-editor>
+		</div>
+	</div>
 </div>

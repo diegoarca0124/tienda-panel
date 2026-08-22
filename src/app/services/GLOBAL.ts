@@ -1,3 +1,3 @@
 export const GLOBAL = {
-    MIN_LOADING_TIME : 400
-}
+	MIN_LOADING_TIME: 400,
+};

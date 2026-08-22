@@ -17,7 +17,7 @@ import { IMaskModule } from 'angular-imask';
 import { CategoryInterface } from '../interfaces/category.interface';
 import { createEmptyCategory, createEmptyFieldErrorsCategory } from '../utils/empties.util';
 import { ValidationPopoverComponent } from '@app/shared/validation-popover/validation-popover.component';
-declare const toastr: any; 
+declare const toastr: any;
 import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
 import { MonacoOptions } from '../constants/monaco-options.constant';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -31,10 +31,22 @@ import { CreateCategoryRESI } from '../interfaces/response.interface';
 @Component({
 	selector: 'app-create-category',
 	standalone: true,
-	imports: [TopbarComponent, SidebarComponent, FormsModule, CommonModule, RouterModule, AlertComponent, TextFieldModule, IMaskModule, ValidationPopoverComponent, InputSvgComponent, TextareaAutoresizeDirective ],
+	imports: [
+		TopbarComponent,
+		SidebarComponent,
+		FormsModule,
+		CommonModule,
+		RouterModule,
+		AlertComponent,
+		TextFieldModule,
+		IMaskModule,
+		ValidationPopoverComponent,
+		InputSvgComponent,
+		TextareaAutoresizeDirective,
+	],
 	templateUrl: './create-category.component.html',
 	styleUrl: './create-category.component.css',
-	schemas: [CUSTOM_ELEMENTS_SCHEMA]
+	schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class CreateCategoryComponent {
 	@ViewChild('editorContainer', { static: true }) editorContainer!: ElementRef;
@@ -44,14 +56,13 @@ export class CreateCategoryComponent {
 	public category: CategoryInterface = createEmptyCategory();
 	public prefixMask = {
 		mask: /^[A-Z]{0,3}$/,
-		prepare: (str: string) => str.toUpperCase()
+		prepare: (str: string) => str.toUpperCase(),
 	};
-	public fieldErrors : CategoryFieldErrors = createEmptyFieldErrorsCategory();
+	public fieldErrors: CategoryFieldErrors = createEmptyFieldErrorsCategory();
 
 	constructor(
 		private categoryService: CategoryService,
-		private _router: Router,
-		
+		private _router: Router
 	) {}
 
 	ngOnDestroy(): void {
@@ -61,7 +72,7 @@ export class CreateCategoryComponent {
 
 	create() {
 		this.isCreateCategoryLoading = true;
-		if(this.category.icon == null) this.category.icon = "";
+		if (this.category.icon == null) this.category.icon = '';
 		this.categoryService
 			.create_category(this.category)
 			.pipe(
@@ -81,13 +92,9 @@ export class CreateCategoryComponent {
 
 					if (error.validation) {
 						this.validationCategoryError = error.validation;
-						this.fieldErrors = buildShowErrors(this.fieldErrors,this.validationCategoryError);	
+						this.fieldErrors = buildShowErrors(this.fieldErrors, this.validationCategoryError);
 					}
 				},
 			});
 	}
-
-	
-
-	
 }
