@@ -1,5 +1,5 @@
 import { CollaboratorInterface } from '../interfaces/collaborator.interface';
-import { CollaboratorFieldErrors } from '../interfaces/validation.interface';
+import { CollaboratorFieldErrors, FieldExportColumnsErrors } from '../interfaces/validation.interface';
 
 export const createEmptyCollaborator = (): CollaboratorInterface =>
 	({
@@ -23,4 +23,11 @@ export const createEmptyFieldErrors = (): CollaboratorFieldErrors => ({
 	number_document: false,
 	phone: false,
 	password: false,
+});
+
+export const createEmptyFieldExportErrors = (): FieldExportColumnsErrors => ({
+	key: false,
+	checked: false,
+	label: false,
+	description: false,
 });

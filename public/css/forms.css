@@ -106,7 +106,7 @@ textarea::placeholder,
 	font-size: var(--form-text-sm);
 	font-weight: 600;
 	line-height: 1.2;
-	color: #475467;
+	color: #475467 !important;
 }
 
 .form-field-label.required::after {

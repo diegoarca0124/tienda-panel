@@ -157,7 +157,8 @@
 													[(ngModel)]="collaborator.number_document"
 													[disabled]="!collaborator.type_document"
 													[imask]="{
-														mask: collaborator.type_document?.name == 'DNI' ? '00000000' : '0000000000000000000',
+														mask:
+															collaborator.type_document === 'DNI' ? '00000000' : collaborator.type_document === 'CE - Carné de Extranjería' ? '00000000000' : '000000000000000',
 														unmask: true,
 													}"
 													[class.is-invalid]="validationCollaboratorError?.number_document"

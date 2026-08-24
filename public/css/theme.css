@@ -91,6 +91,15 @@ body {
 	font-size: 0.8rem !important;
 }
 
+.bg-outline-primary {
+    color: #3e97ff !important;
+    background-color: #f1faff;
+    border: 1px dashed #3e97ff;
+    padding: 5px 12px !important;
+    font-weight: 500 !important;
+	font-size: 0.8rem !important;
+}
+
 
 .form-control-load {
 	background: #e7e7e7 no-repeat !important;
@@ -104,6 +113,7 @@ body {
 
 .border-danger {
 	border-radius: 6px !important;
+	border: 1px dashed #f1416c;
 }
 
 .border-primary {

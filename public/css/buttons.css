@@ -3,15 +3,19 @@
 	 * Los botones reutilizan las mismas medidas de forms.css.
 	 * Los valores después de la coma son respaldo.
 	 */
+	--control-height-xs: var(--form-control-height-xs, 2rem);
 	--control-height-sm: var(--form-control-height-sm, 2.875rem);
 	--control-height-md: var(--form-control-height-md, 3.25rem);
 
+	--control-text-xs: var(--form-control-text-xs, 0.75rem);
 	--control-text-sm: var(--form-control-text-sm, 0.875rem);
 	--control-text-md: var(--form-control-text-md, 0.9375rem);
 
+	--control-padding-xs: var(--form-control-padding-xs, 0.375rem);
 	--control-padding-sm: var(--form-control-padding-sm, 0.75rem);
 	--control-padding-md: var(--form-control-padding-md, 0.875rem);
 
+	--control-icon-xs: 0.875rem;
 	--control-icon-sm: 1rem;
 	--control-icon-md: 1.125rem;
 
@@ -32,6 +36,20 @@
 	font-family: inherit;
 	line-height: 1.2;
 	border-radius: var(--control-radius) !important;
+}
+
+/* =========================================================
+   BOTÓN XS
+   Mismo alto que form-control-xs
+========================================================= */
+
+.btn.btn-xs {
+	box-sizing: border-box !important;
+	height: var(--control-height-xs) !important;
+	min-height: var(--control-height-xs) !important;
+	padding: var(--control-padding-xs) 0.625rem !important;
+	font-size: var(--control-text-xs) !important;
+	line-height: 1.2 !important;
 }
 
 /* =========================================================
@@ -63,6 +81,25 @@
 }
 
 /* =========================================================
+   BOTÓN XS CON SOLO ICONO
+========================================================= */
+
+.btn.btn-xs.btn-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex: 0 0 var(--control-height-xs);
+	width: var(--control-height-xs) !important;
+	min-width: var(--control-height-xs) !important;
+	max-width: var(--control-height-xs) !important;
+	height: var(--control-height-xs) !important;
+	min-height: var(--control-height-xs) !important;
+	max-height: var(--control-height-xs) !important;
+	padding: 0 !important;
+	line-height: 1 !important;
+}
+
+/* =========================================================
    BOTÓN SM CON SOLO ICONO
 ========================================================= */
 
@@ -76,6 +113,7 @@
 	max-width: var(--control-height-sm) !important;
 	height: var(--control-height-sm) !important;
 	min-height: var(--control-height-sm) !important;
+	max-height: var(--control-height-sm) !important;
 	padding: 0 !important;
 	line-height: 1 !important;
 }
@@ -94,6 +132,7 @@
 	max-width: var(--control-height-md) !important;
 	height: var(--control-height-md) !important;
 	min-height: var(--control-height-md) !important;
+	max-height: var(--control-height-md) !important;
 	padding: 0 !important;
 	line-height: 1 !important;
 }
@@ -114,15 +153,27 @@
 	line-height: 1;
 }
 
+.btn.btn-xs > i,
+.btn.btn-xs > ion-icon,
+.btn.btn-xs > svg {
+	width: var(--control-icon-xs);
+	height: var(--control-icon-xs);
+	font-size: var(--control-icon-xs);
+}
+
 .btn.btn-sm > i,
 .btn.btn-sm > ion-icon,
 .btn.btn-sm > svg {
+	width: var(--control-icon-sm);
+	height: var(--control-icon-sm);
 	font-size: var(--control-icon-sm);
 }
 
 .btn.btn-md > i,
 .btn.btn-md > ion-icon,
 .btn.btn-md > svg {
+	width: var(--control-icon-md);
+	height: var(--control-icon-md);
 	font-size: var(--control-icon-md);
 }
 
@@ -146,6 +197,11 @@
 /* =========================================================
    SPINNER
 ========================================================= */
+
+.btn.btn-xs .spinner-border {
+	width: var(--control-icon-xs);
+	height: var(--control-icon-xs);
+}
 
 .btn.btn-sm .spinner-border {
 	width: var(--control-icon-sm);

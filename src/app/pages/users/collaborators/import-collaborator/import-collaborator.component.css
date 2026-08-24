@@ -25,3 +25,22 @@
 	color: #5e6278;
 	font-size: 0.8rem;
 }
+
+.field-dropdown-menu {
+	width: 18rem;
+	max-width: calc(100vw - 2rem);
+}
+
+.field-dropdown-label {
+	flex: 1 1 auto;
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.field-dropdown-status {
+	flex: 0 0 auto;
+	margin-left: 0.5rem;
+	white-space: nowrap;
+}

@@ -28,6 +28,13 @@ export interface FieldExportColumns {
 	description: string;
 }
 
+export interface FieldExportColumnsErrors {
+	key: boolean;
+	checked: boolean;
+	label: boolean;
+	description: boolean;
+}
+
 export interface ImportInterface {
 	file: File | undefined;
 	mode: 'upsert' | 'insert' | 'update';

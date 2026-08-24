@@ -26,7 +26,11 @@ export interface UpdateCollaboratorRESI {
 }
 
 export interface UpdateCollaboratorStatusRESI {
-	data: CollaboratorInterface;
+	data: {
+		id: string;
+		names: string;
+		status: boolean;
+	};
 	message: string;
 }
 
@@ -36,6 +40,6 @@ export interface UpdateCollaboratorsStatusRESI {
 }
 
 export interface CreateCollaboratorRESI {
-	data: CollaboratorInterface;
+	data: string;
 	message: string;
 }

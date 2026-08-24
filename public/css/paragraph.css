@@ -1,21 +1,38 @@
 /* =====================================================
-   Paragraph and text utilities
-   ===================================================== */
+   PARAGRAPH AND TEXT UTILITIES
+===================================================== */
 
 :root {
-	--text-black: #111827;
-	--text-dark: #1f2937;
-	--text-gray: #6b7280;
-	--text-gray-light: #9ca3af;
-	--text-muted: #94a3b8;
+	/* Gray scale */
+	--text-gray-100: #f3f4f6;
+	--text-gray-200: #e5e7eb;
+	--text-gray-300: #d1d5db;
+	--text-gray-400: #9ca3af;
+	--text-gray-500: #6b7280;
+	--text-gray-600: #4b5563;
+	--text-gray-700: #374151;
+	--text-gray-800: #1f2937;
+	--text-gray-900: #111827;
+
+	/* Compatibility aliases */
+	--text-black: var(--text-gray-900);
+	--text-dark: var(--text-gray-800);
+	--text-gray: var(--text-gray-500);
+	--text-gray-light: var(--text-gray-400);
+	--text-muted: var(--text-gray-400);
+
+	/* Semantic colors */
 	--text-white: #ffffff;
 	--text-primary: #2563eb;
-	--text-success: #16a34a;
+	--text-success: #0f602d;
 	--text-warning: #d97706;
 	--text-danger: #dc2626;
 }
 
-/* Font size */
+/* =====================================================
+   FONT SIZE
+===================================================== */
+
 .fs-10 {
 	font-size: 0.625rem !important;
 }
@@ -64,7 +81,10 @@
 	font-size: 2rem !important;
 }
 
-/* Font weight */
+/* =====================================================
+   FONT WEIGHT
+===================================================== */
+
 .fw-300 {
 	font-weight: 300 !important;
 }
@@ -93,7 +113,10 @@
 	font-weight: 900 !important;
 }
 
-/* Colors */
+/* =====================================================
+   TEXT COLORS
+===================================================== */
+
 .text-black {
 	color: var(--text-black) !important;
 }
@@ -102,21 +125,63 @@
 	color: var(--text-dark) !important;
 }
 
-.text-gray {
-	color: var(--text-gray) !important;
-}
-
-.text-gray-light {
-	color: var(--text-gray-light) !important;
-}
-
-.text-muted {
-	color: var(--text-muted) !important;
-}
-
 .text-white {
 	color: var(--text-white) !important;
 }
+
+/* Gray scale */
+
+.text-gray-100 {
+	color: var(--text-gray-100) !important;
+}
+
+.text-gray-200 {
+	color: var(--text-gray-200) !important;
+}
+
+.text-gray-300 {
+	color: var(--text-gray-300) !important;
+}
+
+.text-gray-400 {
+	color: var(--text-gray-400) !important;
+}
+
+.text-gray-500 {
+	color: var(--text-gray-500) !important;
+}
+
+.text-gray-600 {
+	color: var(--text-gray-600) !important;
+}
+
+.text-gray-700 {
+	color: var(--text-gray-700) !important;
+}
+
+.text-gray-800 {
+	color: var(--text-gray-800) !important;
+}
+
+.text-gray-900 {
+	color: var(--text-gray-900) !important;
+}
+
+/* Compatibility aliases */
+
+.text-gray {
+	color: var(--text-gray-500) !important;
+}
+
+.text-gray-light {
+	color: var(--text-gray-400) !important;
+}
+
+.text-muted {
+	color: var(--text-gray-400) !important;
+}
+
+/* Semantic colors */
 
 .text-primary {
 	color: var(--text-primary) !important;
@@ -134,7 +199,10 @@
 	color: var(--text-danger) !important;
 }
 
-/* Alignment */
+/* =====================================================
+   TEXT ALIGNMENT
+===================================================== */
+
 .text-left {
 	text-align: left !important;
 }
@@ -151,7 +219,10 @@
 	text-align: justify !important;
 }
 
-/* Text transformation */
+/* =====================================================
+   TEXT TRANSFORMATION
+===================================================== */
+
 .text-uppercase {
 	text-transform: uppercase !important;
 }
@@ -168,7 +239,10 @@
 	text-transform: none !important;
 }
 
-/* Font style and decoration */
+/* =====================================================
+   FONT STYLE AND DECORATION
+===================================================== */
+
 .text-italic {
 	font-style: italic !important;
 }
@@ -189,7 +263,10 @@
 	text-decoration: none !important;
 }
 
-/* Letter spacing */
+/* =====================================================
+   LETTER SPACING
+===================================================== */
+
 .ls-tight {
 	letter-spacing: -0.025em !important;
 }
@@ -210,7 +287,10 @@
 	letter-spacing: 0.1em !important;
 }
 
-/* Line height */
+/* =====================================================
+   LINE HEIGHT
+===================================================== */
+
 .lh-none {
 	line-height: 1 !important;
 }
@@ -231,7 +311,10 @@
 	line-height: 2 !important;
 }
 
-/* Single-line ellipsis */
+/* =====================================================
+   SINGLE-LINE ELLIPSIS
+===================================================== */
+
 .text-ellipsis,
 .text-truncate-1 {
 	display: block;
@@ -241,7 +324,10 @@
 	white-space: nowrap;
 }
 
-/* Multiline ellipsis */
+/* =====================================================
+   MULTILINE ELLIPSIS
+===================================================== */
+
 .text-truncate-2,
 .text-truncate-3,
 .text-truncate-4 {
@@ -265,7 +351,10 @@
 	line-clamp: 4;
 }
 
-/* Wrapping and whitespace */
+/* =====================================================
+   WRAPPING AND WHITESPACE
+===================================================== */
+
 .text-nowrap {
 	white-space: nowrap !important;
 }
@@ -288,7 +377,10 @@
 	white-space: pre-wrap !important;
 }
 
-/* Width helpers for ellipsis */
+/* =====================================================
+   WIDTH HELPERS FOR ELLIPSIS
+===================================================== */
+
 .text-max-100 {
 	max-width: 100px !important;
 }
@@ -309,10 +401,13 @@
 	max-width: 300px !important;
 }
 
-/* Paragraph spacing */
+/* =====================================================
+   PARAGRAPH
+===================================================== */
+
 .paragraph {
 	margin: 0 0 1rem;
-	color: var(--text-dark);
+	color: var(--text-gray-800);
 	font-size: 1rem;
 	line-height: 1.5;
 }
@@ -328,11 +423,11 @@
 }
 
 .paragraph-muted {
-	color: var(--text-gray);
+	color: var(--text-gray-500);
 }
 
 .paragraph-lead {
-	color: var(--text-gray);
+	color: var(--text-gray-500);
 	font-size: 1.25rem;
 	font-weight: 400;
 	line-height: 1.7;

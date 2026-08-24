@@ -53,7 +53,7 @@ export class IndexCollaboratorComponent {
 
 	public selectedCollaboratorsIds = new Set<string>();
 	public isCollaboratorsLoading: boolean = true;
-	public collaboratorsLoadError: string = '';
+	public collaboratorsLoadError: Record<string, any> | null = null;
 
 	public isUpdatingSingleStatus: WritableSignal<boolean> = signal(false);
 	public isUpdatingMultipleStatuses: WritableSignal<boolean> = signal(false);
@@ -111,7 +111,7 @@ export class IndexCollaboratorComponent {
 			.pipe(
 				switchMap((query) => {
 					this.isCollaboratorsLoading = true;
-					this.collaboratorsLoadError = '';
+					this.collaboratorsLoadError = null;
 					return this.collaboratorService.getCollaborators(query).pipe(
 						withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
 						map(
@@ -144,6 +144,37 @@ export class IndexCollaboratorComponent {
 			});
 	}
 
+	private refreshCollaborators(): void {
+		this.collaboratorService
+			.getCollaborators({
+				filter: this.filter,
+				page: this.currentPage,
+				limit: this.limit,
+				status: this.selectedStatus,
+				sort: this.selectedSort,
+			})
+			.pipe(takeUntil(this.destroy$))
+			.subscribe({
+				next: (response: GetCollaboratorsRESI) => {
+					this.collaborators =
+						response.collaborators;
+
+					this.totalPages =
+						response.meta.totalPages;
+
+					this.syncCurrentPage(
+						response.meta.currentPage
+					);
+				},
+				error: (error: HttpErrorResponse) => {
+					toastr.error(
+						error.error?.message ||
+							'No fue posible actualizar la lista.'
+					);
+				},
+			});
+	}
+
 	syncCurrentPage(currentPage: number): void {
 		if (this.currentPage === currentPage) return;
 
@@ -170,8 +201,12 @@ export class IndexCollaboratorComponent {
 			this.currentPage = 1;
 		}
 
+		const normalizedFilter = typeof this.filter === 'string' ? this.filter.trim().slice(0, 50) : '';
+
+		this.filter = normalizedFilter;
+
 		const queryParams = {
-			filter: this.filter.trim(),
+			filter: normalizedFilter,
 			page: this.currentPage,
 			limit: this.limit,
 			status: this.selectedStatus,
@@ -223,15 +258,15 @@ export class IndexCollaboratorComponent {
 			)
 			.subscribe({
 				next: (next: UpdateCollaboratorStatusRESI) => {
-					const collaborator = this.collaborators.find((c) => c.id === next.data.id);
-					if (collaborator) {
-						collaborator.status = next.data.status;
-					}
 					toastr.success(next.message);
-					closeModal('modalDelete-' + id);
+					closeModal(`modalDelete-${id}`);
+					this.refreshCollaborators();
 				},
 				error: (error: HttpErrorResponse) => {
-					toastr.error(error.error.message);
+					toastr.error(
+						error.error?.message ||
+							'No fue posible actualizar el estado.'
+					);
 				},
 			});
 	}
@@ -282,6 +317,31 @@ export class IndexCollaboratorComponent {
 		return this.selectedCollaboratorsIds.size > 0;
 	}
 
+	clearCollaboratorSelection(): void {
+		this.selectedCollaboratorsIds.clear();
+	}
+
+	selectAllCollaborators(): void {
+		this.selectedCollaboratorsIds = new Set(
+			this.collaborators
+				.map((collaborator) => collaborator.id)
+				.filter((id): id is string => Boolean(id))
+		);
+	}
+
+	get areAllCollaboratorsSelected(): boolean {
+		return (
+			this.collaborators.length > 0 &&
+			this.collaborators.every(
+				(collaborator) =>
+					Boolean(collaborator.id) &&
+					this.selectedCollaboratorsIds.has(
+						collaborator.id!
+					)
+			)
+		);
+	}
+
 	onUpdateStatusMultiple(status: boolean) {
 		this.isUpdatingMultipleStatuses.set(true);
 		this.collaboratorService
@@ -296,24 +356,20 @@ export class IndexCollaboratorComponent {
 			)
 			.subscribe({
 				next: (next: UpdateCollaboratorsStatusRESI) => {
-					console.log(next);
-
-					const updatedIds = new Set(next.data);
-					this.collaborators = this.collaborators.map((prev) => {
-						if (updatedIds.has(prev.id!)) {
-							return {
-								...prev,
-								status: status,
-							};
-						}
-						return prev;
-					});
 					toastr.success(next.message);
-					closeModal(status ? 'modalMultipleActive' : 'modalMultipleDisabled');
+					closeModal(
+						status
+							? 'modalMultipleActive'
+							: 'modalMultipleDisabled'
+					);
 					this.selectedCollaboratorsIds.clear();
+					this.refreshCollaborators();
 				},
 				error: (error: HttpErrorResponse) => {
-					toastr.error(error.error.message);
+					toastr.error(
+						error.error?.message ||
+							'No fue posible actualizar los estados.'
+					);
 				},
 			});
 	}

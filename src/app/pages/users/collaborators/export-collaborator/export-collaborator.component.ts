@@ -10,9 +10,11 @@ import { finalize, Subject, takeUntil } from 'rxjs';
 import { GLOBAL } from '@app/services/GLOBAL';
 import { ExportCollaboratorsXlsxUtil } from '../utils/export-collaborators-xlsx.util';
 import { ExportCollaboratorsCsvUtil } from '../utils/export-collaborators-csv.util';
-import { FieldExportColumns } from '../interfaces/validation.interface';
+import { FieldExportColumns, FieldExportColumnsErrors } from '../interfaces/validation.interface';
 import { HttpErrorResponse } from '@angular/common/http';
 import { fieldsExportOptions, sortOptions } from '../constants/selectors.constants';
+import { buildShowErrors } from '@app/common/utils/build-show.errors.util';
+import { createEmptyFieldExportErrors } from '../utils/empties.util';
 declare const toastr: any;
 
 @Component({
@@ -23,7 +25,9 @@ declare const toastr: any;
 	schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class ExportCollaboratorComponent {
-	public fieldsExport: FieldExportColumns[] = fieldsExportOptions;
+	public fieldsExport: FieldExportColumns[] = fieldsExportOptions.map((field) => ({
+		...field,
+	}));
 	public exportOptions = {
 		format: 'xlsx',
 		maskData: false,
@@ -33,7 +37,8 @@ export class ExportCollaboratorComponent {
 		ids: [] as any,
 	};
 	public isExportCollaboratorLoading: boolean = false;
-	public validationCollaboratioError: any = {};
+	public validationCollaboratorError: any = {};
+	public fieldErrors: FieldExportColumnsErrors = createEmptyFieldExportErrors();
 	public sortOptions = sortOptions;
 	private destroy$ = new Subject<void>();
 
@@ -53,6 +58,8 @@ export class ExportCollaboratorComponent {
 		}));
 		this.isExportCollaboratorLoading = true;
 		this.exportOptions.ids = [];
+		console.log(this.exportOptions);
+
 		this.collaboratorService
 			.exportCollaborators(this.exportOptions)
 			.pipe(
@@ -78,28 +85,14 @@ export class ExportCollaboratorComponent {
 					toastr.success('Archivo generado correctamente.');
 				},
 				error: async (err: HttpErrorResponse) => {
-					console.log(err);
-					let errorParsed: any;
-					if (err.error instanceof Blob && err.error.type === 'application/json') {
-						try {
-							const text = await err.error.text();
-							errorParsed = JSON.parse(text);
-						} catch {
-							errorParsed = { message: 'Error al procesar la respuesta del servidor.' };
-						}
-					} else {
-						errorParsed = err.error;
-					}
+					const error = err?.error ?? {};
+					toastr.error(error.message || '¡Error desconocido!');
 
-					toastr.error(errorParsed.message || '¡Error desconocido!');
-
-					if (errorParsed.validation) {
-						this.validationCollaboratioError = errorParsed.validation;
-						if (this.validationCollaboratioError.ids) {
-							this.validationCollaboratioError.scope = [...(this.validationCollaboratioError.scope || []), ...this.validationCollaboratioError.ids];
-						}
+					if (error.validation) {
+						this.validationCollaboratorError = error.validation;
+						this.fieldErrors = buildShowErrors(this.fieldErrors, this.validationCollaboratorError);
 					}
-					console.log(this.validationCollaboratioError);
+					console.log(this.validationCollaboratorError);
 				},
 			});
 	}

@@ -31,13 +31,14 @@
 							<div class="list-toolbar-search">
 								<div class="list-toolbar-search-field">
 									<input
-										type="search"
+										type="text"
 										class="form-control form-control-sm"
 										placeholder="Buscar colaborador"
 										name="filter"
 										[(ngModel)]="filter"
 										(keyup.enter)="applyFilters()"
 										[disabled]="isCollaboratorsLoading"
+										maxlength="50"
 									/>
 									<i class="bi bi-search list-toolbar-input-icon" aria-hidden="true"></i>
 								</div>
@@ -100,6 +101,7 @@
 												<span class="action-dropdown-item-title">Importar</span>
 											</a>
 										</li>
+										
 									</ul>
 								</div>
 							</div>
@@ -186,7 +188,7 @@
 													placement="top"
 													tooltipClass="tooltip-dark"
 													container="body"
-													[disabled]="!hasSelectedCollaborators || isCollaboratorsLoading"
+													[disabled]="isCollaboratorsLoading"
 													id="dropdownTable"
 													data-bs-toggle="dropdown"
 													aria-expanded="false"
@@ -218,6 +220,40 @@
 														</span>
 														<span class="action-dropdown-item-title text-danger">Desactivar</span>
 													</a>
+													<button
+														type="button"
+														class="dropdown-item action-dropdown-item action-dropdown-item-compact"
+														[disabled]="areAllCollaboratorsSelected"
+														(click)="selectAllCollaborators()"
+													>
+														<span class="action-dropdown-item-icon">
+															<ion-icon class="fs-4" name="checkbox-outline" aria-hidden="true"></ion-icon>
+														</span>
+
+														<span class="action-dropdown-item-title">
+															Seleccionar todos
+														</span>
+													</button>
+													<button
+														type="button"
+														class="dropdown-item action-dropdown-item action-dropdown-item-compact"
+														[disabled]="
+															selectedCollaboratorsIds.size === 0
+														"
+														(click)="clearCollaboratorSelection()"
+													>
+														<span class="action-dropdown-item-icon">
+															<ion-icon
+																class="fs-4"
+																name="square-outline"
+																aria-hidden="true"
+															></ion-icon>
+														</span>
+
+														<span class="action-dropdown-item-title">
+															Quitar selección
+														</span>
+													</button>
 												</div>
 											</div>
 										</th>
@@ -273,6 +309,7 @@
 										</tr>
 									} @else if (collaborators.length >= 1) {
 										<tr *ngFor="let item of collaborators">
+											<!-- Selección -->
 											<td class="fixed-xs text-center p-0">
 												<label class="form-check form-check-customs form-check-sm m-0 d-flex align-items-center justify-content-center h-100">
 													<input
@@ -283,50 +320,79 @@
 													/>
 												</label>
 											</td>
-											<td class="flex-col fw-medium">
+
+											<!-- Usuario -->
+											<td class="flex-col">
 												<div class="d-flex align-items-center gap-2" style="min-width: 0">
 													<div class="symbol me-3" style="flex-shrink: 0">
-														<span class="symbol-label fw-bold" style="height: 30px; width: 30px" [ngClass]="getAvatarColor(item.names)">
+														<span class="symbol-label fw-700" style="width: 30px; height: 30px" [ngClass]="getAvatarColor(item.names)">
 															{{ item.names.charAt(0).toUpperCase() }}
 														</span>
 													</div>
+
 													<div class="d-flex flex-column" style="min-width: 0">
-														<span class="table-cell-title text-truncate-1">
-															{{
-																item.fullnames
-																	? item.fullnames
-																	: `${item.names}
-															${item.surname}`
-															}}
-														</span>
-														<small class="table-cell-secondary text-truncate-1">{{ item.email }}</small>
+														<p class="paragraph paragraph-sm text-gray-700 fw-600 lh-tight text-truncate-1 m-0">
+															{{ item.fullnames ? item.fullnames : item.names + ' ' + item.surname }}
+														</p>
+
+														<p class="paragraph paragraph-sm text-gray-400 fs-12 fw-400 lh-tight text-truncate-1 m-0">
+															{{ item.email }}
+														</p>
 													</div>
 												</div>
 											</td>
+
+											<!-- Teléfono -->
 											<td class="fixed-md">
-												<div class="d-flex flex-column">
-													<div class="table-phone">
-														<span class="table-phone-prefix">{{ item.prefix }}</span>
-														<span class="table-cell-title text-truncate-1">{{ item.phone }}</span>
-													</div>
+												<div class="table-phone">
+													<span class="table-phone-prefix text-gray-600">
+														{{ item.prefix }}
+													</span>
+
+													<p class="paragraph paragraph-sm text-gray-700 fw-500 lh-tight text-truncate-1 m-0">
+														{{ item.phone }}
+													</p>
 												</div>
 											</td>
+
+											<!-- Documento -->
 											<td class="fixed-md">
 												<div class="d-flex flex-column">
-													<span class="table-cell-title text-truncate-1">{{ item.number_document }}</span>
-													<span class="table-cell-secondary text-truncate-1">{{ item.type_document || 'Sin tipo de documento' }}</span>
+													<p class="paragraph paragraph-sm text-gray-700 fw-500 lh-tight text-truncate-1 m-0">
+														{{ item.number_document }}
+													</p>
+
+													<p class="paragraph paragraph-sm text-gray-500 fs-12 fw-400 lh-tight text-truncate-1 m-0">
+														{{ item.type_document || 'Sin tipo de documento' }}
+													</p>
 												</div>
 											</td>
+
+											<!-- Estado -->
 											<td class="fixed-sm">
-												<span class="badge rounded-pill text-gray-700 fw-800" [ngClass]="{ 'bg-outline-danger': !item.status, 'bg-outline-success': item.status }">
+												<span
+													class="badge rounded-pill fw-700"
+													[ngClass]="{
+														'bg-outline-danger': !item.status,
+														'bg-outline-primary': item.status,
+														'text-danger': !item.status,
+														'text-primary': item.status,
+													}"
+												>
 													<span
 														class="d-inline-block rounded-circle me-1"
 														style="width: 6px; height: 6px"
-														[ngClass]="{ 'bg-danger': !item.status, 'bg-success': item.status }"
+														[ngClass]="{
+															'bg-danger': !item.status,
+															'bg-primary': item.status,
+														}"
 													></span>
+
 													{{ item.status ? 'Activo' : 'Inactivo' }}
 												</span>
 											</td>
+
+											<!-- Acciones -->
 											<td class="fixed-xs text-center p-0">
 												<div class="dropdown">
 													<button
@@ -340,6 +406,7 @@
 													>
 														<i class="bi bi-three-dots"></i>
 													</button>
+
 													<app-modal-delete
 														[id]="'modalDelete-' + item.id"
 														[title]="item.status ? 'Desactivar colaborador' : 'Activar colaborador'"
@@ -350,41 +417,60 @@
 														"
 														[textButton]="item.status ? 'Desactivar' : 'Activar'"
 														(actionConfirmed)="onUpdateStatus(item.id!, item.status!)"
-														[loadBtnDelete]="isUpdatingMultipleStatuses"
+														[loadBtnDelete]="isUpdatingSingleStatus"
 													></app-modal-delete>
+
 													<div class="dropdown-menu dropdown-menu-end action-dropdown-menu action-dropdown-menu-compact">
+														<!-- Editar -->
 														<a class="dropdown-item action-dropdown-item action-dropdown-item-compact" [routerLink]="['/users/collaborators/' + item.id + '/edit']">
 															<span class="action-dropdown-item-icon">
 																<ion-icon class="fs-4" name="create-outline" aria-hidden="true"></ion-icon>
 															</span>
+
 															<span class="action-dropdown-item-title">Editar</span>
 														</a>
+
+														<!-- WhatsApp -->
 														<a class="dropdown-item action-dropdown-item action-dropdown-item-compact cursor-pointer" (click)="sendCollaboratorByWhatsApp(item)">
 															<span class="action-dropdown-item-icon">
 																<ion-icon class="fs-4" name="logo-whatsapp" aria-hidden="true"></ion-icon>
 															</span>
+
 															<span class="action-dropdown-item-title">Enviar a WhatsApp</span>
 														</a>
+
+														<!-- Copiar -->
 														<a class="dropdown-item action-dropdown-item action-dropdown-item-compact cursor-pointer" (click)="copyCollaboratorToClipboard(item)">
 															<span class="action-dropdown-item-icon">
 																<ion-icon class="fs-4" name="copy-outline" aria-hidden="true"></ion-icon>
 															</span>
+
 															<span class="action-dropdown-item-title">Copiar información</span>
 														</a>
+
 														<div class="action-dropdown-divider"></div>
+
+														<!-- Actividad -->
 														<a class="dropdown-item action-dropdown-item action-dropdown-item-compact" [routerLink]="['/users/collaborators/' + item.id + '/logs']">
 															<span class="action-dropdown-item-icon">
 																<ion-icon class="fs-4" name="document-text-outline" aria-hidden="true"></ion-icon>
 															</span>
+
 															<span class="action-dropdown-item-title">Ver actividad</span>
 														</a>
+
+														<!-- Permisos -->
 														<a class="dropdown-item action-dropdown-item action-dropdown-item-compact" [routerLink]="['/users/collaborators/' + item.id + '/rols']">
 															<span class="action-dropdown-item-icon">
 																<ion-icon class="fs-4" name="shield-checkmark-outline" aria-hidden="true"></ion-icon>
 															</span>
+
 															<span class="action-dropdown-item-title">Permisos</span>
 														</a>
+
 														<div class="action-dropdown-divider"></div>
+
+														<!-- Activar o desactivar -->
 														<a
 															class="dropdown-item action-dropdown-item action-dropdown-item-compact cursor-pointer"
 															[class.action-dropdown-item-danger]="item.status"
@@ -401,7 +487,10 @@
 																	aria-hidden="true"
 																></ion-icon>
 															</span>
-															<span class="action-dropdown-item-title">{{ item.status ? 'Desactivar' : 'Activar' }}</span>
+
+															<span class="action-dropdown-item-title">
+																{{ item.status ? 'Desactivar' : 'Activar' }}
+															</span>
 														</a>
 													</div>
 												</div>
