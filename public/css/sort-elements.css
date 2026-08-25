@@ -5,52 +5,137 @@
 .list-filter-row {
 	display: flex;
 	align-items: flex-end;
+	flex-wrap: wrap;
 	gap: 0.625rem;
 	width: 100%;
 }
 
+/* =========================================================
+   ELEMENTO BASE
+========================================================= */
+
 .list-filter-item {
+	--list-filter-width: 11rem;
+
 	display: flex;
 	flex-direction: column;
 	gap: 0.3125rem;
 
-	width: 11rem;
+	flex: 0 1 var(--list-filter-width);
+	width: var(--list-filter-width);
+	max-width: 100%;
 	min-width: 0;
 }
 
-.list-filter-sort {
-	width: 13.5rem;
+/* =========================================================
+   ESCALA REUTILIZABLE DE ANCHOS
+========================================================= */
+
+.list-filter-xs {
+	--list-filter-width: 8rem;
 }
+
+.list-filter-sm {
+	--list-filter-width: 11rem;
+}
+
+.list-filter-md {
+	--list-filter-width: 14rem;
+}
+
+.list-filter-lg {
+	--list-filter-width: 18rem;
+}
+
+.list-filter-xl {
+	--list-filter-width: 24rem;
+}
+
+/*
+ * Ocupa el espacio disponible.
+ * Conserva 18rem como ancho base.
+ */
+.list-filter-fluid {
+	--list-filter-width: 18rem;
+
+	flex: 1 1 var(--list-filter-width);
+}
+
+/*
+ * Compatibilidad con las vistas anteriores.
+ * Puede reemplazarse gradualmente por list-filter-md.
+ */
+.list-filter-sort {
+	--list-filter-width: 14rem;
+}
+
+/* =========================================================
+   ETIQUETA
+========================================================= */
 
 .list-filter-label {
 	margin: 0;
 	padding-left: 0.125rem;
+
 	font-size: 0.8125rem;
 	font-weight: 500;
 	line-height: 1;
+
 	color: #2d3036;
 }
 
-.list-filter-item ng-select {
+/* =========================================================
+   CONTROLES INTERNOS
+========================================================= */
+
+.list-filter-item ng-select,
+.list-filter-item app-menu-settings-categories,
+.list-filter-item .form-control,
+.list-filter-item .form-select {
 	width: 100%;
+	min-width: 0;
 }
 
-/* Móvil */
+/* =========================================================
+   TABLET Y MÓVIL
+========================================================= */
+
 @media (max-width: 575.98px) {
 	.list-filter-row {
 		display: grid;
-		grid-template-columns: repeat(2, minmax(0, 1fr));
+		grid-template-columns: repeat(
+			2,
+			minmax(0, 1fr)
+		);
 		gap: 0.625rem;
 	}
 
 	.list-filter-item,
 	.list-filter-sort {
 		width: 100%;
+		max-width: none;
+	}
+
+	/*
+	 * Los filtros grandes ocupan toda la fila.
+	 */
+	.list-filter-lg,
+	.list-filter-xl,
+	.list-filter-fluid {
+		grid-column: 1 / -1;
 	}
 }
+
+/* =========================================================
+   MÓVILES PEQUEÑOS
+========================================================= */
 
 @media (max-width: 359.98px) {
 	.list-filter-row {
 		grid-template-columns: 1fr;
+	}
+
+	.list-filter-item {
+		grid-column: 1 / -1;
 	}
 }

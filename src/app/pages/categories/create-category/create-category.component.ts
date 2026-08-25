@@ -14,7 +14,6 @@ import { GLOBAL } from '@app/services/GLOBAL';
 import { AlertComponent } from '@app/shared/alert/alert.component';
 import { TextFieldModule } from '@angular/cdk/text-field';
 import { IMaskModule } from 'angular-imask';
-import { CategoryInterface } from '../interfaces/category.interface';
 import { createEmptyCategory, createEmptyFieldErrorsCategory } from '../utils/empties.util';
 import { ValidationPopoverComponent } from '@app/shared/validation-popover/validation-popover.component';
 declare const toastr: any;
@@ -27,6 +26,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { CategoryFieldErrors } from '../interfaces/validation.interface';
 import { buildShowErrors } from '@app/common/utils/build-show.errors.util';
 import { CreateCategoryRESI } from '../interfaces/response.interface';
+import { CategoryInterface } from '../interfaces/data.interface';
 
 @Component({
 	selector: 'app-create-category',

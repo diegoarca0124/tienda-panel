@@ -27,7 +27,6 @@ import { CurrencySymbolPipe } from '../../../common/pipes/currency-symbol.pipe';
 import { sortColumnsProducts } from '../constants/sort-columns-products.constant';
 import { PaginationMetaInterface } from '@app/common/interface/pagination-meta.interface';
 import { CategoryService } from '@app/services/category.service';
-import { CategoryInterface } from '@app/pages/categories/interfaces/category.interface';
 
 @Component({
 	selector: 'app-products-brand',

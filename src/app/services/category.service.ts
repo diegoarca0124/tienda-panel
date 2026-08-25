@@ -3,12 +3,10 @@ import { Injectable } from '@angular/core';
 import { environment } from 'environments/environment.dev';
 import { AuthService } from './auth.service';
 import { Observable } from 'rxjs';
-import { CategoryInterface } from '@app/pages/categories/interfaces/category.interface';
-import { SubcategoryInterface } from '@app/pages/categories/interfaces/subcategory.interface';
-import { UpdatesCatsubcatProductsInterface } from '@app/pages/categories/interfaces/update-catsubcat.products.interface';
 import { GetCategoriessRESI, UpdateCategoriesStatusRESI, UpdateCategoryStatusRESI } from '@app/pages/categories/interfaces/response.interface';
 import { GetCategoriesQPI } from '@app/pages/brands/interfaces/query-params.interface';
 import { UpdateCategoriesStatusREQI, UpdateCategoryStatusREQI } from '@app/pages/categories/interfaces/request.interface';
+import { CategoryInterface, MoveProductsInterface, SubcategoryInterface } from '@app/pages/categories/interfaces/data.interface';
 
 @Injectable({
 	providedIn: 'root',
@@ -117,7 +115,7 @@ export class CategoryService {
 		});
 	}
 
-	update_catsubcat_products(data: UpdatesCatsubcatProductsInterface): Observable<any> {
+	update_catsubcat_products(data: MoveProductsInterface): Observable<any> {
 		return this.http.post(`${this.apiUrl}/category/update_catsubcat_products`, data, { headers: this.getHeaders() });
 	}
 

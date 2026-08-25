@@ -20,7 +20,7 @@ import { sortColumnsAttributes } from '../constants/sortColumnsAttributes.consta
 import { ValidateQPAttributes } from '../utils/validate-qp-attribute.util';
 import { AttributeGroupInterface } from '../interfaces/attribute-group.interface';
 import { createEmptyGroupAttribute } from '../utils/empties.util';
-import { CategoryInterface } from '@app/pages/categories/interfaces/category.interface';
+import { CategoryInterface } from '@app/pages/categories/interfaces/data.interface';
 declare const toastr: any;
 declare const $: any;
 

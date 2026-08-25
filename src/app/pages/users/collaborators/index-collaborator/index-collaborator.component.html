@@ -101,14 +101,13 @@
 												<span class="action-dropdown-item-title">Importar</span>
 											</a>
 										</li>
-										
 									</ul>
 								</div>
 							</div>
 						</div>
 						<div class="list-filter-row my-7">
 							<!-- Estado -->
-							<div class="list-filter-item">
+							<div class="list-filter-item list-filter-md">
 								<label class="list-filter-label" for="collaboratorStatus">Estado</label>
 								<ng-select
 									id="collaboratorStatus"
@@ -142,7 +141,7 @@
 								</ng-select>
 							</div>
 							<!-- Orden -->
-							<div class="list-filter-item list-filter-sort">
+							<div class="list-filter-item list-filter-md">
 								<label class="list-filter-label" for="collaboratorSort">Orden</label>
 								<ng-select
 									id="collaboratorSort"
@@ -230,29 +229,19 @@
 															<ion-icon class="fs-4" name="checkbox-outline" aria-hidden="true"></ion-icon>
 														</span>
 
-														<span class="action-dropdown-item-title">
-															Seleccionar todos
-														</span>
+														<span class="action-dropdown-item-title">Seleccionar todos</span>
 													</button>
 													<button
 														type="button"
 														class="dropdown-item action-dropdown-item action-dropdown-item-compact"
-														[disabled]="
-															selectedCollaboratorsIds.size === 0
-														"
+														[disabled]="selectedCollaboratorsIds.size === 0"
 														(click)="clearCollaboratorSelection()"
 													>
 														<span class="action-dropdown-item-icon">
-															<ion-icon
-																class="fs-4"
-																name="square-outline"
-																aria-hidden="true"
-															></ion-icon>
+															<ion-icon class="fs-4" name="square-outline" aria-hidden="true"></ion-icon>
 														</span>
 
-														<span class="action-dropdown-item-title">
-															Quitar selección
-														</span>
+														<span class="action-dropdown-item-title">Quitar selección</span>
 													</button>
 												</div>
 											</div>
@@ -273,7 +262,7 @@
 
 											<td class="flex-col fw-medium">
 												<div class="d-flex align-items-center">
-													<div class="skeleton skeleton-square-sm me-3"></div>
+													<div class="skeleton skeleton-square-sm me-4"></div>
 
 													<div class="skeleton-lines d-flex flex-column gap-2">
 														<div class="skeleton skeleton-text skeleton-w-60"></div>

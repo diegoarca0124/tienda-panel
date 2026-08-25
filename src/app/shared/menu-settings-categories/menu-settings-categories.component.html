@@ -1,61 +1,67 @@
-<div class="dropdown">
-	<div class="position-relative w-100 dropdown-toggle" data-bs-toggle="dropdown" #trigger>
-		<input
-			type="text"
-			autocomplete="off"
-			readonly
-			class="form-control form-control-sm w-100 text-ellipsis cursor-pointer custom-trigger pe-12"
-			style="font-size: 0.85rem !important"
-			[ngClass]="{ 'form-control-sm': sizeClass == 'sm' }"
-			aria-expanded="false"
-			[value]="getSelectedNames()"
-			[placeholder]="placeholder"
-			placement="top"
-			[ngbTooltip]="getSelectedNames()"
-			tooltipClass="tooltip-dark"
-		/>
+<div class="dropdown action-dropdown settings-dropdown">
+	<button
+		#trigger
+		type="button"
+		class="form-control settings-trigger dropdown-toggle dropdown-toggle-no-arrow text-gray-700 fw-500"
+		[ngClass]="sizeClass === 'sm' ? 'form-control-sm' : 'form-control-md'"
+		data-bs-toggle="dropdown"
+		data-bs-auto-close="outside"
+		data-bs-offset="0,8"
+		aria-haspopup="true"
+		aria-expanded="false"
+		[attr.aria-label]="title"
+		[ngbTooltip]="selectedItems.length ? getSelectedNames() : null"
+		placement="top"
+		tooltipClass="tooltip-dark"
+	>
+		<span class="text-truncate" [class.placeholder-text]="!selectedItems.length">
+			{{ selectedItems.length ? getSelectedNames() : placeholder }}
+		</span>
 
-		@if (selectedItems.length >= 1) {
-			<span class="badge bg-light-primary text-primary position-absolute" style="right: 15px; top: 50%; transform: translateY(-50%); z-index: 5">
-				{{ selectedItems.length }}
-			</span>
-		}
-	</div>
+		<span class="d-inline-flex align-items-center gap-2 flex-shrink-0">
+			@if (selectedItems.length) {
+				<span class="badge rounded-pill bg-light-primary text-primary fw-700" aria-label="Configuraciones seleccionadas">
+					{{ selectedItems.length }}
+				</span>
+			}
 
-	<div id="dropdown" class="dropdown-menu" data-bs-display="static" data-bs-auto-close="outside" (click)="$event.stopPropagation()">
-		<!-- HEADER -->
-		<div class="dropdown-header-custom p-4">
-			<div class="d-flex justify-content-between align-items-center">
-				<div class="d-flex flex-column">
-					<span class="text-uppercase fs-6 text-gray-800 fw-700 ls-1px">
-						{{ title }}
+			<ion-icon style="font-size: 1.1rem" name="chevron-down-outline" class="app-btn-chevron text-gray-500" aria-hidden="true"></ion-icon>
+		</span>
+	</button>
+
+	<div class="dropdown-menu dropdown-menu-end action-dropdown-menu settings-menu p-0" (click)="$event.stopPropagation()">
+		<header class="form-card-header d-flex align-items-start justify-content-between gap-3">
+			<div>
+				<h3 class="form-card-title fs-15">
+					{{ title }}
+				</h3>
+
+				<p class="form-card-description fs-12">Elige los datos que deseas solicitar para los productos de esta categoría.</p>
+			</div>
+
+			<span class="badge rounded-pill bg-light-primary text-primary fw-700 flex-shrink-0">{{ selectedItems.length }}/{{ displayData.length }}</span>
+		</header>
+
+		<div class="settings-list" role="group" [attr.aria-label]="title">
+			<label class="form-check form-check-customs form-check-sm action-dropdown-item settings-option m-0" *ngFor="let item of displayData">
+				<input class="form-check-input flex-shrink-0" type="checkbox" [(ngModel)]="item.checked" />
+
+				<span class="action-dropdown-item-content">
+					<span class="action-dropdown-item-title">
+						{{ item.name }}
 					</span>
-					<small class="dropdown-subtitle text-gray-600 fw-400">Seleccion configuraciones en categorías</small>
-				</div>
-			</div>
+
+					<span class="action-dropdown-item-description">
+						{{ item.description }}
+					</span>
+				</span>
+			</label>
 		</div>
 
-		<!-- ITEMS -->
-		<div class="items-container" style="overflow-y: scroll !important">
-			<div class="dropdown-item-custom d-flex justify-content-between mb-0" *ngFor="let item of displayData">
-				<label class="form-check form-check-custom form-check-solid m-0 cursor-pointer">
-					<input class="form-check-input me-2" type="checkbox" [(ngModel)]="item.checked" [checked]="item.checked" style="border: 1px dashed #ccc" />
-					<div class="d-flex flex-column">
-						<small class="form-check-label text-gray-800 fs-8">
-							{{ item.name }}
-						</small>
-						<small class="text-gray-500" style="margin-left: 0.55rem; font-size: 0.75rem !important">
-							{{ item.description }}
-						</small>
-					</div>
-				</label>
-			</div>
-		</div>
-		<!-- FOOTER -->
-		<div class="dropdown-footer p-4">
-			<div class="d-flex justify-content-end gap-2">
-				<button class="btn btn-sm btn-dark d-flex align-items-center px-4 py-2 fs-8" (click)="confirmSelection()">Confirmar</button>
-			</div>
-		</div>
+		<footer class="form-card-footer d-flex align-items-center justify-content-end gap-2">
+			<button type="button" class="btn btn-sm btn-light" [disabled]="!selectedItems.length" (click)="clearSelection()">Limpiar</button>
+
+			<button type="button" class="btn btn-sm btn-primary" (click)="confirmSelection()">Aplicar filtros</button>
+		</footer>
 	</div>
 </div>

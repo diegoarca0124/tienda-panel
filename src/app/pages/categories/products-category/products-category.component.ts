@@ -15,11 +15,9 @@ import { ValidateQPProductsCategory } from '../utils/validate-qp-products-catego
 import { NgSelectModule } from '@ng-select/ng-select';
 import { MenuSubcategoriesComponent } from '@app/shared/menu-subcategories/menu-subcategories.component';
 import { NotFoundComponent } from '@app/shared/not-found/not-found.component';
-import { UpdatesCatsubcatProductsInterface } from '../interfaces/update-catsubcat.products.interface';
-import { createEmptyCategory, createUpdateCatsubcatProducts } from '../utils/empties.util';
+import { createEmptyCategory, createMoveProducts } from '../utils/empties.util';
 import { FallbackImageDirective } from '@app/common/directives/fallback-image.directive';
 import { environment } from 'environments/environment.dev';
-import { CategoryInterface } from '../interfaces/category.interface';
 import { PadCodePipe } from '../../../common/pipes/pad-code.pipe';
 import { HttpErrorResponse } from '@angular/common/http';
 import { PaginationMetaInterface } from '@app/common/interface/pagination-meta.interface';
@@ -28,6 +26,7 @@ import { CurrencySymbolPipe } from '../../../common/pipes/currency-symbol.pipe';
 import { qualityFilters } from '../constants/quality-filters.constant';
 import { visibilityFilters } from '../constants/visibility.filters.constant';
 import { InputDialerComponent } from '@app/shared/input-dialer/input-dialer.component';
+import { CategoryInterface, MoveProductsInterface } from '../interfaces/data.interface';
 declare var toastr: any;
 
 @Component({
@@ -75,7 +74,7 @@ export class ProductsCategoryComponent {
 
 	public selectedProductsIds = new Set<string>();
 
-	public moveProductsPayload: UpdatesCatsubcatProductsInterface = createUpdateCatsubcatProducts();
+	public moveProductsPayload: MoveProductsInterface = createMoveProducts();
 	public movingToSubcategoryId: string | null = null;
 
 	public expandedCategoryIndex: number | null = 0;

@@ -9,9 +9,9 @@ import { SidebarComponent } from '@app/shared/sidebar/sidebar.component';
 import { TopbarComponent } from '@app/shared/topbar/topbar.component';
 import { finalize, Subject, takeUntil } from 'rxjs';
 import { CdkDragDrop, DragDropModule, transferArrayItem } from '@angular/cdk/drag-drop';
-import { CategoryInterface } from '../interfaces/category.interface';
 import { DomSanitizer } from '@angular/platform-browser';
 import { HttpErrorResponse } from '@angular/common/http';
+import { CategoryInterface } from '../interfaces/data.interface';
 declare const toastr: any;
 
 @Component({

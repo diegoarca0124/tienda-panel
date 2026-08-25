@@ -156,21 +156,14 @@ export class IndexCollaboratorComponent {
 			.pipe(takeUntil(this.destroy$))
 			.subscribe({
 				next: (response: GetCollaboratorsRESI) => {
-					this.collaborators =
-						response.collaborators;
+					this.collaborators = response.collaborators;
 
-					this.totalPages =
-						response.meta.totalPages;
+					this.totalPages = response.meta.totalPages;
 
-					this.syncCurrentPage(
-						response.meta.currentPage
-					);
+					this.syncCurrentPage(response.meta.currentPage);
 				},
 				error: (error: HttpErrorResponse) => {
-					toastr.error(
-						error.error?.message ||
-							'No fue posible actualizar la lista.'
-					);
+					toastr.error(error.error?.message || 'No fue posible actualizar la lista.');
 				},
 			});
 	}
@@ -263,10 +256,7 @@ export class IndexCollaboratorComponent {
 					this.refreshCollaborators();
 				},
 				error: (error: HttpErrorResponse) => {
-					toastr.error(
-						error.error?.message ||
-							'No fue posible actualizar el estado.'
-					);
+					toastr.error(error.error?.message || 'No fue posible actualizar el estado.');
 				},
 			});
 	}
@@ -322,24 +312,11 @@ export class IndexCollaboratorComponent {
 	}
 
 	selectAllCollaborators(): void {
-		this.selectedCollaboratorsIds = new Set(
-			this.collaborators
-				.map((collaborator) => collaborator.id)
-				.filter((id): id is string => Boolean(id))
-		);
+		this.selectedCollaboratorsIds = new Set(this.collaborators.map((collaborator) => collaborator.id).filter((id): id is string => Boolean(id)));
 	}
 
 	get areAllCollaboratorsSelected(): boolean {
-		return (
-			this.collaborators.length > 0 &&
-			this.collaborators.every(
-				(collaborator) =>
-					Boolean(collaborator.id) &&
-					this.selectedCollaboratorsIds.has(
-						collaborator.id!
-					)
-			)
-		);
+		return this.collaborators.length > 0 && this.collaborators.every((collaborator) => Boolean(collaborator.id) && this.selectedCollaboratorsIds.has(collaborator.id!));
 	}
 
 	onUpdateStatusMultiple(status: boolean) {
@@ -357,19 +334,12 @@ export class IndexCollaboratorComponent {
 			.subscribe({
 				next: (next: UpdateCollaboratorsStatusRESI) => {
 					toastr.success(next.message);
-					closeModal(
-						status
-							? 'modalMultipleActive'
-							: 'modalMultipleDisabled'
-					);
+					closeModal(status ? 'modalMultipleActive' : 'modalMultipleDisabled');
 					this.selectedCollaboratorsIds.clear();
 					this.refreshCollaborators();
 				},
 				error: (error: HttpErrorResponse) => {
-					toastr.error(
-						error.error?.message ||
-							'No fue posible actualizar los estados.'
-					);
+					toastr.error(error.error?.message || 'No fue posible actualizar los estados.');
 				},
 			});
 	}

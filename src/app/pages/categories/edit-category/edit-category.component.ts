@@ -17,8 +17,6 @@ import { AlertComponent } from '@app/shared/alert/alert.component';
 declare const toastr: any;
 import { IMaskModule } from 'angular-imask';
 import { createEmptyCategory, createEmptyFieldErrorsCategory, createEmptyFieldErrorsSubcategory, createEmptySubcategory } from '../utils/empties.util';
-import { CategoryInterface } from '../interfaces/category.interface';
-import { SubcategoryInterface } from '../interfaces/subcategory.interface';
 import { ValidationPopoverComponent } from '@app/shared/validation-popover/validation-popover.component';
 import { showErrorsSubcategory } from '../constants/show-errors-subcategory.constant';
 import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
@@ -30,6 +28,7 @@ import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { HttpErrorResponse } from '@angular/common/http';
 import { CategoryFieldErrors, SubcategoryFieldErrors } from '../interfaces/validation.interface';
 import { buildShowErrors } from '@app/common/utils/build-show.errors.util';
+import { CategoryInterface, SubcategoryInterface } from '../interfaces/data.interface';
 
 @Component({
 	selector: 'app-edit-category',

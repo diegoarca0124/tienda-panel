@@ -6,7 +6,7 @@
 	width: 100%;
 	max-width: 100%;
 	overflow-x: auto;
-	overflow-y: hidden;
+	overflow: visible;
 	-webkit-overflow-scrolling: touch;
 
 	background: #eef1f5;

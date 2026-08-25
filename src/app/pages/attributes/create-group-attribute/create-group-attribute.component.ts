@@ -16,9 +16,9 @@ import { AlertComponent } from '@app/shared/alert/alert.component';
 import { ValidationPopoverComponent } from '@app/shared/validation-popover/validation-popover.component';
 import { showErrorsGroupAttribute } from '../constants/show-errors-group-attribute.constant';
 import { buildShowErrors } from '@app/common/utils/build-show.errors.util';
-import { CategoryInterface } from '@app/pages/categories/interfaces/category.interface';
 import { TextFieldModule } from '@angular/cdk/text-field';
 import { TextareaAutoresizeDirective } from '@app/common/directives/textarea-autoresize.directive';
+import { CategoryInterface } from '@app/pages/categories/interfaces/data.interface';
 declare const toastr: any;
 
 @Component({

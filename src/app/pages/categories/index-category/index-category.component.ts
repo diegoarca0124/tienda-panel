@@ -15,7 +15,6 @@ import { SidebarComponent } from '@app/shared/sidebar/sidebar.component';
 import { TopbarComponent } from '@app/shared/topbar/topbar.component';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { catchError, finalize, map, of, Subject, switchMap, takeUntil } from 'rxjs';
-import { CategoryInterface } from '../interfaces/category.interface';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { validateCategoriesQueryParams } from '../utils/validate-categories-query-params.util';
 import { FallbackImageDirective } from '@app/common/directives/fallback-image.directive';
@@ -28,6 +27,7 @@ import { GetCategoriesQPI } from '@app/pages/brands/interfaces/query-params.inte
 import { sortOptions } from '../constants/sort-categories-filters.constant';
 import { statusOptions } from '../constants/status-filters.contant';
 import { GetCategoriessRESI, UpdateCategoriesStatusRESI, UpdateCategoryStatusRESI } from '../interfaces/response.interface';
+import { CategoryInterface } from '../interfaces/data.interface';
 declare const toastr: any;
 declare const $: any;
 
@@ -157,6 +157,29 @@ export class IndexCategoryComponent {
 			});
 	}
 
+	private refreshCategories(): void {
+		this.categoryService
+			.getCategories({
+				filter: this.filter,
+				page: this.currentPage,
+				limit: this.limit,
+				status: this.selectedStatus,
+				sort: this.selectedSort,
+				configurations: this.selectedConfigurations
+			})
+			.pipe(takeUntil(this.destroy$))
+			.subscribe({
+				next: (response: GetCategoriessRESI) => {
+					this.categories = this.mapCategories(response.categories);
+					this.totalPages = response.meta.totalPages;
+					this.syncCurrentPage(response.meta.currentPage);
+				},
+				error: (error: HttpErrorResponse) => {
+					toastr.error(error.error?.message || 'No fue posible actualizar la lista.');
+				},
+			});
+	}
+
 	syncCurrentPage(currentPage: number): void {
 		if (this.currentPage === currentPage) return;
 
@@ -228,6 +251,18 @@ export class IndexCategoryComponent {
 		this.currentPage = 1;
 	}
 
+	clearCollaboratorSelection(): void {
+		this.selectedCategoriesIds.clear();
+	}
+
+	selectAllCollaborators(): void {
+		this.selectedCategoriesIds = new Set(this.categories.map((category) => category.id).filter((id): id is string => Boolean(id)));
+	}
+
+	get areAllCollaboratorsSelected(): boolean {
+		return this.categories.length > 0 && this.categories.every((category) => Boolean(category.id) && this.selectedCategoriesIds.has(category.id!));
+	}
+
 	onUpdateStatus(id: string, status: boolean) {
 		this.isUpdatingSingleStatus.set(true);
 		this.categoryService
@@ -239,12 +274,9 @@ export class IndexCategoryComponent {
 			)
 			.subscribe({
 				next: (next: UpdateCategoryStatusRESI) => {
-					const category = this.categories.find((c) => c.id === next.data.id);
-					if (category) {
-						category.status = next.data.status;
-					}
 					toastr.success(next.message);
-					closeModal('modalDelete-' + id);
+					closeModal(`modalDelete-${id}`);
+					this.refreshCategories();
 				},
 				error: (error: HttpErrorResponse) => {
 					toastr.error(error.error.message);
@@ -331,19 +363,10 @@ export class IndexCategoryComponent {
 			)
 			.subscribe({
 				next: (next: UpdateCategoriesStatusRESI) => {
-					const updatedIds = new Set(next.data);
-					this.categories = this.categories.map((prev) => {
-						if (updatedIds.has(prev.id!)) {
-							return {
-								...prev,
-								status,
-							};
-						}
-						return prev;
-					});
 					toastr.success(next.message);
 					closeModal(status ? 'modalMultipleActive' : 'modalMultipleDisabled');
 					this.selectedCategoriesIds.clear();
+					this.refreshCategories();
 				},
 				error: (error: HttpErrorResponse) => {
 					toastr.error(error.error.message);

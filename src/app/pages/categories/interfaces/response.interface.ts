@@ -1,4 +1,5 @@
-import { CategoryInterface } from './category.interface';
+import { CategoryInterface } from "./data.interface";
+
 
 export interface GetCategoriessRESI {
 	categories: CategoryInterface[];

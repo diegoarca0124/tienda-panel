@@ -28,7 +28,6 @@ import { ProductService } from '@app/services/product.service';
 import { withMinLoadingTime } from '@app/common/interface/with-min-loading-time.interface';
 import { CategoryService } from '@app/services/category.service';
 import { DomSanitizer } from '@angular/platform-browser';
-import { CategoryInterface } from '@app/pages/categories/interfaces/category.interface';
 import { SubcategoryInterface } from '../interfaces/subcategory.interface';
 import { BrandService } from '@app/services/brand.service';
 import { BrandInterface } from '../interfaces/brands.interface';
@@ -36,6 +35,7 @@ import { environment } from 'environments/environment.dev';
 import { GLOBAL } from '@app/services/GLOBAL';
 import { NotFoundComponent } from '@app/shared/not-found/not-found.component';
 import { ProductInterface } from '../interfaces/product.interface';
+import { CategoryInterface } from '../interfaces/category.interface';
 declare const toastr: any;
 
 @Component({

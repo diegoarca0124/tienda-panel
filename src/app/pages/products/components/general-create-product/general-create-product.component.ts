@@ -16,13 +16,13 @@ import { warranties } from '@app/common/constants/warranties.constant';
 import { NgxCurrencyDirective } from 'ngx-currency';
 import { countries } from '@app/common/constants/countries.constant';
 import Quill from 'quill';
-import { CategoryInterface } from '@app/pages/categories/interfaces/category.interface';
 import { ValidationPopoverComponent } from '@app/shared/validation-popover/validation-popover.component';
 import { ɵɵDir } from '@angular/cdk/scrolling';
 import { catchError, finalize, tap } from 'rxjs';
 import { CharacteristicInterface } from '../../interfaces/characteristic.interface';
 import { createEmptyCharacteristic } from '../../utils/empties.util';
 import { TextareaAutoresizeDirective } from '@app/common/directives/textarea-autoresize.directive';
+import { CategoryInterface } from '../../interfaces/category.interface';
 
 @Component({
 	selector: 'app-general-create-product',

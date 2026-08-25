@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, EventEmitter, Input, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, ElementRef, EventEmitter, Input, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { configurationsFilters } from '@app/pages/categories/constants/configurations-filters.constant';
@@ -11,33 +11,31 @@ import { Subject } from 'rxjs';
 	imports: [RouterModule, CommonModule, FormsModule, NgbTooltipModule],
 	templateUrl: './menu-settings-categories.component.html',
 	styleUrl: './menu-settings-categories.component.css',
+	schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class MenuSettingsCategoriesComponent {
 	@ViewChild('trigger') trigger!: ElementRef;
 
-	@Input() title: string = '';
-	@Input() placeholder: string = '';
-	@Input() selectedData: any = '';
+	@Input() title: string = 'Configuraciones';
+	@Input() placeholder: string = 'Seleccionar configuraciones';
+	@Input() selectedData: string | string[] = [];
 	@Input() sizeClass: 'sm' | 'lg' = 'sm';
 
-	@Output() applyData = new EventEmitter();
+	@Output() applyData = new EventEmitter<string[]>();
 
 	private destroy$ = new Subject<void>();
-	public filter: string = '';
 
+	public filter: string = '';
 	public data: any[] = [];
 	public displayData: any[] = [];
 	public errorMsmSeverListData: string = '';
 
-	constructor() {}
-
-	ngOnInit() {
+	ngOnInit(): void {
 		this.initData();
 	}
 
-	ngOnChanges(changes: SimpleChanges) {
+	ngOnChanges(changes: SimpleChanges): void {
 		if (changes['selectedData']) {
-			console.log(this.selectedData);
 			this.syncSelectedData();
 		}
 	}
@@ -47,32 +45,23 @@ export class MenuSettingsCategoriesComponent {
 		this.destroy$.complete();
 	}
 
-	initData() {
+	initData(): void {
 		this.data = configurationsFilters;
 		this.displayData = this.data;
 		this.syncSelectedData();
 	}
 
-	private syncSelectedData() {
-		this.displayData = this.displayData.map((item) => ({
+	private syncSelectedData(): void {
+		const selectedValues = Array.isArray(this.selectedData) ? this.selectedData : this.selectedData.split(',').filter(Boolean);
+
+		this.displayData = this.data.map((item) => ({
 			...item,
-			checked: this.selectedData.includes(item.value),
+			checked: selectedValues.includes(item.value),
 		}));
-		this.data = this.displayData;
-	}
-
-	onCategoryChecked(category: any): void {
-		category.subcategories.forEach((sub: any) => {
-			sub.checked = category.checked;
-		});
-	}
-
-	onSubcategoryChecked(category: any): void {
-		category.checked = category.subcategories.every((sub: any) => sub.checked);
 	}
 
 	get selectedItems(): any[] {
-		return this.data.filter((sub) => sub.checked);
+		return this.displayData.filter((item) => item.checked);
 	}
 
 	getSelectedNames(): string {
@@ -80,29 +69,31 @@ export class MenuSettingsCategoriesComponent {
 	}
 
 	private closeMenu(): void {
+		if (!this.trigger?.nativeElement) {
+			return;
+		}
+
 		const element = this.trigger.nativeElement;
+
 		const dropdown = (window as any).bootstrap.Dropdown.getInstance(element) ?? new (window as any).bootstrap.Dropdown(element);
 
 		dropdown.hide();
 	}
 
-	clearSelection() {
-		this.data.forEach((category) => {
-			category.checked = false;
-			category.subcategories.forEach((sub: any) => (sub.checked = false));
+	clearSelection(): void {
+		this.displayData.forEach((item) => {
+			item.checked = false;
 		});
+
 		this.selectedData = [];
 		this.applyData.emit([]);
 		this.closeMenu();
 	}
 
-	confirmSelection() {
-		console.log(this.selectedItems);
-
+	confirmSelection(): void {
 		const selectedIds = this.selectedItems.map((item) => item.value);
-		this.selectedData = selectedIds;
-		console.log(selectedIds);
 
+		this.selectedData = selectedIds;
 		this.applyData.emit(selectedIds);
 		this.closeMenu();
 	}

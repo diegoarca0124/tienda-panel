@@ -1,6 +1,5 @@
-import { CategoryInterface } from '../interfaces/category.interface';
-import { SubcategoryInterface } from '../interfaces/subcategory.interface';
-import { UpdatesCatsubcatProductsInterface } from '../interfaces/update-catsubcat.products.interface';
+
+import { CategoryInterface, MoveProductsInterface, SubcategoryInterface } from '../interfaces/data.interface';
 import { CategoryFieldErrors, SubcategoryFieldErrors } from '../interfaces/validation.interface';
 
 export function createEmptyCategory(): CategoryInterface {
@@ -29,7 +28,7 @@ export function createEmptySubcategory(): SubcategoryInterface {
 	};
 }
 
-export function createUpdateCatsubcatProducts(): UpdatesCatsubcatProductsInterface {
+export function createMoveProducts(): MoveProductsInterface {
 	return {
 		products: [],
 		categoryId: '',
