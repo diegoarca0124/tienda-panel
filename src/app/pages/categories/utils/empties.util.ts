@@ -1,4 +1,3 @@
-
 import { CategoryInterface, MoveProductsInterface, SubcategoryInterface } from '../interfaces/data.interface';
 import { CategoryFieldErrors, SubcategoryFieldErrors } from '../interfaces/validation.interface';
 

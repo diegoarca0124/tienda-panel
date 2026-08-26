@@ -1,5 +1,4 @@
-import { CategoryInterface } from "./data.interface";
-
+import { CategoryInterface } from './data.interface';
 
 export interface GetCategoriesRESI {
 	categories: CategoryInterface[];
@@ -8,12 +7,12 @@ export interface GetCategoriesRESI {
 		totalPages: number;
 		currentPage: number;
 		limit: number;
-		configurations: string;
 	};
 	filters: {
 		filter: string;
 		status: 'Todos' | 'Activos' | 'Inactivos';
 		sort: string;
+		configurations: string[];
 	};
 }
 

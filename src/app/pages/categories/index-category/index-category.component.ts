@@ -61,7 +61,7 @@ export class IndexCategoryComponent {
 	public filter: string = '';
 	public selectedStatus: string = 'Todos';
 	public selectedSort: string = 'Predeterminado';
-	public selectedConfigurations: any = 'Predeterminado';
+	public selectedConfigurations: string = 'Predeterminado';
 
 	public currentPage: number = 1;
 	public totalPages: number = 0;
@@ -72,7 +72,7 @@ export class IndexCategoryComponent {
 
 	public selectedCategoriesIds = new Set<string>();
 	public isCategoriesLoading: boolean = true;
-	public categoriesLoadError: | Record<string, any> | null = null;
+	public categoriesLoadError: Record<string, any> | null = null;
 
 	public isUpdatingSingleStatus: WritableSignal<boolean> = signal(false);
 	public isUpdatingMultipleStatuses: WritableSignal<boolean> = signal(false);
@@ -158,8 +158,6 @@ export class IndexCategoryComponent {
 	}
 
 	private refreshCategories(): void {
-		this.isCategoriesLoading = true;
-
 		this.categoryService
 			.getCategories({
 				filter: this.filter,
@@ -169,28 +167,17 @@ export class IndexCategoryComponent {
 				sort: this.selectedSort,
 				configurations: this.selectedConfigurations,
 			})
-			.pipe(
-				takeUntil(this.destroy$),
-				finalize(() => {
-					this.isCategoriesLoading = false;
-				}),
-			)
+			.pipe(takeUntil(this.destroy$))
 			.subscribe({
 				next: (response: GetCategoriesRESI) => {
-					this.categories = this.mapCategories(
-						response.categories,
-					);
+					this.categories = this.mapCategories(response.categories);
 
 					this.totalPages = response.meta.totalPages;
-					this.syncCurrentPage(
-						response.meta.currentPage,
-					);
+
+					this.syncCurrentPage(response.meta.currentPage);
 				},
 				error: (error: HttpErrorResponse) => {
-					toastr.error(
-						error.error?.message ||
-							'No fue posible actualizar la lista.',
-					);
+					toastr.error(error.error?.message || 'No fue posible actualizar la lista.');
 				},
 			});
 	}
@@ -224,22 +211,14 @@ export class IndexCategoryComponent {
 		});
 	}
 
-	private mapCategories(
-		categories: CategoryInterface[],
-	): CategoryInterface[] {
+	private mapCategories(categories: CategoryInterface[]): CategoryInterface[] {
 		return categories.map((category) => ({
 			...category,
-			safeIcon: this.sanitizer.bypassSecurityTrustHtml(
-				category.icon || '',
-			),
-			latestProducts: (category.latestProducts ?? []).map(
-				(product) => ({
-					...product,
-					cover: product.cover
-						? `${environment.s3_public_url}/products/small/${product.cover}`
-						: '',
-				}),
-			),
+			safeIcon: this.sanitizer.bypassSecurityTrustHtml(category.icon || ''),
+			latestProducts: (category.latestProducts ?? []).map((product) => ({
+				...product,
+				cover: product.cover ? `${environment.s3_public_url}/products/small/${product.cover}` : '',
+			})),
 			totalProducts: category.totalProducts ?? 0,
 			moreProducts: category.moreProducts ?? 0,
 		}));
@@ -304,10 +283,7 @@ export class IndexCategoryComponent {
 					this.refreshCategories();
 				},
 				error: (error: HttpErrorResponse) => {
-					toastr.error(
-						error.error?.message ||
-							'No fue posible actualizar el estado.',
-					);
+					toastr.error(error.error?.message || 'No fue posible actualizar el estado.');
 				},
 			});
 	}
@@ -317,10 +293,7 @@ export class IndexCategoryComponent {
 			this.currentPage = 1;
 		}
 
-		const normalizedFilter =
-			typeof this.filter === 'string'
-				? this.filter.trim().slice(0, 50)
-				: '';
+		const normalizedFilter = typeof this.filter === 'string' ? this.filter.trim().slice(0, 50) : '';
 
 		this.filter = normalizedFilter;
 
@@ -340,10 +313,8 @@ export class IndexCategoryComponent {
 			Number(current['page'] ?? 1) === queryParams.page &&
 			Number(current['limit'] ?? 10) === queryParams.limit &&
 			(current['status'] ?? 'Todos') === queryParams.status &&
-			(current['sort'] ?? 'Predeterminado') ===
-				queryParams.sort &&
-			(current['configurations'] ?? 'Predeterminado') ===
-				queryParams.configurations;
+			(current['sort'] ?? 'Predeterminado') === queryParams.sort &&
+			(current['configurations'] ?? 'Predeterminado') === queryParams.configurations;
 
 		if (same) {
 			this.loadCategories();
@@ -410,10 +381,7 @@ export class IndexCategoryComponent {
 					this.refreshCategories();
 				},
 				error: (error: HttpErrorResponse) => {
-					toastr.error(
-						error.error?.message ||
-							'No fue posible actualizar el estado.',
-					);
+					toastr.error(error.error?.message || 'No fue posible actualizar el estado.');
 				},
 			});
 	}
