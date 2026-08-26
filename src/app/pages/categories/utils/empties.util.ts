@@ -11,7 +11,7 @@ export function createEmptyCategory(): CategoryInterface {
 		description: '',
 		isDimensions: false,
 		isCharacteristics: false,
-		isConditiom: false,
+		isCondition: false,
 		isWarranty: false,
 		isCountryOfOrigin: false,
 		isMaterial: false,
@@ -45,7 +45,7 @@ export const createEmptyFieldErrorsCategory = (): CategoryFieldErrors => ({
 
 	isDimensions: false,
 	isCharacteristics: false,
-	isConditiom: false,
+	isCondition: false,
 	isWarranty: false,
 	isCountryOfOrigin: false,
 	isMaterial: false,

@@ -7,7 +7,7 @@ export interface CategoryFieldErrors {
 
 	isDimensions: boolean;
 	isCharacteristics: boolean;
-	isConditiom: boolean;
+	isCondition: boolean;
 	isWarranty: boolean;
 	isCountryOfOrigin: boolean;
 	isMaterial: boolean;

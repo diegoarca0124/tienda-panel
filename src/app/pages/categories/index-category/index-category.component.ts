@@ -23,15 +23,15 @@ import { PadCodePipe } from '../../../common/pipes/pad-code.pipe';
 import { HttpErrorResponse } from '@angular/common/http';
 import { configurationsFilters } from '../constants/configurations-filters.constant';
 import { MenuSettingsCategoriesComponent } from '@app/shared/menu-settings-categories/menu-settings-categories.component';
-import { GetCategoriesQPI } from '@app/pages/brands/interfaces/query-params.interface';
 import { sortOptions } from '../constants/sort-categories-filters.constant';
 import { statusOptions } from '../constants/status-filters.contant';
-import { GetCategoriessRESI, UpdateCategoriesStatusRESI, UpdateCategoryStatusRESI } from '../interfaces/response.interface';
+import { GetCategoriesRESI, UpdateCategoriesStatusRESI, UpdateCategoryStatusRESI } from '../interfaces/response.interface';
 import { CategoryInterface } from '../interfaces/data.interface';
+import { GetCategoriesQPI } from '../interfaces/query-params.interface';
 declare const toastr: any;
 declare const $: any;
 
-type CategoriesLoadResult = { data: GetCategoriessRESI; error: null } | { data: null; error: HttpErrorResponse };
+type CategoriesLoadResult = { data: GetCategoriesRESI; error: null } | { data: null; error: HttpErrorResponse };
 
 @Component({
 	selector: 'app-index-category',
@@ -72,7 +72,7 @@ export class IndexCategoryComponent {
 
 	public selectedCategoriesIds = new Set<string>();
 	public isCategoriesLoading: boolean = true;
-	public categoriesLoadError: string = '';
+	public categoriesLoadError: | Record<string, any> | null = null;
 
 	public isUpdatingSingleStatus: WritableSignal<boolean> = signal(false);
 	public isUpdatingMultipleStatuses: WritableSignal<boolean> = signal(false);
@@ -124,7 +124,7 @@ export class IndexCategoryComponent {
 			.pipe(
 				switchMap((query) => {
 					this.isCategoriesLoading = true;
-					this.categoriesLoadError = '';
+					this.categoriesLoadError = null;
 					return this.categoryService.getCategories(query).pipe(
 						withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
 						map(
@@ -158,6 +158,8 @@ export class IndexCategoryComponent {
 	}
 
 	private refreshCategories(): void {
+		this.isCategoriesLoading = true;
+
 		this.categoryService
 			.getCategories({
 				filter: this.filter,
@@ -165,17 +167,30 @@ export class IndexCategoryComponent {
 				limit: this.limit,
 				status: this.selectedStatus,
 				sort: this.selectedSort,
-				configurations: this.selectedConfigurations
+				configurations: this.selectedConfigurations,
 			})
-			.pipe(takeUntil(this.destroy$))
+			.pipe(
+				takeUntil(this.destroy$),
+				finalize(() => {
+					this.isCategoriesLoading = false;
+				}),
+			)
 			.subscribe({
-				next: (response: GetCategoriessRESI) => {
-					this.categories = this.mapCategories(response.categories);
+				next: (response: GetCategoriesRESI) => {
+					this.categories = this.mapCategories(
+						response.categories,
+					);
+
 					this.totalPages = response.meta.totalPages;
-					this.syncCurrentPage(response.meta.currentPage);
+					this.syncCurrentPage(
+						response.meta.currentPage,
+					);
 				},
 				error: (error: HttpErrorResponse) => {
-					toastr.error(error.error?.message || 'No fue posible actualizar la lista.');
+					toastr.error(
+						error.error?.message ||
+							'No fue posible actualizar la lista.',
+					);
 				},
 			});
 	}
@@ -209,14 +224,24 @@ export class IndexCategoryComponent {
 		});
 	}
 
-	private mapCategories(categories: CategoryInterface[]): CategoryInterface[] {
+	private mapCategories(
+		categories: CategoryInterface[],
+	): CategoryInterface[] {
 		return categories.map((category) => ({
 			...category,
-			safeIcon: this.sanitizer.bypassSecurityTrustHtml(category.icon),
-			latestProducts: category.latestProducts!.map((product) => ({
-				...product,
-				cover: `${environment.s3_public_url}/products/small/${product.cover}`,
-			})),
+			safeIcon: this.sanitizer.bypassSecurityTrustHtml(
+				category.icon || '',
+			),
+			latestProducts: (category.latestProducts ?? []).map(
+				(product) => ({
+					...product,
+					cover: product.cover
+						? `${environment.s3_public_url}/products/small/${product.cover}`
+						: '',
+				}),
+			),
+			totalProducts: category.totalProducts ?? 0,
+			moreProducts: category.moreProducts ?? 0,
 		}));
 	}
 
@@ -237,29 +262,29 @@ export class IndexCategoryComponent {
 	}
 
 	onLimitChange() {
-		this.currentPage = 1;
 		this.applyFilters();
 	}
 
 	onPageChange(newPage: number): void {
 		if (newPage === this.currentPage) return;
+
 		this.currentPage = newPage;
-		this.applyFilters();
+		this.applyFilters(false);
 	}
 
 	onResetCurrentPage() {
 		this.currentPage = 1;
 	}
 
-	clearCollaboratorSelection(): void {
+	clearCategorySelection(): void {
 		this.selectedCategoriesIds.clear();
 	}
 
-	selectAllCollaborators(): void {
+	selectAllCategories(): void {
 		this.selectedCategoriesIds = new Set(this.categories.map((category) => category.id).filter((id): id is string => Boolean(id)));
 	}
 
-	get areAllCollaboratorsSelected(): boolean {
+	get areAllCategoriesSelected(): boolean {
 		return this.categories.length > 0 && this.categories.every((category) => Boolean(category.id) && this.selectedCategoriesIds.has(category.id!));
 	}
 
@@ -279,14 +304,28 @@ export class IndexCategoryComponent {
 					this.refreshCategories();
 				},
 				error: (error: HttpErrorResponse) => {
-					toastr.error(error.error.message);
+					toastr.error(
+						error.error?.message ||
+							'No fue posible actualizar el estado.',
+					);
 				},
 			});
 	}
 
-	applyFilters() {
+	applyFilters(resetPage: boolean = true): void {
+		if (resetPage) {
+			this.currentPage = 1;
+		}
+
+		const normalizedFilter =
+			typeof this.filter === 'string'
+				? this.filter.trim().slice(0, 50)
+				: '';
+
+		this.filter = normalizedFilter;
+
 		const queryParams = {
-			filter: this.filter,
+			filter: normalizedFilter,
 			page: this.currentPage,
 			limit: this.limit,
 			status: this.selectedStatus,
@@ -294,16 +333,17 @@ export class IndexCategoryComponent {
 			configurations: this.selectedConfigurations,
 		};
 
-		const current: any = this.route.snapshot.queryParams;
+		const current = this.route.snapshot.queryParams;
 
 		const same =
-			(current.filter ?? '') === queryParams.filter &&
-			Number(current.page) === queryParams.page &&
-			Number(current.limit) === queryParams.limit &&
-			(current.status ?? 'Todos') === queryParams.status &&
-			(current.sort ?? 'Predeterminado') === queryParams.sort &&
-			(current.configurations ?? 'Predeterminado') === queryParams.configurations;
-		console.log(queryParams);
+			(current['filter'] ?? '') === queryParams.filter &&
+			Number(current['page'] ?? 1) === queryParams.page &&
+			Number(current['limit'] ?? 10) === queryParams.limit &&
+			(current['status'] ?? 'Todos') === queryParams.status &&
+			(current['sort'] ?? 'Predeterminado') ===
+				queryParams.sort &&
+			(current['configurations'] ?? 'Predeterminado') ===
+				queryParams.configurations;
 
 		if (same) {
 			this.loadCategories();
@@ -311,6 +351,7 @@ export class IndexCategoryComponent {
 		}
 
 		this.router.navigate([], {
+			relativeTo: this.route,
 			queryParams,
 		});
 	}
@@ -369,7 +410,10 @@ export class IndexCategoryComponent {
 					this.refreshCategories();
 				},
 				error: (error: HttpErrorResponse) => {
-					toastr.error(error.error.message);
+					toastr.error(
+						error.error?.message ||
+							'No fue posible actualizar el estado.',
+					);
 				},
 			});
 	}

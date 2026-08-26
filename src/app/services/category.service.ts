@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { environment } from 'environments/environment.dev';
 import { AuthService } from './auth.service';
 import { Observable } from 'rxjs';
-import { GetCategoriessRESI, UpdateCategoriesStatusRESI, UpdateCategoryStatusRESI } from '@app/pages/categories/interfaces/response.interface';
+import { GetCategoriesRESI, UpdateCategoriesStatusRESI, UpdateCategoryStatusRESI } from '@app/pages/categories/interfaces/response.interface';
 import { GetCategoriesQPI } from '@app/pages/brands/interfaces/query-params.interface';
 import { UpdateCategoriesStatusREQI, UpdateCategoryStatusREQI } from '@app/pages/categories/interfaces/request.interface';
 import { CategoryInterface, MoveProductsInterface, SubcategoryInterface } from '@app/pages/categories/interfaces/data.interface';
@@ -29,7 +29,7 @@ export class CategoryService {
 		return this.http.post(`${this.apiUrl}/category/create_category`, category, { headers: this.getHeaders() });
 	}
 
-	getCategories(query: GetCategoriesQPI): Observable<GetCategoriessRESI> {
+	getCategories(query: GetCategoriesQPI): Observable<GetCategoriesRESI> {
 		const params = new HttpParams()
 			.set('filter', query.filter)
 			.set('page', query.page)
@@ -38,7 +38,7 @@ export class CategoryService {
 			.set('sort', query.sort)
 			.set('configurations', query.configurations);
 
-		return this.http.get<GetCategoriessRESI>(`${this.apiUrl}/category/getCategories`, { headers: this.getHeaders(), params });
+		return this.http.get<GetCategoriesRESI>(`${this.apiUrl}/category/getCategories`, { headers: this.getHeaders(), params });
 	}
 
 	updateCategoryStatus(id: string, data: UpdateCategoryStatusREQI): Observable<UpdateCategoryStatusRESI> {

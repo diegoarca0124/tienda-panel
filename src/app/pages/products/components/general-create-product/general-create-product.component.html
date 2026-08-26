@@ -70,7 +70,7 @@
 				<app-validation-popover [errors]="errorsProduct?.unitOfMeasure"></app-validation-popover>
 			</div>
 		</div>
-		<div class="col-md-6 mb-4" *ngIf="categorySelected!.isConditiom">
+		<div class="col-md-6 mb-4" *ngIf="categorySelected!.isCondition">
 			<div class="d-flex align-items-center justify-content-between mb-1">
 				<label class="fw-500 text-gray-700 fs-6 mb-1">Condición</label>
 				<small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="errorsProduct?.condition" (click)="showErrors.condition = !showErrors.condition">

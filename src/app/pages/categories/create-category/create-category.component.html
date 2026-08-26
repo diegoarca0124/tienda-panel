@@ -200,14 +200,14 @@
 
 									<div class="col-12 col-md-6 py-4">
 										<label class="form-check form-check-custom form-check-solid align-items-start">
-											<input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="category.isConditiom" />
+											<input class="form-check-input me-3 mt-1" type="checkbox" [(ngModel)]="category.isCondition" />
 											<span class="form-check-label d-flex flex-column align-items-start">
 												<span class="fw-500 text-gray-700 fs-6 mb-1">Condición</span>
 												<small class="d-block lh-sm">Indica si el producto es nuevo, usado o se encuentra reacondicionado.</small>
 											</span>
 										</label>
-										<div class="validation-wrapper" [class.open]="fieldErrors.isConditiom">
-											<app-validation-popover [errors]="validationCategoryError?.isConditiom"></app-validation-popover>
+										<div class="validation-wrapper" [class.open]="fieldErrors.isCondition">
+											<app-validation-popover [errors]="validationCategoryError?.isCondition"></app-validation-popover>
 										</div>
 									</div>
 

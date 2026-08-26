@@ -228,8 +228,8 @@
 															<button
 																type="button"
 																class="dropdown-item action-dropdown-item action-dropdown-item-compact"
-																[disabled]="areAllCollaboratorsSelected"
-																(click)="selectAllCollaborators()"
+																[disabled]="areAllCategoriesSelected"
+																(click)="selectAllCategories()"
 															>
 																<span class="action-dropdown-item-icon">
 																	<ion-icon class="fs-4" name="checkbox-outline" aria-hidden="true"></ion-icon>
@@ -241,7 +241,7 @@
 																type="button"
 																class="dropdown-item action-dropdown-item action-dropdown-item-compact"
 																[disabled]="selectedCategoriesIds.size === 0"
-																(click)="clearCollaboratorSelection()"
+																(click)="clearCategorySelection()"
 															>
 																<span class="action-dropdown-item-icon">
 																	<ion-icon class="fs-4" name="square-outline" aria-hidden="true"></ion-icon>

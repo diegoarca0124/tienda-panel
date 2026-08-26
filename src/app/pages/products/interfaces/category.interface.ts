@@ -6,7 +6,7 @@ export interface CategoryInterface {
 	status: boolean;
 
 	isCharacteristics: boolean;
-	isConditiom: boolean;
+	isCondition: boolean;
 	isCountryOfOrigin: boolean;
 	isDimensions: boolean;
 	isMaterial: boolean;

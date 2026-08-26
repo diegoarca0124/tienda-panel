@@ -1,13 +1,14 @@
 import { CategoryInterface } from "./data.interface";
 
 
-export interface GetCategoriessRESI {
+export interface GetCategoriesRESI {
 	categories: CategoryInterface[];
 	meta: {
 		totalCategories: number;
 		totalPages: number;
 		currentPage: number;
 		limit: number;
+		configurations: string;
 	};
 	filters: {
 		filter: string;
