@@ -4,6 +4,7 @@ export interface CategoryFieldErrors {
 	icon: boolean;
 	description: boolean;
 	prefix: boolean;
+	color: boolean;
 
 	isDimensions: boolean;
 	isCharacteristics: boolean;

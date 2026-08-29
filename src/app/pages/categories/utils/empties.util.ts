@@ -7,6 +7,7 @@ export function createEmptyCategory(): CategoryInterface {
 		slug: '',
 		icon: '',
 		prefix: '',
+		color: '#abacad',
 		description: '',
 		isDimensions: false,
 		isCharacteristics: false,
@@ -41,6 +42,7 @@ export const createEmptyFieldErrorsCategory = (): CategoryFieldErrors => ({
 	icon: false,
 	description: false,
 	prefix: false,
+	color: false,
 
 	isDimensions: false,
 	isCharacteristics: false,

@@ -3,7 +3,13 @@ import { Injectable } from '@angular/core';
 import { environment } from 'environments/environment.dev';
 import { AuthService } from './auth.service';
 import { Observable } from 'rxjs';
-import { GetCategoriesRESI, GetCategoriesWithSubcategoriesRESI, MoveSubcategoryRESI, UpdateCategoriesStatusRESI, UpdateCategoryStatusRESI } from '@app/pages/categories/interfaces/response.interface';
+import {
+	GetCategoriesRESI,
+	GetCategoriesWithSubcategoriesRESI,
+	MoveSubcategoryRESI,
+	UpdateCategoriesStatusRESI,
+	UpdateCategoryStatusRESI,
+} from '@app/pages/categories/interfaces/response.interface';
 
 import { UpdateCategoriesStatusREQI, UpdateCategoryStatusREQI } from '@app/pages/categories/interfaces/request.interface';
 import { CategoryInterface, MoveProductsInterface, SubcategoryInterface } from '@app/pages/categories/interfaces/data.interface';
@@ -111,7 +117,7 @@ export class CategoryService {
 	}
 
 	getCategoriesWithSubcategories(): Observable<GetCategoriesWithSubcategoriesRESI> {
-		return this.http.get<GetCategoriesWithSubcategoriesRESI>(`${this.apiUrl}/category/getCategoriesWithSubcategories`, {headers: this.getHeaders()});
+		return this.http.get<GetCategoriesWithSubcategoriesRESI>(`${this.apiUrl}/category/getCategoriesWithSubcategories`, { headers: this.getHeaders() });
 	}
 
 	update_catsubcat_products(data: MoveProductsInterface): Observable<any> {

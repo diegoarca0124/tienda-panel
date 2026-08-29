@@ -47,6 +47,7 @@ export interface CategoryWithSubcategoriesRESI {
 	icon: string;
 	safeIcon: string;
 	prefix: string;
+	color: string;
 	subcategories: SubcategoryInterface[];
 }
 

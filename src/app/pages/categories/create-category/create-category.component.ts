@@ -87,6 +87,8 @@ export class CreateCategoryComponent {
 					this._router.navigate(['/products/categories']);
 				},
 				error: (err: HttpErrorResponse) => {
+					console.log(err);
+					
 					const error = err.error;
 					toastr.error(error.message || '¡Error desconocido!');
 

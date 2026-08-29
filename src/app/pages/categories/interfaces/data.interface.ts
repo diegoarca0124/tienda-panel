@@ -7,6 +7,7 @@ export interface CategoryInterface {
 	description?: string;
 	prefix: string;
 	safeIcon?: any;
+	color?: string;
 
 	isDimensions?: boolean;
 	isCharacteristics?: boolean;
