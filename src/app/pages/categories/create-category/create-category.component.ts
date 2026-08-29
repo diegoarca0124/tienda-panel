@@ -74,7 +74,7 @@ export class CreateCategoryComponent {
 		this.isCreateCategoryLoading = true;
 		if (this.category.icon == null) this.category.icon = '';
 		this.categoryService
-			.create_category(this.category)
+			.createCategory(this.category)
 			.pipe(
 				takeUntil(this.destroy$),
 				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),

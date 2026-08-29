@@ -32,8 +32,8 @@ export class CategoryService {
 		private authsService: AuthService
 	) {}
 
-	create_category(category: CategoryInterface): Observable<any> {
-		return this.http.post(`${this.apiUrl}/category/create_category`, category, { headers: this.getHeaders() });
+	createCategory(category: CategoryInterface): Observable<any> {
+		return this.http.post(`${this.apiUrl}/category/createCategory`, category, { headers: this.getHeaders() });
 	}
 
 	getCategories(query: GetCategoriesQPI): Observable<GetCategoriesRESI> {
