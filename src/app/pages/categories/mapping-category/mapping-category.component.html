@@ -1,138 +1,148 @@
 <div class="app-page flex-column flex-column-fluid" id="kt_app_page">
 	<app-topbar></app-topbar>
+
 	<div class="app-wrapper flex-column flex-row-fluid" id="kt_app_wrapper">
 		<app-sidebar></app-sidebar>
+
 		<div class="app-main flex-column flex-row-fluid">
 			<div class="d-flex flex-column flex-column-fluid">
-				<div id="kt_app_toolbar" class="app-toolbar py-3 py-lg-6">
-					<div id="kt_app_toolbar_container" class="app-container container-fluid d-flex flex-stack">
-						<div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
-							<h1 class="page-heading d-flex text-gray-700 fs-3 flex justify-content-start my-0 align-items-center text-uppercase ls-1px fw-700">Categorías</h1>
+				<div id="kt_app_toolbar" class="app-toolbar page-header py-5 py-lg-6">
+					<div id="kt_app_toolbar_container" class="app-container container-fluid page-header-layout">
+						<div class="page-header-content">
+							<nav aria-label="Migas de pan">
+								<ol class="page-header-breadcrumb">
+									<li class="page-header-breadcrumb-item">
+										<a [routerLink]="['/products/categories']" class="page-header-breadcrumb-link">Categorías</a>
+									</li>
 
-							<ul class="breadcrumb breadcrumb-separatorless fs-7 my-0 pt-1">
-								<li class="breadcrumb-item text-muted">
-									<a [routerLink]="['/products/categories']" class="text-muted text-hover-primary">Categorías</a>
-								</li>
-								<li class="breadcrumb-item">
-									<span class="bullet bg-gray-400 w-5px h-2px"></span>
-								</li>
-								<li class="breadcrumb-item text-primary fw-600">Mapeo de categorías</li>
-							</ul>
+									<li class="page-header-breadcrumb-item page-header-breadcrumb-active" aria-current="page">Mapeo</li>
+								</ol>
+							</nav>
+
+							<h1 class="page-header-title">Mapeo de categorías</h1>
 						</div>
+
+						<button
+							[disabled]="isCategoriesLoading"
+							(click)="initCategories()"
+							class="btn btn-xs btn-light-primary page-header-action"
+							aria-label="Volver a categorías"
+							title="Volver a categorías"
+						>
+							<i *ngIf="!isCategoriesLoading" class="bi bi-arrow-clockwise"></i>
+							<span *ngIf="isCategoriesLoading" class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+
+							<span class="page-header-action-text">Refrescar</span>
+						</button>
 					</div>
 				</div>
-				<div class="app-content flex-column-fluid">
+
+				<div class="app-content flex-column-fluid mt-5">
 					<div class="app-container container-fluid">
-						<div class="row g-3 g-lg-4">
-							<div class="col-12">
-								<div class="accordion-container my-5">
-									<div class="category-accordion-container min-h-card">
-										@if (loading) {
-											<div class="category-card" *ngFor="let category of [1, 2, 3, 4, 5, 6]; let i = index">
-												<div class="category-header" style="background-color: white !important">
-													<div class="d-flex align-items-center gap-3 min-w-0">
-														<div class="skeleton skeleton-text" style="width: 30px !important; height: 30px; border-radius: 12px"></div>
-														<div class="d-flex align-items-center">
-															<div class="d-flex flex-column min-w-0 me-3 gap-2" style="width: 200px">
-																<div class="skeleton skeleton-text" style="width: 60% !important"></div>
-																<div class="skeleton skeleton-text" style="width: 40% !important"></div>
-															</div>
-														</div>
-													</div>
+						<section class="mb-7" aria-label="Mapeo de categorías">
+							@if (isCategoriesLoading) {
+								<div class="category-list" aria-label="Cargando categorías" aria-busy="true">
+									<div class="form-card category-card category-card-skeleton" *ngFor="let category of [1, 2, 3, 4, 5, 6]">
+										<div class="category-header">
+											<div class="category-main">
+												<div class="skeleton skeleton-square-sm"></div>
+
+												<div class="skeleton-lines">
+													<div class="skeleton skeleton-text skeleton-w-60"></div>
+
+													<div class="skeleton skeleton-text skeleton-w-40"></div>
 												</div>
 											</div>
-										} @else if (errorMsmServerListCategories) {
-											<div class="card">
-												<div class="card-body">
-													<app-not-found [error]="errorMsmServerListCategories"></app-not-found>
-												</div>
-											</div>
-										} @else if (categories.length >= 1) {
-											<div class="category-card" *ngFor="let category of categories; let i = index">
-												<div
-													class="category-drop-zone"
-													cdkDropList
-													[id]="'category-' + category.id"
-													[cdkDropListData]="category"
-													[cdkDropListConnectedTo]="getDropListIds(category.id!)"
-													(cdkDropListDropped)="drop($event)"
-													(cdkDropListEntered)="dragOverCategoryId = category.id"
-													(cdkDropListExited)="dragOverCategoryId = undefined"
-													[class.drag-over]="dragOverCategoryId === category.id"
-													[cdkDropListDisabled]="loadingMove"
-												>
-													<div class="category-header">
-														<div class="d-flex align-items-center gap-3 min-w-0">
-															<div class="category-icon">
-																<ng-container *ngIf="category.icon">
-																	<div class="symbol">
-																		<span class="symbol-label fw-bold h-30px w-30px" style="border: 1px dashed #e3e3e3" [innerHTML]="category.safeIcon"></span>
-																	</div>
-																</ng-container>
-																<ng-container *ngIf="!category.icon">
-																	<ion-icon name="folder-outline" class="fs-5 text-primary"></ion-icon>
-																</ng-container>
-															</div>
-															<div class="d-flex align-items-center">
-																<div class="d-flex flex-column min-w-0 me-5">
-																	<span class="category-name text-truncate text-gray-700">{{ category.name }}</span>
-																	<small class="text-gray-500 fs-8">
-																		{{ category.subcategories.length }}
-																		subcategorías
-																	</small>
-																</div>
-															</div>
-														</div>
-														<div class="loader" *ngIf="categoryDestination == category.id && loadingMove">
-															<span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
-															<span class="visually-hidden" role="status">Loading...</span>
-														</div>
-													</div>
-													<div class="subcategory-container">
-														<div
-															class="subcategory-item"
-															*ngFor="let subcategory of category.subcategories"
-															cdkDrag
-															[cdkDragData]="subcategory"
-															[cdkDragDisabled]="loadingMove"
-															[class.opacity-50]="loadingMove"
-														>
-															<div class="d-flex align-items-center gap-3">
-																<div class="subcategory-tree-icon">
-																	<ion-icon name="return-down-forward-outline"></ion-icon>
-																</div>
-																<div class="d-flex gap-3 align-items-center">
-																	<span class="subcategory-name text-gray-700 fs-8 fw-400">
-																		{{ subcategory.name }}
-																	</span>
-																</div>
-															</div>
-															<div class="drag-handle">
-																<button
-																	class="btn btn-icon btn-primary h-25px w-25px btn-move"
-																	type="button"
-																	cdkDragHandle
-																	style="cursor: move"
-																	[class.drag-disabled]="loadingMove"
-																>
-																	<ion-icon name="reorder-three-outline" class="fs-2 fw-800"></ion-icon>
-																</button>
-															</div>
-														</div>
-													</div>
-												</div>
-											</div>
-										} @else {
-											<div class="card">
-												<div class="card-body">
-													<app-not-found [error]="{ message: 'No se encontraron registros.', statusCode: 404 }"></app-not-found>
-												</div>
-											</div>
-										}
+
+											<div class="skeleton skeleton-badge"></div>
+										</div>
 									</div>
 								</div>
-							</div>
-						</div>
+							} @else if (categoriesLoadError) {
+								<app-not-found [error]="categoriesLoadError"></app-not-found>
+							} @else if (categories.length > 0) {
+								<div class="category-list">
+									<article class="form-card category-card" *ngFor="let category of categories">
+										<div class="category-drop-zone" [class.drag-over]="dragOverCategoryId === category.id">
+											<header class="category-header">
+												<div class="category-main">
+													<div class="category-icon" aria-hidden="true">
+														<span *ngIf="category.icon" [innerHTML]="category.safeIcon"></span>
+
+														<ion-icon *ngIf="!category.icon" name="folder-outline"></ion-icon>
+													</div>
+
+													<div class="category-content">
+														<h3 class="category-name">
+															{{ category.name }}
+														</h3>
+
+														<span class="category-code" *ngIf="category.code">
+															{{ category.code }}
+														</span>
+													</div>
+												</div>
+
+												<div class="category-meta">
+													<span class="category-count">
+														{{ category.subcategories.length }}
+
+														<span>subcategorías</span>
+													</span>
+
+													<span class="spinner-border spinner-border-sm text-primary" *ngIf="categoryDestination === category.id && loadingMove" role="status">
+														<span class="visually-hidden">Moviendo subcategoría</span>
+													</span>
+												</div>
+											</header>
+
+											<div
+												class="subcategory-list"
+												cdkDropList
+												[id]="'category-' + category.id"
+												[cdkDropListData]="category"
+												[cdkDropListConnectedTo]="getDropListIds(category.id!)"
+												[cdkDropListDisabled]="loadingMove"
+												[class.subcategory-list-empty]="category.subcategories.length === 0"
+												(cdkDropListDropped)="drop($event)"
+												(cdkDropListEntered)="dragOverCategoryId = category.id"
+												(cdkDropListExited)="dragOverCategoryId = undefined"
+											>
+												<div
+													class="subcategory-item"
+													*ngFor="let subcategory of category.subcategories"
+													cdkDrag
+													[cdkDragData]="subcategory"
+													[cdkDragDisabled]="loadingMove"
+													(cdkDragEnded)="dragOverCategoryId = undefined"
+												>
+													<div class="subcategory-content">
+														<span class="subcategory-branch" aria-hidden="true"></span>
+
+														<span class="subcategory-name">
+															{{ subcategory.name }}
+														</span>
+													</div>
+
+													<button class="btn btn-xs btn-icon btn-light-primary drag-handle" type="button" tabindex="-1" [disabled]="loadingMove" aria-hidden="true">
+														<ion-icon name="reorder-three-outline" aria-hidden="true"></ion-icon>
+													</button>
+												</div>
+
+												<p class="subcategory-empty" *ngIf="category.subcategories.length === 0 && dragOverCategoryId !== category.id">Arrastra aquí una subcategoría</p>
+											</div>
+										</div>
+									</article>
+								</div>
+							} @else {
+								<app-not-found
+									[error]="{
+										message: 'No se encontraron registros.',
+										statusCode: 404,
+									}"
+								></app-not-found>
+							}
+						</section>
 					</div>
 				</div>
 			</div>

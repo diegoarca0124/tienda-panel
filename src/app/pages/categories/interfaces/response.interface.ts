@@ -30,3 +30,13 @@ export interface CreateCategoryRESI {
 	data: CategoryInterface;
 	message: string;
 }
+
+export interface MoveSubcategoryRESI {
+	message: string;
+	data: {
+		id: string;
+		name: string;
+		categoryId: string;
+		affectedProducts: number;
+	};
+}

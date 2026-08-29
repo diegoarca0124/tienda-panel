@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { environment } from 'environments/environment.dev';
 import { AuthService } from './auth.service';
 import { Observable } from 'rxjs';
-import { GetCategoriesRESI, UpdateCategoriesStatusRESI, UpdateCategoryStatusRESI } from '@app/pages/categories/interfaces/response.interface';
+import { GetCategoriesRESI, MoveSubcategoryRESI, UpdateCategoriesStatusRESI, UpdateCategoryStatusRESI } from '@app/pages/categories/interfaces/response.interface';
 
 import { UpdateCategoriesStatusREQI, UpdateCategoryStatusREQI } from '@app/pages/categories/interfaces/request.interface';
 import { CategoryInterface, MoveProductsInterface, SubcategoryInterface } from '@app/pages/categories/interfaces/data.interface';
@@ -136,7 +136,7 @@ export class CategoryService {
 		return this.http.post(`${this.apiUrl}/category/update_status_subcategories`, data, { headers: this.getHeaders() });
 	}
 
-	update_category_in_subcategory(id: string, data: { categoryId: string }): Observable<any> {
-		return this.http.put(`${this.apiUrl}/category/update_category_in_subcategory/${id}`, data, { headers: this.getHeaders() });
+	moveSubcategory(id: string, data: { categoryId: string }): Observable<MoveSubcategoryRESI> {
+		return this.http.put<MoveSubcategoryRESI>(`${this.apiUrl}/category/moveSubcategory/${id}`, data, { headers: this.getHeaders() });
 	}
 }

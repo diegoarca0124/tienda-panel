@@ -12,6 +12,7 @@ import { CdkDragDrop, DragDropModule, transferArrayItem } from '@angular/cdk/dra
 import { DomSanitizer } from '@angular/platform-browser';
 import { HttpErrorResponse } from '@angular/common/http';
 import { CategoryInterface } from '../interfaces/data.interface';
+import { GetCategoriesRESI, MoveSubcategoryRESI } from '../interfaces/response.interface';
 declare const toastr: any;
 
 @Component({
@@ -24,8 +25,8 @@ declare const toastr: any;
 export class MappingCategoryComponent {
 	public categories: CategoryInterface[] = [];
 	private destroy$ = new Subject<void>();
-	public loading: boolean = true;
-	public errorMsmServerListCategories: string = '';
+	public isCategoriesLoading: boolean = true;
+	public categoriesLoadError: Record<string, any> | null = null;
 	public dropListIds: string[] = [];
 	public dragOverCategoryId: string | undefined = undefined;
 	public loadingMove: boolean = false;
@@ -64,7 +65,7 @@ export class MappingCategoryComponent {
 		this.loadingMove = true;
 		this.dragOverCategoryId = undefined;
 		this.categoryService
-			.update_category_in_subcategory(subcategory.id, data)
+			.moveSubcategory(subcategory.id, data)
 			.pipe(
 				takeUntil(this.destroy$),
 				finalize(() => {
@@ -73,7 +74,7 @@ export class MappingCategoryComponent {
 				})
 			)
 			.subscribe({
-				next: (next: { message: string }) => {
+				next: (next: MoveSubcategoryRESI) => {
 					toastr.success(next.message);
 					transferArrayItem(previousCategory.subcategories, currentCategory.subcategories, event.previousIndex, event.currentIndex);
 				},
@@ -85,19 +86,19 @@ export class MappingCategoryComponent {
 	}
 
 	initCategories() {
-		this.loading = true;
-		this.errorMsmServerListCategories = '';
+		this.isCategoriesLoading = true;
+		this.categoriesLoadError = null;
 		this.categories = [];
 		this.categoryService
 			.get_categories_with_subcategories()
 			.pipe(
 				takeUntil(this.destroy$),
 				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
-				finalize(() => (this.loading = false))
+				finalize(() => (this.isCategoriesLoading = false))
 			)
 			.subscribe({
-				next: (next: { data: CategoryInterface[]; message: string }) => {
-					this.categories = next.data.map((i) => ({
+				next: (next: GetCategoriesRESI) => {
+					this.categories = next.categories.map((i) => ({
 						...i,
 						safeIcon: this.sanitizer.bypassSecurityTrustHtml(i.icon),
 					}));
@@ -105,7 +106,7 @@ export class MappingCategoryComponent {
 				},
 				error: (err: HttpErrorResponse) => {
 					const error = err.error;
-					this.errorMsmServerListCategories = error;
+					this.categoriesLoadError = error;
 				},
 			});
 	}
