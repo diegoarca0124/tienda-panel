@@ -9,6 +9,15 @@
 	--skeleton-duration: 1.2s;
 	--skeleton-shimmer-width: 150px;
 
+	--skeleton-textarea-height-sm:
+		var(--form-textarea-height-sm, 7rem);
+
+	--skeleton-textarea-height-md:
+		var(--form-textarea-height-md, 9rem);
+
+	--skeleton-textarea-height:
+		var(--skeleton-textarea-height-md);
+
 	/*
 	 * Mismos altos definidos en forms.css.
 	 * Los valores de respaldo son:
@@ -159,4 +168,51 @@
 
 .skeleton-w-60 {
 	width: 60%;
+}
+
+/* =========================================================
+   TEXTAREA PREDETERMINADO
+   MD: mismo alto que textarea.form-control-md
+========================================================= */
+
+.skeleton-textarea {
+	width: 100%;
+	height: var(
+		--skeleton-textarea-height-md
+	) !important;
+	min-height: var(
+		--skeleton-textarea-height-md
+	) !important;
+}
+
+/* =========================================================
+   TEXTAREA SM
+   Mismo alto que textarea.form-control-sm
+========================================================= */
+
+.skeleton-textarea-sm,
+.skeleton-textarea.skeleton-sm {
+	width: 100%;
+	height: var(
+		--skeleton-textarea-height-sm
+	) !important;
+	min-height: var(
+		--skeleton-textarea-height-sm
+	) !important;
+}
+
+/* =========================================================
+   TEXTAREA MD
+   Mismo alto que textarea.form-control-md
+========================================================= */
+
+.skeleton-textarea-md,
+.skeleton-textarea.skeleton-md {
+	width: 100%;
+	height: var(
+		--skeleton-textarea-height-md
+	) !important;
+	min-height: var(
+		--skeleton-textarea-height-md
+	) !important;
 }

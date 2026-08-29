@@ -1,3 +1,26 @@
+:root {
+	--app-font-family:
+		'Lexend',
+		Arial,
+		sans-serif;
+}
+
+html,
+body {
+	font-family: var(--app-font-family);
+}
+
+button,
+input,
+select,
+textarea,
+.ng-select,
+.dropdown-menu,
+.tooltip,
+.popover {
+	font-family: inherit;
+}
+
 .ff-open-sans {
 	font-family: 'Open Sans' !important;
 }
@@ -20,10 +43,6 @@ body {
 
 .fw-800 {
 	font-weight: 800 !important;
-}
-
-* {
-	font-family: 'Lexend';
 }
 
 .fw-300{
