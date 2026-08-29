@@ -1,3 +1,4 @@
+import { SafeHtml } from '@angular/platform-browser';
 import { CategoryInterface, SubcategoryInterface } from './data.interface';
 
 export interface GetCategoriesRESI {
@@ -27,7 +28,7 @@ export interface UpdateCategoriesStatusRESI {
 }
 
 export interface CreateCategoryRESI {
-	data: CategoryInterface;
+	data: string;
 	message: string;
 }
 
@@ -45,7 +46,7 @@ export interface CategoryWithSubcategoriesRESI {
 	id: string;
 	name: string;
 	icon: string;
-	safeIcon: string;
+	safeIcon?: SafeHtml;
 	prefix: string;
 	color: string;
 	subcategories: SubcategoryInterface[];

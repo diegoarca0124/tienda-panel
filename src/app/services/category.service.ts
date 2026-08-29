@@ -4,6 +4,7 @@ import { environment } from 'environments/environment.dev';
 import { AuthService } from './auth.service';
 import { Observable } from 'rxjs';
 import {
+	CreateCategoryRESI,
 	GetCategoriesRESI,
 	GetCategoriesWithSubcategoriesRESI,
 	MoveSubcategoryRESI,
@@ -32,8 +33,8 @@ export class CategoryService {
 		private authsService: AuthService
 	) {}
 
-	createCategory(category: CategoryInterface): Observable<any> {
-		return this.http.post(`${this.apiUrl}/category/createCategory`, category, { headers: this.getHeaders() });
+	createCategory(category: CategoryInterface): Observable<CreateCategoryRESI> {
+		return this.http.post<CreateCategoryRESI>(`${this.apiUrl}/category/createCategory`, category, { headers: this.getHeaders() });
 	}
 
 	getCategories(query: GetCategoriesQPI): Observable<GetCategoriesRESI> {
