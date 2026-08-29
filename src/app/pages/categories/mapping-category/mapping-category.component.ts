@@ -12,7 +12,7 @@ import { CdkDragDrop, DragDropModule, transferArrayItem } from '@angular/cdk/dra
 import { DomSanitizer } from '@angular/platform-browser';
 import { HttpErrorResponse } from '@angular/common/http';
 import { CategoryInterface } from '../interfaces/data.interface';
-import { GetCategoriesRESI, MoveSubcategoryRESI } from '../interfaces/response.interface';
+import { GetCategoriesRESI, GetCategoriesWithSubcategoriesRESI, MoveSubcategoryRESI } from '../interfaces/response.interface';
 declare const toastr: any;
 
 @Component({
@@ -90,23 +90,22 @@ export class MappingCategoryComponent {
 		this.categoriesLoadError = null;
 		this.categories = [];
 		this.categoryService
-			.get_categories_with_subcategories()
+			.getCategoriesWithSubcategories()
 			.pipe(
 				takeUntil(this.destroy$),
 				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
 				finalize(() => (this.isCategoriesLoading = false))
 			)
 			.subscribe({
-				next: (next: GetCategoriesRESI) => {
-					this.categories = next.categories.map((i) => ({
+				next: (next: GetCategoriesWithSubcategoriesRESI) => {
+					this.categories = next.data.map((i) => ({
 						...i,
 						safeIcon: this.sanitizer.bypassSecurityTrustHtml(i.icon),
 					}));
 					this.dropListIds = this.categories.map((category: CategoryInterface) => 'category-' + category.id);
 				},
 				error: (err: HttpErrorResponse) => {
-					const error = err.error;
-					this.categoriesLoadError = error;
+					this.categoriesLoadError = err?.error?.message || 'Ocurrió un error al actualizar las categorías.';
 				},
 			});
 	}

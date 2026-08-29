@@ -3,8 +3,8 @@ export interface CategoryInterface {
 	name: string;
 	code?: string;
 	slug?: string;
-	icon: string;
-	description: string;
+	icon?: string;
+	description?: string;
 	prefix: string;
 	safeIcon?: any;
 

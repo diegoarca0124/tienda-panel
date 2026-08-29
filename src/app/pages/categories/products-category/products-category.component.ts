@@ -27,6 +27,7 @@ import { qualityFilters } from '../constants/quality-filters.constant';
 import { visibilityFilters } from '../constants/visibility.filters.constant';
 import { InputDialerComponent } from '@app/shared/input-dialer/input-dialer.component';
 import { CategoryInterface, MoveProductsInterface } from '../interfaces/data.interface';
+import { GetCategoriesWithSubcategoriesRESI } from '../interfaces/response.interface';
 declare var toastr: any;
 
 @Component({
@@ -248,11 +249,11 @@ export class ProductsCategoryComponent {
 		this.isCategoriesLoading = true;
 		this.categoriesLoadError = '';
 
-		return this.categoryService.get_categories_with_subcategories().pipe(
+		return this.categoryService.getCategoriesWithSubcategories().pipe(
 			withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
 			finalize(() => (this.isCategoriesLoading = false)),
 			tap({
-				next: (next: { data: CategoryInterface[]; message: string }) => {
+				next: (next: GetCategoriesWithSubcategoriesRESI) => {
 					this.categories = next.data.map((category) => ({
 						...category,
 						safeIcon: this.sanitizer.bypassSecurityTrustHtml(category.icon),
@@ -292,9 +293,9 @@ export class ProductsCategoryComponent {
 		this.currentPage = 1;
 		this.limit = 10;
 		this.selectedStatus = 'Todos';
-		return this.categoryService.get_categories_with_subcategories().pipe(
+		return this.categoryService.getCategoriesWithSubcategories().pipe(
 			tap({
-				next: (next: { data: CategoryInterface[]; message: string }) => {
+				next: (next: GetCategoriesWithSubcategoriesRESI) => {
 					console.log(next);
 					this.categories = next.data;
 					this.categories = next.data.map((i) => ({

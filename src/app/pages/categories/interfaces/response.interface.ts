@@ -1,4 +1,4 @@
-import { CategoryInterface } from './data.interface';
+import { CategoryInterface, SubcategoryInterface } from './data.interface';
 
 export interface GetCategoriesRESI {
 	categories: CategoryInterface[];
@@ -39,4 +39,18 @@ export interface MoveSubcategoryRESI {
 		categoryId: string;
 		affectedProducts: number;
 	};
+}
+
+export interface CategoryWithSubcategoriesRESI {
+	id: string;
+	name: string;
+	icon: string;
+	safeIcon: string;
+	prefix: string;
+	subcategories: SubcategoryInterface[];
+}
+
+export interface GetCategoriesWithSubcategoriesRESI {
+	data: CategoryWithSubcategoriesRESI[];
+	message: string;
 }
