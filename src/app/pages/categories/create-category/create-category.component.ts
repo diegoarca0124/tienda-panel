@@ -27,6 +27,7 @@ import { CategoryFieldErrors, CategoryValidationErrors } from '../interfaces/val
 import { buildShowErrors } from '@app/common/utils/build-show.errors.util';
 import { CreateCategoryRESI } from '../interfaces/response.interface';
 import { CategoryInterface } from '../interfaces/data.interface';
+import { prefixMask } from '../constants/prefix-mask.constant';
 
 @Component({
 	selector: 'app-create-category',
@@ -54,10 +55,7 @@ export class CreateCategoryComponent {
 	public isCreateCategoryLoading: boolean = false;
 	public validationCategoryError: CategoryValidationErrors = {};
 	public category: CategoryInterface = createEmptyCategory();
-	public prefixMask = {
-		mask: /^[A-Z]{0,3}$/,
-		prepare: (str: string) => str.toUpperCase(),
-	};
+	public prefixMask = prefixMask;
 	public fieldErrors: CategoryFieldErrors = createEmptyFieldErrorsCategory();
 
 	constructor(

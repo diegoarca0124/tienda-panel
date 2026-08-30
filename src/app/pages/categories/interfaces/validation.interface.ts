@@ -22,7 +22,6 @@ export interface SubcategoryValidationErrors {
 	prefix?: string[];
 }
 
-
 export interface CategoryFieldErrors {
 	name: boolean;
 	code: boolean;

@@ -22,13 +22,38 @@ export interface UpdateCategoryStatusRESI {
 	message: string;
 }
 
+export interface UpdateSubcategoryStatusRESI {
+	data: SubcategoryInterface;
+	message: string;
+}
+
+export interface UpdateSubcategoriesStatusRESI {
+	data: string[];
+	message: string;
+}
+
 export interface GetCategoryRESI {
 	data: CategoryInterface;
 	message: string;
 }
 
+export interface GetSubcategoriesRESI {
+	data: SubcategoryInterface[];
+	message: string;
+}
+
+export interface CreateSubcategoryRESI {
+	data: SubcategoryInterface;
+	message: string;
+}
+
 export interface UpdateCategoryRESI {
 	data: CategoryInterface;
+	message: string;
+}
+
+export interface UpdateSubcategoryRESI {
+	data: SubcategoryInterface;
 	message: string;
 }
 

@@ -29,6 +29,8 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { CategoryFieldErrors, CategoryValidationErrors, SubcategoryFieldErrors, SubcategoryValidationErrors } from '../interfaces/validation.interface';
 import { buildShowErrors } from '@app/common/utils/build-show.errors.util';
 import { CategoryInterface, SubcategoryInterface } from '../interfaces/data.interface';
+import { prefixMask } from '../constants/prefix-mask.constant';
+import { GetSubcategoriesRESI } from '../interfaces/response.interface';
 
 @Component({
 	selector: 'app-edit-category',
@@ -55,11 +57,13 @@ import { CategoryInterface, SubcategoryInterface } from '../interfaces/data.inte
 })
 export class EditCategoryComponent {
 	@ViewChild('editorContainer', { static: true }) editorContainer!: ElementRef;
-	public isUpdatingMultipleStatuses: WritableSignal<boolean> = signal(false);
+	public isUpdatingMultipleStatus: WritableSignal<boolean> = signal(false);
+	public isUpdatingSingleStatus: WritableSignal<boolean> = signal(false);
+
 	private destroy$ = new Subject<void>();
 	public isUpdateCategoryLoading = false;
 	public isCreateSubcategoryLoading = false;
-	
+
 	public fieldCategoryErrors: CategoryFieldErrors = createEmptyFieldErrorsCategory();
 	public fieldSubcategoryErrors: SubcategoryFieldErrors = createEmptyFieldErrorsSubcategory();
 
@@ -72,24 +76,18 @@ export class EditCategoryComponent {
 	public id: string = '';
 	public isGetCategoryLoading = true;
 	public isGetSubcategoriesLoading = true;
-	
+
 	public subcategories: SubcategoryInterface[] = [];
-	public msmErrorUpdateSubcategory: any = [];
-	public errorMsmServerGetCategory: string = '';
-	public errorMsmServerGetSubcategory: string = '';
-	public arrDataSkull: Array<any> = Array.from({ length: 5 }, () => ({}));
-	public loadBtnDelete: WritableSignal<boolean> = signal(false);
+
+	public categoryLoadError: string = '';
+	public subcategoryLoadError: string = '';
+
+	
 	public typeForm: 'create' | 'edit' = 'create';
+
 	public option = 1;
-	public selectedIds = new Set<string>();
-	public columns = [
-		{ key: 'name', label: 'Subcategoría', classCol: 'col-w-xs-200 col-w-md-250' },
-		{ key: 'status', label: 'Estado', classCol: 'col-w-xs-200 col-w-md-250' },
-	];
-	public prefixMask = {
-		mask: /^[A-Z]{0,3}$/,
-		prepare: (str: string) => str.toUpperCase(),
-	};
+	public selectedSubcategoriesIds = new Set<string>();
+	public prefixMask = prefixMask;
 	public editorOptions = MonacoOptions;
 
 	constructor(
@@ -144,7 +142,7 @@ export class EditCategoryComponent {
 
 	initData(id: string): Observable<any> {
 		this.isGetCategoryLoading = true;
-		this.errorMsmServerGetCategory = '';
+		this.categoryLoadError = '';
 
 		return this.categoryService.getCategory(id).pipe(
 			withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
@@ -156,7 +154,7 @@ export class EditCategoryComponent {
 				},
 				error: (err: HttpErrorResponse) => {
 					const error = err.error;
-					this.errorMsmServerGetCategory = error;
+					this.categoryLoadError = error;
 				},
 			})
 		);
@@ -164,8 +162,8 @@ export class EditCategoryComponent {
 
 	initSubcategories$(id: string): Observable<{ data: SubcategoryInterface[]; message: string }> {
 		this.isGetSubcategoriesLoading = true;
-		this.errorMsmServerGetSubcategory = '';
-		return this.categoryService.get_subcategories(id).pipe(
+		this.subcategoryLoadError = '';
+		return this.categoryService.getSubcategories(id).pipe(
 			withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
 			finalize(() => (this.isGetSubcategoriesLoading = false)),
 			tap({
@@ -177,7 +175,7 @@ export class EditCategoryComponent {
 				},
 				error: (err: HttpErrorResponse) => {
 					const error = err.error;
-					this.errorMsmServerGetSubcategory = error;
+					this.subcategoryLoadError = error;
 				},
 			})
 		);
@@ -185,6 +183,23 @@ export class EditCategoryComponent {
 
 	initSubcategories(id: string) {
 		this.initSubcategories$(id).pipe(takeUntil(this.destroy$)).subscribe();
+	}
+
+	private refreshSubcategories(id: string): void {
+		this.categoryService
+			.getSubcategories(id)
+			.pipe(takeUntil(this.destroy$))
+			.subscribe({
+				next: (response: GetSubcategoriesRESI) => {
+					this.subcategories = response.data.map((i) => ({
+						...i,
+						safeIcon: this.sanitizer.bypassSecurityTrustHtml(i.icon),
+					}));
+				},
+				error: (error: HttpErrorResponse) => {
+					toastr.error(error.error?.message || 'No fue posible actualizar la lista.');
+				},
+			});
 	}
 
 	updateCategory() {
@@ -216,15 +231,15 @@ export class EditCategoryComponent {
 	}
 
 	add() {
-		if (this.typeForm == 'create') this.create_subcategory();
-		else if (this.typeForm == 'edit') this.update_subcategory();
+		if (this.typeForm == 'create') this.createSubcategory();
+		else if (this.typeForm == 'edit') this.updateSubcategory();
 	}
 
-	create_subcategory() {
+	createSubcategory() {
 		this.isCreateSubcategoryLoading = true;
 		this.subcategory.categoryId = this.id;
 		this.categoryService
-			.create_subcategory(this.subcategory)
+			.createSubcategory(this.subcategory)
 			.pipe(
 				takeUntil(this.destroy$),
 				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
@@ -250,12 +265,10 @@ export class EditCategoryComponent {
 			});
 	}
 
-	update_subcategory() {
+	updateSubcategory() {
 		this.isCreateSubcategoryLoading = true;
-		this.msmErrorUpdateSubcategory = [];
-		this.validationSubcategoryError = {};
 		this.categoryService
-			.update_subcategory(this.subcategory?.id, this.subcategory)
+			.updateSubcategory(this.subcategory?.id, this.subcategory)
 			.pipe(
 				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
 				takeUntil(this.destroy$),
@@ -263,6 +276,7 @@ export class EditCategoryComponent {
 			)
 			.subscribe({
 				next: (next: { data: SubcategoryInterface; message: string }) => {
+					this.validationSubcategoryError = {};
 					this.subcategories = this.subcategories.map((subcat: any) => (subcat.id === this.subcategory.id ? next.data : subcat));
 					toastr.success(next.message);
 					this.cancelEdit();
@@ -273,31 +287,26 @@ export class EditCategoryComponent {
 
 					if (error.validation) {
 						this.validationSubcategoryError = error.validation;
-						this.msmErrorUpdateSubcategory = Object.values(this.validationSubcategoryError).flat();
+						this.fieldSubcategoryErrors = buildShowErrors(this.fieldSubcategoryErrors, this.validationSubcategoryError);
 					}
 				},
 			});
 	}
 
-	setStatus(id: string, status: boolean) {
-		this.loadBtnDelete.set(true);
+	onUpdateStatus(id: string, status: boolean) {
+		this.isUpdatingSingleStatus.set(true);
 		this.categoryService
-			.update_status_subcategory(id, { status })
+			.updateSubcategoryStatus(id, { status })
 			.pipe(
 				takeUntil(this.destroy$),
 				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
-				finalize(() => this.loadBtnDelete.set(false))
+				finalize(() => this.isUpdatingSingleStatus.set(false))
 			)
 			.subscribe({
 				next: (next: { data: SubcategoryInterface; message: string }) => {
-					this.subcategories = this.subcategories.map((prev: SubcategoryInterface) => {
-						if (next.data.id === prev.id) {
-							return { ...prev, status: next.data.status };
-						}
-						return prev;
-					});
 					toastr.success(next.message);
-					closeModal(id);
+					closeModal(`modalDelete-${id}`);
+					this.refreshSubcategories(this.id);
 				},
 				error: (error: HttpErrorResponse) => {
 					toastr.error(error.error.message);
@@ -318,7 +327,6 @@ export class EditCategoryComponent {
 
 	editSubcategory(subcategory: SubcategoryInterface) {
 		this.validationSubcategoryError = {};
-		this.msmErrorUpdateSubcategory = [];
 		this.typeForm = 'edit';
 
 		this.subcategory = { ...subcategory };
@@ -328,40 +336,34 @@ export class EditCategoryComponent {
 		const checked = (event.target as HTMLInputElement).checked;
 
 		if (checked) {
-			this.selectedIds.add(id);
+			this.selectedSubcategoriesIds.add(id);
 		} else {
-			this.selectedIds.delete(id);
+			this.selectedSubcategoriesIds.delete(id);
 		}
 	}
 
 	getSelectedIds(): string[] {
-		return [...this.selectedIds];
+		return [...this.selectedSubcategoriesIds];
 	}
 
 	onUpdateStatusMultiple(status: boolean) {
-		this.isUpdatingMultipleStatuses.set(true);
+		this.isUpdatingMultipleStatus.set(true);
 		this.categoryService
-			.update_status_subcategories({
+			.updateSubcategoriesStatus({
 				ids: this.getSelectedIds(),
 				status,
 			})
 			.pipe(
 				takeUntil(this.destroy$),
 				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
-				finalize(() => this.isUpdatingMultipleStatuses.set(false))
+				finalize(() => this.isUpdatingMultipleStatus.set(false))
 			)
 			.subscribe({
 				next: (next: { data: string[]; message: string }) => {
-					this.subcategories = this.subcategories.map((prev: SubcategoryInterface) => {
-						if (next.data.includes(prev.id)) {
-							return { ...prev, status: status };
-						}
-						return prev;
-					});
-
 					toastr.success(next.message);
 					closeModal(status ? 'modalMultipleActive' : 'modalMultipleDisabled');
-					this.selectedIds.clear();
+					this.selectedSubcategoriesIds.clear();
+					this.refreshSubcategories(this.id);
 				},
 				error: (error: HttpErrorResponse) => {
 					toastr.error(error.error.message);

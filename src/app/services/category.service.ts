@@ -5,13 +5,18 @@ import { AuthService } from './auth.service';
 import { Observable } from 'rxjs';
 import {
 	CreateCategoryRESI,
+	CreateSubcategoryRESI,
 	GetCategoriesRESI,
 	GetCategoriesWithSubcategoriesRESI,
 	GetCategoryRESI,
+	GetSubcategoriesRESI,
 	MoveSubcategoryRESI,
 	UpdateCategoriesStatusRESI,
 	UpdateCategoryRESI,
 	UpdateCategoryStatusRESI,
+	UpdateSubcategoriesStatusRESI,
+	UpdateSubcategoryRESI,
+	UpdateSubcategoryStatusRESI,
 } from '@app/pages/categories/interfaces/response.interface';
 
 import { UpdateCategoriesStatusREQI, UpdateCategoryStatusREQI } from '@app/pages/categories/interfaces/request.interface';
@@ -67,20 +72,20 @@ export class CategoryService {
 		return this.http.put<UpdateCategoryRESI>(`${this.apiUrl}/category/updateCategory/${id}`, category, { headers: this.getHeaders() });
 	}
 
-	create_subcategory(subcategory: SubcategoryInterface): Observable<any> {
-		return this.http.post(`${this.apiUrl}/category/create_subcategory`, subcategory, { headers: this.getHeaders() });
+	createSubcategory(subcategory: SubcategoryInterface): Observable<CreateSubcategoryRESI> {
+		return this.http.post<CreateSubcategoryRESI>(`${this.apiUrl}/category/createSubcategory`, subcategory, { headers: this.getHeaders() });
 	}
 
-	get_subcategories(id: string): Observable<any> {
-		return this.http.get(`${this.apiUrl}/category/get_subcategories/${id}`, { headers: this.getHeaders() });
+	getSubcategories(id: string): Observable<GetSubcategoriesRESI> {
+		return this.http.get<GetSubcategoriesRESI>(`${this.apiUrl}/category/getSubcategories/${id}`, { headers: this.getHeaders() });
 	}
 
-	update_status_subcategory(id: string, data: { status: boolean }): Observable<any> {
-		return this.http.put(`${this.apiUrl}/category/update_status_subcategory/${id}`, data, { headers: this.getHeaders() });
+	updateSubcategoryStatus(id: string, data: { status: boolean }): Observable<UpdateSubcategoryStatusRESI> {
+		return this.http.put<UpdateSubcategoryStatusRESI>(`${this.apiUrl}/category/updateSubcategoryStatus/${id}`, data, { headers: this.getHeaders() });
 	}
 
-	update_subcategory(id: string, subcategory: SubcategoryInterface): Observable<any> {
-		return this.http.put(`${this.apiUrl}/category/update_subcategory/${id}`, subcategory, { headers: this.getHeaders() });
+	updateSubcategory(id: string, subcategory: SubcategoryInterface): Observable<UpdateSubcategoryRESI> {
+		return this.http.put<UpdateSubcategoryRESI>(`${this.apiUrl}/category/updateSubcategory/${id}`, subcategory, { headers: this.getHeaders() });
 	}
 
 	findCategoryProducts(
@@ -139,8 +144,8 @@ export class CategoryService {
 		return this.http.get(`${this.apiUrl}/category/get_subcategories_by_select/${id}`, { headers: this.getHeaders() });
 	}
 
-	update_status_subcategories(data: { ids: Array<string>; status: boolean }): Observable<any> {
-		return this.http.post(`${this.apiUrl}/category/update_status_subcategories`, data, { headers: this.getHeaders() });
+	updateSubcategoriesStatus(data: { ids: Array<string>; status: boolean }): Observable<UpdateSubcategoriesStatusRESI> {
+		return this.http.post<UpdateSubcategoriesStatusRESI>(`${this.apiUrl}/category/updateSubcategoriesStatus`, data, { headers: this.getHeaders() });
 	}
 
 	moveSubcategory(id: string, data: { categoryId: string }): Observable<MoveSubcategoryRESI> {

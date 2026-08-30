@@ -40,7 +40,7 @@
 												active: option === 1,
 											}"
 											(click)="setOption(1)"
-											[disabled]="isGetCategoryLoading || !!errorMsmServerGetCategory"
+											[disabled]="isGetCategoryLoading || !!categoryLoadError"
 										>
 											<i class="bi bi-folder2-open" [class.text-white]="option === 1"></i>
 
@@ -56,7 +56,7 @@
 												active: option === 2,
 											}"
 											(click)="setOption(2)"
-											[disabled]="isGetCategoryLoading || !!errorMsmServerGetCategory"
+											[disabled]="isGetCategoryLoading || !!categoryLoadError"
 										>
 											<i class="bi bi-diagram-3" [class.text-white]="option === 2"></i>
 
@@ -143,7 +143,7 @@
 													</button>
 												</div>
 
-												<div class="skeleton skeleton-textarea" style="height: 248.67px !important"></div>
+												<div class="skeleton skeleton-textarea" style="height: 253px !important"></div>
 
 												<p class="form-field-help">Se mostrará junto al nombre de la categoría.</p>
 
@@ -247,9 +247,9 @@
 											</div>
 										</section>
 									</div>
-								} @else if (errorMsmServerGetCategory) {
+								} @else if (categoryLoadError) {
 									<div class="form-card-body">
-										<app-not-found [error]="errorMsmServerGetCategory"></app-not-found>
+										<app-not-found [error]="categoryLoadError"></app-not-found>
 									</div>
 								} @else {
 									<div class="form-card-body">
@@ -482,7 +482,12 @@
 															[class.is-invalid]="validationCategoryError?.isCharacteristics"
 															style="background: #f9f9f9 !important"
 														>
-															<input class="form-check-input float-none flex-shrink-0 ms-0 mt-1" type="checkbox" name="isCharacteristics" [(ngModel)]="category.isCharacteristics" />
+															<input
+																class="form-check-input float-none flex-shrink-0 ms-0 mt-1"
+																type="checkbox"
+																name="isCharacteristics"
+																[(ngModel)]="category.isCharacteristics"
+															/>
 
 															<span class="form-check-label d-flex flex-column align-items-start">
 																<span class="fw-semibold text-gray-700 fs-7">Características</span>
@@ -500,7 +505,12 @@
 												<div class="col-12 col-md-6">
 													<div class="form-field h-100">
 														<div class="d-flex align-items-center justify-content-between gap-2">
-															<button *ngIf="validationCategoryError?.isCondition" type="button" class="form-error-toggle" (click)="fieldCategoryErrors.isCondition = !fieldCategoryErrors.isCondition">
+															<button
+																*ngIf="validationCategoryError?.isCondition"
+																type="button"
+																class="form-error-toggle"
+																(click)="fieldCategoryErrors.isCondition = !fieldCategoryErrors.isCondition"
+															>
 																{{ fieldCategoryErrors.isCondition ? 'Ocultar errores' : 'Ver errores' }}
 															</button>
 														</div>
@@ -528,7 +538,12 @@
 												<div class="col-12 col-md-6">
 													<div class="form-field h-100">
 														<div class="d-flex align-items-center justify-content-between gap-2">
-															<button *ngIf="validationCategoryError?.isWarranty" type="button" class="form-error-toggle" (click)="fieldCategoryErrors.isWarranty = !fieldCategoryErrors.isWarranty">
+															<button
+																*ngIf="validationCategoryError?.isWarranty"
+																type="button"
+																class="form-error-toggle"
+																(click)="fieldCategoryErrors.isWarranty = !fieldCategoryErrors.isWarranty"
+															>
 																{{ fieldCategoryErrors.isWarranty ? 'Ocultar errores' : 'Ver errores' }}
 															</button>
 														</div>
@@ -571,7 +586,12 @@
 															[class.is-invalid]="validationCategoryError?.isCountryOfOrigin"
 															style="background: #f9f9f9 !important"
 														>
-															<input class="form-check-input float-none flex-shrink-0 ms-0 mt-1" type="checkbox" name="isCountryOfOrigin" [(ngModel)]="category.isCountryOfOrigin" />
+															<input
+																class="form-check-input float-none flex-shrink-0 ms-0 mt-1"
+																type="checkbox"
+																name="isCountryOfOrigin"
+																[(ngModel)]="category.isCountryOfOrigin"
+															/>
 
 															<span class="form-check-label d-flex flex-column align-items-start">
 																<span class="fw-semibold text-gray-700 fs-7">País de origen</span>
@@ -589,7 +609,12 @@
 												<div class="col-12 col-md-6">
 													<div class="form-field h-100">
 														<div class="d-flex align-items-center justify-content-between gap-2">
-															<button *ngIf="validationCategoryError?.isMaterial" type="button" class="form-error-toggle" (click)="fieldCategoryErrors.isMaterial = !fieldCategoryErrors.isMaterial">
+															<button
+																*ngIf="validationCategoryError?.isMaterial"
+																type="button"
+																class="form-error-toggle"
+																(click)="fieldCategoryErrors.isMaterial = !fieldCategoryErrors.isMaterial"
+															>
 																{{ fieldCategoryErrors.isMaterial ? 'Ocultar errores' : 'Ver errores' }}
 															</button>
 														</div>
@@ -654,8 +679,8 @@
 											<button
 												type="button"
 												class="btn btn-sm btn-primary px-5"
-												[disabled]="isUpdateCategoryLoading || !!errorMsmServerGetCategory"
-												(click)="!isUpdateCategoryLoading && !errorMsmServerGetCategory && updateCategory()"
+												[disabled]="isUpdateCategoryLoading || !!categoryLoadError"
+												(click)="!isUpdateCategoryLoading && !categoryLoadError && updateCategory()"
 											>
 												<span *ngIf="isUpdateCategoryLoading" class="spinner-border spinner-border-sm" aria-hidden="true"></span>
 
@@ -670,7 +695,7 @@
 								}
 							}
 							@if (option === 2) {
-								@if (isGetSubcategoriesLoading) {
+								@if (isGetCategoryLoading) {
 									<div class="form-card-body">
 										<section class="mb-7">
 											<header class="border-bottom pb-3 mb-4">
@@ -733,8 +758,8 @@
 												<button
 													type="button"
 													class="btn btn-primary btn-sm"
-													[disabled]="isGetSubcategoriesLoading || isCreateSubcategoryLoading || !!errorMsmServerGetSubcategory"
-													(click)="!isGetSubcategoriesLoading && !isCreateSubcategoryLoading && !errorMsmServerGetSubcategory && add()"
+													[disabled]="isGetSubcategoriesLoading || isCreateSubcategoryLoading || !!subcategoryLoadError"
+													(click)="!isGetSubcategoriesLoading && !isCreateSubcategoryLoading && !subcategoryLoadError && add()"
 												>
 													<span *ngIf="isCreateSubcategoryLoading" class="spinner-border spinner-border-sm" aria-hidden="true"></span>
 
@@ -746,66 +771,10 @@
 												</button>
 											</div>
 										</section>
-
-										<section>
-											<header class="border-bottom pb-3 mb-4">
-												<h2 class="form-card-title">Subcategorías</h2>
-
-												<p class="form-card-description">Administra las subcategorías asociadas.</p>
-											</header>
-
-											<div class="table-wrapper">
-												<table class="table custom-table align-middle mb-0">
-													<thead>
-														<tr>
-															<th class="fixed-xs text-center p-0">
-																<label class="form-check form-check-customs form-check-sm m-0 d-flex align-items-center justify-content-center h-100">
-																	<input class="form-check-input" type="checkbox" disabled />
-																</label>
-															</th>
-
-															<th class="flex-column">Subcategoría</th>
-
-															<th class="fixed-md">Estado</th>
-
-															<th class="fixed-xs"></th>
-														</tr>
-													</thead>
-
-													<tbody>
-														<tr *ngFor="let item of [1, 2, 3, 4, 5, 6]">
-															<td class="fixed-xs text-center p-0">
-																<div class="skeleton skeleton-check"></div>
-															</td>
-
-															<td class="flex-column">
-																<div class="d-flex align-items-center gap-3">
-																	<div class="skeleton skeleton-square-sm"></div>
-
-																	<div class="skeleton-lines d-flex flex-column gap-2">
-																		<div class="skeleton skeleton-text skeleton-w-60"></div>
-
-																		<div class="skeleton skeleton-text skeleton-w-40"></div>
-																	</div>
-																</div>
-															</td>
-
-															<td class="fixed-md">
-																<div class="skeleton skeleton-badge"></div>
-															</td>
-
-															<td class="fixed-xs text-center p-0">
-																<div class="skeleton skeleton-btn"></div>
-															</td>
-														</tr>
-													</tbody>
-												</table>
-											</div>
-										</section>
 									</div>
-								} @else if (errorMsmServerGetCategory) {
+								} @else if (categoryLoadError) {
 									<div class="form-card-body">
-										<app-not-found [error]="errorMsmServerGetCategory"></app-not-found>
+										<app-not-found [error]="categoryLoadError"></app-not-found>
 									</div>
 								} @else {
 									<div class="form-card-body">
@@ -824,7 +793,12 @@
 														<div class="d-flex align-items-center justify-content-between gap-2">
 															<label class="form-field-label required" for="subcategoryName">Nombre</label>
 
-															<button *ngIf="validationSubcategoryError?.name" type="button" class="form-error-toggle" (click)="fieldSubcategoryErrors.name = !fieldSubcategoryErrors.name">
+															<button
+																*ngIf="validationSubcategoryError?.name"
+																type="button"
+																class="form-error-toggle"
+																(click)="fieldSubcategoryErrors.name = !fieldSubcategoryErrors.name"
+															>
 																{{ fieldSubcategoryErrors.name ? 'Ocultar errores' : 'Ver errores' }}
 															</button>
 														</div>
@@ -897,7 +871,12 @@
 														<div class="d-flex align-items-center justify-content-between gap-2">
 															<label class="form-field-label">Icono</label>
 
-															<button *ngIf="validationSubcategoryError?.icon" type="button" class="form-error-toggle" (click)="fieldSubcategoryErrors.icon = !fieldSubcategoryErrors.icon">
+															<button
+																*ngIf="validationSubcategoryError?.icon"
+																type="button"
+																class="form-error-toggle"
+																(click)="fieldSubcategoryErrors.icon = !fieldSubcategoryErrors.icon"
+															>
 																{{ fieldSubcategoryErrors.icon ? 'Ocultar errores' : 'Ver errores' }}
 															</button>
 														</div>
@@ -929,8 +908,8 @@
 												<button
 													type="button"
 													class="btn btn-primary btn-sm"
-													[disabled]="isGetSubcategoriesLoading || isCreateSubcategoryLoading || !!errorMsmServerGetSubcategory"
-													(click)="!isGetSubcategoriesLoading && !isCreateSubcategoryLoading && !errorMsmServerGetSubcategory && add()"
+													[disabled]="isGetSubcategoriesLoading || isCreateSubcategoryLoading || !!subcategoryLoadError"
+													(click)="!isGetSubcategoriesLoading && !isCreateSubcategoryLoading && !subcategoryLoadError && add()"
 												>
 													<span *ngIf="isCreateSubcategoryLoading" class="spinner-border spinner-border-sm" aria-hidden="true"></span>
 
@@ -998,21 +977,62 @@
 												</div>
 											</header>
 
-											<div class="table-wrapper">
+											<div class="table-wrapper mb-7">
 												<table class="table custom-table align-middle mb-0">
 													<thead>
 														<tr>
-															<th class="fixed-xs text-center p-0">
-																<label class="form-check form-check-customs form-check-sm m-0 d-flex align-items-center justify-content-center h-100">
-																	<input class="form-check-input cursor-pointer" type="checkbox" disabled />
-																</label>
+															<th class="fixed-xs text-center p-0" style="position: unset !important">
+																<div class="dropdown">
+																	<button
+																		id="subcategoryTableOptions"
+																		type="button"
+																		class="btn btn-icon btn-dark h-25px w-25px"
+																		data-bs-toggle="dropdown"
+																		aria-expanded="false"
+																		aria-label="Acciones para subcategorías seleccionadas"
+																		title="Acciones"
+																		[disabled]="isGetSubcategoriesLoading"
+																	>
+																		<ion-icon name="settings-outline" class="fs-5" aria-hidden="true"></ion-icon>
+																	</button>
+
+																	<div class="dropdown-menu dropdown-menu-end action-dropdown-menu action-dropdown-menu-compact" aria-labelledby="subcategoryTableOptions">
+																		<a
+																			class="dropdown-item action-dropdown-item action-dropdown-item-compact"
+																			[class.disabled]="selectedSubcategoriesIds.size === 0"
+																			[attr.data-bs-toggle]="selectedSubcategoriesIds.size > 0 ? 'modal' : null"
+																			[attr.data-bs-target]="selectedSubcategoriesIds.size > 0 ? '#modalMultipleActive' : null"
+																			style="text-transform: capitalize !important"
+																		>
+																			<span class="action-dropdown-item-icon">
+																				<ion-icon name="checkmark-circle-outline" class="fs-4 text-primary" aria-hidden="true"></ion-icon>
+																			</span>
+
+																			<span class="action-dropdown-item-title text-primary">Activar</span>
+																		</a>
+
+																		<a
+																			class="dropdown-item action-dropdown-item action-dropdown-item-compact"
+																			[class.disabled]="selectedSubcategoriesIds.size === 0"
+																			[attr.data-bs-toggle]="selectedSubcategoriesIds.size > 0 ? 'modal' : null"
+																			[attr.data-bs-target]="selectedSubcategoriesIds.size > 0 ? '#modalMultipleDisabled' : null"
+																			style="text-transform: capitalize !important"
+																		>
+																			<span class="action-dropdown-item-icon">
+																				<ion-icon name="close-circle-outline" class="fs-4 text-danger" aria-hidden="true"></ion-icon>
+																			</span>
+
+																			<span class="action-dropdown-item-title text-danger">Desactivar</span>
+																		</a>
+																	</div>
+																</div>
 															</th>
 
 															<th class="flex-column">Subcategoría</th>
 
-															<th class="fixed-md">Estado</th>
+															<th class="fixed-sm">Estado</th>
 
-															<th class="fixed-xs"></th>
+															<th class="fixed-xs text-center"></th>
 														</tr>
 													</thead>
 
@@ -1024,8 +1044,8 @@
 																</td>
 
 																<td class="flex-column">
-																	<div class="d-flex align-items-center gap-3">
-																		<div class="skeleton skeleton-square-sm"></div>
+																	<div class="d-flex align-items-center">
+																		<div class="skeleton skeleton-square-sm me-3"></div>
 
 																		<div class="skeleton-lines d-flex flex-column gap-2">
 																			<div class="skeleton skeleton-text skeleton-w-60"></div>
@@ -1035,7 +1055,7 @@
 																	</div>
 																</td>
 
-																<td class="fixed-md">
+																<td class="fixed-sm">
 																	<div class="skeleton skeleton-badge"></div>
 																</td>
 
@@ -1043,54 +1063,62 @@
 																	<div class="skeleton skeleton-btn"></div>
 																</td>
 															</tr>
-														} @else if (errorMsmServerGetSubcategory) {
+														} @else if (subcategoryLoadError) {
 															<tr>
 																<td colspan="4">
-																	<app-not-found [error]="errorMsmServerGetSubcategory"></app-not-found>
+																	<app-not-found [error]="subcategoryLoadError"></app-not-found>
 																</td>
 															</tr>
-														} @else if (subcategories.length > 0) {
+														} @else if (subcategories.length >= 1) {
 															<tr *ngFor="let item of subcategories">
 																<td class="fixed-xs text-center p-0">
 																	<label class="form-check form-check-customs form-check-sm m-0 d-flex align-items-center justify-content-center h-100">
-																		<input class="form-check-input cursor-pointer" type="checkbox" [checked]="selectedIds.has(item.id!)" (change)="toggleItem(item.id!, $event)" />
+																		<input
+																			class="form-check-input cursor-pointer"
+																			type="checkbox"
+																			[checked]="selectedSubcategoriesIds.has(item.id!)"
+																			(change)="toggleItem(item.id!, $event)"
+																			[attr.aria-label]="'Seleccionar subcategoría ' + item.name"
+																		/>
 																	</label>
 																</td>
 
 																<td class="flex-column">
-																	<div class="d-flex align-items-center gap-3" style="min-width: 0">
-																		<span class="symbol symbol-30px flex-shrink-0">
-																			<span class="symbol-label bg-light-primary">
-																				<span *ngIf="item.icon" class="d-flex align-items-center justify-content-center w-100 h-100" [innerHTML]="item.safeIcon"></span>
+																	<div class="d-flex align-items-center gap-2" style="min-width: 0">
+																		<div class="symbol me-3" style="flex-shrink: 0">
+																			<span *ngIf="item.icon" class="symbol-label fw-700" style="width: 30px; height: 30px" [innerHTML]="item.safeIcon"></span>
 
-																				<ion-icon *ngIf="!item.icon" name="folder-outline" class="text-primary fs-5" aria-hidden="true"></ion-icon>
+																			<span *ngIf="!item.icon" class="symbol-label bg-light-primary text-primary" style="width: 30px; height: 30px">
+																				<ion-icon name="folder-outline" class="fs-4" aria-hidden="true"></ion-icon>
 																			</span>
-																		</span>
+																		</div>
 
 																		<div class="d-flex flex-column" style="min-width: 0">
-																			<span class="text-gray-700 fs-8 fw-500 text-truncate-1">
+																			<p class="paragraph paragraph-sm text-gray-700 fw-600 lh-tight text-truncate-1 m-0">
 																				{{ item.name }}
-																			</span>
+																			</p>
 
-																			<small class="text-primary fw-400 text-truncate-1 fs-8">#{{ item.prefix }}-{{ item.code! | padCode: 6 }}</small>
+																			<p class="paragraph paragraph-sm text-gray-400 fs-12 fw-400 lh-tight text-truncate-1 m-0">#{{ item.prefix }}-{{ item.code! | padCode: 6 }}</p>
 																		</div>
 																	</div>
 																</td>
 
-																<td class="fixed-md">
+																<td class="fixed-sm">
 																	<span
-																		class="badge rounded-pill text-gray-700 fw-600"
+																		class="badge rounded-pill fw-700"
 																		[ngClass]="{
 																			'bg-outline-danger': !item.status,
-																			'bg-outline-success': item.status,
+																			'bg-outline-primary': item.status,
+																			'text-danger': !item.status,
+																			'text-primary': item.status,
 																		}"
 																	>
 																		<span
 																			class="d-inline-block rounded-circle me-1"
-																			style="width: 0.5rem; height: 0.5rem"
+																			style="width: 6px; height: 6px"
 																			[ngClass]="{
 																				'bg-danger': !item.status,
-																				'bg-success': item.status,
+																				'bg-primary': item.status,
 																			}"
 																		></span>
 
@@ -1100,28 +1128,17 @@
 
 																<td class="fixed-xs text-center p-0">
 																	<div class="dropdown">
-																		<button type="button" class="icon-btn btn-action dropdown-toggle" data-bs-toggle="dropdown" aria-label="Acciones de la subcategoría">
+																		<button
+																			type="button"
+																			class="icon-btn btn-action dropdown-toggle dropdown-toggle-no-arrow d-flex align-items-center justify-content-center mx-auto"
+																			data-bs-toggle="dropdown"
+																			data-bs-offset="0,7"
+																			aria-expanded="false"
+																			[attr.aria-label]="'Opciones de la subcategoría ' + item.name"
+																			title="Opciones"
+																		>
 																			<i class="bi bi-three-dots" aria-hidden="true"></i>
 																		</button>
-
-																		<div class="dropdown-menu menu-state-bg-light-primary" data-bs-display="static">
-																			<button type="button" class="dropdown-item d-flex align-items-center gap-2" (click)="editSubcategory(item)">
-																				<ion-icon name="create-outline" aria-hidden="true"></ion-icon>
-
-																				Editar
-																			</button>
-
-																			<button
-																				type="button"
-																				class="dropdown-item d-flex align-items-center gap-2"
-																				data-bs-toggle="modal"
-																				[attr.data-bs-target]="'#modalDelete-' + item.id"
-																			>
-																				<ion-icon [name]="item.status ? 'close-circle-outline' : 'checkmark-circle-outline'" aria-hidden="true"></ion-icon>
-
-																				{{ item.status ? 'Desactivar' : 'Activar' }}
-																			</button>
-																		</div>
 
 																		<app-modal-delete
 																			[id]="'modalDelete-' + item.id"
@@ -1132,9 +1149,43 @@
 																					: `La subcategoría <b>${item.name}</b> volverá a estar disponible y visible dentro del sistema.`
 																			"
 																			[textButton]="item.status ? 'Desactivar' : 'Activar'"
-																			(actionConfirmed)="setStatus(item.id!, item.status!)"
-																			[loadBtnDelete]="loadBtnDelete"
+																			(actionConfirmed)="onUpdateStatus(item.id!, item.status!)"
+																			[loadBtnDelete]="isUpdatingSingleStatus"
 																		></app-modal-delete>
+
+																		<div class="dropdown-menu dropdown-menu-end action-dropdown-menu action-dropdown-menu-compact">
+																			<button type="button" class="dropdown-item action-dropdown-item action-dropdown-item-compact" (click)="editSubcategory(item)">
+																				<span class="action-dropdown-item-icon">
+																					<ion-icon name="create-outline" class="fs-4" aria-hidden="true"></ion-icon>
+																				</span>
+
+																				<span class="action-dropdown-item-title">Editar</span>
+																			</button>
+
+																			<div class="action-dropdown-divider"></div>
+
+																			<a
+																				class="dropdown-item action-dropdown-item action-dropdown-item-compact cursor-pointer"
+																				[class.action-dropdown-item-danger]="item.status"
+																				[class.text-primary]="!item.status"
+																				data-bs-toggle="modal"
+																				[attr.data-bs-target]="'#modalDelete-' + item.id"
+																			>
+																				<span class="action-dropdown-item-icon">
+																					<ion-icon
+																						class="fs-4"
+																						[class.action-dropdown-item-danger]="item.status"
+																						[class.text-primary]="!item.status"
+																						[name]="item.status ? 'close-circle-outline' : 'checkmark-circle-outline'"
+																						aria-hidden="true"
+																					></ion-icon>
+																				</span>
+
+																				<span class="action-dropdown-item-title">
+																					{{ item.status ? 'Desactivar' : 'Activar' }}
+																				</span>
+																			</a>
+																		</div>
 																	</div>
 																</td>
 															</tr>
@@ -1143,7 +1194,7 @@
 																<td colspan="4">
 																	<app-not-found
 																		[error]="{
-																			message: 'No se encontraron subcategorías.',
+																			message: 'No se encontraron registros.',
 																			statusCode: 404,
 																		}"
 																	></app-not-found>
@@ -1161,7 +1212,7 @@
 
 						<div class="d-flex flex-column w-100 mb-10">
 							<ng-container *ngIf="!isGetCategoryLoading">
-								<ng-container *ngIf="!errorMsmServerGetCategory">
+								<ng-container *ngIf="!categoryLoadError">
 									<div class="d-flex gap-2">
 										<small class="text-gray-700 fw-600 fs-8">Creación:</small>
 										<small class="text-muted fs-8">{{ category.createdAt | date: 'medium' }}</small>
@@ -1190,7 +1241,7 @@
 	[description]="'El estado de las subcategorias serán actualizadas. Verifica tu selección antes de continuar, ya que este cambio se aplicará a todos.'"
 	[textButton]="'Activar'"
 	(actionConfirmed)="onUpdateStatusMultiple(true)"
-	[loadBtnDelete]="isUpdatingMultipleStatuses"
+	[loadBtnDelete]="isUpdatingMultipleStatus"
 ></app-modal-delete>
 
 <app-modal-delete
@@ -1199,5 +1250,5 @@
 	[description]="'El estado de las subcategorias serán actualizadas. Verifica tu selección antes de continuar, ya que este cambio se aplicará a todos.'"
 	[textButton]="'Desactivar'"
 	(actionConfirmed)="onUpdateStatusMultiple(false)"
-	[loadBtnDelete]="isUpdatingMultipleStatuses"
+	[loadBtnDelete]="isUpdatingMultipleStatus"
 ></app-modal-delete>
