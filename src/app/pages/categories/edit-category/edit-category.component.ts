@@ -26,7 +26,7 @@ import { PadCodePipe } from '../../../common/pipes/pad-code.pipe';
 import { TextareaAutoresizeDirective } from '@app/common/directives/textarea-autoresize.directive';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { HttpErrorResponse } from '@angular/common/http';
-import { CategoryFieldErrors, SubcategoryFieldErrors } from '../interfaces/validation.interface';
+import { CategoryFieldErrors, CategoryValidationErrors, SubcategoryFieldErrors, SubcategoryValidationErrors } from '../interfaces/validation.interface';
 import { buildShowErrors } from '@app/common/utils/build-show.errors.util';
 import { CategoryInterface, SubcategoryInterface } from '../interfaces/data.interface';
 
@@ -55,20 +55,25 @@ import { CategoryInterface, SubcategoryInterface } from '../interfaces/data.inte
 })
 export class EditCategoryComponent {
 	@ViewChild('editorContainer', { static: true }) editorContainer!: ElementRef;
-	public loadBtnMultipleStatus: WritableSignal<boolean> = signal(false);
+	public isUpdatingMultipleStatuses: WritableSignal<boolean> = signal(false);
 	private destroy$ = new Subject<void>();
-	public loadBtn = false;
-	public loadBtnSubcat = false;
-	public errorsCategory: any = {};
-	public errorsSubcategory: any = {};
+	public isUpdateCategoryLoading = false;
+	public isCreateSubcategoryLoading = false;
+	
+	public fieldCategoryErrors: CategoryFieldErrors = createEmptyFieldErrorsCategory();
+	public fieldSubcategoryErrors: SubcategoryFieldErrors = createEmptyFieldErrorsSubcategory();
+
+	public validationSubcategoryError: SubcategoryValidationErrors = {};
+	public validationCategoryError: CategoryValidationErrors = {};
+
 	public category: CategoryInterface = createEmptyCategory();
 	public subcategory: SubcategoryInterface = createEmptySubcategory();
+
 	public id: string = '';
-	public loading = true;
-	public loadingSubcategories = true;
+	public isGetCategoryLoading = true;
+	public isGetSubcategoriesLoading = true;
+	
 	public subcategories: SubcategoryInterface[] = [];
-	public msmErrorUpdateCategory: any = [];
-	public msmErrorCreateSubcategory: any = [];
 	public msmErrorUpdateSubcategory: any = [];
 	public errorMsmServerGetCategory: string = '';
 	public errorMsmServerGetSubcategory: string = '';
@@ -85,8 +90,6 @@ export class EditCategoryComponent {
 		mask: /^[A-Z]{0,3}$/,
 		prepare: (str: string) => str.toUpperCase(),
 	};
-	public fieldErrorsCategory: CategoryFieldErrors = createEmptyFieldErrorsCategory();
-	public fieldErrorsSubcategory: SubcategoryFieldErrors = createEmptyFieldErrorsSubcategory();
 	public editorOptions = MonacoOptions;
 
 	constructor(
@@ -140,12 +143,12 @@ export class EditCategoryComponent {
 	}
 
 	initData(id: string): Observable<any> {
-		this.loading = true;
+		this.isGetCategoryLoading = true;
 		this.errorMsmServerGetCategory = '';
 
 		return this.categoryService.getCategory(id).pipe(
 			withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
-			finalize(() => (this.loading = false)),
+			finalize(() => (this.isGetCategoryLoading = false)),
 			tap({
 				next: (next: { data: CategoryInterface; message: string }) => {
 					this.category = next.data;
@@ -160,11 +163,11 @@ export class EditCategoryComponent {
 	}
 
 	initSubcategories$(id: string): Observable<{ data: SubcategoryInterface[]; message: string }> {
-		this.loadingSubcategories = true;
+		this.isGetSubcategoriesLoading = true;
 		this.errorMsmServerGetSubcategory = '';
 		return this.categoryService.get_subcategories(id).pipe(
 			withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
-			finalize(() => (this.loadingSubcategories = false)),
+			finalize(() => (this.isGetSubcategoriesLoading = false)),
 			tap({
 				next: (next: { data: SubcategoryInterface[]; message: string }) => {
 					this.subcategories = next.data.map((i) => ({
@@ -184,20 +187,19 @@ export class EditCategoryComponent {
 		this.initSubcategories$(id).pipe(takeUntil(this.destroy$)).subscribe();
 	}
 
-	update() {
-		this.loadBtn = true;
-		this.errorsCategory = {};
-		this.msmErrorUpdateCategory = [];
+	updateCategory() {
+		this.isUpdateCategoryLoading = true;
+		delete this.category.isDimensions;
 		this.categoryService
 			.updateCategory(this.id, this.category)
 			.pipe(
 				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
 				takeUntil(this.destroy$),
-				finalize(() => (this.loadBtn = false))
+				finalize(() => (this.isUpdateCategoryLoading = false))
 			)
 			.subscribe({
 				next: (next: { data: CategoryInterface; message: string }) => {
-					this.errorsCategory = {};
+					this.validationCategoryError = {};
 					this.category = next.data;
 					toastr.success(next.message);
 				},
@@ -206,9 +208,8 @@ export class EditCategoryComponent {
 					toastr.error(error.message || '¡Error desconocido!');
 
 					if (error.validation) {
-						this.errorsCategory = error.validation;
-						this.msmErrorUpdateCategory = Object.values(this.errorsCategory).flat();
-						this.fieldErrorsCategory = buildShowErrors(this.fieldErrorsCategory, this.msmErrorUpdateCategory);
+						this.validationCategoryError = error.validation;
+						this.fieldCategoryErrors = buildShowErrors(this.fieldCategoryErrors, this.validationCategoryError);
 					}
 				},
 			});
@@ -220,19 +221,18 @@ export class EditCategoryComponent {
 	}
 
 	create_subcategory() {
-		this.loadBtnSubcat = true;
-		this.msmErrorCreateSubcategory = [];
+		this.isCreateSubcategoryLoading = true;
 		this.subcategory.categoryId = this.id;
 		this.categoryService
 			.create_subcategory(this.subcategory)
 			.pipe(
 				takeUntil(this.destroy$),
 				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
-				finalize(() => (this.loadBtnSubcat = false))
+				finalize(() => (this.isCreateSubcategoryLoading = false))
 			)
 			.subscribe({
 				next: (next: { data: SubcategoryInterface; message: string }) => {
-					this.errorsSubcategory = {};
+					this.validationSubcategoryError = {};
 					this.subcategory = createEmptySubcategory();
 					next.data.safeIcon = this.sanitizer.bypassSecurityTrustHtml(next.data.icon);
 					this.subcategories.push(next.data);
@@ -243,24 +243,23 @@ export class EditCategoryComponent {
 					toastr.error(error.message || '¡Error desconocido!');
 
 					if (error.validation) {
-						this.errorsSubcategory = error.validation;
-						this.msmErrorCreateSubcategory = Object.values(this.errorsSubcategory).flat();
-						this.fieldErrorsSubcategory = buildShowErrors(this.fieldErrorsSubcategory, this.msmErrorUpdateSubcategory);
+						this.validationSubcategoryError = error.validation;
+						this.fieldSubcategoryErrors = buildShowErrors(this.fieldSubcategoryErrors, this.validationSubcategoryError);
 					}
 				},
 			});
 	}
 
 	update_subcategory() {
-		this.loadBtnSubcat = true;
+		this.isCreateSubcategoryLoading = true;
 		this.msmErrorUpdateSubcategory = [];
-		this.errorsSubcategory = {};
+		this.validationSubcategoryError = {};
 		this.categoryService
 			.update_subcategory(this.subcategory?.id, this.subcategory)
 			.pipe(
 				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
 				takeUntil(this.destroy$),
-				finalize(() => (this.loadBtnSubcat = false))
+				finalize(() => (this.isCreateSubcategoryLoading = false))
 			)
 			.subscribe({
 				next: (next: { data: SubcategoryInterface; message: string }) => {
@@ -273,8 +272,8 @@ export class EditCategoryComponent {
 					toastr.error(error.message || '¡Error desconocido!');
 
 					if (error.validation) {
-						this.errorsSubcategory = error.validation;
-						this.msmErrorUpdateSubcategory = Object.values(this.errorsSubcategory).flat();
+						this.validationSubcategoryError = error.validation;
+						this.msmErrorUpdateSubcategory = Object.values(this.validationSubcategoryError).flat();
 					}
 				},
 			});
@@ -313,12 +312,12 @@ export class EditCategoryComponent {
 			prefix: '',
 			categoryId: this.id,
 		};
-		this.errorsSubcategory = {};
+		this.validationSubcategoryError = {};
 		this.typeForm = 'create';
 	}
 
 	editSubcategory(subcategory: SubcategoryInterface) {
-		this.errorsSubcategory = {};
+		this.validationSubcategoryError = {};
 		this.msmErrorUpdateSubcategory = [];
 		this.typeForm = 'edit';
 
@@ -340,7 +339,7 @@ export class EditCategoryComponent {
 	}
 
 	onUpdateStatusMultiple(status: boolean) {
-		this.loadBtnMultipleStatus.set(true);
+		this.isUpdatingMultipleStatuses.set(true);
 		this.categoryService
 			.update_status_subcategories({
 				ids: this.getSelectedIds(),
@@ -349,7 +348,7 @@ export class EditCategoryComponent {
 			.pipe(
 				takeUntil(this.destroy$),
 				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
-				finalize(() => this.loadBtnMultipleStatus.set(false))
+				finalize(() => this.isUpdatingMultipleStatuses.set(false))
 			)
 			.subscribe({
 				next: (next: { data: string[]; message: string }) => {

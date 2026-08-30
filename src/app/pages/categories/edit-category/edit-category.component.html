@@ -40,7 +40,7 @@
 												active: option === 1,
 											}"
 											(click)="setOption(1)"
-											[disabled]="loading || !!errorMsmServerGetCategory"
+											[disabled]="isGetCategoryLoading || !!errorMsmServerGetCategory"
 										>
 											<i class="bi bi-folder2-open" [class.text-white]="option === 1"></i>
 
@@ -56,7 +56,7 @@
 												active: option === 2,
 											}"
 											(click)="setOption(2)"
-											[disabled]="loading || !!errorMsmServerGetCategory"
+											[disabled]="isGetCategoryLoading || !!errorMsmServerGetCategory"
 										>
 											<i class="bi bi-diagram-3" [class.text-white]="option === 2"></i>
 
@@ -67,7 +67,7 @@
 							</header>
 
 							@if (option === 1) {
-								@if (loading) {
+								@if (isGetCategoryLoading) {
 									<div class="form-card-body">
 										<section class="mb-7">
 											<header class="border-bottom pb-3 mb-4">
@@ -138,17 +138,17 @@
 												<div class="d-flex align-items-center justify-content-between gap-2">
 													<label class="form-field-label">Icono</label>
 
-													<button *ngIf="errorsCategory?.icon" type="button" class="form-error-toggle" (click)="fieldErrorsCategory.icon = !fieldErrorsCategory.icon">
-														{{ fieldErrorsCategory.icon ? 'Ocultar errores' : 'Ver errores' }}
+													<button *ngIf="validationCategoryError?.icon" type="button" class="form-error-toggle" (click)="fieldCategoryErrors.icon = !fieldCategoryErrors.icon">
+														{{ fieldCategoryErrors.icon ? 'Ocultar errores' : 'Ver errores' }}
 													</button>
 												</div>
 
-												<div class="skeleton skeleton-textarea" style="height: 248.67px !important;"></div>
+												<div class="skeleton skeleton-textarea" style="height: 248.67px !important"></div>
 
 												<p class="form-field-help">Se mostrará junto al nombre de la categoría.</p>
 
-												<div class="validation-wrapper" [class.open]="fieldErrorsCategory.icon">
-													<app-validation-popover [errors]="errorsCategory?.icon"></app-validation-popover>
+												<div class="validation-wrapper" [class.open]="fieldCategoryErrors.icon">
+													<app-validation-popover [errors]="validationCategoryError?.icon!"></app-validation-popover>
 												</div>
 											</div>
 										</section>
@@ -163,7 +163,7 @@
 											<div class="row g-3">
 												<div class="col-12 col-md-6">
 													<label class="form-check form-check-customs form-check-sm d-flex align-items-start gap-3 border rounded p-3 m-0 h-100 w-100 cursor-pointer bg-light">
-														<input class="form-check-input float-none flex-shrink-0 ms-0 mt-1" type="checkbox" disabled/>
+														<input class="form-check-input float-none flex-shrink-0 ms-0 mt-1" type="checkbox" disabled />
 
 														<span class="form-check-label d-flex flex-column align-items-start">
 															<span class="fw-semibold text-gray-700 fs-7">Dimensiones</span>
@@ -175,7 +175,7 @@
 
 												<div class="col-12 col-md-6">
 													<label class="form-check form-check-customs form-check-sm d-flex align-items-start gap-3 border rounded p-3 m-0 h-100 w-100 cursor-pointer bg-light">
-														<input class="form-check-input float-none flex-shrink-0 ms-0 mt-1" type="checkbox" disabled/>
+														<input class="form-check-input float-none flex-shrink-0 ms-0 mt-1" type="checkbox" disabled />
 
 														<span class="form-check-label d-flex flex-column align-items-start">
 															<span class="fw-semibold text-gray-700 fs-7">Características</span>
@@ -187,7 +187,7 @@
 
 												<div class="col-12 col-md-6">
 													<label class="form-check form-check-customs form-check-sm d-flex align-items-start gap-3 border rounded p-3 m-0 h-100 w-100 cursor-pointer bg-light">
-														<input class="form-check-input float-none flex-shrink-0 ms-0 mt-1" type="checkbox" disabled/>
+														<input class="form-check-input float-none flex-shrink-0 ms-0 mt-1" type="checkbox" disabled />
 
 														<span class="form-check-label d-flex flex-column align-items-start">
 															<span class="fw-semibold text-gray-700 fs-7">Condición</span>
@@ -199,7 +199,7 @@
 
 												<div class="col-12 col-md-6">
 													<label class="form-check form-check-customs form-check-sm d-flex align-items-start gap-3 border rounded p-3 m-0 h-100 w-100 cursor-pointer bg-light">
-														<input class="form-check-input float-none flex-shrink-0 ms-0 mt-1" type="checkbox" disabled/>
+														<input class="form-check-input float-none flex-shrink-0 ms-0 mt-1" type="checkbox" disabled />
 
 														<span class="form-check-label d-flex flex-column align-items-start">
 															<span class="fw-semibold text-gray-700 fs-7">Garantía</span>
@@ -211,7 +211,7 @@
 
 												<div class="col-12 col-md-6">
 													<label class="form-check form-check-customs form-check-sm d-flex align-items-start gap-3 border rounded p-3 m-0 h-100 w-100 cursor-pointer bg-light">
-														<input class="form-check-input float-none flex-shrink-0 ms-0 mt-1" type="checkbox" disabled/>
+														<input class="form-check-input float-none flex-shrink-0 ms-0 mt-1" type="checkbox" disabled />
 
 														<span class="form-check-label d-flex flex-column align-items-start">
 															<span class="fw-semibold text-gray-700 fs-7">País de origen</span>
@@ -223,7 +223,7 @@
 
 												<div class="col-12 col-md-6">
 													<label class="form-check form-check-customs form-check-sm d-flex align-items-start gap-3 border rounded p-3 m-0 h-100 w-100 cursor-pointer bg-light">
-														<input class="form-check-input float-none flex-shrink-0 ms-0 mt-1" type="checkbox" disabled/>
+														<input class="form-check-input float-none flex-shrink-0 ms-0 mt-1" type="checkbox" disabled />
 
 														<span class="form-check-label d-flex flex-column align-items-start">
 															<span class="fw-semibold text-gray-700 fs-7">Material principal</span>
@@ -235,7 +235,7 @@
 
 												<div class="col-12 col-md-6">
 													<label class="form-check form-check-customs form-check-sm d-flex align-items-start gap-3 border rounded p-3 m-0 h-100 w-100 cursor-pointer bg-light">
-														<input class="form-check-input float-none flex-shrink-0 ms-0 mt-1" type="checkbox" disabled/>
+														<input class="form-check-input float-none flex-shrink-0 ms-0 mt-1" type="checkbox" disabled />
 
 														<span class="form-check-label d-flex flex-column align-items-start">
 															<span class="fw-semibold text-gray-700 fs-7">Temperatura</span>
@@ -266,8 +266,8 @@
 														<div class="d-flex align-items-center justify-content-between gap-2">
 															<label class="form-field-label required" for="categoryName">Nombre</label>
 
-															<button *ngIf="errorsCategory?.name" type="button" class="form-error-toggle" (click)="fieldErrorsCategory.name = !fieldErrorsCategory.name">
-																{{ fieldErrorsCategory.name ? 'Ocultar errores' : 'Ver errores' }}
+															<button *ngIf="validationCategoryError?.name" type="button" class="form-error-toggle" (click)="fieldCategoryErrors.name = !fieldCategoryErrors.name">
+																{{ fieldCategoryErrors.name ? 'Ocultar errores' : 'Ver errores' }}
 															</button>
 														</div>
 
@@ -278,13 +278,13 @@
 															placeholder="Ej. Frutas y verduras"
 															name="name"
 															[(ngModel)]="category.name"
-															[class.is-invalid]="errorsCategory?.name"
+															[class.is-invalid]="validationCategoryError?.name"
 														/>
 
 														<p class="form-field-help">Nombre visible en el panel y en la tienda.</p>
 
-														<div class="validation-wrapper" [class.open]="fieldErrorsCategory.name">
-															<app-validation-popover [errors]="errorsCategory?.name"></app-validation-popover>
+														<div class="validation-wrapper" [class.open]="fieldCategoryErrors.name">
+															<app-validation-popover [errors]="validationCategoryError?.name!"></app-validation-popover>
 														</div>
 													</div>
 												</div>
@@ -294,8 +294,13 @@
 														<div class="d-flex align-items-center justify-content-between gap-2">
 															<label class="form-field-label required" for="categoryColor">Color</label>
 
-															<button *ngIf="errorsCategory?.color" type="button" class="form-error-toggle" (click)="fieldErrorsCategory.color = !fieldErrorsCategory.color">
-																{{ fieldErrorsCategory.color ? 'Ocultar errores' : 'Ver errores' }}
+															<button
+																*ngIf="validationCategoryError?.color"
+																type="button"
+																class="form-error-toggle"
+																(click)="fieldCategoryErrors.color = !fieldCategoryErrors.color"
+															>
+																{{ fieldCategoryErrors.color ? 'Ocultar errores' : 'Ver errores' }}
 															</button>
 														</div>
 
@@ -306,7 +311,7 @@
 																class="form-control form-control-md p-2"
 																name="color"
 																[(ngModel)]="category.color"
-																[class.is-invalid]="errorsCategory?.color"
+																[class.is-invalid]="validationCategoryError?.color"
 															/>
 
 															<span class="input-group-text text-uppercase justify-content-center" style="width: 6.5rem">
@@ -316,8 +321,8 @@
 
 														<p class="form-field-help">Color de identificación.</p>
 
-														<div class="validation-wrapper" [class.open]="fieldErrorsCategory.color">
-															<app-validation-popover [errors]="errorsCategory?.color"></app-validation-popover>
+														<div class="validation-wrapper" [class.open]="fieldCategoryErrors.color">
+															<app-validation-popover [errors]="validationCategoryError?.color!"></app-validation-popover>
 														</div>
 													</div>
 												</div>
@@ -327,8 +332,13 @@
 														<div class="d-flex align-items-center justify-content-between gap-2">
 															<label class="form-field-label required" for="categoryPrefix">Prefijo</label>
 
-															<button *ngIf="errorsCategory?.prefix" type="button" class="form-error-toggle" (click)="fieldErrorsCategory.prefix = !fieldErrorsCategory.prefix">
-																{{ fieldErrorsCategory.prefix ? 'Ocultar errores' : 'Ver errores' }}
+															<button
+																*ngIf="validationCategoryError?.prefix"
+																type="button"
+																class="form-error-toggle"
+																(click)="fieldCategoryErrors.prefix = !fieldCategoryErrors.prefix"
+															>
+																{{ fieldCategoryErrors.prefix ? 'Ocultar errores' : 'Ver errores' }}
 															</button>
 														</div>
 
@@ -340,13 +350,13 @@
 															name="prefix"
 															[(ngModel)]="category.prefix"
 															[imask]="prefixMask"
-															[class.is-invalid]="errorsCategory?.prefix"
+															[class.is-invalid]="validationCategoryError?.prefix"
 														/>
 
 														<p class="form-field-help">Máximo tres letras identificadoras.</p>
 
-														<div class="validation-wrapper" [class.open]="fieldErrorsCategory.prefix">
-															<app-validation-popover [errors]="errorsCategory?.prefix"></app-validation-popover>
+														<div class="validation-wrapper" [class.open]="fieldCategoryErrors.prefix">
+															<app-validation-popover [errors]="validationCategoryError?.prefix!"></app-validation-popover>
 														</div>
 													</div>
 												</div>
@@ -357,12 +367,12 @@
 															<label class="form-field-label required" for="categoryDescription">Descripción</label>
 
 															<button
-																*ngIf="errorsCategory?.description"
+																*ngIf="validationCategoryError?.description"
 																type="button"
 																class="form-error-toggle"
-																(click)="fieldErrorsCategory.description = !fieldErrorsCategory.description"
+																(click)="fieldCategoryErrors.description = !fieldCategoryErrors.description"
 															>
-																{{ fieldErrorsCategory.description ? 'Ocultar errores' : 'Ver errores' }}
+																{{ fieldCategoryErrors.description ? 'Ocultar errores' : 'Ver errores' }}
 															</button>
 														</div>
 
@@ -372,15 +382,15 @@
 															placeholder="Describe qué productos pertenecen a esta categoría"
 															name="description"
 															[(ngModel)]="category.description"
-															[class.is-invalid]="errorsCategory?.description"
+															[class.is-invalid]="validationCategoryError?.description"
 															textAreaAutoResize
 															rows="3"
 														></textarea>
 
 														<p class="form-field-help">Ayuda a comprender el alcance de la categoría.</p>
 
-														<div class="validation-wrapper" [class.open]="fieldErrorsCategory.description">
-															<app-validation-popover [errors]="errorsCategory?.description"></app-validation-popover>
+														<div class="validation-wrapper" [class.open]="fieldCategoryErrors.description">
+															<app-validation-popover [errors]="validationCategoryError?.description!"></app-validation-popover>
 														</div>
 													</div>
 												</div>
@@ -398,17 +408,17 @@
 												<div class="d-flex align-items-center justify-content-between gap-2">
 													<label class="form-field-label">Icono</label>
 
-													<button *ngIf="errorsCategory?.icon" type="button" class="form-error-toggle" (click)="fieldErrorsCategory.icon = !fieldErrorsCategory.icon">
-														{{ fieldErrorsCategory.icon ? 'Ocultar errores' : 'Ver errores' }}
+													<button *ngIf="validationCategoryError?.icon" type="button" class="form-error-toggle" (click)="fieldCategoryErrors.icon = !fieldCategoryErrors.icon">
+														{{ fieldCategoryErrors.icon ? 'Ocultar errores' : 'Ver errores' }}
 													</button>
 												</div>
 
-												<app-input-svg [errors]="errorsCategory" [data]="category"></app-input-svg>
+												<app-input-svg [errors]="validationCategoryError" [data]="category"></app-input-svg>
 
 												<p class="form-field-help">Se mostrará junto al nombre de la categoría.</p>
 
-												<div class="validation-wrapper" [class.open]="fieldErrorsCategory.icon">
-													<app-validation-popover [errors]="errorsCategory?.icon"></app-validation-popover>
+												<div class="validation-wrapper" [class.open]="fieldCategoryErrors.icon">
+													<app-validation-popover [errors]="validationCategoryError?.icon!"></app-validation-popover>
 												</div>
 											</div>
 										</section>
@@ -422,444 +432,735 @@
 
 											<div class="row g-3">
 												<div class="col-12 col-md-6">
-													<label class="form-check form-check-customs form-check-sm d-flex align-items-start gap-3 border rounded p-3 m-0 h-100 w-100 cursor-pointer bg-light">
-														<input class="form-check-input float-none flex-shrink-0 ms-0 mt-1" type="checkbox" [(ngModel)]="category.isDimensions" />
+													<div class="form-field h-100">
+														<div class="d-flex align-items-center justify-content-between gap-2">
+															<button
+																*ngIf="validationCategoryError?.isDimensions"
+																type="button"
+																class="form-error-toggle"
+																(click)="fieldCategoryErrors.isDimensions = !fieldCategoryErrors.isDimensions"
+															>
+																{{ fieldCategoryErrors.isDimensions ? 'Ocultar errores' : 'Ver errores' }}
+															</button>
+														</div>
 
-														<span class="form-check-label d-flex flex-column align-items-start">
-															<span class="fw-semibold text-gray-700 fs-7">Dimensiones</span>
+														<label
+															class="form-check form-check-customs form-check-sm d-flex align-items-start gap-3 border rounded p-3 m-0 w-100 cursor-pointer"
+															[class.is-invalid]="validationCategoryError?.isDimensions"
+															style="background: #f9f9f9 !important"
+														>
+															<input class="form-check-input float-none flex-shrink-0 ms-0 mt-1" type="checkbox" name="isDimensions" [(ngModel)]="category.isDimensions" />
 
-															<small class="form-field-help mt-1">Alto, ancho, largo, peso y otras medidas.</small>
-														</span>
-													</label>
+															<span class="form-check-label d-flex flex-column align-items-start">
+																<span class="fw-semibold text-gray-700 fs-7">Dimensiones</span>
+
+																<small class="form-field-help mt-1">Alto, ancho, largo, peso y otras medidas físicas.</small>
+															</span>
+														</label>
+
+														<div class="validation-wrapper" [class.open]="fieldCategoryErrors.isDimensions">
+															<app-validation-popover [errors]="validationCategoryError?.isDimensions!"></app-validation-popover>
+														</div>
+													</div>
 												</div>
 
 												<div class="col-12 col-md-6">
-													<label class="form-check form-check-customs form-check-sm d-flex align-items-start gap-3 border rounded p-3 m-0 h-100 w-100 cursor-pointer bg-light">
-														<input class="form-check-input float-none flex-shrink-0 ms-0 mt-1" type="checkbox" [(ngModel)]="category.isCharacteristics" />
+													<div class="form-field h-100">
+														<div class="d-flex align-items-center justify-content-between gap-2">
+															<button
+																*ngIf="validationCategoryError?.isCharacteristics"
+																type="button"
+																class="form-error-toggle"
+																(click)="fieldCategoryErrors.isCharacteristics = !fieldCategoryErrors.isCharacteristics"
+															>
+																{{ fieldCategoryErrors.isCharacteristics ? 'Ocultar errores' : 'Ver errores' }}
+															</button>
+														</div>
 
-														<span class="form-check-label d-flex flex-column align-items-start">
-															<span class="fw-semibold text-gray-700 fs-7">Características</span>
+														<label
+															class="form-check form-check-customs form-check-sm d-flex align-items-start gap-3 border rounded p-3 m-0 w-100 cursor-pointer"
+															[class.is-invalid]="validationCategoryError?.isCharacteristics"
+															style="background: #f9f9f9 !important"
+														>
+															<input class="form-check-input float-none flex-shrink-0 ms-0 mt-1" type="checkbox" name="isCharacteristics" [(ngModel)]="category.isCharacteristics" />
 
-															<small class="form-field-help mt-1">Funciones, ventajas y detalles técnicos.</small>
-														</span>
-													</label>
+															<span class="form-check-label d-flex flex-column align-items-start">
+																<span class="fw-semibold text-gray-700 fs-7">Características</span>
+
+																<small class="form-field-help mt-1">Funciones, ventajas y detalles técnicos principales.</small>
+															</span>
+														</label>
+
+														<div class="validation-wrapper" [class.open]="fieldCategoryErrors.isCharacteristics">
+															<app-validation-popover [errors]="validationCategoryError?.isCharacteristics!"></app-validation-popover>
+														</div>
+													</div>
 												</div>
 
 												<div class="col-12 col-md-6">
-													<label class="form-check form-check-customs form-check-sm d-flex align-items-start gap-3 border rounded p-3 m-0 h-100 w-100 cursor-pointer bg-light">
-														<input class="form-check-input float-none flex-shrink-0 ms-0 mt-1" type="checkbox" [(ngModel)]="category.isCondition" />
+													<div class="form-field h-100">
+														<div class="d-flex align-items-center justify-content-between gap-2">
+															<button *ngIf="validationCategoryError?.isCondition" type="button" class="form-error-toggle" (click)="fieldCategoryErrors.isCondition = !fieldCategoryErrors.isCondition">
+																{{ fieldCategoryErrors.isCondition ? 'Ocultar errores' : 'Ver errores' }}
+															</button>
+														</div>
 
-														<span class="form-check-label d-flex flex-column align-items-start">
-															<span class="fw-semibold text-gray-700 fs-7">Condición</span>
+														<label
+															class="form-check form-check-customs form-check-sm d-flex align-items-start gap-3 border rounded p-3 m-0 w-100 cursor-pointer"
+															[class.is-invalid]="validationCategoryError?.isCondition"
+															style="background: #f9f9f9 !important"
+														>
+															<input class="form-check-input float-none flex-shrink-0 ms-0 mt-1" type="checkbox" name="isCondition" [(ngModel)]="category.isCondition" />
 
-															<small class="form-field-help mt-1">Estado nuevo, usado o reacondicionado.</small>
-														</span>
-													</label>
+															<span class="form-check-label d-flex flex-column align-items-start">
+																<span class="fw-semibold text-gray-700 fs-7">Condición</span>
+
+																<small class="form-field-help mt-1">Estado nuevo, usado o reacondicionado.</small>
+															</span>
+														</label>
+
+														<div class="validation-wrapper" [class.open]="fieldCategoryErrors.isCondition">
+															<app-validation-popover [errors]="validationCategoryError?.isCondition!"></app-validation-popover>
+														</div>
+													</div>
 												</div>
 
 												<div class="col-12 col-md-6">
-													<label class="form-check form-check-customs form-check-sm d-flex align-items-start gap-3 border rounded p-3 m-0 h-100 w-100 cursor-pointer bg-light">
-														<input class="form-check-input float-none flex-shrink-0 ms-0 mt-1" type="checkbox" [(ngModel)]="category.isWarranty" />
+													<div class="form-field h-100">
+														<div class="d-flex align-items-center justify-content-between gap-2">
+															<button *ngIf="validationCategoryError?.isWarranty" type="button" class="form-error-toggle" (click)="fieldCategoryErrors.isWarranty = !fieldCategoryErrors.isWarranty">
+																{{ fieldCategoryErrors.isWarranty ? 'Ocultar errores' : 'Ver errores' }}
+															</button>
+														</div>
 
-														<span class="form-check-label d-flex flex-column align-items-start">
-															<span class="fw-semibold text-gray-700 fs-7">Garantía</span>
+														<label
+															class="form-check form-check-customs form-check-sm d-flex align-items-start gap-3 border rounded p-3 m-0 w-100 cursor-pointer"
+															[class.is-invalid]="validationCategoryError?.isWarranty"
+															style="background: #f9f9f9 !important"
+														>
+															<input class="form-check-input float-none flex-shrink-0 ms-0 mt-1" type="checkbox" name="isWarranty" [(ngModel)]="category.isWarranty" />
 
-															<small class="form-field-help mt-1">Tiempo, tipo y condiciones de cobertura.</small>
-														</span>
-													</label>
+															<span class="form-check-label d-flex flex-column align-items-start">
+																<span class="fw-semibold text-gray-700 fs-7">Garantía</span>
+
+																<small class="form-field-help mt-1">Tiempo, tipo y condiciones de cobertura.</small>
+															</span>
+														</label>
+
+														<div class="validation-wrapper" [class.open]="fieldCategoryErrors.isWarranty">
+															<app-validation-popover [errors]="validationCategoryError?.isWarranty!"></app-validation-popover>
+														</div>
+													</div>
 												</div>
 
 												<div class="col-12 col-md-6">
-													<label class="form-check form-check-customs form-check-sm d-flex align-items-start gap-3 border rounded p-3 m-0 h-100 w-100 cursor-pointer bg-light">
-														<input class="form-check-input float-none flex-shrink-0 ms-0 mt-1" type="checkbox" [(ngModel)]="category.isCountryOfOrigin" />
+													<div class="form-field h-100">
+														<div class="d-flex align-items-center justify-content-between gap-2">
+															<button
+																*ngIf="validationCategoryError?.isCountryOfOrigin"
+																type="button"
+																class="form-error-toggle"
+																(click)="fieldCategoryErrors.isCountryOfOrigin = !fieldCategoryErrors.isCountryOfOrigin"
+															>
+																{{ fieldCategoryErrors.isCountryOfOrigin ? 'Ocultar errores' : 'Ver errores' }}
+															</button>
+														</div>
 
-														<span class="form-check-label d-flex flex-column align-items-start">
-															<span class="fw-semibold text-gray-700 fs-7">País de origen</span>
+														<label
+															class="form-check form-check-customs form-check-sm d-flex align-items-start gap-3 border rounded p-3 m-0 w-100 cursor-pointer"
+															[class.is-invalid]="validationCategoryError?.isCountryOfOrigin"
+															style="background: #f9f9f9 !important"
+														>
+															<input class="form-check-input float-none flex-shrink-0 ms-0 mt-1" type="checkbox" name="isCountryOfOrigin" [(ngModel)]="category.isCountryOfOrigin" />
 
-															<small class="form-field-help mt-1">Lugar de fabricación o ensamblaje.</small>
-														</span>
-													</label>
+															<span class="form-check-label d-flex flex-column align-items-start">
+																<span class="fw-semibold text-gray-700 fs-7">País de origen</span>
+
+																<small class="form-field-help mt-1">Lugar de fabricación, producción o ensamblaje.</small>
+															</span>
+														</label>
+
+														<div class="validation-wrapper" [class.open]="fieldCategoryErrors.isCountryOfOrigin">
+															<app-validation-popover [errors]="validationCategoryError?.isCountryOfOrigin!"></app-validation-popover>
+														</div>
+													</div>
 												</div>
 
 												<div class="col-12 col-md-6">
-													<label class="form-check form-check-customs form-check-sm d-flex align-items-start gap-3 border rounded p-3 m-0 h-100 w-100 cursor-pointer bg-light">
-														<input class="form-check-input float-none flex-shrink-0 ms-0 mt-1" type="checkbox" [(ngModel)]="category.isMaterial" />
+													<div class="form-field h-100">
+														<div class="d-flex align-items-center justify-content-between gap-2">
+															<button *ngIf="validationCategoryError?.isMaterial" type="button" class="form-error-toggle" (click)="fieldCategoryErrors.isMaterial = !fieldCategoryErrors.isMaterial">
+																{{ fieldCategoryErrors.isMaterial ? 'Ocultar errores' : 'Ver errores' }}
+															</button>
+														</div>
 
-														<span class="form-check-label d-flex flex-column align-items-start">
-															<span class="fw-semibold text-gray-700 fs-7">Material principal</span>
+														<label
+															class="form-check form-check-customs form-check-sm d-flex align-items-start gap-3 border rounded p-3 m-0 w-100 cursor-pointer"
+															[class.is-invalid]="validationCategoryError?.isMaterial"
+															style="background: #f9f9f9 !important"
+														>
+															<input class="form-check-input float-none flex-shrink-0 ms-0 mt-1" type="checkbox" name="isMaterial" [(ngModel)]="category.isMaterial" />
 
-															<small class="form-field-help mt-1">Material predominante de fabricación.</small>
-														</span>
-													</label>
+															<span class="form-check-label d-flex flex-column align-items-start">
+																<span class="fw-semibold text-gray-700 fs-7">Material principal</span>
+
+																<small class="form-field-help mt-1">Material predominante utilizado en la fabricación.</small>
+															</span>
+														</label>
+
+														<div class="validation-wrapper" [class.open]="fieldCategoryErrors.isMaterial">
+															<app-validation-popover [errors]="validationCategoryError?.isMaterial!"></app-validation-popover>
+														</div>
+													</div>
 												</div>
 
 												<div class="col-12 col-md-6">
-													<label class="form-check form-check-customs form-check-sm d-flex align-items-start gap-3 border rounded p-3 m-0 h-100 w-100 cursor-pointer bg-light">
-														<input class="form-check-input float-none flex-shrink-0 ms-0 mt-1" type="checkbox" [(ngModel)]="category.isTemperature" />
+													<div class="form-field h-100">
+														<div class="d-flex align-items-center justify-content-between gap-2">
+															<button
+																*ngIf="validationCategoryError?.isTemperature"
+																type="button"
+																class="form-error-toggle"
+																(click)="fieldCategoryErrors.isTemperature = !fieldCategoryErrors.isTemperature"
+															>
+																{{ fieldCategoryErrors.isTemperature ? 'Ocultar errores' : 'Ver errores' }}
+															</button>
+														</div>
 
-														<span class="form-check-label d-flex flex-column align-items-start">
-															<span class="fw-semibold text-gray-700 fs-7">Temperatura</span>
+														<label
+															class="form-check form-check-customs form-check-sm d-flex align-items-start gap-3 border rounded p-3 m-0 w-100 cursor-pointer"
+															[class.is-invalid]="validationCategoryError?.isTemperature"
+															style="background: #f9f9f9 !important"
+														>
+															<input class="form-check-input float-none flex-shrink-0 ms-0 mt-1" type="checkbox" name="isTemperature" [(ngModel)]="category.isTemperature" />
 
-															<small class="form-field-help mt-1">Rango ideal de uso o almacenamiento.</small>
-														</span>
-													</label>
+															<span class="form-check-label d-flex flex-column align-items-start">
+																<span class="fw-semibold text-gray-700 fs-7">Temperatura</span>
+
+																<small class="form-field-help mt-1">Rango ideal de uso, conservación o almacenaje.</small>
+															</span>
+														</label>
+
+														<div class="validation-wrapper" [class.open]="fieldCategoryErrors.isTemperature">
+															<app-validation-popover [errors]="validationCategoryError?.isTemperature!"></app-validation-popover>
+														</div>
+													</div>
 												</div>
 											</div>
 										</section>
 									</div>
+									<footer class="form-card-footer">
+										<div class="d-flex flex-column-reverse flex-sm-row align-items-stretch align-items-sm-center justify-content-end gap-2">
+											<button
+												type="button"
+												class="btn btn-sm btn-primary px-5"
+												[disabled]="isUpdateCategoryLoading || !!errorMsmServerGetCategory"
+												(click)="!isUpdateCategoryLoading && !errorMsmServerGetCategory && updateCategory()"
+											>
+												<span *ngIf="isUpdateCategoryLoading" class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+
+												<i *ngIf="!isUpdateCategoryLoading" class="bi bi-folder-check" aria-hidden="true"></i>
+
+												<span>
+													{{ isUpdateCategoryLoading ? 'Actualizando...' : 'Actualizar categoría' }}
+												</span>
+											</button>
+										</div>
+									</footer>
 								}
 							}
 							@if (option === 2) {
-								@if (loading || !errorMsmServerGetCategory) {
-									<div class="card-body">
-										<div class="mb-10">
-											<div class="row">
-												<div class="col-lg-6">
-													<div class="d-flex flex-column mb-5 fv-row fv-plugins-icon-container">
-														<div class="d-flex align-items-center justify-content-between mb-1">
-															<label class="required fw-500 text-gray-700 fs-6 mb-1">Nombre</label>
-															<small
-																class="text-danger cursor-pointer d-flex align-items-center gap-1"
-																*ngIf="errorsSubcategory?.name"
-																(click)="fieldErrorsSubcategory.name = !fieldErrorsSubcategory.name"
-															>
-																<ion-icon name="information-circle-outline" class="validation-icon"></ion-icon>
-																{{ fieldErrorsSubcategory.name ? 'Ocultar errores' : 'Ver errores' }}
-															</small>
+								@if (isGetSubcategoriesLoading) {
+									<div class="form-card-body">
+										<section class="mb-7">
+											<header class="border-bottom pb-3 mb-4">
+												<h2 class="form-card-title">Información de la subcategoría</h2>
+
+												<p class="form-card-description">Registra una nueva subcategoría dentro de esta categoría.</p>
+											</header>
+
+											<div class="row g-4">
+												<div class="col-12 col-md-6">
+													<div class="form-field">
+														<div class="d-flex align-items-center justify-content-between gap-2">
+															<label class="form-field-label required" for="subcategoryName">Nombre</label>
 														</div>
 
-														@if (!loadingSubcategories) {
-															<div class="position-relative mb-1">
-																<input
-																	type="text"
-																	class="form-control pe-15"
-																	placeholder="Computers & Accessories"
-																	name="name"
-																	[(ngModel)]="subcategory.name"
-																	[ngClass]="{ 'is-invalid': errorsSubcategory?.name }"
-																	(keyup.ENTER)="add()"
-																/>
-																<span
-																	class="text-primary position-absolute top-50 end-0 translate-middle-y me-3 fw-600 fs-8"
-																	style="pointer-events: none; background: #fff; padding: 1px"
-																>
-																	[ENTER]
-																</span>
-															</div>
-														} @else {
-															<div class="skeleton skeleton-input mb-1"></div>
-														}
+														<div class="skeleton skeleton-input"></div>
 
-														<span class="fs-8 text-muted">Título de la subcategoría.</span>
-
-														<div class="validation-wrapper" [class.open]="fieldErrorsSubcategory.name">
-															<app-validation-popover [errors]="errorsSubcategory?.name"></app-validation-popover>
-														</div>
+														<p class="form-field-help">Nombre visible en el panel y en la tienda.</p>
 													</div>
 												</div>
-												<div class="col-lg-6">
-													<div class="d-flex flex-column mb-5 fv-row fv-plugins-icon-container">
-														<div class="d-flex align-items-center justify-content-between mb-1">
-															<label class="required fw-500 text-gray-700 fs-6 mb-1">Prefijo</label>
-															<small
-																class="text-danger cursor-pointer d-flex align-items-center gap-1"
-																*ngIf="errorsSubcategory?.prefix"
-																(click)="fieldErrorsSubcategory.prefix = !fieldErrorsSubcategory.prefix"
-															>
-																<ion-icon name="information-circle-outline" class="validation-icon"></ion-icon>
-																{{ fieldErrorsSubcategory.prefix ? 'Ocultar errores' : 'Ver errores' }}
-															</small>
+
+												<div class="col-12 col-md-6">
+													<div class="form-field">
+														<div class="d-flex align-items-center justify-content-between gap-2">
+															<label class="form-field-label required" for="subcategoryPrefix">Prefijo</label>
 														</div>
-														@if (!loadingSubcategories) {
+
+														<div class="skeleton skeleton-input"></div>
+
+														<p class="form-field-help">Dos caracteres que identifican la subcategoría.</p>
+													</div>
+												</div>
+
+												<div class="col-12">
+													<div class="form-field">
+														<div class="d-flex align-items-center justify-content-between gap-2">
+															<label class="form-field-label">Icono</label>
+														</div>
+
+														<div class="skeleton skeleton-textarea" style="height: 253px !important"></div>
+
+														<p class="form-field-help">Se mostrará junto al nombre de la subcategoría.</p>
+													</div>
+												</div>
+											</div>
+
+											<div class="d-flex flex-column-reverse flex-sm-row align-items-stretch align-items-sm-center justify-content-end gap-2 mt-5">
+												<button
+													*ngIf="typeForm === 'edit'"
+													type="button"
+													class="btn btn-warning btn-sm"
+													[disabled]="isGetSubcategoriesLoading || isCreateSubcategoryLoading"
+													(click)="cancelEdit()"
+												>
+													<i class="bi bi-x-circle" aria-hidden="true"></i>
+
+													Cancelar edición
+												</button>
+
+												<button
+													type="button"
+													class="btn btn-primary btn-sm"
+													[disabled]="isGetSubcategoriesLoading || isCreateSubcategoryLoading || !!errorMsmServerGetSubcategory"
+													(click)="!isGetSubcategoriesLoading && !isCreateSubcategoryLoading && !errorMsmServerGetSubcategory && add()"
+												>
+													<span *ngIf="isCreateSubcategoryLoading" class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+
+													<i *ngIf="!isCreateSubcategoryLoading" class="bi" [ngClass]="typeForm === 'edit' ? 'bi-folder-check' : 'bi-folder-plus'" aria-hidden="true"></i>
+
+													<span>
+														{{ isCreateSubcategoryLoading ? 'Procesando...' : typeForm === 'edit' ? 'Actualizar subcategoría' : 'Agregar subcategoría' }}
+													</span>
+												</button>
+											</div>
+										</section>
+
+										<section>
+											<header class="border-bottom pb-3 mb-4">
+												<h2 class="form-card-title">Subcategorías</h2>
+
+												<p class="form-card-description">Administra las subcategorías asociadas.</p>
+											</header>
+
+											<div class="table-wrapper">
+												<table class="table custom-table align-middle mb-0">
+													<thead>
+														<tr>
+															<th class="fixed-xs text-center p-0">
+																<label class="form-check form-check-customs form-check-sm m-0 d-flex align-items-center justify-content-center h-100">
+																	<input class="form-check-input" type="checkbox" disabled />
+																</label>
+															</th>
+
+															<th class="flex-column">Subcategoría</th>
+
+															<th class="fixed-md">Estado</th>
+
+															<th class="fixed-xs"></th>
+														</tr>
+													</thead>
+
+													<tbody>
+														<tr *ngFor="let item of [1, 2, 3, 4, 5, 6]">
+															<td class="fixed-xs text-center p-0">
+																<div class="skeleton skeleton-check"></div>
+															</td>
+
+															<td class="flex-column">
+																<div class="d-flex align-items-center gap-3">
+																	<div class="skeleton skeleton-square-sm"></div>
+
+																	<div class="skeleton-lines d-flex flex-column gap-2">
+																		<div class="skeleton skeleton-text skeleton-w-60"></div>
+
+																		<div class="skeleton skeleton-text skeleton-w-40"></div>
+																	</div>
+																</div>
+															</td>
+
+															<td class="fixed-md">
+																<div class="skeleton skeleton-badge"></div>
+															</td>
+
+															<td class="fixed-xs text-center p-0">
+																<div class="skeleton skeleton-btn"></div>
+															</td>
+														</tr>
+													</tbody>
+												</table>
+											</div>
+										</section>
+									</div>
+								} @else if (errorMsmServerGetCategory) {
+									<div class="form-card-body">
+										<app-not-found [error]="errorMsmServerGetCategory"></app-not-found>
+									</div>
+								} @else {
+									<div class="form-card-body">
+										<section class="mb-7">
+											<header class="border-bottom pb-3 mb-4">
+												<h2 class="form-card-title">Información de la subcategoría</h2>
+
+												<p class="form-card-description">
+													{{ typeForm === 'edit' ? 'Actualiza la información de la subcategoría seleccionada.' : 'Registra una nueva subcategoría dentro de esta categoría.' }}
+												</p>
+											</header>
+
+											<div class="row g-4">
+												<div class="col-12 col-md-6">
+													<div class="form-field">
+														<div class="d-flex align-items-center justify-content-between gap-2">
+															<label class="form-field-label required" for="subcategoryName">Nombre</label>
+
+															<button *ngIf="validationSubcategoryError?.name" type="button" class="form-error-toggle" (click)="fieldSubcategoryErrors.name = !fieldSubcategoryErrors.name">
+																{{ fieldSubcategoryErrors.name ? 'Ocultar errores' : 'Ver errores' }}
+															</button>
+														</div>
+
+														<div class="position-relative">
 															<input
+																id="subcategoryName"
 																type="text"
-																class="form-control mb-1"
-																placeholder="AZ"
-																name="prefix"
-																[(ngModel)]="subcategory.prefix"
-																[ngClass]="{ 'is-invalid': errorsSubcategory?.prefix }"
-																[imask]="prefixMask"
+																class="form-control form-control-md pe-15"
+																placeholder="Ej. Bayas"
+																name="subcategoryName"
+																[(ngModel)]="subcategory.name"
+																[class.is-invalid]="validationSubcategoryError?.name"
+																(keyup.enter)="add()"
 															/>
-														} @else {
-															<div class="skeleton skeleton-input mb-1"></div>
-														}
 
-														<span class="fs-8 text-muted">Dos caracteres representativos.</span>
-
-														<div class="validation-wrapper" [class.open]="fieldErrorsSubcategory.prefix">
-															<app-validation-popover [errors]="errorsSubcategory?.prefix"></app-validation-popover>
-														</div>
-													</div>
-												</div>
-											</div>
-											<div class="row">
-												<div class="col-lg-12">
-													<div class="d-flex flex-column mb-5 fv-row fv-plugins-icon-container">
-														<div class="d-flex align-items-center justify-content-between mb-1">
-															<label class="fw-500 text-gray-700 fs-6 mb-1">Icono</label>
-															<small
-																class="text-danger cursor-pointer d-flex align-items-center gap-1"
-																*ngIf="errorsSubcategory?.icon"
-																(click)="fieldErrorsSubcategory.icon = !fieldErrorsSubcategory.icon"
+															<span
+																class="position-absolute top-50 end-0 translate-middle-y me-3 text-primary fw-600 fs-8"
+																style="pointer-events: none; background-color: #ffffff; padding: 0.125rem 0.25rem"
 															>
-																<ion-icon name="information-circle-outline" class="validation-icon"></ion-icon>
-																{{ fieldErrorsSubcategory.icon ? 'Ocultar errores' : 'Ver errores' }}
-															</small>
+																ENTER
+															</span>
 														</div>
 
-														@if (!loadingSubcategories) {
-															<app-input-svg [errors]="errorsSubcategory" [data]="subcategory"></app-input-svg>
-														} @else {
-															<div class="skeleton skeleton-input mb-1" style="height: 250px !important"></div>
-														}
+														<p class="form-field-help">Nombre visible en el panel y en la tienda.</p>
 
-														<span class="fs-8 text-muted">Icono visible en la tienda.</span>
+														<div class="validation-wrapper" [class.open]="fieldSubcategoryErrors.name">
+															<app-validation-popover [errors]="validationSubcategoryError?.name!"></app-validation-popover>
+														</div>
+													</div>
+												</div>
 
-														<div class="validation-wrapper" [class.open]="fieldErrorsSubcategory.icon">
-															<app-validation-popover [errors]="errorsSubcategory?.icon"></app-validation-popover>
+												<div class="col-12 col-md-6">
+													<div class="form-field">
+														<div class="d-flex align-items-center justify-content-between gap-2">
+															<label class="form-field-label required" for="subcategoryPrefix">Prefijo</label>
+
+															<button
+																*ngIf="validationSubcategoryError?.prefix"
+																type="button"
+																class="form-error-toggle"
+																(click)="fieldSubcategoryErrors.prefix = !fieldSubcategoryErrors.prefix"
+															>
+																{{ fieldSubcategoryErrors.prefix ? 'Ocultar errores' : 'Ver errores' }}
+															</button>
+														</div>
+
+														<input
+															id="subcategoryPrefix"
+															type="text"
+															class="form-control form-control-md text-uppercase"
+															placeholder="Ej. BA"
+															name="subcategoryPrefix"
+															[(ngModel)]="subcategory.prefix"
+															[imask]="prefixMask"
+															[class.is-invalid]="validationSubcategoryError?.prefix"
+															(keyup.enter)="add()"
+														/>
+
+														<p class="form-field-help">Dos caracteres que identifican la subcategoría.</p>
+
+														<div class="validation-wrapper" [class.open]="fieldSubcategoryErrors.prefix">
+															<app-validation-popover [errors]="validationSubcategoryError?.prefix!"></app-validation-popover>
+														</div>
+													</div>
+												</div>
+
+												<div class="col-12">
+													<div class="form-field">
+														<div class="d-flex align-items-center justify-content-between gap-2">
+															<label class="form-field-label">Icono</label>
+
+															<button *ngIf="validationSubcategoryError?.icon" type="button" class="form-error-toggle" (click)="fieldSubcategoryErrors.icon = !fieldSubcategoryErrors.icon">
+																{{ fieldSubcategoryErrors.icon ? 'Ocultar errores' : 'Ver errores' }}
+															</button>
+														</div>
+
+														<app-input-svg [errors]="validationSubcategoryError" [data]="subcategory"></app-input-svg>
+
+														<p class="form-field-help">Se mostrará junto al nombre de la subcategoría.</p>
+
+														<div class="validation-wrapper" [class.open]="fieldSubcategoryErrors.icon">
+															<app-validation-popover [errors]="validationSubcategoryError?.icon!"></app-validation-popover>
 														</div>
 													</div>
 												</div>
 											</div>
-											<div class="row">
-												<div class="col-12 d-flex gap-5">
-													<button
-														class="btn btn-sm btn-primary my-1 cursor-pointer d-inline-flex align-items-center"
-														[disabled]="loadingSubcategories || loadBtnSubcat || errorMsmServerGetSubcategory"
-														(click)="!loadingSubcategories && !loadBtnSubcat && !errorMsmServerGetSubcategory && add()"
-														type="button"
-													>
-														<ng-container *ngIf="loadBtnSubcat">
-															<span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
-															<span role="status">Procesando...</span>
-														</ng-container>
 
-														<ng-container *ngIf="!loadBtnSubcat">
-															<i class="bi me-1" [ngClass]="typeForm == 'edit' ? 'bi bi-diagram-3' : 'bi bi-diagram-3'"></i>
+											<div class="d-flex flex-column-reverse flex-sm-row align-items-stretch align-items-sm-center justify-content-end gap-2 mt-5">
+												<button
+													*ngIf="typeForm === 'edit'"
+													type="button"
+													class="btn btn-warning btn-sm text-dark"
+													[disabled]="isGetSubcategoriesLoading || isCreateSubcategoryLoading"
+													(click)="cancelEdit()"
+												>
+													<i class="bi bi-x-circle text-dark" aria-hidden="true"></i>
 
-															{{ typeForm == 'edit' ? 'Actualizar' : 'Agregar' }}
-														</ng-container>
-													</button>
+													Cancelar edición
+												</button>
 
-													<button class="btn btn-sm btn-warning my-1 cursor-pointer text-dark d-inline-flex align-items-center" *ngIf="typeForm == 'edit'" (click)="cancelEdit()">
-														<i class="bi bi-x-circle me-1 text-dark"></i>
-														Cancelar Edición
-													</button>
+												<button
+													type="button"
+													class="btn btn-primary btn-sm"
+													[disabled]="isGetSubcategoriesLoading || isCreateSubcategoryLoading || !!errorMsmServerGetSubcategory"
+													(click)="!isGetSubcategoriesLoading && !isCreateSubcategoryLoading && !errorMsmServerGetSubcategory && add()"
+												>
+													<span *ngIf="isCreateSubcategoryLoading" class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+
+													<i *ngIf="!isCreateSubcategoryLoading" class="bi" [ngClass]="typeForm === 'edit' ? 'bi-folder-check' : 'bi-folder-plus'" aria-hidden="true"></i>
+
+													<span>
+														{{ isCreateSubcategoryLoading ? 'Procesando...' : typeForm === 'edit' ? 'Actualizar subcategoría' : 'Agregar subcategoría' }}
+													</span>
+												</button>
+											</div>
+										</section>
+
+										<section>
+											<header class="border-bottom pb-3 mb-4 d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between gap-3">
+												<div>
+													<h2 class="form-card-title">Subcategorías</h2>
+
+													<p class="form-card-description">
+														Administra las subcategorías asociadas a
+														{{ category.name }}.
+													</p>
 												</div>
-											</div>
-										</div>
-										<div class="d-flex justify-content-between mb-5">
-											<div class="d-flex flex-column mb-3">
-												<h4 class="mb-0">Subcategorías</h4>
-												<span class="text-gray-600 mt-1 fw-400 fs-0-9rem">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Asperiores, rerum.</span>
-											</div>
-											<div>
-												<div class="d-flex gap-2">
-													@if (getSelectedIds().length >= 1) {
+
+												<div class="d-flex flex-wrap align-items-center gap-2">
+													@if (getSelectedIds().length > 0) {
 														<button
-															class="btn btn-xs bg-light-primary btn-text-primary"
 															type="button"
-															style="border: 1px solid #eceaff"
+															class="btn btn-light-primary btn-xs"
 															data-bs-toggle="modal"
 															[attr.data-bs-target]="'#modalMultipleActive'"
-															[disabled]="loadingSubcategories"
+															[disabled]="isGetSubcategoriesLoading"
 														>
-															<i class="bi bi-check-circle fs-5 me-1 text-primary"></i>
+															<i class="bi bi-check-circle" aria-hidden="true"></i>
+
 															Activar
 														</button>
 
 														<button
-															class="btn btn-xs bg-light-danger btn-text-danger"
 															type="button"
-															style="border: 1px solid #eceaff"
+															class="btn btn-light-danger btn-xs"
 															data-bs-toggle="modal"
 															[attr.data-bs-target]="'#modalMultipleDisabled'"
-															[disabled]="loadingSubcategories"
+															[disabled]="isGetSubcategoriesLoading"
 														>
-															<i class="bi bi-x-circle fs-5 me-1 text-danger"></i>
+															<i class="bi bi-x-circle" aria-hidden="true"></i>
+
 															Desactivar
 														</button>
 													}
 
 													<button
 														type="button"
-														class="btn btn-icon bg-light-secondary"
+														class="btn btn-icon btn-light btn-xs"
 														(click)="initSubcategories(id)"
-														[disabled]="loadingSubcategories"
+														[disabled]="isGetSubcategoriesLoading"
 														placement="top"
 														[ngbTooltip]="'Recargar subcategorías'"
 														tooltipClass="tooltip-dark"
+														aria-label="Recargar subcategorías"
 													>
-														<span *ngIf="loadingSubcategories" class="spinner-border spinner-border-sm text-gray-800"></span>
+														<span *ngIf="isGetSubcategoriesLoading" class="spinner-border spinner-border-sm" aria-hidden="true"></span>
 
-														<ion-icon *ngIf="!loadingSubcategories" name="refresh-outline" class="fs-5 text-gray-700"></ion-icon>
+														<ion-icon *ngIf="!isGetSubcategoriesLoading" name="refresh-outline" aria-hidden="true"></ion-icon>
 													</button>
 												</div>
-											</div>
-										</div>
-										<div class="table-wrapper my-7">
-											<table class="table custom-table align-middle mb-0">
-												<thead>
-													<tr>
-														<th class="fixed-xs text-center p-0">
-															<label class="form-check form-check-customs form-check-sm m-0 d-flex align-items-center justify-content-center h-100">
-																<input class="form-check-input cursor-pointer" type="checkbox" disabled />
-															</label>
-														</th>
-														<th class="flex-column">Subcategoría</th>
-														<th class="fixed-md">Estado</th>
-														<th class="fixed-xs text-center text-center"></th>
-													</tr>
-												</thead>
-												<tbody>
-													@if (loadingSubcategories) {
-														<tr *ngFor="let item of [1, 2, 3, 4, 5, 6]">
-															<td class="fixed-xs text-center p-0">
-																<div class="skeleton skeleton-check"></div>
-															</td>
-															<td class="flex-column fw-medium">
-																<div class="d-flex align-items-center">
-																	<div class="skeleton me-3" style="width: 30px !important; height: 30px"></div>
+											</header>
 
-																	<div class="d-flex flex-column gap-2" style="width: 100%; max-width: 250px">
-																		<div class="skeleton skeleton-text" style="width: 60%"></div>
-																		<div class="skeleton skeleton-text" style="width: 40%"></div>
-																	</div>
-																</div>
-															</td>
-															<td class="fixed-md">
-																<div class="skeleton skeleton-badge"></div>
-															</td>
-															<td class="fixed-xs text-center p-0">
-																<div class="skeleton skeleton-btn"></div>
-															</td>
-														</tr>
-													} @else if (errorMsmServerGetSubcategory) {
+											<div class="table-wrapper">
+												<table class="table custom-table align-middle mb-0">
+													<thead>
 														<tr>
-															<td colspan="4">
-																<app-not-found [error]="errorMsmServerGetSubcategory"></app-not-found>
-															</td>
-														</tr>
-													} @else if (subcategories.length >= 1) {
-														<tr *ngFor="let item of subcategories">
-															<td class="fixed-xs text-center p-0">
+															<th class="fixed-xs text-center p-0">
 																<label class="form-check form-check-customs form-check-sm m-0 d-flex align-items-center justify-content-center h-100">
-																	<input class="form-check-input cursor-pointer" type="checkbox" [checked]="selectedIds.has(item.id!)" (change)="toggleItem(item.id!, $event)" />
+																	<input class="form-check-input cursor-pointer" type="checkbox" disabled />
 																</label>
-															</td>
-															<td class="flex-column fw-medium">
-																<div class="d-flex align-items-center gap-2" style="min-width: 0">
-																	<div class="symbol me-3">
+															</th>
+
+															<th class="flex-column">Subcategoría</th>
+
+															<th class="fixed-md">Estado</th>
+
+															<th class="fixed-xs"></th>
+														</tr>
+													</thead>
+
+													<tbody>
+														@if (isGetSubcategoriesLoading) {
+															<tr *ngFor="let item of [1, 2, 3, 4, 5, 6]">
+																<td class="fixed-xs text-center p-0">
+																	<div class="skeleton skeleton-check"></div>
+																</td>
+
+																<td class="flex-column">
+																	<div class="d-flex align-items-center gap-3">
+																		<div class="skeleton skeleton-square-sm"></div>
+
+																		<div class="skeleton-lines d-flex flex-column gap-2">
+																			<div class="skeleton skeleton-text skeleton-w-60"></div>
+
+																			<div class="skeleton skeleton-text skeleton-w-40"></div>
+																		</div>
+																	</div>
+																</td>
+
+																<td class="fixed-md">
+																	<div class="skeleton skeleton-badge"></div>
+																</td>
+
+																<td class="fixed-xs text-center p-0">
+																	<div class="skeleton skeleton-btn"></div>
+																</td>
+															</tr>
+														} @else if (errorMsmServerGetSubcategory) {
+															<tr>
+																<td colspan="4">
+																	<app-not-found [error]="errorMsmServerGetSubcategory"></app-not-found>
+																</td>
+															</tr>
+														} @else if (subcategories.length > 0) {
+															<tr *ngFor="let item of subcategories">
+																<td class="fixed-xs text-center p-0">
+																	<label class="form-check form-check-customs form-check-sm m-0 d-flex align-items-center justify-content-center h-100">
+																		<input class="form-check-input cursor-pointer" type="checkbox" [checked]="selectedIds.has(item.id!)" (change)="toggleItem(item.id!, $event)" />
+																	</label>
+																</td>
+
+																<td class="flex-column">
+																	<div class="d-flex align-items-center gap-3" style="min-width: 0">
+																		<span class="symbol symbol-30px flex-shrink-0">
+																			<span class="symbol-label bg-light-primary">
+																				<span *ngIf="item.icon" class="d-flex align-items-center justify-content-center w-100 h-100" [innerHTML]="item.safeIcon"></span>
+
+																				<ion-icon *ngIf="!item.icon" name="folder-outline" class="text-primary fs-5" aria-hidden="true"></ion-icon>
+																			</span>
+																		</span>
+
+																		<div class="d-flex flex-column" style="min-width: 0">
+																			<span class="text-gray-700 fs-8 fw-500 text-truncate-1">
+																				{{ item.name }}
+																			</span>
+
+																			<small class="text-primary fw-400 text-truncate-1 fs-8">#{{ item.prefix }}-{{ item.code! | padCode: 6 }}</small>
+																		</div>
+																	</div>
+																</td>
+
+																<td class="fixed-md">
+																	<span
+																		class="badge rounded-pill text-gray-700 fw-600"
+																		[ngClass]="{
+																			'bg-outline-danger': !item.status,
+																			'bg-outline-success': item.status,
+																		}"
+																	>
 																		<span
-																			*ngIf="item.icon"
-																			class="symbol-label fw-bold"
-																			style="height: 30px; width: 30px; border: 1px dashed #e3e3e3"
-																			[innerHTML]="item.safeIcon"
+																			class="d-inline-block rounded-circle me-1"
+																			style="width: 0.5rem; height: 0.5rem"
+																			[ngClass]="{
+																				'bg-danger': !item.status,
+																				'bg-success': item.status,
+																			}"
 																		></span>
 
-																		<span *ngIf="!item.icon" class="symbol-label fw-bold" style="height: 30px; width: 30px; border: 1px dashed #e3e3e3">
-																			<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-																				<rect opacity="0.3" x="2" y="2" width="20" height="20" rx="10" fill="currentColor" />
-																				<path
-																					d="M11.276 13.654C11.276 13.2713 11.3367 12.9447 11.458 12.674C11.5887 12.394 11.738 12.1653 11.906 11.988C12.0833 11.8107 12.3167 11.61 12.606 11.386C12.942 11.1247 13.1893 10.896 13.348 10.7C13.5067 10.4947 13.586 10.2427 13.586 9.944C13.586 9.636 13.4833 9.356 13.278 9.104C13.082 8.84267 12.69 8.712 12.102 8.712C11.486 8.712 11.066 8.866 10.842 9.174C10.6273 9.482 10.52 9.82267 10.52 10.196L10.534 10.574H8.826C8.78867 10.3967 8.77 10.2333 8.77 10.084C8.77 9.552 8.90067 9.07133 9.162 8.642C9.42333 8.20333 9.81067 7.858 10.324 7.606C10.8467 7.354 11.4813 7.228 12.228 7.228C13.1987 7.228 13.9687 7.44733 14.538 7.886C15.1073 8.31533 15.392 8.92667 15.392 9.72C15.392 10.168 15.322 10.5507 15.182 10.868C15.042 11.1853 14.874 11.442 14.678 11.638C14.482 11.834 14.2253 12.0533 13.908 12.296C13.544 12.576 13.2733 12.8233 13.096 13.038C12.928 13.2527 12.844 13.528 12.844 13.864V14.326H11.276V13.654ZM11.192 15.222H12.928V17H11.192V15.222Z"
-																					fill="currentColor"
-																				/>
-																			</svg>
-																		</span>
-																	</div>
-																	<div class="d-flex flex-column" style="min-width: 0">
-																		<a class="text-gray-700 fs-8 fw-500 text-truncate-1">
-																			{{ item.name }}
-																		</a>
+																		{{ item.status ? 'Activo' : 'Inactivo' }}
+																	</span>
+																</td>
 
-																		<small class="text-primary fw-400 text-truncate-1 fs-8">#{{ item.prefix }}-{{ item.code! | padCode: 6 }}</small>
-																	</div>
-																</div>
-															</td>
-															<td class="fixed-md">
-																<span class="badge rounded-pill text-gray-700 fw-800" [ngClass]="{ 'bg-outline-danger': !item.status, 'bg-outline-success': item.status }">
-																	<span
-																		class="d-inline-block rounded-circle me-1"
-																		style="width: 8px; height: 8px"
-																		[ngClass]="{ 'bg-danger': !item.status, 'bg-success': item.status }"
-																	></span>
-																	{{ item.status ? 'Activo' : 'Inactivo' }}
-																</span>
-															</td>
-															<td class="fixed-xs text-center p-0">
-																<div class="dropdown">
-																	<button class="icon-btn btn-action dropdown-toggle d-flex align-items-center justify-content-center mx-auto" data-bs-toggle="dropdown">
-																		<i class="bi bi-three-dots"></i>
-																	</button>
-																	<app-modal-delete
-																		[id]="'modalDelete-' + item.id"
-																		[title]="item.status ? 'Desactivar subcategoría' : 'Activar subcategoría'"
-																		[description]="
-																			item.status
-																				? `La subcategoría <b>${item.name}</b> dejará de estar disponible y se ocultará temporalmente del sistema.`
-																				: `La subcategoría <b>${item.name}</b> volverá a estar disponible y visible dentro del sistema.`
-																		"
-																		[textButton]="item.status ? 'Desactivar' : 'Activar'"
-																		(actionConfirmed)="setStatus(item.id!, item.status!)"
-																		[loadBtnDelete]="loadBtnDelete"
-																	></app-modal-delete>
-																	<div class="dropdown-menu menu-state-bg-light-primary" data-bs-display="static">
-																		<a class="dropdown-item d-flex align-items-center gap-2 cursor-pointer" (click)="editSubcategory(item)">
-																			<ion-icon name="create-outline"></ion-icon>
-																			Editar
-																		</a>
+																<td class="fixed-xs text-center p-0">
+																	<div class="dropdown">
+																		<button type="button" class="icon-btn btn-action dropdown-toggle" data-bs-toggle="dropdown" aria-label="Acciones de la subcategoría">
+																			<i class="bi bi-three-dots" aria-hidden="true"></i>
+																		</button>
 
-																		<a
-																			class="dropdown-item d-flex align-items-center gap-2 cursor-pointer"
-																			data-bs-toggle="modal"
-																			[attr.data-bs-target]="'#modalDelete-' + item?.id"
-																		>
-																			<ion-icon [name]="item?.status ? 'close-circle-outline' : 'checkmark-circle-outline'"></ion-icon>
-																			{{ item?.status ? 'Desactivar' : 'Activar' }}
-																		</a>
+																		<div class="dropdown-menu menu-state-bg-light-primary" data-bs-display="static">
+																			<button type="button" class="dropdown-item d-flex align-items-center gap-2" (click)="editSubcategory(item)">
+																				<ion-icon name="create-outline" aria-hidden="true"></ion-icon>
+
+																				Editar
+																			</button>
+
+																			<button
+																				type="button"
+																				class="dropdown-item d-flex align-items-center gap-2"
+																				data-bs-toggle="modal"
+																				[attr.data-bs-target]="'#modalDelete-' + item.id"
+																			>
+																				<ion-icon [name]="item.status ? 'close-circle-outline' : 'checkmark-circle-outline'" aria-hidden="true"></ion-icon>
+
+																				{{ item.status ? 'Desactivar' : 'Activar' }}
+																			</button>
+																		</div>
+
+																		<app-modal-delete
+																			[id]="'modalDelete-' + item.id"
+																			[title]="item.status ? 'Desactivar subcategoría' : 'Activar subcategoría'"
+																			[description]="
+																				item.status
+																					? `La subcategoría <b>${item.name}</b> dejará de estar disponible y se ocultará temporalmente del sistema.`
+																					: `La subcategoría <b>${item.name}</b> volverá a estar disponible y visible dentro del sistema.`
+																			"
+																			[textButton]="item.status ? 'Desactivar' : 'Activar'"
+																			(actionConfirmed)="setStatus(item.id!, item.status!)"
+																			[loadBtnDelete]="loadBtnDelete"
+																		></app-modal-delete>
 																	</div>
-																</div>
-															</td>
-														</tr>
-													} @else {
-														<tr>
-															<td colspan="4">
-																<app-not-found [error]="{ message: 'No se encontraron registros.', statusCode: 404 }"></app-not-found>
-															</td>
-														</tr>
-													}
-												</tbody>
-											</table>
-										</div>
-									</div>
-								} @else {
-									<div class="card-body">
-										<app-not-found [error]="errorMsmServerGetCategory"></app-not-found>
+																</td>
+															</tr>
+														} @else {
+															<tr>
+																<td colspan="4">
+																	<app-not-found
+																		[error]="{
+																			message: 'No se encontraron subcategorías.',
+																			statusCode: 404,
+																		}"
+																	></app-not-found>
+																</td>
+															</tr>
+														}
+													</tbody>
+												</table>
+											</div>
+										</section>
 									</div>
 								}
 							}
-							<footer class="form-card-footer">
-								<div class="d-flex flex-column-reverse flex-sm-row align-items-stretch align-items-sm-center justify-content-end gap-2">
-									<button
-										type="button"
-										class="btn btn-primary btn-sm px-5"
-										[disabled]="loadBtn || !!errorMsmServerGetCategory"
-										(click)="!loadBtn && !errorMsmServerGetCategory && update()"
-									>
-										<span *ngIf="loadBtn" class="spinner-border spinner-border-sm" aria-hidden="true"></span>
-
-										<i *ngIf="!loadBtn" class="bi bi-folder-check" aria-hidden="true"></i>
-
-										<span>
-											{{ loadBtn ? 'Actualizando...' : 'Actualizar categoría' }}
-										</span>
-									</button>
-								</div>
-							</footer>
 						</div>
 
 						<div class="d-flex flex-column w-100 mb-10">
-							<ng-container *ngIf="!loading">
+							<ng-container *ngIf="!isGetCategoryLoading">
 								<ng-container *ngIf="!errorMsmServerGetCategory">
 									<div class="d-flex gap-2">
 										<small class="text-gray-700 fw-600 fs-8">Creación:</small>
@@ -889,7 +1190,7 @@
 	[description]="'El estado de las subcategorias serán actualizadas. Verifica tu selección antes de continuar, ya que este cambio se aplicará a todos.'"
 	[textButton]="'Activar'"
 	(actionConfirmed)="onUpdateStatusMultiple(true)"
-	[loadBtnDelete]="loadBtnMultipleStatus"
+	[loadBtnDelete]="isUpdatingMultipleStatuses"
 ></app-modal-delete>
 
 <app-modal-delete
@@ -898,5 +1199,5 @@
 	[description]="'El estado de las subcategorias serán actualizadas. Verifica tu selección antes de continuar, ya que este cambio se aplicará a todos.'"
 	[textButton]="'Desactivar'"
 	(actionConfirmed)="onUpdateStatusMultiple(false)"
-	[loadBtnDelete]="loadBtnMultipleStatus"
+	[loadBtnDelete]="isUpdatingMultipleStatuses"
 ></app-modal-delete>

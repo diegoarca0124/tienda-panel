@@ -23,7 +23,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { InputSvgComponent } from '@app/shared/input-svg/input-svg.component';
 import { TextareaAutoresizeDirective } from '@app/common/directives/textarea-autoresize.directive';
 import { HttpErrorResponse } from '@angular/common/http';
-import { CategoryFieldErrors } from '../interfaces/validation.interface';
+import { CategoryFieldErrors, CategoryValidationErrors } from '../interfaces/validation.interface';
 import { buildShowErrors } from '@app/common/utils/build-show.errors.util';
 import { CreateCategoryRESI } from '../interfaces/response.interface';
 import { CategoryInterface } from '../interfaces/data.interface';
@@ -52,7 +52,7 @@ export class CreateCategoryComponent {
 	@ViewChild('editorContainer', { static: true }) editorContainer!: ElementRef;
 	private destroy$ = new Subject<void>();
 	public isCreateCategoryLoading: boolean = false;
-	public validationCategoryError: any = {};
+	public validationCategoryError: CategoryValidationErrors = {};
 	public category: CategoryInterface = createEmptyCategory();
 	public prefixMask = {
 		mask: /^[A-Z]{0,3}$/,

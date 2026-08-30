@@ -1,3 +1,28 @@
+export interface CategoryValidationErrors {
+	name?: string[];
+	code?: string[];
+	icon?: string[];
+	description?: string[];
+	prefix?: string[];
+	color?: string[];
+
+	isDimensions?: string[];
+	isCharacteristics?: string[];
+	isCondition?: string[];
+	isWarranty?: string[];
+	isCountryOfOrigin?: string[];
+	isMaterial?: string[];
+	isTemperature?: string[];
+}
+
+export interface SubcategoryValidationErrors {
+	name?: string[];
+	icon?: string[];
+	description?: string[];
+	prefix?: string[];
+}
+
+
 export interface CategoryFieldErrors {
 	name: boolean;
 	code: boolean;
