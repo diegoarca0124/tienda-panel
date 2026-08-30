@@ -20,6 +20,10 @@ export class InputSvgComponent {
 
 	constructor(private sanitizer: DomSanitizer) {}
 
+	ngOnInit(){
+		this.svgPreview = this.sanitizer.bypassSecurityTrustHtml(this.data.icon);
+	}
+
 	updatePreview(svg: string): void {
 		this.svgPreview = this.sanitizer.bypassSecurityTrustHtml(svg);
 	}

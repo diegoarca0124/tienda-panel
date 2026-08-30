@@ -116,7 +116,7 @@ export class ProductsCategoryComponent {
 					this.id = params['id'];
 					this.isCategoryLoading = true;
 
-					return this.categoryService.get_category(this.id).pipe(
+					return this.categoryService.getCategory(this.id).pipe(
 						withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
 						finalize(() => (this.isCategoryLoading = false)),
 						switchMap((category) =>

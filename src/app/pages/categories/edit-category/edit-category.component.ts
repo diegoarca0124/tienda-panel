@@ -143,7 +143,7 @@ export class EditCategoryComponent {
 		this.loading = true;
 		this.errorMsmServerGetCategory = '';
 
-		return this.categoryService.get_category(id).pipe(
+		return this.categoryService.getCategory(id).pipe(
 			withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
 			finalize(() => (this.loading = false)),
 			tap({
@@ -189,7 +189,7 @@ export class EditCategoryComponent {
 		this.errorsCategory = {};
 		this.msmErrorUpdateCategory = [];
 		this.categoryService
-			.update_category(this.id, this.category)
+			.updateCategory(this.id, this.category)
 			.pipe(
 				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
 				takeUntil(this.destroy$),

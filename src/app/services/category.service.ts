@@ -7,8 +7,10 @@ import {
 	CreateCategoryRESI,
 	GetCategoriesRESI,
 	GetCategoriesWithSubcategoriesRESI,
+	GetCategoryRESI,
 	MoveSubcategoryRESI,
 	UpdateCategoriesStatusRESI,
+	UpdateCategoryRESI,
 	UpdateCategoryStatusRESI,
 } from '@app/pages/categories/interfaces/response.interface';
 
@@ -57,12 +59,12 @@ export class CategoryService {
 		return this.http.post<UpdateCategoriesStatusRESI>(`${this.apiUrl}/category/updateCategoriesStatus`, data, { headers: this.getHeaders() });
 	}
 
-	get_category(id: string): Observable<any> {
-		return this.http.get(`${this.apiUrl}/category/get_category/${id}`, { headers: this.getHeaders() });
+	getCategory(id: string): Observable<GetCategoryRESI> {
+		return this.http.get<GetCategoryRESI>(`${this.apiUrl}/category/getCategory/${id}`, { headers: this.getHeaders() });
 	}
 
-	update_category(id: string, category: CategoryInterface): Observable<any> {
-		return this.http.put(`${this.apiUrl}/category/update_category/${id}`, category, { headers: this.getHeaders() });
+	updateCategory(id: string, category: CategoryInterface): Observable<UpdateCategoryRESI> {
+		return this.http.put<UpdateCategoryRESI>(`${this.apiUrl}/category/updateCategory/${id}`, category, { headers: this.getHeaders() });
 	}
 
 	create_subcategory(subcategory: SubcategoryInterface): Observable<any> {
