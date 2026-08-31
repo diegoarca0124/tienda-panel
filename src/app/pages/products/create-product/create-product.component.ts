@@ -15,7 +15,6 @@ import { labels } from '@app/common/constants/labels.constant';
 
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { visibilities } from '../constants/visibilities.constant';
-import { statusProduct } from '../constants/status-product.contant';
 
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { productFormHelp } from '../constants/form-product-helper.constant';
@@ -45,6 +44,7 @@ import { ProductTabInterface } from '../interfaces/product-tab.interface';
 import { CategoryInterface } from '../interfaces/category.interface';
 import { SubcategoryInterface } from '../interfaces/subcategory.interface';
 import { TextareaAutoresizeDirective } from '@app/common/directives/textarea-autoresize.directive';
+import { statusOptions } from '../constants/selectors.constant';
 
 @Component({
 	selector: 'app-create-product',
@@ -92,7 +92,7 @@ export class CreateProductComponent {
 	public loadBtn = false;
 	public categories: CategoryInterface[] = [];
 	public visibilities: any = visibilities;
-	public statusProduct: any = statusProduct;
+	public statusProduct: any = statusOptions;
 
 	public subcategories: any = [];
 	public brands: any = [];

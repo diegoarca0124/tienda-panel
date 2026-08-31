@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, ElementRef, EventEmitter, Input, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { configurationsFilters } from '@app/pages/categories/constants/configurations-filters.constant';
+import { configurationsOptions } from '@app/pages/categories/constants/selectors.constant';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { Subject } from 'rxjs';
 
@@ -46,7 +46,7 @@ export class MenuSettingsCategoriesComponent {
 	}
 
 	initData(): void {
-		this.data = configurationsFilters;
+		this.data = configurationsOptions;
 		this.displayData = this.data;
 		this.syncSelectedData();
 	}

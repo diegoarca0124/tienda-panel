@@ -21,13 +21,11 @@ import { environment } from 'environments/environment.dev';
 import { PadCodePipe } from '../../../common/pipes/pad-code.pipe';
 import { HttpErrorResponse } from '@angular/common/http';
 import { PaginationMetaInterface } from '@app/common/interface/pagination-meta.interface';
-import { sortProductsFilters } from '../constants/sort-products-filters.constant';
 import { CurrencySymbolPipe } from '../../../common/pipes/currency-symbol.pipe';
-import { qualityFilters } from '../constants/quality-filters.constant';
-import { visibilityFilters } from '../constants/visibility.filters.constant';
 import { InputDialerComponent } from '@app/shared/input-dialer/input-dialer.component';
 import { CategoryInterface, MoveProductsInterface } from '../interfaces/data.interface';
 import { GetCategoriesWithSubcategoriesRESI } from '../interfaces/response.interface';
+import { qualityOptions, sortOptions, statusOptions, visibilityOptions } from '@app/pages/products/constants/selectors.constant';
 declare var toastr: any;
 
 @Component({
@@ -89,11 +87,11 @@ export class ProductsCategoryComponent {
 	public categoriesLoadError: string = '';
 	public productsLoadError: string = '';
 
-	public readonly statusFilters = [];
-	public readonly qualityFilters = qualityFilters;
-	public readonly visibilityFilters = visibilityFilters;
-	public readonly sortFilters = sortProductsFilters;
-	public readonly sortValues = sortProductsFilters.map((item) => item.value);
+	public readonly statusFilters = statusOptions;
+	public readonly qualityFilters = qualityOptions;
+	public readonly visibilityFilters = visibilityOptions;
+	public readonly sortFilters = sortOptions;
+	public readonly sortValues = sortOptions.map((item) => item.value);
 
 	readonly qualityLabels: Record<string, string> = {
 		low: 'Baja',

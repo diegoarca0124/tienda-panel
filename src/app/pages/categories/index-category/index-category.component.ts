@@ -21,13 +21,11 @@ import { FallbackImageDirective } from '@app/common/directives/fallback-image.di
 import { environment } from 'environments/environment.dev';
 import { PadCodePipe } from '../../../common/pipes/pad-code.pipe';
 import { HttpErrorResponse } from '@angular/common/http';
-import { configurationsFilters } from '../constants/configurations-filters.constant';
 import { MenuSettingsCategoriesComponent } from '@app/shared/menu-settings-categories/menu-settings-categories.component';
-import { sortOptions } from '../constants/sort-categories-filters.constant';
-import { statusOptions } from '../constants/status-filters.contant';
 import { GetCategoriesRESI, UpdateCategoriesStatusRESI, UpdateCategoryStatusRESI } from '../interfaces/response.interface';
 import { CategoryInterface } from '../interfaces/data.interface';
 import { GetCategoriesQPI } from '../interfaces/query-params.interface';
+import { configurationsOptions, sortOptions, statusOptions } from '../constants/selectors.constant';
 declare const toastr: any;
 declare const $: any;
 
@@ -81,7 +79,7 @@ export class IndexCategoryComponent {
 	public screenHeight = window.innerHeight;
 
 	public readonly sortValues = sortOptions.map((item) => item.value);
-	public readonly configurationsValues = configurationsFilters.map((item) => item.value);
+	public readonly configurationsValues = configurationsOptions.map((item) => item.value);
 
 	constructor(
 		private router: Router,

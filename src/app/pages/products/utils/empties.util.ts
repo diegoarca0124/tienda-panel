@@ -1,14 +1,14 @@
 import { ShippingProduct } from '@app/common/interface/shipping-product.interface';
-import { statusProduct } from '../constants/status-product.contant';
 import { visibilities } from '../constants/visibilities.constant';
 import { CharacteristicInterface } from '../interfaces/characteristic.interface';
 import { PhysicalProductInterface } from '../interfaces/product-physical.interface';
 import { ProductInterface } from '../interfaces/product.interface';
+import { statusOptions } from '../constants/selectors.constant';
 
 export function createEmptyProduct(): ProductInterface {
 	return {
 		visibility: visibilities[0].value,
-		status: statusProduct[0].value,
+		status: statusOptions[0].value,
 		name: '',
 		type: 'Fisico',
 		quality: 0,

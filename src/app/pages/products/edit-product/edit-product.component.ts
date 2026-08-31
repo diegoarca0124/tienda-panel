@@ -21,7 +21,6 @@ import { ShippingProduct } from '@app/common/interface/shipping-product.interfac
 import { productFormHelp } from '../constants/form-product-helper.constant';
 import { catchError, EMPTY, finalize, forkJoin, map, of, Subject, switchMap, takeUntil, tap } from 'rxjs';
 import { visibilities } from '../constants/visibilities.constant';
-import { statusProduct } from '../constants/status-product.contant';
 import { showErrorsProduct } from '../constants/show-errors-product.constant';
 import { labels } from '@app/common/constants/labels.constant';
 import { ProductService } from '@app/services/product.service';
@@ -36,6 +35,7 @@ import { GLOBAL } from '@app/services/GLOBAL';
 import { NotFoundComponent } from '@app/shared/not-found/not-found.component';
 import { ProductInterface } from '../interfaces/product.interface';
 import { CategoryInterface } from '../interfaces/category.interface';
+import { statusOptions } from '../constants/selectors.constant';
 declare const toastr: any;
 
 @Component({
@@ -82,7 +82,7 @@ export class EditProductComponent {
 	public loadBtn = false;
 	public categories: any = [];
 	public visibilities: any = visibilities;
-	public statusProduct: any = statusProduct;
+	public statusProduct: any = statusOptions;
 	public showErrors = showErrorsProduct;
 	public categorySelected: any = {};
 	public tab: any = 'general';

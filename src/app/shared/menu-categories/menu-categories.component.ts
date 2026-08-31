@@ -3,7 +3,7 @@ import { Component, ElementRef, EventEmitter, Input, Output, SimpleChanges, View
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { withMinLoadingTime } from '@app/common/interface/with-min-loading-time.interface';
-import { CategoryInterface } from '@app/pages/categories/interfaces/category.interface';
+import { CategoryInterface } from '@app/pages/categories/interfaces/data.interface';
 import { CategoryService } from '@app/services/category.service';
 import { GLOBAL } from '@app/services/GLOBAL';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
