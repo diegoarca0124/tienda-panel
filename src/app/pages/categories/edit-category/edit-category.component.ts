@@ -82,7 +82,6 @@ export class EditCategoryComponent {
 	public categoryLoadError: string = '';
 	public subcategoryLoadError: string = '';
 
-	
 	public typeForm: 'create' | 'edit' = 'create';
 
 	public option = 1;
@@ -283,19 +282,10 @@ export class EditCategoryComponent {
 
 					const updatedSubcategory = {
 						...next.data,
-						safeIcon:
-							this.sanitizer
-								.bypassSecurityTrustHtml(
-									next.data.icon || '',
-								),
+						safeIcon: this.sanitizer.bypassSecurityTrustHtml(next.data.icon || ''),
 					};
 
-					this.subcategories =
-						this.subcategories.map((item) =>
-							item.id === updatedSubcategory.id
-								? updatedSubcategory
-								: item,
-						);
+					this.subcategories = this.subcategories.map((item) => (item.id === updatedSubcategory.id ? updatedSubcategory : item));
 
 					toastr.success(next.message);
 					this.cancelEdit();

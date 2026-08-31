@@ -54,4 +54,3 @@ export const configurationsOptions = [
 		icon: 'thermometer-outline',
 	},
 ];
-

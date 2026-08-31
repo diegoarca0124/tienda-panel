@@ -243,6 +243,10 @@ export class ProductsCategoryComponent {
 			);
 	}
 
+	onLimitChange() {
+		this.applyFilters();
+	}
+
 	initCategories$() {
 		this.isCategoriesLoading = true;
 		this.categoriesLoadError = '';

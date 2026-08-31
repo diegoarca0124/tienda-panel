@@ -23,7 +23,6 @@
 				</div>
 				<div class="app-content flex-column-fluid">
 					<div class="app-container container-fluid">
-
 						<div class="list-toolbar">
 							<!-- Buscador -->
 							<div class="list-toolbar-search">
@@ -108,8 +107,8 @@
 						</div>
 
 						<div class="list-filter-row my-7">
-							<div class="list-filter-item list-filter-md">
-								<label class="list-filter-label" for="categoryStatus">ESTADO</label>
+							<div class="list-filter-item list-filter-sm">
+								<label class="list-filter-label" for="categoryStatus">Estado</label>
 								<ng-select
 									id="categoryStatus"
 									[items]="statusFilters"
@@ -176,7 +175,7 @@
 								</ng-select>
 							</div>
 
-							<div class="list-filter-item list-filter-md">
+							<div class="list-filter-item list-filter-sm">
 								<label class="list-filter-label" for="productQuality">Calidad</label>
 								<ng-select
 									id="productQuality"
@@ -210,7 +209,7 @@
 								</ng-select>
 							</div>
 
-							<div class="list-filter-item list-filter-md">
+							<div class="list-filter-item list-filter-sm">
 								<label class="list-filter-label" for="productVisibility">Visibilidad</label>
 								<ng-select
 									id="productVisibility"
@@ -243,151 +242,139 @@
 									</ng-template>
 								</ng-select>
 							</div>
-							<div class="list-filter-item list-filter-md">
-								<label class="list-filter-label" for="productVisibility">Precios</label>
-								<ng-select
-									id="productVisibility"
-									[items]="visibilityFilters"
-									bindLabel="name"
-									bindValue="value"
-									name="selectedVisibility"
-									[(ngModel)]="selectedVisibility"
-									placeholder="Seleccionar visibilidad"
-									[clearable]="false"
-									[closeOnSelect]="true"
-									[searchable]="false"
-									[disabled]="isCategoriesLoading"
-									appendTo="body"
-									dropdownPanelClass="app-select-panel"
-									class="app-select app-select-sm"
-								>
-									<ng-template ng-option-tmp let-item="item">
-										<div class="app-select-option">
-											<ion-icon [name]="item.icon" class="app-select-option-icon" aria-hidden="true"></ion-icon>
-											<span class="app-select-option-text">{{ item.name }}</span>
-											<ion-icon name="checkmark-outline" class="app-select-check" aria-hidden="true"></ion-icon>
-										</div>
-									</ng-template>
-									<ng-template ng-label-tmp let-item="item">
-										<div class="app-select-value">
-											<ion-icon [name]="item.icon" class="app-select-value-icon" aria-hidden="true"></ion-icon>
-											<span class="app-select-value-text">{{ item.name }}</span>
-										</div>
-									</ng-template>
-								</ng-select>
+							<div class="list-filter-item list-filter-lg">
+								<label class="list-filter-label">Precios</label>
+
+								<div class="d-flex align-items-center gap-2 w-100">
+									<div class="flex-fill min-w-0">
+										<app-input-dialer class="d-block w-100" [value]="minPrice" (valueChange)="onMinPriceChange($event)" placeholder="Mín." [step]="5"></app-input-dialer>
+									</div>
+
+									<span class="text-gray-400 fs-8 flex-shrink-0" aria-hidden="true">—</span>
+
+									<div class="flex-fill min-w-0">
+										<app-input-dialer class="d-block w-100" [value]="maxPrice" (valueChange)="onMaxPriceChange($event)" placeholder="Máx." [step]="5"></app-input-dialer>
+									</div>
+								</div>
 							</div>
 						</div>
 
 						<div class="row g-3 g-lg-4">
 							<div class="col-12">
-
-								<!-- <div class="my-7">
-									<div class="filters-container">
-										<div class="filter-item">
-											<app-menu-select-subcategories
-												(applySubcategories)="onSubcategoriesChange($event)"
-												[selectedSubcategories]="selectedSubcategoryIds"
-												[title]="'Subcategorías'"
-												[placeholder]="'Filtrar por subcategoría'"
-												[sizeClass]="'sm'"
-												[categoryId]="id"
-											></app-menu-select-subcategories>
-										</div>
-										<div class="filter-item">
-											<div class="d-flex flex-column mb-1 gap-1">
-												<div class="d-flex align-items-center">
-													<span class="text-gray-700 ls-1px" style="font-size: 0.7rem">PRECIOS</span>
-												</div>
-												<div class="d-flex gap-5">
-													<app-input-dialer [value]="minPrice" (valueChange)="onMinPriceChange($event)" placeholder="Mín" [step]="5"></app-input-dialer>
-
-													<app-input-dialer [value]="maxPrice" (valueChange)="onMaxPriceChange($event)" placeholder="Máx" [step]="5"></app-input-dialer>
-												</div>
-											</div>
-										</div>
-									</div>
-									<button class="btn btn-xs bg-light-primary my-3 d-inline-flex align-items-center gap-2" (click)="applyFilters()" [disabled]="isProductsLoading">
-										<ng-container *ngIf="!isProductsLoading; else loadingTpl">
-											<ion-icon name="search-outline" class="fs-6 text-primary"></ion-icon>
-											<span class="text-primary">Buscar</span>
-										</ng-container>
-
-										<ng-template #loadingTpl>
-											<span class="spinner-border spinner-border-sm text-primary" aria-hidden="true"></span>
-											<span class="text-primary">Buscando...</span>
-										</ng-template>
-									</button>
-								</div> -->
-
-								<div class="table-wrapper mb-7">
-									<table class="table custom-table align-middle mb-0">
+								<div class="table-wrapper sticky-table-wrapper mb-7">
+									<table class="table custom-table sticky-table align-middle mb-0">
 										<thead>
 											<tr>
-												<th class="fixed-xs text-center p-0">
-													<label class="form-check form-check-customs form-check-sm m-0 d-flex align-items-center justify-content-center h-100">
-														<input class="form-check-input cursor-pointer" type="checkbox" disabled />
-													</label>
+												<th class="fixed-xs text-center p-0" style="position: unset !important">
+													<div class="dropdown">
+														<button
+															id="productTableOptions"
+															type="button"
+															class="btn btn-icon btn-dark h-25px w-25px"
+															data-bs-toggle="dropdown"
+															aria-expanded="false"
+															aria-label="Acciones para productos seleccionados"
+															title="Acciones"
+															[disabled]="isProductsLoading"
+														>
+															<ion-icon name="settings-outline" class="fs-5" aria-hidden="true"></ion-icon>
+														</button>
+
+														<div class="dropdown-menu dropdown-menu-end action-dropdown-menu action-dropdown-menu-compact" aria-labelledby="productTableOptions">
+															<a
+																class="dropdown-item action-dropdown-item action-dropdown-item-compact"
+																[class.disabled]="selectedProductsIds.size === 0"
+																[attr.data-bs-toggle]="selectedProductsIds.size > 0 ? 'modal' : null"
+																[attr.data-bs-target]="selectedProductsIds.size > 0 ? '#modalMove' : null"
+															>
+																<span class="action-dropdown-item-icon">
+																	<ion-icon name="folder-open-outline" class="fs-4 text-primary" aria-hidden="true"></ion-icon>
+																</span>
+
+																<span class="action-dropdown-item-title" style="text-transform: none">
+																Mover productos
+																</span>
+															</a>
+														</div>
+													</div>
 												</th>
-												<th class="fixed-column min-w-250px">Producto</th>
+
+												<th class="flex-column min-w-250px">Producto</th>
+
 												<th class="fixed-sm">Calidad</th>
-												<th class="fixed-md">Precio</th>
+
+												<th class="fixed-sm">Precio</th>
+
 												<th class="fixed-md">Marca</th>
-												<th class="fixed-md">Subcategorìa</th>
+
+												<th class="fixed-md">Subcategoría</th>
+
 												<th class="fixed-sm">Stock</th>
+
 												<th class="fixed-sm">Estado</th>
-												<th class="fixed-xs text-center text-center"></th>
+
+												<th class="fixed-xs text-center table-actions-sticky" aria-label="Acciones"></th>
 											</tr>
 										</thead>
+
 										<tbody>
 											@if (isProductsLoading) {
 												<tr *ngFor="let item of [1, 2, 3, 4, 5, 6]">
 													<td class="fixed-xs text-center p-0">
 														<div class="skeleton skeleton-check"></div>
 													</td>
-													<td class="flex-column fw-medium">
-														<div class="d-flex align-items-center gap-4">
-															<div class="skeleton" style="max-width: 33.67px !important; height: 33.67px; min-width: 33.67px !important"></div>
 
-															<div class="d-flex flex-column gap-2" style="width: 100%; max-width: 250px">
-																<div class="skeleton skeleton-text" style="width: 60%"></div>
-																<div class="skeleton skeleton-text" style="width: 40%"></div>
+													<td class="flex-column">
+														<div class="d-flex align-items-center">
+															<div class="skeleton skeleton-square-sm me-3"></div>
+
+															<div class="skeleton-lines d-flex flex-column gap-2">
+																<div class="skeleton skeleton-text skeleton-w-60"></div>
+
+																<div class="skeleton skeleton-text skeleton-w-40"></div>
 															</div>
 														</div>
 													</td>
-													<td class="fixed-sm">
-														<div class="skeleton skeleton-text" style="width: 60%"></div>
-													</td>
-													<td class="fixed-md">
-														<div class="skeleton skeleton-text" style="width: 60%"></div>
-													</td>
-													<td class="fixed-md">
-														<div class="d-flex align-items-center gap-4">
-															<div class="skeleton" style="max-width: 25px !important; height: 25px; min-width: 25px !important"></div>
 
-															<div class="d-flex flex-column gap-2" style="width: 100%; max-width: 250px">
-																<div class="skeleton skeleton-text" style="width: 60%"></div>
-															</div>
-														</div>
-													</td>
-													<td class="fixed-md">
-														<div class="d-flex flex-column gap-2" style="width: 100%; max-width: 250px">
-															<div class="skeleton skeleton-text" style="width: 60%"></div>
-															<div class="skeleton skeleton-text" style="width: 40%"></div>
-														</div>
-													</td>
 													<td class="fixed-sm">
-														<div class="skeleton skeleton-text" style="width: 60%"></div>
+														<div class="skeleton skeleton-text skeleton-w-60"></div>
 													</td>
+
+													<td class="fixed-sm">
+														<div class="skeleton skeleton-text skeleton-w-60"></div>
+													</td>
+
+													<td class="fixed-md">
+														<div class="d-flex align-items-center">
+															<div class="skeleton me-3" style="width: 25px !important; height: 25px !important"></div>
+
+															<div class="skeleton skeleton-text skeleton-w-60"></div>
+														</div>
+													</td>
+
+													<td class="fixed-md">
+														<div class="skeleton-lines d-flex flex-column gap-2">
+															<div class="skeleton skeleton-text skeleton-w-60"></div>
+
+															<div class="skeleton skeleton-text skeleton-w-40"></div>
+														</div>
+													</td>
+
+													<td class="fixed-sm">
+														<div class="skeleton skeleton-text skeleton-w-40"></div>
+													</td>
+
 													<td class="fixed-sm">
 														<div class="skeleton skeleton-badge"></div>
 													</td>
+
 													<td class="fixed-xs text-center p-0">
 														<div class="skeleton skeleton-btn"></div>
 													</td>
 												</tr>
 											} @else if (productsLoadError) {
 												<tr>
-													<td colspan="6">
+													<td colspan="9">
 														<app-not-found [error]="productsLoadError"></app-not-found>
 													</td>
 												</tr>
@@ -400,113 +387,152 @@
 																type="checkbox"
 																[checked]="selectedProductsIds.has(item.id!)"
 																(change)="onProductSelectionChange(item.id!, $event)"
+																[attr.aria-label]="'Seleccionar producto ' + item.name"
 															/>
 														</label>
 													</td>
-													<td class="flex-column fw-medium">
-														<div class="d-flex align-items-center gap-4" style="min-width: 0">
-															<div>
-																<div class="symbol" style="height: 35px !important; width: 35px !important; border: 1px dashed #e3e3e3">
-																	<img [src]="item.cover" class="h-100 w-100" style="object-fit: cover" fallbackImage />
-																</div>
-															</div>
-															<div class="d-flex flex-column" style="min-width: 0">
-																<a class="text-gray-700 fs-8 fw-500 text-truncate-1">
-																	{{ item.name }}
-																</a>
 
-																<small class="text-primary fw-400 text-truncate-1 fs-8">
-																	<span class="text-gray-600">SKU:</span>
-																	<span class="text-primary">5FDS65E9W98WE9</span>
-																</small>
+													<td class="flex-column">
+														<div class="d-flex align-items-center gap-2" style="min-width: 0">
+															<div class="symbol me-3" style="flex-shrink: 0">
+																<span class="symbol-label" style="width: 30px; height: 30px; border: 1px dashed #e3e3e3">
+																	<img [src]="item.cover" [alt]="item.name" class="w-100 h-100" style="object-fit: cover" fallbackImage />
+																</span>
+															</div>
+
+															<div class="d-flex flex-column" style="min-width: 0">
+																<p class="paragraph paragraph-sm text-gray-700 fw-600 lh-tight text-truncate-1 m-0">
+																	{{ item.name }}
+																</p>
+
+																<p class="paragraph paragraph-sm text-gray-400 fs-12 fw-400 lh-tight text-truncate-1 m-0">
+																	{{ item.type }}
+																</p>
 															</div>
 														</div>
 													</td>
+
 													<td class="fixed-sm">
 														<div class="d-flex align-items-center">
 															<span
 																class="d-inline-block rounded-circle me-2"
-																style="width: 8px; height: 8px"
+																style="width: 6px; height: 6px"
 																[ngClass]="{
-																	'bg-danger': item.quality_label == 'low',
-																	'bg-warning': item.quality_label == 'medium',
-																	'bg-success': item.quality_label == 'high',
+																	'bg-danger': item.quality_label === 'low',
+																	'bg-warning': item.quality_label === 'medium',
+																	'bg-primary': item.quality_label === 'high',
 																}"
 															></span>
 
-															<span class="text-gray-700 fs-8 fw-500 text-truncate-1">
+															<span class="paragraph paragraph-sm text-gray-700 fw-500 text-truncate-1 m-0">
 																{{ qualityLabels[item.quality_label!] }}
 															</span>
 														</div>
 													</td>
-													<td class="fixed-md">
-														<div class="d-flex gap-2 align-items-center">
-															<span
-																class="fs-7 fw-500 text-truncate-1"
-																[ngClass]="{
-																	'text-danger': item.priceDiscount > 0,
-																	'text-gray-700': !(item.priceDiscount > 0),
-																}"
-															>
+
+													<td class="fixed-sm">
+														<div class="d-flex flex-column">
+															<span class="paragraph paragraph-sm fw-600 m-0" [class.text-danger]="item.priceDiscount > 0" [class.text-gray-700]="!(item.priceDiscount > 0)">
 																{{ 'PE' | currencySymbol }}
 																{{ (item.priceDiscount > 0 ? item.priceDiscount : item.priceRegular) | number: '1.2-2' }}
 															</span>
 
-															@if (item.priceDiscount > 0) {
-																<span class="text-decoration-line-through text-muted fs-9">
-																	{{ 'PE' | currencySymbol }}
-																	{{ item.priceRegular | number: '1.2-2' }}
-																</span>
-															}
+															<span *ngIf="item.priceDiscount > 0" class="paragraph paragraph-sm text-gray-400 text-decoration-line-through m-0">
+																{{ 'PE' | currencySymbol }}
+																{{ item.priceRegular | number: '1.2-2' }}
+															</span>
 														</div>
 													</td>
+
 													<td class="fixed-md">
 														<div class="d-flex align-items-center gap-2">
-															<div class="symbol me-2" style="height: 25px; width: 25px; border: 1px dashed #e3e3e3; flex-shrink: 0">
-																<img [src]="item.brand.logoUrl" class="h-100 w-100" fallbackImage />
-															</div>
-															<span class="text-gray-700 fs-8 fw-600">
+															<span class="symbol symbol-25px flex-shrink-0" style="border: 1px dashed #e3e3e3">
+																<img [src]="item.brand.logoUrl" [alt]="item.brand.name" fallbackImage />
+															</span>
+
+															<span class="paragraph paragraph-sm text-gray-700 fw-600 text-truncate-1 m-0">
 																{{ item.brand.name }}
 															</span>
 														</div>
 													</td>
+
 													<td class="fixed-md">
 														<div class="d-flex flex-column">
-															<a class="text-gray-600 fw-400 fs-8 text-truncate-1">
+															<p class="paragraph paragraph-sm text-gray-700 fw-500 text-truncate-1 m-0">
 																{{ item.subcategory.name }}
-															</a>
-															<span class="text-gray-700 fs-8 fw-500 text-truncate-1">{{ item.subcategory.prefix }}-{{ item.subcategory.code | padCode: 6 }}</span>
+															</p>
+
+															<p class="paragraph paragraph-sm text-gray-400 fw-400 text-truncate-1 m-0">#{{ item.subcategory.prefix }}-{{ item.subcategory.code | padCode: 6 }}</p>
 														</div>
 													</td>
+
 													<td class="fixed-sm">
-														<span class="text-gray-700 fs-8 fw-500 text-truncate-1">0</span>
+														<span class="paragraph paragraph-sm text-gray-700 fw-600 m-0">0</span>
 													</td>
+
 													<td class="fixed-sm">
 														<span
-															class="badge rounded-pill text-gray-700 fw-800"
-															[ngClass]="{ 'bg-outline-warning': item.status == 'draft', 'bg-outline-success': item.status == 'published' }"
+															class="badge rounded-pill fw-700"
+															[ngClass]="{
+																'bg-outline-warning text-warning': item.status === 'draft',
+																'bg-outline-primary text-primary': item.status === 'published',
+															}"
 														>
 															<span
 																class="d-inline-block rounded-circle me-1"
-																style="width: 8px; height: 8px"
-																[ngClass]="{ 'bg-warning': item.status == 'draft', 'bg-success': item.status == 'published' }"
+																style="width: 6px; height: 6px"
+																[ngClass]="{
+																	'bg-warning': item.status === 'draft',
+																	'bg-primary': item.status === 'published',
+																}"
 															></span>
-															{{ item.status == 'published' ? 'Publicado' : 'Borrador' }}
+
+															{{ item.status === 'published' ? 'Publicado' : 'Borrador' }}
 														</span>
 													</td>
-													<td class="fixed-xs text-center p-0">
+
+													<td class="fixed-xs text-center p-0 table-actions-sticky">
 														<div class="dropdown">
-															<button disabled class="icon-btn btn-action dropdown-toggle d-flex align-items-center justify-content-center mx-auto" data-bs-toggle="dropdown">
-																<i class="bi bi-three-dots"></i>
+															<button
+																type="button"
+																class="icon-btn btn-action dropdown-toggle dropdown-toggle-no-arrow d-flex align-items-center justify-content-center mx-auto"
+																data-bs-toggle="dropdown"
+																data-bs-offset="0,7"
+																aria-expanded="false"
+																[attr.aria-label]="'Opciones del producto ' + item.name"
+																title="Opciones"
+															>
+																<i class="bi bi-three-dots" aria-hidden="true"></i>
 															</button>
-															<div class="dropdown-menu menu-state-bg-light-primary" data-bs-display="static"></div>
+
+															<div class="dropdown-menu dropdown-menu-end action-dropdown-menu action-dropdown-menu-compact">
+																<a
+																	class="dropdown-item action-dropdown-item action-dropdown-item-compact cursor-pointer"
+																	data-bs-toggle="modal"
+																	data-bs-target="#modalMove"
+																	(click)="selectedProductsIds.clear(); selectedProductsIds.add(item.id!)"
+																>
+																	<span class="action-dropdown-item-icon">
+																		<ion-icon name="folder-open-outline" class="fs-4" aria-hidden="true"></ion-icon>
+																	</span>
+
+																	<span class="action-dropdown-item-title" style="text-transform: none">
+																		Mover productos
+																	</span>
+																</a>
+															</div>
 														</div>
 													</td>
 												</tr>
 											} @else {
 												<tr>
-													<td colspan="6">
-														<app-not-found [error]="{ message: 'No se encontraron registros.', statusCode: 404 }"></app-not-found>
+													<td colspan="9">
+														<app-not-found
+															[error]="{
+																message: 'No se encontraron registros.',
+																statusCode: 404,
+															}"
+														></app-not-found>
 													</td>
 												</tr>
 											}
@@ -514,16 +540,26 @@
 									</table>
 								</div>
 
-								<div class="d-flex justify-content-between pb-10" *ngIf="products.length >= 1">
-									<div class="d-flex align-items-center gap-2 text-gray-600 fs-8 text-uppercase ls-1px">
-										Ver
-										<select class="form-select form-select-sm w-auto" name="limit" [(ngModel)]="limit" (change)="setLimit()">
-											<option value="10">10</option>
-											<option value="20">20</option>
-											<option value="25">25</option>
+								<div class="d-flex justify-content-between pb-10">
+									<label class="page-size-control">
+										<span>Mostrar</span>
+
+										<select
+											class="form-select page-size-select"
+											name="limit"
+											[(ngModel)]="limit"
+											(change)="onLimitChange()"
+											[disabled]="isCategoriesLoading"
+											aria-label="Cantidad de categorías por página"
+										>
+											<option [ngValue]="10">10</option>
+											<option [ngValue]="20">20</option>
+											<option [ngValue]="25">25</option>
 										</select>
-										Por pagina
-									</div>
+
+										<span>por página</span>
+									</label>
+
 									<div class="d-flex align-items-center gap-3">
 										<app-pagination [currentPage]="currentPage" [totalPages]="totalPages" (pageChanged)="onPageChange($event)"></app-pagination>
 									</div>

@@ -23,7 +23,6 @@ export const qualityOptions = [
 	{ name: 'Baja', value: 'low', color: 'danger' },
 ];
 
-
 export const sortOptions = [
 	{ name: 'Predeterminado', value: 'Predeterminado', icon: 'swap-vertical-outline' },
 	{ name: 'Nombre A → Z', value: 'name:asc', icon: 'text-outline' },
