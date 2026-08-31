@@ -181,8 +181,12 @@ export class EditCategoryComponent {
 		);
 	}
 
-	initSubcategories(id: string) {
-		this.initSubcategories$(id).pipe(takeUntil(this.destroy$)).subscribe();
+	initSubcategories(id: string): void {
+		this.initSubcategories$(id)
+			.pipe(takeUntil(this.destroy$))
+			.subscribe({
+				error: () => {},
+			});
 	}
 
 	private refreshSubcategories(id: string): void {
@@ -204,7 +208,6 @@ export class EditCategoryComponent {
 
 	updateCategory() {
 		this.isUpdateCategoryLoading = true;
-		delete this.category.isDimensions;
 		this.categoryService
 			.updateCategory(this.id, this.category)
 			.pipe(
@@ -277,7 +280,23 @@ export class EditCategoryComponent {
 			.subscribe({
 				next: (next: { data: SubcategoryInterface; message: string }) => {
 					this.validationSubcategoryError = {};
-					this.subcategories = this.subcategories.map((subcat: any) => (subcat.id === this.subcategory.id ? next.data : subcat));
+
+					const updatedSubcategory = {
+						...next.data,
+						safeIcon:
+							this.sanitizer
+								.bypassSecurityTrustHtml(
+									next.data.icon || '',
+								),
+					};
+
+					this.subcategories =
+						this.subcategories.map((item) =>
+							item.id === updatedSubcategory.id
+								? updatedSubcategory
+								: item,
+						);
+
 					toastr.success(next.message);
 					this.cancelEdit();
 				},
@@ -296,7 +315,7 @@ export class EditCategoryComponent {
 	onUpdateStatus(id: string, status: boolean) {
 		this.isUpdatingSingleStatus.set(true);
 		this.categoryService
-			.updateSubcategoryStatus(id, { status })
+			.updateSubcategoryStatus(id, { status: !status })
 			.pipe(
 				takeUntil(this.destroy$),
 				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
@@ -309,7 +328,7 @@ export class EditCategoryComponent {
 					this.refreshSubcategories(this.id);
 				},
 				error: (error: HttpErrorResponse) => {
-					toastr.error(error.error.message);
+					toastr.error(error.error?.message || 'No fue posible actualizar el estado.');
 				},
 			});
 	}
@@ -366,7 +385,7 @@ export class EditCategoryComponent {
 					this.refreshSubcategories(this.id);
 				},
 				error: (error: HttpErrorResponse) => {
-					toastr.error(error.error.message);
+					toastr.error(error.error?.message || 'No fue posible actualizar el estado.');
 				},
 			});
 	}

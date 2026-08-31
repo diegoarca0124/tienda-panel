@@ -339,7 +339,7 @@ export class IndexCollaboratorComponent {
 					this.refreshCollaborators();
 				},
 				error: (error: HttpErrorResponse) => {
-					toastr.error(error.error?.message || 'No fue posible actualizar los estados.');
+					toastr.error(error.error?.message || 'No fue posible actualizar el estado.');
 				},
 			});
 	}

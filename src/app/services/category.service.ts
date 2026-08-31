@@ -19,7 +19,7 @@ import {
 	UpdateSubcategoryStatusRESI,
 } from '@app/pages/categories/interfaces/response.interface';
 
-import { UpdateCategoriesStatusREQI, UpdateCategoryStatusREQI } from '@app/pages/categories/interfaces/request.interface';
+import { UpdateCategoriesStatusREQI, UpdateCategoryStatusREQI, UpdateSubcategoryStatusREQI } from '@app/pages/categories/interfaces/request.interface';
 import { CategoryInterface, MoveProductsInterface, SubcategoryInterface } from '@app/pages/categories/interfaces/data.interface';
 import { GetCategoriesQPI } from '@app/pages/categories/interfaces/query-params.interface';
 
@@ -80,7 +80,7 @@ export class CategoryService {
 		return this.http.get<GetSubcategoriesRESI>(`${this.apiUrl}/category/getSubcategories/${id}`, { headers: this.getHeaders() });
 	}
 
-	updateSubcategoryStatus(id: string, data: { status: boolean }): Observable<UpdateSubcategoryStatusRESI> {
+	updateSubcategoryStatus(id: string, data: UpdateSubcategoryStatusREQI): Observable<UpdateSubcategoryStatusRESI> {
 		return this.http.put<UpdateSubcategoryStatusRESI>(`${this.apiUrl}/category/updateSubcategoryStatus/${id}`, data, { headers: this.getHeaders() });
 	}
 
