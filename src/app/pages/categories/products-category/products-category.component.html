@@ -261,8 +261,8 @@
 
 						<div class="row g-3 g-lg-4">
 							<div class="col-12">
-								<div class="table-wrapper sticky-table-wrapper mb-7">
-									<table class="table custom-table sticky-table align-middle mb-0">
+								<div class="table-wrapper sticky-table-wrapper products-table-wrapper mb-7">
+									<table class="table custom-table sticky-table products-table align-middle mb-0">
 										<thead>
 											<tr>
 												<th class="fixed-xs text-center p-0" style="position: unset !important">
@@ -313,7 +313,7 @@
 
 												<th class="fixed-sm">Estado</th>
 
-												<th class="fixed-xs text-center table-actions-sticky" aria-label="Acciones"></th>
+												<th class="fixed-xs text-center" aria-label="Acciones"></th>
 											</tr>
 										</thead>
 
@@ -491,7 +491,7 @@
 														</span>
 													</td>
 
-													<td class="fixed-xs text-center p-0 table-actions-sticky">
+													<td class="fixed-xs text-center p-0">
 														<div class="dropdown">
 															<button
 																type="button"
@@ -502,22 +502,34 @@
 																[attr.aria-label]="'Opciones del producto ' + item.name"
 																title="Opciones"
 															>
-																<i class="bi bi-three-dots" aria-hidden="true"></i>
+																<i
+																	class="bi bi-three-dots"
+																	aria-hidden="true"
+																></i>
 															</button>
 
-															<div class="dropdown-menu dropdown-menu-end action-dropdown-menu action-dropdown-menu-compact">
+															<div
+																class="dropdown-menu dropdown-menu-end action-dropdown-menu action-dropdown-menu-compact"
+															>
 																<a
 																	class="dropdown-item action-dropdown-item action-dropdown-item-compact cursor-pointer"
 																	data-bs-toggle="modal"
 																	data-bs-target="#modalMove"
-																	(click)="selectedProductsIds.clear(); selectedProductsIds.add(item.id!)"
+																	(click)="
+																		selectedProductsIds.clear();
+																		selectedProductsIds.add(item.id!)
+																	"
 																>
 																	<span class="action-dropdown-item-icon">
-																		<ion-icon name="folder-open-outline" class="fs-4" aria-hidden="true"></ion-icon>
+																		<ion-icon
+																			name="folder-open-outline"
+																			class="fs-4"
+																			aria-hidden="true"
+																		></ion-icon>
 																	</span>
 
-																	<span class="action-dropdown-item-title" style="text-transform: none">
-																		Mover productos
+																	<span class="action-dropdown-item-title text-transform-none">
+																		Mover producto
 																	</span>
 																</a>
 															</div>
@@ -573,124 +585,399 @@
 	</div>
 </div>
 
-<div class="modal fade" id="modalMove" tabindex="-1" aria-hidden="true">
-	<div class="modal-dialog modal-dialog-centered mw-650px">
-		<div class="modal-content rounded">
-			<div class="modal-header pb-0 border-0 justify-content-end">
-				<span class="svg-icon svg-icon-muted svg-icon-1 cursor-pointer" data-bs-dismiss="modal">
-					<svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-						<rect opacity="0.5" x="6" y="17.3137" width="16" height="2" rx="1" transform="rotate(-45 6 17.3137)" fill="currentColor" />
-						<rect x="7.41422" y="6" width="16" height="2" rx="1" transform="rotate(45 7.41422 6)" fill="currentColor" />
-					</svg>
-				</span>
+<div
+	class="modal fade"
+	id="modalMove"
+	tabindex="-1"
+	aria-labelledby="modalMoveTitle"
+	aria-hidden="true"
+>
+	<div
+		class="modal-dialog modal-dialog-centered modal-dialog-scrollable mw-650px"
+	>
+		<div class="modal-content form-card">
+			<div
+				class="form-card-header d-flex align-items-start justify-content-between gap-3"
+			>
+				<div class="d-flex align-items-center gap-3 min-w-0">
+					<span class="symbol symbol-40px flex-shrink-0">
+						<span
+							class="symbol-label bg-light-primary text-primary"
+						>
+							<ion-icon
+								name="folder-open-outline"
+								class="fs-3"
+								aria-hidden="true"
+							></ion-icon>
+						</span>
+					</span>
+
+					<div class="min-w-0">
+						<h2
+							id="modalMoveTitle"
+							class="form-card-title"
+						>
+							Mover productos
+						</h2>
+
+						<p class="form-card-description">
+							Selecciona la categoría y subcategoría
+							donde se moverán los productos.
+						</p>
+					</div>
+				</div>
+
+				<button
+					type="button"
+					class="btn btn-icon btn-light btn-xs flex-shrink-0"
+					data-bs-dismiss="modal"
+					aria-label="Cerrar"
+					title="Cerrar"
+				>
+					<ion-icon
+						name="close-outline"
+						aria-hidden="true"
+					></ion-icon>
+				</button>
 			</div>
 
-			<div class="modal-body scroll-y px-10 px-lg-15 pt-0 pb-15 h-modal">
-				<form class="form">
-					<div class="text-center">
-						<h1 class="mb-3">Mover Productos</h1>
-						<div class="text-gray-600 mt-1 fw-400 fs-0-9rem">Organiza los productos seleccionados asignándolos a una nueva categoría o subcategoría.</div>
+			<div class="modal-body form-card-body p-0">
+				<div
+					class="d-flex align-items-center justify-content-between gap-3 px-6 py-4 border-bottom"
+				>
+					<div class="d-flex align-items-center gap-2 min-w-0">
+						<span
+							class="badge rounded-pill bg-outline-primary text-primary fw-700"
+						>
+							{{ selectedProductsIds.size }}
+						</span>
+
+						<span
+							class="paragraph paragraph-sm text-gray-600 fw-500 text-truncate m-0"
+						>
+							{{
+								selectedProductsIds.size === 1
+									? 'producto seleccionado'
+									: 'productos seleccionados'
+							}}
+						</span>
 					</div>
 
-					<div class="d-flex justify-content-end">
-						<button type="button" class="btn btn-sm btn-light-primary my-5" (click)="!isCategoriesLoading ? initCategories() : null" [disabled]="isCategoriesLoading">
-							<ng-container *ngIf="!isCategoriesLoading">
-								<i class="bi bi-arrow-clockwise me-1"></i>
-								Refrescar
-							</ng-container>
-							<ng-container *ngIf="isCategoriesLoading">
-								<span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
-								<span role="status">Procesando...</span>
-							</ng-container>
-						</button>
-					</div>
+					<button
+						type="button"
+						class="btn btn-icon btn-light-primary btn-xs flex-shrink-0"
+						(click)="
+							!isCategoriesLoading
+								? initCategories()
+								: null
+						"
+						[disabled]="
+							isCategoriesLoading ||
+							isMovingProducts
+						"
+						aria-label="Recargar categorías"
+						title="Recargar categorías"
+					>
+						<span
+							*ngIf="isCategoriesLoading"
+							class="spinner-border spinner-border-sm"
+							aria-hidden="true"
+						></span>
 
-					<div class="accordion-container mb-5" style="margin-right: 0px !important">
-						<div class="category-accordion-container min-h-card">
-							@if (isCategoriesLoading) {
-								<div class="category-card" *ngFor="let category of [1, 2, 3, 4, 5, 6]; let i = index">
-									<div class="category-header" style="background-color: white !important">
-										<div class="d-flex align-items-center gap-3 min-w-0">
-											<div class="skeleton skeleton-text" style="width: 30px !important; height: 30px; border-radius: 12px"></div>
-											<div class="d-flex align-items-center">
-												<div class="d-flex flex-column min-w-0 me-3 gap-2" style="width: 200px">
-													<div class="skeleton skeleton-text" style="width: 60% !important"></div>
-													<div class="skeleton skeleton-text" style="width: 40% !important"></div>
-												</div>
-											</div>
+						<ion-icon
+							*ngIf="!isCategoriesLoading"
+							name="refresh-outline"
+							aria-hidden="true"
+						></ion-icon>
+					</button>
+				</div>
+
+				<div class="accordion-container p-5">
+					<div class="category-accordion-container min-h-card">
+						@if (isCategoriesLoading) {
+							<div
+								class="category-card"
+								*ngFor="
+									let category of [
+										1, 2, 3, 4, 5, 6
+									]
+								"
+							>
+								<div class="category-header bg-white">
+									<div
+										class="d-flex align-items-center gap-3 min-w-0 w-100"
+									>
+										<div
+											class="skeleton skeleton-square-sm flex-shrink-0"
+										></div>
+
+										<div
+											class="skeleton-lines d-flex flex-column gap-2"
+										>
+											<div
+												class="skeleton skeleton-text skeleton-w-60"
+											></div>
+
+											<div
+												class="skeleton skeleton-text skeleton-w-40"
+											></div>
 										</div>
+
+										<div
+											class="skeleton skeleton-btn flex-shrink-0 ms-auto"
+										></div>
 									</div>
 								</div>
-							} @else if (categoriesLoadError) {
-								<app-not-found [error]="categoriesLoadError"></app-not-found>
-							} @else if (categories.length >= 1) {
-								<div class="category-card" *ngFor="let category of categories; let i = index">
-									<div class="category-header" (click)="category.subcategories.length >= 1 ? toggleCategory(i) : null">
-										<div class="d-flex align-items-center gap-3 min-w-0">
-											<div class="category-icon">
-												<ng-container *ngIf="category.icon">
-													<div class="symbol">
-														<span class="symbol-label fw-bold" style="height: 30px; width: 30px; border: 1px dashed #e3e3e3" [innerHTML]="category.safeIcon"></span>
-													</div>
-												</ng-container>
-												<ng-container *ngIf="!category.icon">
-													<ion-icon name="folder-outline" class="fs-5 text-primary"></ion-icon>
-												</ng-container>
-											</div>
-											<div class="d-flex align-items-center">
-												<div class="d-flex flex-column min-w-0 me-5">
-													<span class="category-name text-truncate text-gray-700">{{ category.name }}</span>
-												</div>
-											</div>
-										</div>
-										<div *ngIf="category.subcategories.length >= 1" class="category-arrow active" [class.active]="expandedCategoryIndex === i">
-											<ion-icon name="chevron-down-outline" class="text-primary"></ion-icon>
-										</div>
+							</div>
+						} @else if (categoriesLoadError) {
+							<div
+								class="d-flex align-items-center justify-content-center min-h-card"
+							>
+								<app-not-found
+									[error]="categoriesLoadError"
+								></app-not-found>
+							</div>
+						} @else if (categories.length >= 1) {
+							<div
+								class="category-card"
+								*ngFor="
+									let category of categories;
+									let i = index
+								"
+							>
+								<button
+									type="button"
+									class="category-header border-0 w-100 text-start"
+									(click)="
+										category.subcategories
+											.length >= 1
+											? toggleCategory(i)
+											: null
+									"
+									[disabled]="
+										category.subcategories
+											.length === 0 ||
+										isMovingProducts
+									"
+									[attr.aria-expanded]="
+										category.subcategories
+											.length >= 1
+											? expandedCategoryIndex ===
+												i
+											: null
+									"
+								>
+									<div
+										class="d-flex align-items-center gap-3 min-w-0"
+									>
+										<span
+											class="symbol symbol-30px flex-shrink-0"
+										>
+											<span
+												*ngIf="category.icon"
+												class="symbol-label"
+												[innerHTML]="
+													category.safeIcon
+												"
+											></span>
+
+											<span
+												*ngIf="!category.icon"
+												class="symbol-label bg-light-primary text-primary"
+											>
+												<ion-icon
+													name="folder-outline"
+													class="fs-4"
+													aria-hidden="true"
+												></ion-icon>
+											</span>
+										</span>
+
+										<span
+											class="d-flex flex-column align-items-start min-w-0"
+										>
+											<span
+												class="paragraph paragraph-sm text-gray-700 fw-600 text-truncate-1 m-0"
+											>
+												{{ category.name }}
+											</span>
+
+											<span
+												class="paragraph paragraph-sm text-gray-400 fs-12 fw-400 m-0"
+											>
+												{{
+													category
+														.subcategories
+														.length
+												}}
+												{{
+													category
+														.subcategories
+														.length === 1
+														? 'subcategoría'
+														: 'subcategorías'
+												}}
+											</span>
+										</span>
 									</div>
-									<div class="subcategory-container" [class.open]="expandedCategoryIndex === i">
-										<div>
-											<div class="subcategory-item" *ngFor="let subcategory of category.subcategories">
-												<div class="d-flex align-items-center gap-3">
-													<div class="subcategory-tree-icon">
-														<ion-icon name="return-down-forward-outline"></ion-icon>
-													</div>
-													<div class="d-flex gap-3 align-items-center">
-														<span class="subcategory-name text-gray-700 fs-8 fw-400">
-															{{ subcategory.name }}
-														</span>
-													</div>
-												</div>
+
+									<span
+										*ngIf="
+											category.subcategories
+												.length >= 1
+										"
+										class="category-arrow"
+										[class.active]="
+											expandedCategoryIndex === i
+										"
+										aria-hidden="true"
+									>
+										<ion-icon
+											name="chevron-down-outline"
+										></ion-icon>
+									</span>
+
+									<span
+										*ngIf="
+											category.subcategories
+												.length === 0
+										"
+										class="badge rounded-pill bg-light text-gray-500 fw-600"
+									>
+										Vacía
+									</span>
+								</button>
+
+								<div
+									class="subcategory-container"
+									[class.open]="
+										expandedCategoryIndex === i
+									"
+								>
+									<div>
+										<div
+											class="subcategory-item"
+											*ngFor="
+												let subcategory of category.subcategories
+											"
+										>
+											<div
+												class="d-flex align-items-center gap-3 min-w-0"
+											>
 												<span
-													class="btn btn-dark btn-sm d-flex align-items-center gap-2"
-													style="border: 1px solid #f0f0f0; padding: 5px 10px"
-													(click)="moveSelectedProductsTo(category, subcategory)"
+													class="symbol symbol-30px flex-shrink-0"
 												>
-													<ng-container *ngIf="isMovingProducts && movingToSubcategoryId == subcategory.id; else defaultTpl">
-														<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="width: 14px; height: 14px; border-width: 2px"></span>
-														<span class="fs-8">Moviendo</span>
-													</ng-container>
-													<ng-template #defaultTpl>
-														<ion-icon name="arrow-redo-outline"></ion-icon>
-														<span class="fs-8">Mover</span>
-													</ng-template>
+													<span
+														class="symbol-label bg-light text-gray-500"
+													>
+														<ion-icon
+															name="git-branch-outline"
+															class="fs-5"
+															aria-hidden="true"
+														></ion-icon>
+													</span>
 												</span>
+
+												<div
+													class="d-flex flex-column min-w-0"
+												>
+													<span
+														class="paragraph paragraph-sm text-gray-700 fw-600 text-truncate-1 m-0"
+													>
+														{{
+															subcategory.name
+														}}
+													</span>
+
+													<span
+														*ngIf="
+															subcategory.prefix ||
+															subcategory.code
+														"
+														class="paragraph paragraph-sm text-gray-400 fs-12 fw-400 m-0"
+													>
+														#{{
+															subcategory.prefix
+														}}-{{
+															subcategory.code
+																| padCode: 6
+														}}
+													</span>
+												</div>
 											</div>
+
+											<button
+												type="button"
+												class="btn btn-light-primary btn-xs flex-shrink-0"
+												(click)="
+													moveSelectedProductsTo(
+														category,
+														subcategory
+													)
+												"
+												[disabled]="
+													isMovingProducts
+												"
+											>
+												@if (
+													isMovingProducts &&
+													movingToSubcategoryId ===
+														subcategory.id
+												) {
+													<span
+														class="spinner-border spinner-border-sm"
+														aria-hidden="true"
+													></span>
+
+													<span>
+														Moviendo
+													</span>
+												} @else {
+													<ion-icon
+														name="arrow-forward-outline"
+														aria-hidden="true"
+													></ion-icon>
+
+													<span>Mover</span>
+												}
+											</button>
 										</div>
 									</div>
 								</div>
-							} @else {
-								<app-not-found [error]="{ message: 'No se encontraron registros.', statusCode: 404 }"></app-not-found>
-							}
-						</div>
+							</div>
+						} @else {
+							<div
+								class="d-flex align-items-center justify-content-center min-h-card"
+							>
+								<app-not-found
+									[error]="{
+										message:
+											'No se encontraron categorías disponibles.',
+										statusCode: 404,
+									}"
+								></app-not-found>
+							</div>
+						}
 					</div>
+				</div>
+			</div>
 
-					<div class="text-center" style="line-height: 1.25">
-						<small class="text-muted">
-							El cambio de categoría o subcategoría actualizará automáticamente el estado de los productos a borrador, permitiendo validar atributos, información y configuración
-							según la nueva estructura del catálogo.
-						</small>
-					</div>
-				</form>
+			<div class="form-card-footer">
+				<div class="d-flex align-items-start gap-2">
+					<ion-icon
+						name="information-circle-outline"
+						class="fs-5 text-primary flex-shrink-0"
+						aria-hidden="true"
+					></ion-icon>
+
+					<p
+						class="paragraph paragraph-sm text-gray-500 fw-400 lh-base m-0"
+					>
+						Los productos movidos cambiarán a borrador
+						para validar sus atributos y configuración en
+						la nueva categoría.
+					</p>
+				</div>
 			</div>
 		</div>
 	</div>

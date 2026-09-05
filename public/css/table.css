@@ -473,11 +473,16 @@
 }
 
 /* =========================================================
-   TABLA DE PRODUCTOS
+   TABLA DE STICKY
+========================================================= */
+/* =========================================================
+   TABLA CON COLUMNA STICKY
 ========================================================= */
 
 .sticky-table-wrapper {
 	position: relative;
+	display: block;
+
 	width: 100%;
 	max-width: 100%;
 	min-width: 0;
@@ -494,12 +499,13 @@
 }
 
 /* =========================================================
-   COLUMNA DE ACCIONES FIJA
+   COLUMNA DE ACCIONES STICKY
 ========================================================= */
 
 .sticky-table-wrapper .table-actions-sticky {
 	position: sticky !important;
 	right: 0;
+
 	width: 55px;
 	min-width: 55px;
 	max-width: 55px;
@@ -508,34 +514,42 @@
 	padding-left: 0 !important;
 
 	background-clip: padding-box;
+	border-right: 0 !important;
 	border-left: 1px solid #e3e8ef;
-	box-shadow: -0.5rem 0 0.75rem -0.75rem rgba(34, 46, 67, 0.35);
+
+	box-shadow:
+		-0.5rem 0 0.75rem -0.75rem
+		rgba(34, 46, 67, 0.35);
 }
 
-/* Encabezado fijo */
+/* =========================================================
+   ENCABEZADO STICKY
+========================================================= */
 
 .sticky-table-wrapper
 	.sticky-table
 	thead
 	th.table-actions-sticky {
 	top: 0;
-	z-index: 5;
+	z-index: 30;
+
 	background-color: #e3e6ea;
-	border-right: 0;
 }
 
-/* Celdas fijas */
+/* =========================================================
+   CELDAS STICKY
+========================================================= */
 
 .sticky-table-wrapper
 	.sticky-table
 	tbody
 	td.table-actions-sticky {
 	z-index: 3;
+
 	background-color: #ffffff;
-	border-right: 0;
 }
 
-/* Mantener el color de las filas alternadas */
+/* Filas alternadas */
 
 .sticky-table-wrapper
 	.sticky-table
@@ -545,7 +559,7 @@
 	background-color: #f5f7fa;
 }
 
-/* Mantener el color cuando una fila tenga hover */
+/* Hover */
 
 .sticky-table-wrapper
 	.sticky-table
@@ -555,19 +569,69 @@
 	background-color: #f3f7fc;
 }
 
-/* El dropdown debe mostrarse encima de las demás columnas */
+/* =========================================================
+   DROPDOWN ABIERTO
+========================================================= */
+
+/*
+ * Esta es la corrección principal.
+ * Cuando Bootstrap agrega .show, la celda completa se coloca
+ * por encima de las demás celdas sticky.
+ */
+
+.sticky-table-wrapper
+	.sticky-table
+	tbody
+	td.table-actions-sticky:has(
+		.dropdown-menu.show
+	) {
+	z-index: 50;
+}
+
+/* Elevar la fila activa */
+
+.sticky-table-wrapper
+	.sticky-table
+	tbody
+	tr:has(.dropdown-menu.show) {
+	position: relative;
+	z-index: 50;
+}
+
+/* Dropdown */
 
 .sticky-table-wrapper
 	.table-actions-sticky
 	.dropdown {
 	position: relative;
-	z-index: 6;
+	z-index: 1;
 }
+
+/* Menú */
 
 .sticky-table-wrapper
 	.table-actions-sticky
 	.dropdown-menu {
-	z-index: 1080;
+	z-index: 60;
+
+	min-width: 12rem;
+	margin-top: 0.4375rem;
+
+	background-color: #ffffff;
+	border: 1px solid #e3e8ef;
+	border-radius: 0.625rem;
+
+	box-shadow:
+		0 0.625rem 1.875rem
+			rgba(34, 46, 67, 0.14),
+		0 0.125rem 0.5rem
+			rgba(34, 46, 67, 0.08);
+}
+
+/* Evitar transformación automática del texto */
+
+.text-transform-none {
+	text-transform: none !important;
 }
 
 /* =========================================================
@@ -584,6 +648,7 @@
 
 .sticky-table-wrapper::-webkit-scrollbar-thumb {
 	background-color: #98a4b5;
+
 	border: 0.125rem solid #e5e9ef;
 	border-radius: 999px;
 }
@@ -593,7 +658,7 @@
 }
 
 /* =========================================================
-   RESPONSIVE
+   RESPONSIVE — TABLET
 ========================================================= */
 
 @media (max-width: 991.98px) {
@@ -602,17 +667,29 @@
 	}
 }
 
+/* =========================================================
+   RESPONSIVE — MÓVIL
+========================================================= */
+
 @media (max-width: 575.98px) {
 	.sticky-table-wrapper .sticky-table {
 		min-width: 64rem;
 	}
 
-	.sticky-table-wrapper .table-actions-sticky {
+	.sticky-table-wrapper
+		.table-actions-sticky {
 		width: 48px;
 		min-width: 48px;
 		max-width: 48px;
 
-		box-shadow: -0.375rem 0 0.625rem -0.625rem
+		box-shadow:
+			-0.375rem 0 0.625rem -0.625rem
 			rgba(34, 46, 67, 0.4);
+	}
+
+	.sticky-table-wrapper
+		.table-actions-sticky
+		.dropdown-menu {
+		min-width: 11rem;
 	}
 }
