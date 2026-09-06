@@ -10,6 +10,7 @@ import {
 	GetCategoriesWithSubcategoriesRESI,
 	GetCategoryRESI,
 	GetSubcategoriesRESI,
+	MoveProductsToSubcategoryRERSI,
 	MoveSubcategoryRESI,
 	UpdateCategoriesStatusRESI,
 	UpdateCategoryRESI,
@@ -128,8 +129,8 @@ export class CategoryService {
 		return this.http.get<GetCategoriesWithSubcategoriesRESI>(`${this.apiUrl}/category/getCategoriesWithSubcategories`, { headers: this.getHeaders() });
 	}
 
-	update_catsubcat_products(data: MoveProductsInterface): Observable<any> {
-		return this.http.post(`${this.apiUrl}/category/update_catsubcat_products`, data, { headers: this.getHeaders() });
+	moveProductsToSubcategory(data: MoveProductsInterface): Observable<MoveProductsToSubcategoryRERSI> {
+		return this.http.post<MoveProductsToSubcategoryRERSI>(`${this.apiUrl}/category/moveProductsToSubcategory`, data, { headers: this.getHeaders() });
 	}
 
 	get_categories_by_select(): Observable<any> {

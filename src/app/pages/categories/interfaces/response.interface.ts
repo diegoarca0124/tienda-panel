@@ -91,3 +91,8 @@ export interface GetCategoriesWithSubcategoriesRESI {
 	data: CategoryWithSubcategoriesRESI[];
 	message: string;
 }
+
+export interface MoveProductsToSubcategoryRERSI {
+	data: number;
+	message: string;
+}

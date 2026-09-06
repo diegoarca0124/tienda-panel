@@ -5,7 +5,7 @@ import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
 import { CategoryService } from '@app/services/category.service';
 import { SidebarComponent } from '@app/shared/sidebar/sidebar.component';
 import { TopbarComponent } from '@app/shared/topbar/topbar.component';
-import { EMPTY, finalize, forkJoin, map, Subject, switchMap, takeUntil, tap } from 'rxjs';
+import { catchError, EMPTY, finalize, forkJoin, map, of, Subject, switchMap, takeUntil, tap } from 'rxjs';
 import { withMinLoadingTime } from '@app/common/interface/with-min-loading-time.interface';
 import { GLOBAL } from '@app/services/GLOBAL';
 import { ProductInterface } from '@app/pages/products/interfaces/product.interface';
@@ -26,7 +26,10 @@ import { InputDialerComponent } from '@app/shared/input-dialer/input-dialer.comp
 import { CategoryInterface, MoveProductsInterface } from '../interfaces/data.interface';
 import { GetCategoriesWithSubcategoriesRESI } from '../interfaces/response.interface';
 import { qualityOptions, sortOptions, statusOptions, visibilityOptions } from '@app/pages/products/constants/selectors.constant';
+import { GetProductsCategoryQPI } from '../interfaces/query-params.interface';
 declare var toastr: any;
+
+type ProductsCategoryLoadResult = { data: any; error: null } | { data: null; error: HttpErrorResponse };
 
 @Component({
 	selector: 'app-products-category',
@@ -51,6 +54,7 @@ declare var toastr: any;
 })
 export class ProductsCategoryComponent {
 	private destroy$ = new Subject<void>();
+	private readonly productsCategoryQuery$ = new Subject<GetProductsCategoryQPI>();
 
 	public id: string = '';
 
@@ -83,9 +87,9 @@ export class ProductsCategoryComponent {
 	public isProductsLoading: boolean = true;
 	public isMovingProducts: boolean = false;
 
-	public categoryLoadError: string = '';
-	public categoriesLoadError: string = '';
-	public productsLoadError: string = '';
+	public categoryLoadError: Record<string, any> | null = null;
+	public categoriesLoadError: Record<string, any> | null = null;
+	public productsLoadError: Record<string, any> | null = null;
 
 	public readonly statusFilters = statusOptions;
 	public readonly qualityFilters = qualityOptions;
@@ -98,6 +102,7 @@ export class ProductsCategoryComponent {
 		medium: 'Media',
 		high: 'Alta',
 	};
+	
 
 	constructor(
 		private router: Router,
@@ -107,6 +112,13 @@ export class ProductsCategoryComponent {
 	) {}
 
 	ngOnInit() {
+		this.listenProductsCategoryQueries();
+		this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params) => {
+			const validParams = validateCategoriesQueryParams(this.route, params, this.router, this.sortValues, this.configurationsValues);
+			if (!validParams) return;
+			this.loadQueryParams(params);
+			this.loadCategories();
+		});
 		this.route.params
 			.pipe(
 				takeUntil(this.destroy$),
@@ -158,6 +170,65 @@ export class ProductsCategoryComponent {
 			});
 	}
 
+	private listenProductsCategoryQueries(): void {
+		this.productsCategoryQuery$
+			.pipe(
+				switchMap((query) => {
+					this.isProductsLoading = true;
+					this.productsLoadError = null;
+					return this.categoryService.findCategoryProducts(this.id, query).pipe(
+						withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
+						map(
+							(data): ProductsCategoryLoadResult => ({
+								data,
+								error: null,
+							})
+						),
+						catchError((error: HttpErrorResponse) =>
+							of<ProductsCategoryLoadResult>({
+								data: null,
+								error,
+							})
+						)
+					);
+				}),
+				takeUntil(this.destroy$)
+			)
+			.subscribe(({ data, error }) => {
+				this.isProductsLoading = false;
+				if (error) {
+					this.productsLoadError = error.error;
+					return;
+				}
+				if (!data) return;
+				this.selectedProductsIds.clear();
+				this.totalPages = data.meta.totalPages;
+				this.syncCurrentPage(data.meta.currentPage);
+			});
+	}
+
+	syncCurrentPage(currentPage: number): void {
+		if (this.currentPage === currentPage) return;
+
+		this.currentPage = currentPage;
+
+		this.router.navigate([], {
+			queryParams: {
+				filter: this.filter,
+				page: this.currentPage,
+				limit: this.limit,
+				status: this.selectedStatus,
+				sort: this.selectedSort,
+				subcategoryIds: this.selectedSubcategoryIds,
+				quality: this.selectedQuality,
+				visibility: this.selectedVisibility,
+				minPrice: this.minPrice,
+				maxPrice: this.maxPrice,
+			},
+			replaceUrl: true,
+		});
+	}
+
 	private applyQueryParams(params: Params): void {
 		this.filter = params['filter'] || '';
 		this.currentPage = Number(params['page']) || 1;
@@ -202,7 +273,7 @@ export class ProductsCategoryComponent {
 		this.isProductsLoading = true;
 		this.products = [];
 		this.totalPages = 1;
-		this.productsLoadError = '';
+		this.productsLoadError = null;
 
 		return this.categoryService
 			.findCategoryProducts(this.id, {
@@ -249,7 +320,7 @@ export class ProductsCategoryComponent {
 
 	initCategories$() {
 		this.isCategoriesLoading = true;
-		this.categoriesLoadError = '';
+		this.categoriesLoadError = null;
 
 		return this.categoryService.getCategoriesWithSubcategories().pipe(
 			withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
@@ -290,7 +361,6 @@ export class ProductsCategoryComponent {
 	}
 
 	initCategoriesNoload$() {
-		this.categoriesLoadError = '';
 		this.selectedSubcategoryIds = 'Todos';
 		this.currentPage = 1;
 		this.limit = 10;
@@ -429,7 +499,7 @@ export class ProductsCategoryComponent {
 			this.isMovingProducts = true;
 			this.movingToSubcategoryId = item_.id;
 			this.categoryService
-				.update_catsubcat_products(this.moveProductsPayload)
+				.moveProductsToSubcategory(this.moveProductsPayload)
 				.pipe(
 					takeUntil(this.destroy$),
 					finalize(() => {
