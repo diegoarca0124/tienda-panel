@@ -6,6 +6,7 @@ import { Observable } from 'rxjs';
 import {
 	CreateCategoryRESI,
 	CreateSubcategoryRESI,
+	FindCategoryProductsRESI,
 	GetCategoriesRESI,
 	GetCategoriesWithSubcategoriesRESI,
 	GetCategoryRESI,
@@ -20,7 +21,7 @@ import {
 	UpdateSubcategoryStatusRESI,
 } from '@app/pages/categories/interfaces/response.interface';
 
-import { UpdateCategoriesStatusREQI, UpdateCategoryStatusREQI, UpdateSubcategoryStatusREQI } from '@app/pages/categories/interfaces/request.interface';
+import { FindCategoryProductsREQI, UpdateCategoriesStatusREQI, UpdateCategoryStatusREQI, UpdateSubcategoryStatusREQI } from '@app/pages/categories/interfaces/request.interface';
 import { CategoryInterface, MoveProductsInterface, SubcategoryInterface } from '@app/pages/categories/interfaces/data.interface';
 import { GetCategoriesQPI } from '@app/pages/categories/interfaces/query-params.interface';
 
@@ -89,21 +90,7 @@ export class CategoryService {
 		return this.http.put<UpdateSubcategoryRESI>(`${this.apiUrl}/category/updateSubcategory/${id}`, subcategory, { headers: this.getHeaders() });
 	}
 
-	findCategoryProducts(
-		id: string,
-		qp: {
-			filter: string;
-			page: number;
-			limit: number;
-			status: string;
-			sort: string;
-			subcategoryIds: string;
-			quality: string;
-			visibility: string;
-			minPrice: number | null;
-			maxPrice: number | null;
-		}
-	): Observable<any> {
+	findCategoryProducts(id: string, qp: FindCategoryProductsREQI): Observable<FindCategoryProductsRESI> {
 		let params = new HttpParams()
 			.set('filter', qp.filter)
 			.set('page', qp.page)
@@ -122,7 +109,7 @@ export class CategoryService {
 			params = params.set('maxPrice', qp.maxPrice);
 		}
 
-		return this.http.get(`${this.apiUrl}/category/findCategoryProducts/${id}`, { params, headers: this.getHeaders() });
+		return this.http.get<FindCategoryProductsRESI>(`${this.apiUrl}/category/findCategoryProducts/${id}`, { params, headers: this.getHeaders() });
 	}
 
 	getCategoriesWithSubcategories(): Observable<GetCategoriesWithSubcategoriesRESI> {

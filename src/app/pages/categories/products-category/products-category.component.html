@@ -67,7 +67,7 @@
 							<!-- Acciones del lado derecho -->
 							<div class="list-toolbar-actions">
 								<button
-									class="btn btn-light-primary btn-sm d-flex align-items-center gap-2 my-1"
+									class="btn btn-light-primary btn-sm d-none d-md-flex align-items-center gap-2 my-1"
 									type="button"
 									data-bs-toggle="modal"
 									[attr.data-bs-target]="'#modalMove'"
@@ -93,6 +93,20 @@
 										<ion-icon name="chevron-down-outline" class="app-btn-chevron" aria-hidden="true"></ion-icon>
 									</button>
 									<ul class="dropdown-menu dropdown-menu-end action-dropdown-menu" aria-labelledby="productsOptionsButton">
+										<li class="d-md-none">
+											<button
+												type="button"
+												class="dropdown-item action-dropdown-item action-dropdown-item-compact"
+												[attr.data-bs-toggle]="hasSelectedProducts() ? 'modal' : null"
+												[attr.data-bs-target]="hasSelectedProducts() ? '#modalMove' : null"
+												[disabled]="!hasSelectedProducts()"
+											>
+												<span class="action-dropdown-item-icon">
+													<ion-icon class="fs-4" name="folder-outline" aria-hidden="true"></ion-icon>
+												</span>
+												<span class="action-dropdown-item-title">Mover productos</span>
+											</button>
+										</li>
 										<li>
 											<a class="dropdown-item action-dropdown-item action-dropdown-item-compact" [routerLink]="['/products/categories/mapping']">
 												<span class="action-dropdown-item-icon">
@@ -249,8 +263,6 @@
 									<div class="flex-fill min-w-0">
 										<app-input-dialer class="d-block w-100" [value]="minPrice" (valueChange)="onMinPriceChange($event)" placeholder="Mín." [step]="5"></app-input-dialer>
 									</div>
-
-									<span class="text-gray-400 fs-8 flex-shrink-0" aria-hidden="true">—</span>
 
 									<div class="flex-fill min-w-0">
 										<app-input-dialer class="d-block w-100" [value]="maxPrice" (valueChange)="onMaxPriceChange($event)" placeholder="Máx." [step]="5"></app-input-dialer>
@@ -586,7 +598,7 @@
 				</div>
 
 				<!-- Área desplazable -->
-				<div class="flex-grow-1 overflow-auto min-h-0 pe-2" style="overflow: scroll !important;">
+				<div class="flex-grow-1 overflow-auto min-h-0 pe-2" style="overflow: scroll !important">
 					<!-- Estado de carga -->
 					@if (isCategoriesLoading) {
 						<div class="d-flex flex-column gap-3">
@@ -624,8 +636,7 @@
 					<!-- Listado de categorías -->
 					@else if (categories.length >= 1) {
 						<div class="d-flex flex-column gap-3">
-							<div *ngFor="let category of categories; let categoryIndex = index" class="border rounded overflow-hidden"
-							style="border-color: #e3e3e3 !important">
+							<div *ngFor="let category of categories; let categoryIndex = index" class="border rounded overflow-hidden" style="border-color: #e3e3e3 !important">
 								<!-- Categoría -->
 								<button
 									type="button"
@@ -636,8 +647,7 @@
 									[attr.aria-controls]="'category-content-' + categoryIndex"
 								>
 									<span class="d-flex align-items-center gap-3 min-w-0">
-										<span class="symbol symbol-30px flex-shrink-0"
-										style="border: 1px dashed #ccc;">
+										<span class="symbol symbol-30px flex-shrink-0" style="border: 1px dashed #ccc">
 											<span *ngIf="category.icon" class="symbol-label bg-white" [innerHTML]="category.safeIcon"></span>
 
 											<span *ngIf="!category.icon" class="symbol-label bg-white text-primary">

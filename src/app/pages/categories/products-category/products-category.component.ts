@@ -5,13 +5,13 @@ import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
 import { CategoryService } from '@app/services/category.service';
 import { SidebarComponent } from '@app/shared/sidebar/sidebar.component';
 import { TopbarComponent } from '@app/shared/topbar/topbar.component';
-import { catchError, EMPTY, finalize, forkJoin, map, of, Subject, switchMap, takeUntil, tap } from 'rxjs';
+import { catchError, combineLatest, concatMap, EMPTY, finalize, forkJoin, map, Observable, of, Subject, switchMap, takeUntil, tap } from 'rxjs';
 import { withMinLoadingTime } from '@app/common/interface/with-min-loading-time.interface';
 import { GLOBAL } from '@app/services/GLOBAL';
 import { ProductInterface } from '@app/pages/products/interfaces/product.interface';
 import { FormsModule } from '@angular/forms';
 import { PaginationComponent } from '@app/shared/pagination/pagination.component';
-import { ValidateQPProductsCategory } from '../utils/validate-qp-products-category.util';
+import { validateProductsCategoryQueryParams } from '../utils/validate-productscategory-query-params..util';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { MenuSubcategoriesComponent } from '@app/shared/menu-subcategories/menu-subcategories.component';
 import { NotFoundComponent } from '@app/shared/not-found/not-found.component';
@@ -24,7 +24,7 @@ import { PaginationMetaInterface } from '@app/common/interface/pagination-meta.i
 import { CurrencySymbolPipe } from '../../../common/pipes/currency-symbol.pipe';
 import { InputDialerComponent } from '@app/shared/input-dialer/input-dialer.component';
 import { CategoryInterface, MoveProductsInterface } from '../interfaces/data.interface';
-import { GetCategoriesWithSubcategoriesRESI } from '../interfaces/response.interface';
+import { FindCategoryProductsRESI, GetCategoriesWithSubcategoriesRESI, MoveSubcategoryRESI } from '../interfaces/response.interface';
 import { qualityOptions, sortOptions, statusOptions, visibilityOptions } from '@app/pages/products/constants/selectors.constant';
 import { GetProductsCategoryQPI } from '../interfaces/query-params.interface';
 declare var toastr: any;
@@ -54,7 +54,6 @@ type ProductsCategoryLoadResult = { data: any; error: null } | { data: null; err
 })
 export class ProductsCategoryComponent {
 	private destroy$ = new Subject<void>();
-	private readonly productsCategoryQuery$ = new Subject<GetProductsCategoryQPI>();
 
 	public id: string = '';
 
@@ -102,7 +101,6 @@ export class ProductsCategoryComponent {
 		medium: 'Media',
 		high: 'Alta',
 	};
-	
 
 	constructor(
 		private router: Router,
@@ -112,99 +110,133 @@ export class ProductsCategoryComponent {
 	) {}
 
 	ngOnInit() {
-		this.listenProductsCategoryQueries();
-		this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params) => {
-			const validParams = validateCategoriesQueryParams(this.route, params, this.router, this.sortValues, this.configurationsValues);
-			if (!validParams) return;
-			this.loadQueryParams(params);
-			this.loadCategories();
-		});
-		this.route.params
+		combineLatest([this.route.paramMap, this.route.queryParams])
 			.pipe(
-				takeUntil(this.destroy$),
-				switchMap((params) => {
-					this.id = params['id'];
-					this.isCategoryLoading = true;
-
-					return this.categoryService.getCategory(this.id).pipe(
-						withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
-						finalize(() => (this.isCategoryLoading = false)),
-						switchMap((category) =>
-							this.route.queryParams.pipe(
-								map((queryParams) => ({
-									category,
-									queryParams,
-								}))
-							)
-						)
-					);
+				switchMap(([paramMap, queryParams]) => {
+					const categoryId = paramMap.get('id');
+					if (!categoryId) {
+						this.categoryLoadError = {
+							message: 'No se encontró la categoría.',
+							statusCode: 400,
+						};
+						return EMPTY;
+					}
+					const validParams = validateProductsCategoryQueryParams(this.route, queryParams, this.router, this.sortValues);
+					if (!validParams) return EMPTY;
+					this.id = categoryId;
+					this.loadQueryParams(queryParams);
+					return this.loadProducts$().pipe(concatMap(() => this.loadCategories$()));
 				}),
-				switchMap(({ category, queryParams }) => {
-					this.category = category.data;
-					if (!ValidateQPProductsCategory(this.route, queryParams, this.router, this.sortValues)) return EMPTY;
-
-					this.applyQueryParams(queryParams);
-
-					return forkJoin({
-						products: this.initProducts$(
-							this.filter,
-							this.currentPage,
-							this.limit,
-							this.selectedStatus,
-							this.selectedSort,
-							this.selectedSubcategoryIds,
-							this.selectedQuality,
-							this.selectedVisibility,
-							this.minPrice,
-							this.maxPrice
-						),
-						categories: this.initCategories$(),
-					});
-				})
+				takeUntil(this.destroy$)
 			)
-			.subscribe({
-				error: (err: HttpErrorResponse) => {
+			.subscribe();
+	}
+
+	private loadQueryParams(params: Params): void {
+		this.filter = params['filter'] || '';
+		this.currentPage = Number(params['page']);
+		this.limit = Number(params['limit']);
+		this.selectedStatus = params['status'];
+		this.selectedSort = params['sort'];
+		this.selectedSubcategoryIds = params['subcategoryIds'] || 'Todos';
+		this.selectedQuality = params['quality'] || 'Todos';
+		this.selectedVisibility = params['visibility'] || 'Todos';
+		this.minPrice = params['minPrice'] ? Number(params['minPrice']) : null;
+		this.maxPrice = params['maxPrice'] ? Number(params['maxPrice']) : null;
+	}
+
+	private loadProducts$(showSpinner: boolean = true): Observable<void> {
+		if (showSpinner) {
+			this.isProductsLoading = true;
+			this.productsLoadError = null;
+			this.products = [];
+		}
+
+		const request$ = this.categoryService.findCategoryProducts(this.id, {
+			filter: this.filter,
+			page: this.currentPage,
+			limit: this.limit,
+			status: this.selectedStatus,
+			sort: this.selectedSort,
+			subcategoryIds: this.selectedSubcategoryIds,
+			quality: this.selectedQuality,
+			visibility: this.selectedVisibility,
+			minPrice: this.minPrice,
+			maxPrice: this.maxPrice,
+		});
+
+		const productsRequest$ = showSpinner ? request$.pipe(withMinLoadingTime(GLOBAL.MIN_LOADING_TIME)) : request$;
+
+		return productsRequest$.pipe(
+			tap((response: FindCategoryProductsRESI) => {
+				this.products = response.products.map((product: ProductInterface) => ({
+					...product,
+					cover: `${environment.s3_public_url}/products/small/${product.cover}`,
+					brand: {
+						...product.brand,
+						logoUrl: `${environment.s3_public_url}/brands/small/${product.brand.logoUrl}`,
+					},
+				}));
+
+				this.totalPages = response.meta.totalPages;
+
+				this.selectedProductsIds.clear();
+
+				this.syncCurrentPage(response.meta.currentPage);
+			}),
+
+			map(() => void 0),
+
+			catchError((error: HttpErrorResponse) => {
+				this.productsLoadError = error.error;
+
+				if (showSpinner) {
+					this.products = [];
+					this.totalPages = 0;
+				}
+
+				return EMPTY;
+			}),
+
+			finalize(() => {
+				if (showSpinner) {
 					this.isProductsLoading = false;
-					this.categoryLoadError = err.error;
+				}
+			})
+		);
+	}
+
+	refreshProducts(): void {
+		this.loadProducts$(false)
+			.pipe(takeUntil(this.destroy$))
+			.subscribe({
+				error: () => {
+					toastr.error('Los productos se movieron, pero no fue posible actualizar la tabla.');
 				},
 			});
 	}
 
-	private listenProductsCategoryQueries(): void {
-		this.productsCategoryQuery$
-			.pipe(
-				switchMap((query) => {
-					this.isProductsLoading = true;
-					this.productsLoadError = null;
-					return this.categoryService.findCategoryProducts(this.id, query).pipe(
-						withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
-						map(
-							(data): ProductsCategoryLoadResult => ({
-								data,
-								error: null,
-							})
-						),
-						catchError((error: HttpErrorResponse) =>
-							of<ProductsCategoryLoadResult>({
-								data: null,
-								error,
-							})
-						)
-					);
-				}),
-				takeUntil(this.destroy$)
-			)
-			.subscribe(({ data, error }) => {
-				this.isProductsLoading = false;
-				if (error) {
-					this.productsLoadError = error.error;
-					return;
-				}
-				if (!data) return;
-				this.selectedProductsIds.clear();
-				this.totalPages = data.meta.totalPages;
-				this.syncCurrentPage(data.meta.currentPage);
-			});
+	private loadCategories$(): Observable<void> {
+		this.isCategoriesLoading = true;
+		this.categoriesLoadError = null;
+
+		return this.categoryService.getCategoriesWithSubcategories().pipe(
+			withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
+			tap((response: GetCategoriesWithSubcategoriesRESI) => {
+				this.categories = response.data.map((category) => ({
+					...category,
+					safeIcon: this.sanitizer.bypassSecurityTrustHtml(category.icon),
+				}));
+			}),
+			map(() => void 0),
+			catchError((error: HttpErrorResponse) => {
+				this.categoriesLoadError = error.error;
+				return EMPTY;
+			}),
+			finalize(() => {
+				this.isCategoriesLoading = false;
+			})
+		);
 	}
 
 	syncCurrentPage(currentPage: number): void {
@@ -229,19 +261,6 @@ export class ProductsCategoryComponent {
 		});
 	}
 
-	private applyQueryParams(params: Params): void {
-		this.filter = params['filter'] || '';
-		this.currentPage = Number(params['page']) || 1;
-		this.selectedStatus = params['status'] || 'Todos';
-		this.limit = Number(params['limit']) || 10;
-		this.selectedSort = params['sort'] || 'Predeterminado';
-		this.selectedSubcategoryIds = params['subcategoryIds'] || 'Todos';
-		this.selectedQuality = params['quality'] || 'Todos';
-		this.selectedVisibility = params['visibility'] || 'Todos';
-		this.minPrice = params['minPrice'] ? Number(params['minPrice']) : null;
-		this.maxPrice = params['maxPrice'] ? Number(params['maxPrice']) : null;
-	}
-
 	onMinPriceChange(price: any) {
 		if (price != null) {
 			this.minPrice = parseFloat(price);
@@ -258,136 +277,8 @@ export class ProductsCategoryComponent {
 		}
 	}
 
-	initProducts$(
-		filter: string,
-		page: number,
-		limit: number,
-		status: string,
-		sort: string,
-		subcategoryIds: string,
-		quality: string,
-		visibility: string,
-		minPrice: number,
-		maxPrice: number
-	) {
-		this.isProductsLoading = true;
-		this.products = [];
-		this.totalPages = 1;
-		this.productsLoadError = null;
-
-		return this.categoryService
-			.findCategoryProducts(this.id, {
-				filter,
-				page,
-				limit,
-				status,
-				sort,
-				subcategoryIds,
-				quality,
-				visibility,
-				minPrice,
-				maxPrice,
-			})
-			.pipe(
-				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
-				finalize(() => (this.isProductsLoading = false)),
-				tap({
-					next: (next: { products: ProductInterface[]; meta: PaginationMetaInterface }) => {
-						console.log(next);
-
-						this.products = next.products.map((product) => ({
-							...product,
-							cover: `${environment.s3_public_url}/products/small/${product.cover}`,
-							brand: {
-								...product.brand,
-								logoUrl: `${environment.s3_public_url}/brands/small/${product.brand.logoUrl}`,
-							},
-						}));
-
-						this.currentPage = next.meta.currentPage;
-						this.totalPages = next.meta.totalPages;
-					},
-					error: (err: HttpErrorResponse) => {
-						this.productsLoadError = err.error;
-					},
-				})
-			);
-	}
-
 	onLimitChange() {
 		this.applyFilters();
-	}
-
-	initCategories$() {
-		this.isCategoriesLoading = true;
-		this.categoriesLoadError = null;
-
-		return this.categoryService.getCategoriesWithSubcategories().pipe(
-			withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
-			finalize(() => (this.isCategoriesLoading = false)),
-			tap({
-				next: (next: GetCategoriesWithSubcategoriesRESI) => {
-					this.categories = next.data.map((category) => ({
-						...category,
-						safeIcon: this.sanitizer.bypassSecurityTrustHtml(category.icon),
-					}));
-				},
-				error: (err: HttpErrorResponse) => {
-					this.categoriesLoadError = err.error;
-				},
-			})
-		);
-	}
-
-	initCategories() {
-		this.initCategories$().pipe(takeUntil(this.destroy$)).subscribe();
-	}
-
-	initProducts() {
-		this.initProducts$(
-			this.filter,
-			this.currentPage,
-			this.limit,
-			this.selectedStatus,
-			this.selectedSort,
-			this.selectedSubcategoryIds,
-			this.selectedQuality,
-			this.selectedVisibility,
-			this.minPrice,
-			this.maxPrice
-		)
-			.pipe(takeUntil(this.destroy$))
-			.subscribe();
-	}
-
-	initCategoriesNoload$() {
-		this.selectedSubcategoryIds = 'Todos';
-		this.currentPage = 1;
-		this.limit = 10;
-		this.selectedStatus = 'Todos';
-		return this.categoryService.getCategoriesWithSubcategories().pipe(
-			tap({
-				next: (next: GetCategoriesWithSubcategoriesRESI) => {
-					console.log(next);
-					this.categories = next.data;
-					this.categories = next.data.map((i) => ({
-						...i,
-						safeIcon: this.sanitizer.bypassSecurityTrustHtml(i.icon),
-					}));
-					this.initProducts();
-				},
-				error: (err: HttpErrorResponse) => {
-					console.log(err);
-
-					const error = err.error;
-					this.categoriesLoadError = error;
-				},
-			})
-		);
-	}
-
-	initCategoriesNoload() {
-		this.initCategoriesNoload$().pipe(takeUntil(this.destroy$)).subscribe();
 	}
 
 	ngOnDestroy(): void {
@@ -395,14 +286,11 @@ export class ProductsCategoryComponent {
 		this.destroy$.complete();
 	}
 
-	setLimit() {
-		this.currentPage = 1;
-		this.applyFilters();
-	}
-
 	onPageChange(newPage: number) {
+		if (newPage === this.currentPage) return;
+
 		this.currentPage = newPage;
-		this.applyFilters(); // o init_collaborators()
+		this.applyFilters(false);
 	}
 
 	resetFilters() {
@@ -417,8 +305,6 @@ export class ProductsCategoryComponent {
 		this.minPrice = null;
 		this.maxPrice = null;
 
-		this.selectedProductsIds.clear();
-
 		this.router.navigate([], {
 			queryParams: {
 				page: 1,
@@ -432,17 +318,28 @@ export class ProductsCategoryComponent {
 				minPrice: null,
 				maxPrice: null,
 			},
+			queryParamsHandling: 'merge',
 		});
 	}
 
-	applyFilters() {
-		this.selectedProductsIds.clear();
+	initProducts(): void {
+		this.loadProducts$().pipe(takeUntil(this.destroy$)).subscribe();
+	}
 
+	initCategories(): void {
+		this.loadCategories$().pipe(takeUntil(this.destroy$)).subscribe();
+	}
+
+	applyFilters(resetPage: boolean = true) {
+		if (resetPage) this.currentPage = 1;
+
+		const normalizedFilter = typeof this.filter === 'string' ? this.filter.trim().slice(0, 50) : '';
+		this.filter = normalizedFilter;
 		const queryParams = {
+			filter: normalizedFilter,
 			page: this.currentPage,
 			limit: this.limit,
 			status: this.selectedStatus,
-			filter: this.filter,
 			sort: this.selectedSort,
 			subcategoryIds: this.selectedSubcategoryIds,
 			quality: this.selectedQuality,
@@ -451,18 +348,20 @@ export class ProductsCategoryComponent {
 			maxPrice: this.maxPrice,
 		};
 
-		const current: any = this.route.snapshot.queryParams;
+		const current = this.route.snapshot.queryParams;
 
 		const same =
-			Number(current.page) === queryParams.page &&
-			Number(current.limit) === queryParams.limit &&
-			(current.filter ?? '') === queryParams.filter &&
-			(current.status ?? 'Todos') === queryParams.status &&
-			(current.sort ?? 'Predeterminado') === queryParams.sort &&
-			(current.subcategoryIds ?? 'Todos') === queryParams.subcategoryIds &&
-			(current.visibility ?? 'Todos') === queryParams.visibility &&
-			(current.minPrice ?? 'Todos') === queryParams.minPrice &&
-			(current.maxPrice ?? 'Todos') === queryParams.maxPrice;
+			(current['filter'] ?? '') === queryParams.filter &&
+			Number(current['page'] ?? 1) === queryParams.page &&
+			Number(current['limit'] ?? 10) === queryParams.limit &&
+			(current['status'] ?? 'Todos') === queryParams.status &&
+			(current['sort'] ?? 'Predeterminado') === queryParams.sort &&
+			(current['subcategoryIds'] ?? 'Todos') === queryParams.subcategoryIds &&
+			(current['quality'] ?? 'Todos') === queryParams.quality &&
+			(current['visibility'] ?? 'Todos') === queryParams.visibility &&
+			(current['minPrice'] ?? 'Todos') === queryParams.minPrice &&
+			(current['maxPrice'] ?? 'Todos') === queryParams.maxPrice;
+
 		if (same) {
 			this.initProducts();
 			return;
@@ -471,16 +370,7 @@ export class ProductsCategoryComponent {
 		this.router.navigate([], {
 			relativeTo: this.route,
 			queryParams,
-			queryParamsHandling: '',
 		});
-	}
-
-	onSubcategoriesChange(subcategories: any) {
-		if (subcategories.length >= 1) {
-			this.selectedSubcategoryIds = subcategories.join(',');
-		} else {
-			this.selectedSubcategoryIds = 'Todos';
-		}
 	}
 
 	toggleCategory(index: number) {
@@ -508,9 +398,9 @@ export class ProductsCategoryComponent {
 					})
 				)
 				.subscribe({
-					next: (next: { data: any; message: string }) => {
+					next: (next: MoveSubcategoryRESI) => {
 						this.selectedProductsIds.clear();
-						this.initCategoriesNoload();
+						this.refreshProducts();
 						toastr.success(next.message);
 					},
 					error: (err: HttpErrorResponse) => {

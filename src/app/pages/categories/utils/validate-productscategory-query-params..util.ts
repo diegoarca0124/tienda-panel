@@ -1,105 +1,138 @@
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 
-export const ValidateQPProductsCategory = (route: ActivatedRoute, params: any, router: Router, sortArray: Array<string>): boolean => {
-	//filter: string, page: number, status: string, limit: number, subcategoryIds
+export const validateProductsCategoryQueryParams = (route: ActivatedRoute, params: Params, router: Router, sortArray: string[] = []): boolean => {
+	const filter = params['filter'] ?? '';
+
 	let page = Number(params['page']);
 	let limit = Number(params['limit']);
 	let status = params['status'];
-	let subcategoryIds = params['subcategoryIds'];
 	let sort = params['sort'];
+	let subcategoryIds = params['subcategoryIds'] ?? 'Todos';
 	let quality = params['quality'];
 	let visibility = params['visibility'];
-	let minPrice: number | undefined = Number(params['minPrice']);
-	let maxPrice: number | undefined = Number(params['maxPrice']);
 
 	const validStatusValues = ['Todos', 'draft', 'published'];
+
 	const validQualityValues = ['Todos', 'low', 'medium', 'high'];
+
 	const validVisibilityValues = ['Todos', 'public', 'private'];
-	const validLimitVales = [10, 20, 25];
-	const validSort = sortArray ?? [];
-	const validPrices =
-		minPrice !== undefined && maxPrice !== undefined && Number.isFinite(minPrice) && Number.isFinite(maxPrice) && minPrice >= 0 && maxPrice >= 0 && minPrice <= maxPrice;
+
+	const validLimitValues = [10, 20, 25];
+
 	const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
-	//corregir page
-	if (isNaN(page) || page < 1) {
+	// Validar página
+	if (!Number.isInteger(page) || page < 1) {
 		page = 1;
 	}
 
-	if (isNaN(limit) || !validLimitVales.includes(limit)) {
+	// Validar límite
+	if (!validLimitValues.includes(limit)) {
 		limit = 10;
 	}
 
-	//corregir status
+	// Validar estado
 	if (!validStatusValues.includes(status)) {
 		status = 'Todos';
 	}
 
+	// Validar orden
+	if (!sortArray.includes(sort)) {
+		sort = sortArray[0] ?? 'Predeterminado';
+	}
+
+	// Validar calidad
+	if (!validQualityValues.includes(quality)) {
+		quality = 'Todos';
+	}
+
+	// Validar visibilidad
 	if (!validVisibilityValues.includes(visibility)) {
 		visibility = 'Todos';
 	}
 
-	if (!subcategoryIds) {
-		subcategoryIds = 'Todos';
-	} else {
-		const validIds = subcategoryIds
-			.split(',')
-			.map((id: string) => id.trim())
-			.filter((id: string) => uuidRegex.test(id));
+	// Validar subcategorías
+	if (subcategoryIds !== 'Todos') {
+		const subcategoryList = Array.isArray(subcategoryIds)
+			? subcategoryIds
+			: String(subcategoryIds)
+					.split(',')
+					.map((id) => id.trim())
+					.filter(Boolean);
 
-		subcategoryIds = validIds.length ? validIds.join(',') : 'Todos';
+		const validSubcategoryIds = [...new Set(subcategoryList.filter((id) => uuidRegex.test(id)))];
+
+		subcategoryIds = validSubcategoryIds.length > 0 ? validSubcategoryIds.join(',') : 'Todos';
 	}
 
-	if (validSort.length > 0 && !validSort.includes(sort)) {
-		sort = validSort[0];
+	// Validar rango de precios
+	const rawMinPrice = params['minPrice'];
+	const rawMaxPrice = params['maxPrice'];
+
+	const parsedMinPrice = rawMinPrice !== undefined && rawMinPrice !== null && rawMinPrice !== '' ? Number(rawMinPrice) : undefined;
+
+	const parsedMaxPrice = rawMaxPrice !== undefined && rawMaxPrice !== null && rawMaxPrice !== '' ? Number(rawMaxPrice) : undefined;
+
+	const validPrices =
+		parsedMinPrice !== undefined &&
+		parsedMaxPrice !== undefined &&
+		Number.isFinite(parsedMinPrice) &&
+		Number.isFinite(parsedMaxPrice) &&
+		parsedMinPrice >= 0 &&
+		parsedMaxPrice >= 0 &&
+		parsedMinPrice <= parsedMaxPrice;
+
+	const minPrice = validPrices ? parsedMinPrice : undefined;
+
+	const maxPrice = validPrices ? parsedMaxPrice : undefined;
+
+	// Construir únicamente los parámetros permitidos
+	const sanitizedParams: Params = {
+		filter,
+		page,
+		limit,
+		status,
+		sort,
+		subcategoryIds,
+		quality,
+		visibility,
+	};
+
+	// Los precios solamente se agregan cuando el rango es válido
+	if (minPrice !== undefined && maxPrice !== undefined) {
+		sanitizedParams['minPrice'] = minPrice;
+		sanitizedParams['maxPrice'] = maxPrice;
 	}
 
-	if (!validQualityValues.includes(quality)) {
-		quality = 'Todos';
-	}
-	console.log('validPrices', validPrices);
+	const allowedKeys = Object.keys(sanitizedParams);
 
-	if (!validPrices) {
-		minPrice = undefined;
-		maxPrice = undefined;
-	}
+	const hasUnknownParams = Object.keys(params).some((key) => !allowedKeys.includes(key));
 
-	if (
+	const originalMinPrice = rawMinPrice !== undefined ? Number(rawMinPrice) : undefined;
+
+	const originalMaxPrice = rawMaxPrice !== undefined ? Number(rawMaxPrice) : undefined;
+
+	const hasInvalidValues =
+		filter !== (params['filter'] ?? '') ||
 		page !== Number(params['page']) ||
 		limit !== Number(params['limit']) ||
 		status !== params['status'] ||
 		sort !== params['sort'] ||
-		subcategoryIds !== params['subcategoryIds'] ||
+		subcategoryIds !== (params['subcategoryIds'] ?? 'Todos') ||
 		quality !== params['quality'] ||
 		visibility !== params['visibility'] ||
-		minPrice !== (params['minPrice'] !== undefined ? Number(params['minPrice']) : undefined) ||
-		maxPrice !== (params['maxPrice'] !== undefined ? Number(params['maxPrice']) : undefined)
-	) {
-		const queryParams: any = {
-			...params,
-			page,
-			limit,
-			status,
-			sort,
-			subcategoryIds,
-			quality,
-			visibility,
-		};
+		minPrice !== originalMinPrice ||
+		maxPrice !== originalMaxPrice;
 
-		if (minPrice !== undefined && maxPrice !== undefined) {
-			queryParams.minPrice = minPrice;
-			queryParams.maxPrice = maxPrice;
-		} else {
-			delete queryParams.minPrice;
-			delete queryParams.maxPrice;
-		}
-
+	if (hasUnknownParams || hasInvalidValues) {
 		router.navigate([], {
 			relativeTo: route,
-			queryParams: queryParams,
+			queryParams: sanitizedParams,
 			replaceUrl: true,
 		});
+
 		return false;
 	}
+
 	return true;
 };
