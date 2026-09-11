@@ -11,7 +11,7 @@ import {
 	GetCategoriesWithSubcategoriesRESI,
 	GetCategoryRESI,
 	GetSubcategoriesRESI,
-	MoveProductsToSubcategoryRERSI,
+	MoveProductsToSubcategoryRESI,
 	MoveSubcategoryRESI,
 	UpdateCategoriesStatusRESI,
 	UpdateCategoryRESI,
@@ -21,7 +21,14 @@ import {
 	UpdateSubcategoryStatusRESI,
 } from '@app/pages/categories/interfaces/response.interface';
 
-import { FindCategoryProductsREQI, UpdateCategoriesStatusREQI, UpdateCategoryStatusREQI, UpdateSubcategoryStatusREQI } from '@app/pages/categories/interfaces/request.interface';
+import {
+	FindCategoryProductsREQI,
+	MoveSubcategoryREQI,
+	UpdateCategoriesStatusREQI,
+	UpdateCategoryStatusREQI,
+	UpdateSubcategoriesStatusREQI,
+	UpdateSubcategoryStatusREQI,
+} from '@app/pages/categories/interfaces/request.interface';
 import { CategoryInterface, MoveProductsInterface, SubcategoryInterface } from '@app/pages/categories/interfaces/data.interface';
 import { GetCategoriesQPI } from '@app/pages/categories/interfaces/query-params.interface';
 
@@ -116,8 +123,8 @@ export class CategoryService {
 		return this.http.get<GetCategoriesWithSubcategoriesRESI>(`${this.apiUrl}/category/getCategoriesWithSubcategories`, { headers: this.getHeaders() });
 	}
 
-	moveProductsToSubcategory(data: MoveProductsInterface): Observable<MoveProductsToSubcategoryRERSI> {
-		return this.http.post<MoveProductsToSubcategoryRERSI>(`${this.apiUrl}/category/moveProductsToSubcategory`, data, { headers: this.getHeaders() });
+	moveProductsToSubcategory(data: MoveProductsInterface): Observable<MoveProductsToSubcategoryRESI> {
+		return this.http.post<MoveProductsToSubcategoryRESI>(`${this.apiUrl}/category/moveProductsToSubcategory`, data, { headers: this.getHeaders() });
 	}
 
 	get_categories_by_select(): Observable<any> {
@@ -132,11 +139,11 @@ export class CategoryService {
 		return this.http.get(`${this.apiUrl}/category/get_subcategories_by_select/${id}`, { headers: this.getHeaders() });
 	}
 
-	updateSubcategoriesStatus(data: { ids: Array<string>; status: boolean }): Observable<UpdateSubcategoriesStatusRESI> {
+	updateSubcategoriesStatus(data: UpdateSubcategoriesStatusREQI): Observable<UpdateSubcategoriesStatusRESI> {
 		return this.http.post<UpdateSubcategoriesStatusRESI>(`${this.apiUrl}/category/updateSubcategoriesStatus`, data, { headers: this.getHeaders() });
 	}
 
-	moveSubcategory(id: string, data: { categoryId: string }): Observable<MoveSubcategoryRESI> {
+	moveSubcategory(id: string, data: MoveSubcategoryREQI): Observable<MoveSubcategoryRESI> {
 		return this.http.put<MoveSubcategoryRESI>(`${this.apiUrl}/category/moveSubcategory/${id}`, data, { headers: this.getHeaders() });
 	}
 }

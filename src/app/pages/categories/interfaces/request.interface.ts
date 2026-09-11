@@ -28,3 +28,7 @@ export interface FindCategoryProductsREQI {
 	minPrice: number | null;
 	maxPrice: number | null;
 }
+
+export interface MoveSubcategoryREQI {
+	categoryId: string;
+}

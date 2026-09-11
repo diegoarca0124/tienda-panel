@@ -88,11 +88,6 @@ export interface GetCategoriesWithSubcategoriesRESI {
 	message: string;
 }
 
-export interface MoveProductsToSubcategoryRERSI {
-	data: number;
-	message: string;
-}
-
 export interface FindCategoryProductsRESI {
 	products: ProductInterface[];
 	meta: {
@@ -111,4 +106,9 @@ export interface FindCategoryProductsRESI {
 		minPrice: string;
 		maxPrice: string;
 	};
+}
+
+export interface MoveProductsToSubcategoryRESI {
+	data: number;
+	message: string;
 }
