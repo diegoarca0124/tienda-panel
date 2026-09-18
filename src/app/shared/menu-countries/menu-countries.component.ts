@@ -1,10 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, EventEmitter, Input, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, ElementRef, EventEmitter, Input, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { countries } from '@app/common/constants/countries.constant';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
-import { Subject } from 'rxjs';
 
 interface CountryOption {
 	code: string;
@@ -18,6 +17,7 @@ interface CountryOption {
 	imports: [RouterModule, CommonModule, FormsModule, NgbTooltipModule],
 	templateUrl: './menu-countries.component.html',
 	styleUrl: './menu-countries.component.css',
+	schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class MenuCountriesComponent {
 	@ViewChild('trigger') trigger!: ElementRef;
@@ -32,8 +32,7 @@ export class MenuCountriesComponent {
 	public filter = '';
 	public loadingCountries = false;
 	public errorMsmSeverListCountries = '';
-
-	private countries: CountryOption[] = [];
+	public countries: CountryOption[] = [];
 	public displayCountries: CountryOption[] = [];
 
 	get selectedItems(): CountryOption[] {
@@ -45,7 +44,9 @@ export class MenuCountriesComponent {
 	}
 
 	ngOnChanges(changes: SimpleChanges): void {
-		if (changes['selectedCountries']) this.syncSelectedCountries();
+		if (changes['selectedCountries']) {
+			this.syncSelectedCountries();
+		}
 	}
 
 	private loadCountries(): void {
@@ -61,24 +62,34 @@ export class MenuCountriesComponent {
 	}
 
 	private syncSelectedCountries(): void {
-		this.countries.forEach((country) => (country.checked = this.selectedCountries.includes(country.code)));
+		this.countries.forEach((country) => {
+			country.checked = this.selectedCountries.includes(country.code);
+		});
+
 		this.onFilterCountries();
 	}
 
 	onFilterCountries(): void {
 		const search = this.filter.trim().toLowerCase();
 
-		this.displayCountries = this.countries.filter((country) => !search || country.name.toLowerCase().includes(search) || country.code.toLowerCase().includes(search));
+		this.displayCountries = this.countries.filter(
+			(country) =>
+				!search ||
+				country.name.toLowerCase().includes(search) ||
+				country.code.toLowerCase().includes(search),
+		);
 	}
 
 	clearSelection(): void {
-		this.countries.forEach((country) => (country.checked = false));
+		this.countries.forEach((country) => {
+			country.checked = false;
+		});
 	}
 
 	confirmSelection(): void {
 		const selectedCodes = this.selectedItems.map((item) => item.code);
-		this.selectedCountries = selectedCodes;
 
+		this.selectedCountries = selectedCodes;
 		this.applyCountries.emit(selectedCodes);
 		this.closeMenu();
 	}
@@ -88,8 +99,14 @@ export class MenuCountriesComponent {
 	}
 
 	private closeMenu(): void {
+		if (!this.trigger?.nativeElement) {
+			return;
+		}
+
 		const element = this.trigger.nativeElement;
-		const dropdown = (window as any).bootstrap.Dropdown.getInstance(element) ?? new (window as any).bootstrap.Dropdown(element);
+		const dropdown =
+			(window as any).bootstrap.Dropdown.getInstance(element) ??
+			new (window as any).bootstrap.Dropdown(element);
 
 		dropdown.hide();
 	}

@@ -30,13 +30,12 @@
 	</button>
 
 	<div class="dropdown-menu dropdown-menu-end action-dropdown-menu settings-menu p-0" (click)="$event.stopPropagation()">
-		<header class="form-card-header d-flex align-items-start justify-content-between gap-3">
+		<header class="form-card-header d-flex align-items-center justify-content-between gap-3"
+		style="padding: 1rem 1.24rem !important;">
 			<div>
 				<h3 class="form-card-title fs-15">
 					{{ title }}
 				</h3>
-
-				<p class="form-card-description fs-12">Elige los datos que deseas solicitar para los productos de esta categoría.</p>
 			</div>
 
 			<span class="badge rounded-pill bg-light-primary text-primary fw-700 flex-shrink-0">{{ selectedItems.length }}/{{ displayData.length }}</span>

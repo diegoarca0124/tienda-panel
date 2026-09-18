@@ -1,116 +1,144 @@
-<div class="dropdown w-100">
-	<label
+<div class="dropdown action-dropdown countries-dropdown">
+	<button
 		#trigger
-		readonly
+		type="button"
+		class="form-control countries-trigger dropdown-toggle dropdown-toggle-no-arrow text-gray-700 fw-500"
+		[ngClass]="sizeClass === 'sm' ? 'form-control-sm' : 'form-control-md'"
 		data-bs-toggle="dropdown"
+		data-bs-auto-close="outside"
+		data-bs-offset="0,8"
+		aria-haspopup="true"
 		aria-expanded="false"
-		[ngClass]="{ 'form-control-sm': sizeClass === 'sm' }"
-		class="form-control form-control-sm dropdown-toggle w-100 cursor-pointer custom-trigger d-flex align-items-center"
+		[attr.aria-label]="title"
+		[ngbTooltip]="selectedItems.length ? getSelectedNames() : null"
 		placement="top"
-		[ngbTooltip]="getSelectedNames()"
 		tooltipClass="tooltip-dark"
 	>
-		<ng-container *ngIf="selectedItems.length > 0; else emptyState">
-			<div class="selected-container">
-				@for (item of selectedItems.slice(0, 4); track item) {
-					<div class="selected-item">
-						<div class="symbol symbol-20">
-							<img [src]="item.flag" class="h-100 w-100" alt="" />
-						</div>
-						<small>{{ item.code }}</small>
-					</div>
-				}
-				@if (selectedItems.length > 4) {
-					<span class="badge bg-light text-dark" style="background-color: #f1f5f9 !important">+{{ selectedItems.length - 4 }}</span>
-				}
-			</div>
-		</ng-container>
+		<span
+			class="text-truncate"
+			[class.placeholder-text]="!selectedItems.length"
+		>
+			{{ selectedItems.length ? getSelectedNames() : placeholder }}
+		</span>
 
-		<ng-template #emptyState>
-			<span class="placeholder-text">
-				{{ placeholder }}
-			</span>
-		</ng-template>
-	</label>
-
-	<div id="dropdown" class="dropdown-menu" data-bs-display="static" data-bs-auto-close="outside" (click)="$event.stopPropagation()">
-		<!-- HEADER -->
-		<div class="dropdown-header-custom p-4">
-			<div class="d-flex justify-content-between align-items-center mb-3">
-				<div class="d-flex flex-column">
-					<span class="dropdown-title text-gray-800">
-						{{ title }}
-					</span>
-
-					<small class="dropdown-subtitle text-gray-500">Selecciona uno o más elementos</small>
-				</div>
-			</div>
-
-			<div class="position-relative">
-				<input
-					type="text"
-					class="form-control form-control-sm pe-5 dropdown-search custom-placeholder"
-					[placeholder]="placeholder"
-					[(ngModel)]="filter"
-					(keyup)="onFilterCountries()"
-				/>
-
-				<i class="bi bi-search dropdown-search-icon" (click)="onFilterCountries()"></i>
-			</div>
-		</div>
-
-		<!-- ITEMS -->
-		<div class="items-container">
-			<ng-container *ngIf="loadingCountries">
-				<div class="dropdown-item-custom d-flex align-items-center" *ngFor="let item of [1, 2, 3, 4, 5, 6]" style="height: 40px !important; width: 100% !important">
-					<div class="d-flex justify-content-start align-items-center" style="width: 100% !important">
-						<div class="me-4">
-							<div class="skeleton skeleton-check" style="width: 14.29px !important; height: 14.29px !important"></div>
-						</div>
-						<div class="skeleton skeleton-text" style="width: 40% !important"></div>
-					</div>
-				</div>
-			</ng-container>
-			<ng-container *ngIf="!loadingCountries">
-				<ng-container *ngIf="displayCountries.length >= 1">
-					<div class="dropdown-item-custom d-flex justify-content-between" *ngFor="let item of displayCountries" style="height: 40px !important">
-						<label class="form-check form-check-custom form-check-solid m-0 cursor-pointer">
-							<input class="form-check-input me-4" type="checkbox" [(ngModel)]="item.checked" [checked]="item.checked" />
-							<div class="d-flex align-items-center">
-								<div class="symbol" style="height: 20px; width: 20px; border: 1px dashed #e3e3e3">
-									<img [src]="item.flag" class="h-100 w-100" alt="" />
-								</div>
-
-								<small class="form-check-label text-gray-700">
-									{{ item.name }}
-								</small>
-							</div>
-						</label>
-					</div>
-				</ng-container>
-				<ng-container *ngIf="displayCountries.length == 0">
-					<div class="d-flex flex-column align-items-center justify-content-center p-7">
-						<div class="fw-500 text-gray-700">No se encontraron resultados.</div>
-						<small class="text-gray-500">Lorem ipsum dolor sit amet consectetur adipisicing elit.</small>
-					</div>
-				</ng-container>
-			</ng-container>
-		</div>
-		<!-- FOOTER -->
-		<div class="dropdown-footer p-4">
-			<div class="d-flex justify-content-end gap-2">
-				<button
-					[disabled]="loadingCountries"
-					class="btn btn-xs btn-bg-light btn-icon-secondary text-gray-600 d-flex align-items-center gap-1 px-3 py-2 fs-8"
-					(click)="!loadingCountries ? clearSelection() : null"
-					style="border: 1px solid #eceaff !important; background-color: #fff !important"
+		<span class="d-inline-flex align-items-center gap-2 flex-shrink-0">
+			@if (selectedItems.length) {
+				<span
+					class="badge rounded-pill bg-light-primary text-primary fw-700"
+					aria-label="Países seleccionados"
 				>
-					Limpiar
-				</button>
-				<button class="btn btn-xs btn-dark d-flex align-items-center px-3 py-2 fs-8" [disabled]="loadingCountries" (click)="!loadingCountries ? confirmSelection() : null">
-					Confirmar
-				</button>
+					{{ selectedItems.length }}
+				</span>
+			}
+
+			<ion-icon
+				name="chevron-down-outline"
+				class="app-btn-chevron text-gray-500"
+				style="font-size: 1.1rem"
+				aria-hidden="true"
+			></ion-icon>
+		</span>
+	</button>
+
+	<div
+		class="dropdown-menu dropdown-menu-end action-dropdown-menu countries-menu p-0"
+		(click)="$event.stopPropagation()"
+	>
+		<header class="form-card-header countries-header" style="padding: 1rem 1.24rem !important;">
+			<div class="d-flex align-items-center justify-content-between gap-3">
+				<div>
+					<h3 class="form-card-title fs-15">
+						{{ title }}
+					</h3>
+				</div>
+
+				<span
+					class="badge rounded-pill bg-light-primary text-primary fw-700 flex-shrink-0"
+				>
+					{{ selectedItems.length }}/{{ countries.length }}
+				</span>
 			</div>
+		</header>
+
+		<div
+			class="countries-list"
+			role="group"
+			[attr.aria-label]="title"
+		>
+			@if (loadingCountries) {
+				@for (item of [1, 2, 3, 4, 5, 6]; track item) {
+					<div
+						class="country-option country-skeleton d-flex align-items-center gap-3"
+					>
+						<span class="skeleton skeleton-check"></span>
+						<span class="skeleton skeleton-text"></span>
+					</div>
+				}
+			} @else {
+				@for (item of displayCountries; track item.code) {
+					<label
+						class="form-check form-check-customs form-check-sm action-dropdown-item country-option m-0"
+					>
+						<input
+							class="form-check-input flex-shrink-0"
+							type="checkbox"
+							[(ngModel)]="item.checked"
+						/>
+
+						<span class="country-flag" aria-hidden="true">
+							<img [src]="item.flag" alt="" />
+						</span>
+
+						<span class="action-dropdown-item-content">
+							<span class="action-dropdown-item-title">
+								{{ item.name }}
+							</span>
+
+							<span class="action-dropdown-item-description">
+								{{ item.code }}
+							</span>
+						</span>
+					</label>
+				} @empty {
+					<div class="countries-empty text-center">
+						<ion-icon
+							name="search-outline"
+							class="text-gray-400"
+							aria-hidden="true"
+						></ion-icon>
+
+						<p class="fw-600 text-gray-700 mb-1">
+							No se encontraron países
+						</p>
+
+						<small class="text-gray-500">
+							Prueba con otro nombre o código.
+						</small>
+					</div>
+				}
+			}
 		</div>
+
+		<footer
+			class="form-card-footer d-flex align-items-center justify-content-end gap-2"
+		>
+			<button
+				type="button"
+				class="btn btn-xs btn-light"
+				[disabled]="loadingCountries || !selectedItems.length"
+				(click)="clearSelection()"
+			>
+				Limpiar
+			</button>
+
+			<button
+				type="button"
+				class="btn btn-xs btn-primary"
+				[disabled]="loadingCountries"
+				(click)="confirmSelection()"
+			>
+				Aplicar filtros
+			</button>
+		</footer>
 	</div>
 </div>
