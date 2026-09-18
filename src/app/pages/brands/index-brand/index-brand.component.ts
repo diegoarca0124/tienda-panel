@@ -13,18 +13,24 @@ import { PaginationComponent } from '@app/shared/pagination/pagination.component
 import { SidebarComponent } from '@app/shared/sidebar/sidebar.component';
 import { TopbarComponent } from '@app/shared/topbar/topbar.component';
 import { NgSelectModule } from '@ng-select/ng-select';
-import { finalize, Subject, takeUntil } from 'rxjs';
+import { catchError, finalize, map, of, Subject, switchMap, takeUntil } from 'rxjs';
 import { sortColumnsBrands } from '../constants/sort-columns-brands.constant';
-import { BrandInterface } from '../interfaces/brand.interface';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
-import { ValidateQPBrands } from '../utils/validate-pq-brands.util';
+import { validateBrandsQueryParams } from '../utils/validate-brands-query-params.util';
 import { FallbackImageDirective } from '@app/common/directives/fallback-image.directive';
 import { environment } from 'environments/environment.dev';
 import { PadCodePipe } from '../../../common/pipes/pad-code.pipe';
 import { countries } from '@app/common/constants/countries.constant';
 import { HttpErrorResponse } from '@angular/common/http';
+import { GetBrandsQPI } from '../interfaces/query-params.interface';
+import { sortOptions, statusOptions } from '../constants/selectors.constant';
+import { GetBrandsRESI } from '../interfaces/response.interface';
+import { BrandInterface } from '../interfaces/data.interface';
+import { DomSanitizer } from '@angular/platform-browser';
+import { MenuCountriesComponent } from '@app/shared/menu-countries/menu-countries.component';
 declare const toastr: any;
 declare const $: any;
+type BrandsLoadResult = { data: GetBrandsRESI; error: null } | { data: null; error: HttpErrorResponse };
 
 @Component({
 	selector: 'app-index-brand',
@@ -41,44 +47,47 @@ declare const $: any;
 		NgbTooltipModule,
 		FallbackImageDirective,
 		PadCodePipe,
+		MenuCountriesComponent
 	],
 	templateUrl: './index-brand.component.html',
 	styleUrl: './index-brand.component.css',
 	schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class IndexBrandComponent {
-	public loadBtnDelete: WritableSignal<boolean> = signal(false);
-	public loadBtnMultipleStatus: WritableSignal<boolean> = signal(false);
+	private destroy$ = new Subject<void>();
+	private readonly brandsQuery$ = new Subject<GetBrandsQPI>();
+
 	public filter: string = '';
-	public status: string = 'Todos';
-	public sort: string = 'Predeterminado';
+	public selectedStatus: string = 'Todos';
+	public selectedSort: string = 'Predeterminado';
+	public selectedCountries: string = 'Todos';
+	public selectedCountryCodes: string[] = [];
+
 	public currentPage: number = 1;
-	public limit: number = 10;
 	public totalPages: number = 0;
-	public loading: boolean = true;
-	public arrDataSkull: Array<any> = Array.from({ length: 5 }, () => ({}));
+	public limit: number = 10;
+
+	public readonly statusFilters = statusOptions;
+	public readonly sortFilters = sortOptions;
+
+	public selectedBrandsIds = new Set<string>();
+	public isBrandsLoading: boolean = true;
+	public brandsLoadError: Record<string, any> | null = null;
+
+	public isUpdatingSingleStatus: WritableSignal<boolean> = signal(false);
+	public isUpdatingMultipleStatuses: WritableSignal<boolean> = signal(false);
+
 	public brands: BrandInterface[] = [];
 	public screenHeight = window.innerHeight;
-	public errorMsmServerListBrands: string = '';
-	private destroy$ = new Subject<void>();
-	public columns = [
-		{ key: 'name', label: 'Marca', classCol: 'col-w-xs-200 col-w-md-250' },
-		{ key: 'status', label: 'Estado', classCol: 'col-w-xs-200 col-w-md-250' },
-	];
-	public pageLimit = pageLimit;
-	public statusTable = [];
-	public sortColumns = sortColumnsBrands;
-	public selectedIds = new Set<string>();
 
-	public countries: any = '';
-
-	public readonly sortValues = sortColumnsBrands.map((item) => item.value);
-	public readonly filterCountries = countries.map((item) => item.code);
+	public readonly sortValues = sortOptions.map((item) => item.value);
+	public readonly countriesValues = countries.map((item) => item.code);
 
 	constructor(
-		private _router: Router,
+		private router: Router,
 		private brandService: BrandService,
-		private _route: ActivatedRoute
+		private route: ActivatedRoute,
+		private sanitizer: DomSanitizer
 	) {}
 
 	ngOnDestroy(): void {
@@ -87,161 +96,183 @@ export class IndexBrandComponent {
 	}
 
 	ngOnInit() {
-		this._route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params) => {
-			if (!ValidateQPBrands(this._route, params, this._router, this.sortValues, this.filterCountries)) return;
-
+		this.listenBrandsQueries();
+		this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params) => {
+			const validParams = validateBrandsQueryParams(this.route, params, this.router, this.sortValues, this.countriesValues);
+			if (!validParams) return;
 			this.loadQueryParams(params);
-			this.init_brands(this.filter, this.currentPage, this.status, this.countries, this.limit, this.sort);
+			this.loadBrands();
 		});
 	}
+
+	private loadBrands(): void {
+		this.brandsQuery$.next({
+			filter: this.filter,
+			page: this.currentPage,
+			limit: this.limit,
+			status: this.selectedStatus,
+			sort: this.selectedSort,
+			countries: this.selectedCountries,
+		});
+	}
+
+
+	private listenBrandsQueries(): void {
+		this.brandsQuery$
+			.pipe(
+				switchMap((query) => {
+					this.isBrandsLoading = true;
+					this.brandsLoadError = null;
+					return this.brandService.getBrands(query).pipe(
+						withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
+						map(
+							(data): BrandsLoadResult => ({
+								data,
+								error: null,
+							})
+						),
+						catchError((error: HttpErrorResponse) =>
+							of<BrandsLoadResult>({
+								data: null,
+								error,
+							})
+						)
+					);
+				}),
+				takeUntil(this.destroy$)
+			)
+			.subscribe(({ data, error }) => {
+				this.isBrandsLoading = false;
+				if (error) {
+					this.brandsLoadError = error.error;
+					return;
+				}
+				if (!data) return;
+				this.selectedBrandsIds.clear();
+				this.brands = this.mapBrands(data.brands);
+				this.totalPages = data.meta.totalPages;
+				this.syncCurrentPage(data.meta.currentPage);
+			});
+	}
+
+	syncCurrentPage(currentPage: number): void {
+		if (this.currentPage === currentPage) return;
+
+		this.currentPage = currentPage;
+
+		this.router.navigate([], {
+			queryParams: {
+				filter: this.filter,
+				page: this.currentPage,
+				limit: this.limit,
+				status: this.selectedStatus,
+				sort: this.selectedSort,
+				countries: this.selectedCountries,
+			},
+			replaceUrl: true,
+		});
+	}
+
+	
+	private mapBrands(brands: BrandInterface[]): BrandInterface[] {
+		return brands.map((brand) => ({
+			...brand,
+			logoUrl: `${environment.s3_public_url}/brands/small/${brand.logoUrl}`,
+			latestProducts: (brand.latestProducts ?? []).map((product) => ({
+				...product,
+				cover: product.cover ? `${environment.s3_public_url}/products/small/${product.cover}` : '',
+			}))
+		}));
+	}
+	
 
 	private loadQueryParams(params: Params): void {
 		this.filter = params['filter'] || '';
 		this.currentPage = Number(params['page']);
 		this.limit = Number(params['limit']);
-		this.status = params['status'];
-		this.sort = params['sort'];
-		this.countries = params['countries'];
+		this.selectedStatus = params['status'];
+		this.selectedSort = params['sort'];
+		this.selectedCountries = params['countries'];
+		this.selectedCountryCodes = this.selectedCountries === 'Todos' ? [] : this.selectedCountries.split(',').filter(Boolean);
 	}
 
-	onFilterOrStatusChange() {
-		this.currentPage = 1;
-		this.redirect();
-	}
-
-	getCountries(countries: any) {
-		if (countries.length >= 1) {
-			this.countries = countries.join(',');
-		} else {
-			this.countries = 'Todos';
-		}
-	}
-
-	toggleItem(id: string, event: Event) {
-		const checked = (event.target as HTMLInputElement).checked;
-		if (checked) {
-			this.selectedIds.add(id);
-		} else {
-			this.selectedIds.delete(id);
-		}
-	}
-
-	getSelectedIds(): string[] {
-		return [...this.selectedIds];
-	}
-
-	hasSelectedBrands(): boolean {
-		return this.selectedIds.size > 0;
-	}
-
-	init_brands(filter: string, page: number, status: string, countries: string, limit: number, sort: string) {
-		this.loading = true;
-		this.errorMsmServerListBrands = '';
-		this.brands = [];
+	private refreshBrands(): void {
 		this.brandService
-			.get_brands(filter, page, limit, status, countries, sort)
-			.pipe(
-				takeUntil(this.destroy$),
-				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
-				finalize(() => (this.loading = false))
-			)
+			.getBrands({
+				filter: this.filter,
+				page: this.currentPage,
+				limit: this.limit,
+				status: this.selectedStatus,
+				sort: this.selectedSort,
+				countries: this.selectedCountries,
+			})
+			.pipe(takeUntil(this.destroy$))
 			.subscribe({
-				next: (next: { brands: BrandInterface[]; meta: any }) => {
-					this.brands = this.mapBrands(next.brands);
-					this.currentPage = next.meta.currentPage;
-					this.totalPages = next.meta.totalPages;
-				},
-				error: (err: HttpErrorResponse) => {
-					const error = err.error;
-					this.errorMsmServerListBrands = error;
-				},
-			});
-	}
-
-	private mapBrands(brands: BrandInterface[]): BrandInterface[] {
-		return brands.map((brand) => ({
-			...brand,
-			logoUrl: `${environment.s3_public_url}/brands/small/${brand.logoUrl}`,
-			productsPreview: (brand.productsPreview ?? []).map((product) => ({
-				...product,
-				cover: `${environment.s3_public_url}/products/small/${product.cover}`,
-			})),
-		}));
-	}
-
-	redirect() {
-		const queryParams = {
-			filter: this.filter,
-			page: this.currentPage,
-			limit: this.limit,
-			status: this.status,
-			sort: this.sort,
-			countries: this.countries,
-		};
-
-		const current: any = this._route.snapshot.queryParams;
-
-		const same =
-			(current.filter ?? '') === queryParams.filter &&
-			Number(current.page) === queryParams.page &&
-			Number(current.limit) === queryParams.limit &&
-			(current.status ?? 'Todos') === queryParams.status &&
-			(current.sort ?? 'Predeterminado') === queryParams.sort &&
-			(current.countries ?? 'Todos') === queryParams.countries;
-
-		if (same) {
-			this.init_brands(this.filter, this.currentPage, this.status, this.countries, this.limit, this.sort);
-			return;
-		}
-
-		this._router.navigate(['/products/brands'], {
-			queryParams,
-		});
-	}
-
-	setStatus(id: string, status: boolean) {
-		this.loadBtnDelete.set(true);
-		this.brandService
-			.update_status_brand(id, { status })
-			.pipe(
-				takeUntil(this.destroy$),
-				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
-				finalize(() => this.loadBtnDelete.set(false))
-			)
-			.subscribe({
-				next: (next: { data: BrandInterface; message: string }) => {
-					const brand = this.brands.find((c) => c.id === next.data.id);
-					if (brand) {
-						brand.status = next.data.status;
-					}
-					toastr.success(next.message);
-					closeModal('modalDelete-' + id);
+				next: (response: GetBrandsRESI) => {
+					this.brands = this.mapBrands(response.brands);
+					this.totalPages = response.meta.totalPages;
+					this.syncCurrentPage(response.meta.currentPage);
 				},
 				error: (error: HttpErrorResponse) => {
-					toastr.error(error.error.message);
+					toastr.error(error.error?.message || 'No fue posible actualizar la lista.');
 				},
 			});
 	}
 
-	setLimit() {
-		this.currentPage = 1;
-		this.redirect();
+	getCountries(countries: string[]): void {
+		this.selectedCountryCodes = [...countries];
+		if (countries.length >= 1) {
+			this.selectedCountries = countries.join(',');
+		} else {
+			this.selectedCountries = 'Todos';
+		}
 	}
 
-	onPageChange(newPage: number) {
+	onBrandsSelectionChange(id: string, checked: boolean): void {
+		if (checked) {
+			this.selectedBrandsIds.add(id);
+		} else {
+			this.selectedBrandsIds.delete(id);
+		}
+	}
+
+	get hasSelectedBrands(): boolean {
+		return this.selectedBrandsIds.size > 0;
+	}
+
+	clearBrandsSelection(): void {
+		this.selectedBrandsIds.clear();
+	}
+
+	selectAllBrands(): void {
+		this.selectedBrandsIds = new Set(this.brands.map((brand) => brand.id).filter((id): id is string => Boolean(id)));
+	}
+
+	get areAllBrandsSelected(): boolean {
+		return this.brands.length > 0 && this.brands.every((brand) => Boolean(brand.id) && this.selectedBrandsIds.has(brand.id!));
+	}
+
+	onLimitChange() {
+		this.applyFilters(true);
+	}
+
+	onPageChange(newPage: number): void {
+		if (newPage === this.currentPage) return;
+
 		this.currentPage = newPage;
-		this.redirect(); // o init_collaborators()
+		this.applyFilters(false);
 	}
 
 	resetFilters() {
 		this.filter = '';
-		this.status = 'Todos';
-		this.countries = 'Todos';
-		this.sort = 'Predeterminado';
+		this.selectedStatus = 'Todos';
+		this.selectedSort = 'Predeterminado';
 		this.currentPage = 1;
 		this.limit = 10;
+		this.selectedCountries = 'Todos';
+		this.selectedCountryCodes = [];
 
-		this._router.navigate([], {
+		this.router.navigate([], {
 			queryParams: {
 				filter: null,
 				page: 1,
@@ -254,38 +285,88 @@ export class IndexBrandComponent {
 		});
 	}
 
+	applyFilters(resetPage: boolean = true): void {
+		if (resetPage) {
+			this.currentPage = 1;
+		}
+
+		const normalizedFilter = typeof this.filter === 'string' ? this.filter.trim().slice(0, 50) : '';
+
+		this.filter = normalizedFilter;
+
+		const queryParams = {
+			filter: normalizedFilter,
+			page: this.currentPage,
+			limit: this.limit,
+			status: this.selectedStatus,
+			sort: this.selectedSort,
+			countries: this.selectedCountries,
+		};
+
+		const current = this.route.snapshot.queryParams;
+
+		const same =
+			(current['filter'] ?? '') === queryParams.filter &&
+			Number(current['page'] ?? 1) === queryParams.page &&
+			Number(current['limit'] ?? 10) === queryParams.limit &&
+			(current['status'] ?? 'Todos') === queryParams.status &&
+			(current['sort'] ?? 'Predeterminado') === queryParams.sort &&
+			(current['countries'] ?? 'Todos') === queryParams.countries;
+
+		if (same) {
+			this.loadBrands();
+			return;
+		}
+
+		this.router.navigate([], {
+			relativeTo: this.route,
+			queryParams,
+		});
+	}
+
+	onUpdateStatus(id: string, status: boolean) {
+		/* this.isUpdatingSingleStatus.set(true);
+		this.categoryService
+			.updateCategoryStatus(id, { status: !status })
+			.pipe(
+				takeUntil(this.destroy$),
+				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
+				finalize(() => this.isUpdatingSingleStatus.set(false))
+			)
+			.subscribe({
+				next: (next: UpdateCategoryStatusRESI) => {
+					toastr.success(next.message);
+					closeModal(`modalDelete-${id}`);
+					this.refreshCategories();
+				},
+				error: (error: HttpErrorResponse) => {
+					toastr.error(error.error?.message || 'No fue posible actualizar el estado.');
+				},
+			}); */
+	}
+
 	onUpdateStatusMultiple(status: boolean) {
-		this.loadBtnMultipleStatus.set(true);
+		/* this.isUpdatingMultipleStatuses.set(true);
 		this.brandService
-			.update_status_brands({
-				ids: this.getSelectedIds(),
+			.updateCategoriesStatus({
+				ids: [...this.selectedCategoriesIds],
 				status,
 			})
 			.pipe(
 				takeUntil(this.destroy$),
 				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
-				finalize(() => this.loadBtnMultipleStatus.set(false))
+				finalize(() => this.isUpdatingMultipleStatuses.set(false))
 			)
 			.subscribe({
-				next: (next: { data: string[]; message: string }) => {
-					console.log(next);
-					const updatedIds = new Set(next.data);
-					this.brands = this.brands.map((prev) => {
-						if (updatedIds.has(prev.id!)) {
-							return {
-								...prev,
-								status,
-							};
-						}
-						return prev;
-					});
+				next: (next: UpdateCategoriesStatusRESI) => {
 					toastr.success(next.message);
 					closeModal(status ? 'modalMultipleActive' : 'modalMultipleDisabled');
-					this.selectedIds.clear();
+					this.selectedCategoriesIds.clear();
+					this.refreshCategories();
 				},
 				error: (error: HttpErrorResponse) => {
-					toastr.error(error.error.message);
+					toastr.error(error.error?.message || 'No fue posible actualizar el estado.');
 				},
-			});
+			}); */
 	}
 }

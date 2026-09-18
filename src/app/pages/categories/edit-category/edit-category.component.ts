@@ -84,7 +84,7 @@ export class EditCategoryComponent {
 
 	public typeForm: 'create' | 'edit' = 'create';
 
-	public option = 1;
+	public option: 1 | 2 = 1;
 	public selectedSubcategoriesIds = new Set<string>();
 	public prefixMask = prefixMask;
 	public editorOptions = MonacoOptions;
@@ -102,18 +102,18 @@ export class EditCategoryComponent {
 				takeUntil(this.destroy$),
 				switchMap((params) => {
 					this.id = params.get('id')!;
-					const option = this._route.snapshot.queryParamMap.get('option');
-					if (!option) {
-						this.option = 1;
+					const optionParam = Number(this._route.snapshot.queryParamMap.get('option'));
+					const isValidOption = optionParam === 1 || optionParam === 2;
 
+					this.option = optionParam === 2 ? 2 : 1;
+
+					if (!isValidOption) {
 						this._router.navigate([], {
 							relativeTo: this._route,
 							queryParams: { option: 1 },
 							queryParamsHandling: 'merge',
 							replaceUrl: true,
 						});
-					} else {
-						this.option = Number(option);
 					}
 
 					return this.initData(this.id);
@@ -131,10 +131,12 @@ export class EditCategoryComponent {
 	}
 
 	setOption(value: number) {
-		this.option = value;
+		const validOption: 1 | 2 = value === 2 ? 2 : 1;
+
+		this.option = validOption;
 		this._router.navigate([], {
 			relativeTo: this._route,
-			queryParams: { option: value },
+			queryParams: { option: validOption },
 			queryParamsHandling: 'merge',
 		});
 	}

@@ -21,7 +21,7 @@
 						</div>
 					</div>
 				</div>
-				<div class="app-content flex-column-fluid">
+				<div class="app-content flex-column-fluid mt-5">
 					<div class="app-container container-fluid">
 						<div class="list-toolbar">
 							<!-- Buscador -->
@@ -67,7 +67,7 @@
 							<!-- Acciones del lado derecho -->
 							<div class="list-toolbar-actions">
 								<button
-									class="btn btn-light-primary btn-sm d-none d-md-flex align-items-center gap-2 my-1"
+									class="btn btn-light-primary btn-sm d-none d-md-flex align-items-center gap-2"
 									type="button"
 									data-bs-toggle="modal"
 									[attr.data-bs-target]="'#modalMove'"
@@ -134,7 +134,7 @@
 									[clearable]="false"
 									[closeOnSelect]="true"
 									[searchable]="false"
-									[disabled]="isCategoriesLoading"
+									[disabled]="isProductsLoading"
 									appendTo="body"
 									dropdownPanelClass="app-select-panel"
 									class="app-select app-select-sm"
@@ -168,7 +168,7 @@
 									[clearable]="false"
 									[closeOnSelect]="true"
 									[searchable]="false"
-									[disabled]="isCategoriesLoading"
+									[disabled]="isProductsLoading"
 									appendTo="body"
 									dropdownPanelClass="app-select-panel"
 									class="app-select app-select-sm"
@@ -202,7 +202,7 @@
 									[clearable]="false"
 									[closeOnSelect]="true"
 									[searchable]="false"
-									[disabled]="isCategoriesLoading"
+									[disabled]="isProductsLoading"
 									appendTo="body"
 									dropdownPanelClass="app-select-panel"
 									class="app-select app-select-sm"
@@ -236,7 +236,7 @@
 									[clearable]="false"
 									[closeOnSelect]="true"
 									[searchable]="false"
-									[disabled]="isCategoriesLoading"
+									[disabled]="isProductsLoading"
 									appendTo="body"
 									dropdownPanelClass="app-select-panel"
 									class="app-select app-select-sm"
@@ -261,11 +261,11 @@
 
 								<div class="d-flex align-items-center gap-2 w-100">
 									<div class="flex-fill min-w-0">
-										<app-input-dialer class="d-block w-100" [value]="minPrice" (valueChange)="onMinPriceChange($event)" placeholder="Mín." [step]="5"></app-input-dialer>
+										<app-input-dialer class="d-block w-100" [value]="minPrice" (valueChange)="onMinPriceChange($event)" placeholder="Mín." [step]="5" [disabled]="isProductsLoading"></app-input-dialer>
 									</div>
 
 									<div class="flex-fill min-w-0">
-										<app-input-dialer class="d-block w-100" [value]="maxPrice" (valueChange)="onMaxPriceChange($event)" placeholder="Máx." [step]="5"></app-input-dialer>
+										<app-input-dialer class="d-block w-100" [value]="maxPrice" (valueChange)="onMaxPriceChange($event)" placeholder="Máx." [step]="5" [disabled]="isProductsLoading"></app-input-dialer>
 									</div>
 								</div>
 							</div>

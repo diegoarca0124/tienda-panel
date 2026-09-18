@@ -68,9 +68,10 @@ export class CreateCategoryComponent {
 		this.destroy$.complete();
 	}
 
-	create() {
+	createCategory() {
 		this.isCreateCategoryLoading = true;
 		if (this.category.icon == null) this.category.icon = '';
+		
 		this.categoryService
 			.createCategory(this.category)
 			.pipe(

@@ -17,16 +17,16 @@ import { combineLatest, EMPTY, filter, finalize, forkJoin, map, Subject, switchM
 import { ValidateQPProductsBrand } from '../utils/validate-qp-products-brand.util';
 import { withMinLoadingTime } from '@app/common/interface/with-min-loading-time.interface';
 import { GLOBAL } from '@app/services/GLOBAL';
-import { BrandInterface } from '../interfaces/brand.interface';
 import { FallbackImageDirective } from '@app/common/directives/fallback-image.directive';
 import { environment } from 'environments/environment.dev';
 import { PadCodePipe } from '../../../common/pipes/pad-code.pipe';
 import { createEmptyBrand } from '../utils/empties.util';
 import { HttpErrorResponse } from '@angular/common/http';
 import { CurrencySymbolPipe } from '../../../common/pipes/currency-symbol.pipe';
-import { sortColumnsProducts } from '../constants/sort-columns-products.constant';
 import { PaginationMetaInterface } from '@app/common/interface/pagination-meta.interface';
 import { CategoryService } from '@app/services/category.service';
+import { BrandInterface } from '../interfaces/data.interface';
+import { statusOptions } from '../constants/selectors.constant';
 
 @Component({
 	selector: 'app-products-brand',
@@ -67,10 +67,10 @@ export class ProductsBrandComponent {
 	public products: ProductInterface[] = [];
 	public selectedIds: string[] = [];
 	public statusTable = statusProducts;
-	public sortColumns = sortColumnsProducts;
+	public sortColumns = statusOptions;
 	public selectedProductsIds = new Set<string>();
 	public errorMsmServerCategory: string = '';
-	public readonly sortValues = sortColumnsProducts.map((item) => item.value);
+	public readonly sortValues = statusOptions.map((item) => item.value);
 
 	readonly qualityLabels: Record<string, string> = {
 		low: 'Baja',

@@ -169,9 +169,7 @@ export class IndexCategoryComponent {
 			.subscribe({
 				next: (response: GetCategoriesRESI) => {
 					this.categories = this.mapCategories(response.categories);
-
 					this.totalPages = response.meta.totalPages;
-
 					this.syncCurrentPage(response.meta.currentPage);
 				},
 				error: (error: HttpErrorResponse) => {
@@ -234,58 +232,6 @@ export class IndexCategoryComponent {
 		}
 	}
 
-	hasSelectedCategories(): boolean {
-		return this.selectedCategoriesIds.size > 0;
-	}
-
-	onLimitChange() {
-		this.applyFilters();
-	}
-
-	onPageChange(newPage: number): void {
-		if (newPage === this.currentPage) return;
-
-		this.currentPage = newPage;
-		this.applyFilters(false);
-	}
-
-	onResetCurrentPage() {
-		this.currentPage = 1;
-	}
-
-	clearCategorySelection(): void {
-		this.selectedCategoriesIds.clear();
-	}
-
-	selectAllCategories(): void {
-		this.selectedCategoriesIds = new Set(this.categories.map((category) => category.id).filter((id): id is string => Boolean(id)));
-	}
-
-	get areAllCategoriesSelected(): boolean {
-		return this.categories.length > 0 && this.categories.every((category) => Boolean(category.id) && this.selectedCategoriesIds.has(category.id!));
-	}
-
-	onUpdateStatus(id: string, status: boolean) {
-		this.isUpdatingSingleStatus.set(true);
-		this.categoryService
-			.updateCategoryStatus(id, { status: !status })
-			.pipe(
-				takeUntil(this.destroy$),
-				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
-				finalize(() => this.isUpdatingSingleStatus.set(false))
-			)
-			.subscribe({
-				next: (next: UpdateCategoryStatusRESI) => {
-					toastr.success(next.message);
-					closeModal(`modalDelete-${id}`);
-					this.refreshCategories();
-				},
-				error: (error: HttpErrorResponse) => {
-					toastr.error(error.error?.message || 'No fue posible actualizar el estado.');
-				},
-			});
-	}
-
 	applyFilters(resetPage: boolean = true): void {
 		if (resetPage) {
 			this.currentPage = 1;
@@ -325,6 +271,58 @@ export class IndexCategoryComponent {
 		});
 	}
 
+	onUpdateStatus(id: string, status: boolean) {
+		this.isUpdatingSingleStatus.set(true);
+		this.categoryService
+			.updateCategoryStatus(id, { status: !status })
+			.pipe(
+				takeUntil(this.destroy$),
+				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
+				finalize(() => this.isUpdatingSingleStatus.set(false))
+			)
+			.subscribe({
+				next: (next: UpdateCategoryStatusRESI) => {
+					toastr.success(next.message);
+					closeModal(`modalDelete-${id}`);
+					this.refreshCategories();
+				},
+				error: (error: HttpErrorResponse) => {
+					toastr.error(error.error?.message || 'No fue posible actualizar el estado.');
+				},
+			});
+	}
+
+	onLimitChange() {
+		this.applyFilters(true);
+	}
+
+	onPageChange(newPage: number): void {
+		if (newPage === this.currentPage) return;
+
+		this.currentPage = newPage;
+		this.applyFilters(false);
+	}
+
+	onResetCurrentPage() {
+		this.currentPage = 1;
+	}
+
+	get hasSelectedCategories(): boolean {
+		return this.selectedCategoriesIds.size > 0;
+	}
+
+	clearCategorySelection(): void {
+		this.selectedCategoriesIds.clear();
+	}
+
+	selectAllCategories(): void {
+		this.selectedCategoriesIds = new Set(this.categories.map((category) => category.id).filter((id): id is string => Boolean(id)));
+	}
+
+	get areAllCategoriesSelected(): boolean {
+		return this.categories.length > 0 && this.categories.every((category) => Boolean(category.id) && this.selectedCategoriesIds.has(category.id!));
+	}
+
 	resetFilters() {
 		this.filter = '';
 		this.selectedStatus = 'Todos';
@@ -346,8 +344,7 @@ export class IndexCategoryComponent {
 		});
 	}
 
-	toggleItem(id: string, event: Event) {
-		const checked = (event.target as HTMLInputElement).checked;
+	onCategorySelectionChange(id: string, checked: boolean): void {
 		if (checked) {
 			this.selectedCategoriesIds.add(id);
 		} else {
@@ -355,15 +352,11 @@ export class IndexCategoryComponent {
 		}
 	}
 
-	getSelectedIds(): string[] {
-		return [...this.selectedCategoriesIds];
-	}
-
 	onUpdateStatusMultiple(status: boolean) {
 		this.isUpdatingMultipleStatuses.set(true);
 		this.categoryService
 			.updateCategoriesStatus({
-				ids: this.getSelectedIds(),
+				ids: [...this.selectedCategoriesIds],
 				status,
 			})
 			.pipe(

@@ -17,22 +17,29 @@ export class InputDialerComponent {
 
 	@Input() step = 1;
 	@Input() placeholder = '';
+	@Input() disabled = false;
 
 	ngOnChanges() {
 		this.inputValue = this.value?.toString() ?? '';
 	}
 
 	increment() {
+		if (this.disabled) return;
+
 		const next = (this.value ?? 0) + this.step;
 		this.updateValue(next);
 	}
 
 	decrement() {
+		if (this.disabled) return;
+
 		const next = Math.max(0, (this.value ?? 0) - this.step);
 		this.updateValue(next);
 	}
 
 	onInput(val: string) {
+		if (this.disabled) return;
+
 		this.inputValue = val;
 
 		if (val === '') {

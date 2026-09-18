@@ -13,13 +13,13 @@ import { withMinLoadingTime } from '@app/common/interface/with-min-loading-time.
 import { GLOBAL } from '@app/services/GLOBAL';
 import { AlertComponent } from '@app/shared/alert/alert.component';
 import { IMaskModule } from 'angular-imask';
-import { BrandInterface } from '../interfaces/brand.interface';
 import { ValidationPopoverComponent } from '@app/shared/validation-popover/validation-popover.component';
 import { showErrorsBrand } from '../constants/show-errors-brand.constant';
 import { buildShowErrors } from '@app/common/utils/build-show.errors.util';
 import { createEmptyBrand } from '../utils/empties.util';
 import { TextareaAutoresizeDirective } from '@app/common/directives/textarea-autoresize.directive';
 import { HttpErrorResponse } from '@angular/common/http';
+import { BrandInterface } from '../interfaces/data.interface';
 declare const toastr: any;
 
 @Component({
@@ -86,7 +86,7 @@ export class CreateBrandComponent {
 		this.loadBtn = true;
 		this.msmErrorBrand = [];
 		this.brandService
-			.create_brand(this.brand)
+			.createBrand(this.brand)
 			.pipe(
 				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
 				takeUntil(this.destroy$),

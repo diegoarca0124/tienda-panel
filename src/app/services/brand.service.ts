@@ -1,9 +1,11 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { AuthService } from './auth.service';
 import { environment } from 'environments/environment.dev';
-import { BrandInterface } from '@app/pages/brands/interfaces/brand.interface';
+import { GetBrandsQPI } from '@app/pages/brands/interfaces/query-params.interface';
+import { BrandInterface } from '@app/pages/brands/interfaces/data.interface';
+import { GetBrandsRESI } from '@app/pages/brands/interfaces/response.interface';
 
 @Injectable({
 	providedIn: 'root',
@@ -32,7 +34,7 @@ export class BrandService {
 		private authService: AuthService
 	) {}
 
-	create_brand(brand: any): Observable<any> {
+	createBrand(brand: any): Observable<any> {
 		let data = new FormData();
 		data.append('name', brand.name || '');
 		data.append('country', JSON.stringify(brand.country));
@@ -44,10 +46,16 @@ export class BrandService {
 		return this.http.post(`${this.apiUrl}/brand/create_brand`, data, { headers: this.getHeaders(data) });
 	}
 
-	get_brands(filter: string, page: number, limit: number, status: string, countries: string, sort: string): Observable<any> {
-		return this.http.get(`${this.apiUrl}/brand/get_brands?filter=${filter}&page=${page}&limit=${limit}&status=${status}&countries=${countries}&sort=${sort}`, {
-			headers: this.getHeaders(),
-		});
+	getBrands(query: GetBrandsQPI): Observable<GetBrandsRESI> {
+		const params = new HttpParams()
+			.set('filter', query.filter)
+			.set('page', query.page)
+			.set('limit', query.limit)
+			.set('status', query.status)
+			.set('sort', query.sort)
+			.set('countries', query.countries);
+
+		return this.http.get<GetBrandsRESI>(`${this.apiUrl}/brand/getBrands`, { headers: this.getHeaders(), params });
 	}
 
 	update_status_brand(id: string, data: { status: boolean }): Observable<any> {

@@ -12,6 +12,10 @@ export interface BrandInterface {
 	status?: boolean;
 	productsPreview?: Array<any>;
 	moreProducts?: number;
+
+    totalProducts?: number;
+	latestProducts?: Array<any>;
+
 	createdAt?: Date;
 	updatedAt?: Date;
 	statusAt?: Date;

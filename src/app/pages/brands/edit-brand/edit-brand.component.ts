@@ -14,13 +14,13 @@ import { UploadImageComponent } from '@app/shared/upload-image/upload-image.comp
 import { NgSelectModule } from '@ng-select/ng-select';
 import { IMaskModule } from 'angular-imask';
 import { finalize, Subject, takeUntil } from 'rxjs';
-import { BrandInterface } from '../interfaces/brand.interface';
 import { ValidationPopoverComponent } from '@app/shared/validation-popover/validation-popover.component';
 import { showErrorsBrand } from '../constants/show-errors-brand.constant';
 import { environment } from 'environments/environment.dev';
 import { TextFieldModule } from '@angular/cdk/text-field';
 import { TextareaAutoresizeDirective } from '@app/common/directives/textarea-autoresize.directive';
 import { HttpErrorResponse } from '@angular/common/http';
+import { BrandInterface } from '../interfaces/data.interface';
 declare const toastr: any;
 declare const $: any;
 

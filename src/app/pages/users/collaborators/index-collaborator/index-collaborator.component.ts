@@ -276,6 +276,23 @@ export class IndexCollaboratorComponent {
 		this.currentPage = 1;
 	}
 
+
+	get hasSelectedCollaborators(): boolean {
+		return this.selectedCollaboratorsIds.size > 0;
+	}
+
+	clearCollaboratorSelection(): void {
+		this.selectedCollaboratorsIds.clear();
+	}
+
+	selectAllCollaborators(): void {
+		this.selectedCollaboratorsIds = new Set(this.collaborators.map((collaborator) => collaborator.id).filter((id): id is string => Boolean(id)));
+	}
+
+	get areAllCollaboratorsSelected(): boolean {
+		return this.collaborators.length > 0 && this.collaborators.every((collaborator) => Boolean(collaborator.id) && this.selectedCollaboratorsIds.has(collaborator.id!));
+	}
+
 	resetFilters() {
 		this.filter = '';
 		this.selectedStatus = 'Todos';
@@ -301,22 +318,6 @@ export class IndexCollaboratorComponent {
 		} else {
 			this.selectedCollaboratorsIds.delete(id);
 		}
-	}
-
-	get hasSelectedCollaborators(): boolean {
-		return this.selectedCollaboratorsIds.size > 0;
-	}
-
-	clearCollaboratorSelection(): void {
-		this.selectedCollaboratorsIds.clear();
-	}
-
-	selectAllCollaborators(): void {
-		this.selectedCollaboratorsIds = new Set(this.collaborators.map((collaborator) => collaborator.id).filter((id): id is string => Boolean(id)));
-	}
-
-	get areAllCollaboratorsSelected(): boolean {
-		return this.collaborators.length > 0 && this.collaborators.every((collaborator) => Boolean(collaborator.id) && this.selectedCollaboratorsIds.has(collaborator.id!));
 	}
 
 	onUpdateStatusMultiple(status: boolean) {

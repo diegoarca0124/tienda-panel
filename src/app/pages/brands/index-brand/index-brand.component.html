@@ -5,251 +5,290 @@
 		<div class="app-main flex-column flex-row-fluid">
 			<div class="d-flex flex-column flex-column-fluid">
 				<div id="kt_app_toolbar" class="app-toolbar py-3 py-lg-6">
-					<div id="kt_app_toolbar_container" class="app-container container-fluid d-flex flex-stack">
-						<div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
-							<h1 class="page-heading d-flex text-gray-700 fs-3 flex justify-content-start my-0 align-items-center text-uppercase ls-1px fw-700">Marcas</h1>
+					<div id="kt_app_toolbar_container" class="app-container container-fluid page-header-layout">
+						<div class="page-header-content">
+							<nav aria-label="Migas de pan">
+								<ol class="page-header-breadcrumb">
+									<li class="page-header-breadcrumb-item page-header-breadcrumb-active" aria-current="page">Marcas</li>
+								</ol>
+							</nav>
 
-							<ul class="breadcrumb breadcrumb-separatorless fs-7 my-0 pt-1">
-								<li class="breadcrumb-item text-primary fw-600">Marcas</li>
-							</ul>
+							<h1 class="page-header-title">Marcas</h1>
 						</div>
-						<div class="d-flex align-items-center gap-2 gap-lg-3">
-							<a [routerLink]="['/products/brands/create']" routerLinkActive="router-link-active" class="btn btn-sm fw-bold btn-primary d-inline-flex align-items-center gap-1">
-								<i class="bi bi-award"></i>
-								Nueva Marca
-							</a>
-						</div>
+
+						<a [routerLink]="['/products/brands/create']" class="btn btn-sm btn-primary page-header-action" aria-label="Crear nueva marca" title="Nueva marca">
+							<ion-icon name="person-add-outline" aria-hidden="true"></ion-icon>
+
+							<span class="page-header-action-text">Nueva marca</span>
+						</a>
 					</div>
 				</div>
-				<div class="app-content flex-column-fluid">
+				<div class="app-content flex-column-fluid mt-5">
 					<div class="app-container container-fluid">
+
+						<div class="list-toolbar">
+							<!-- Buscador -->
+							<div class="list-toolbar-search">
+								<div class="list-toolbar-search-field">
+									<input
+										type="text"
+										class="form-control form-control-sm"
+										placeholder="Buscar marca"
+										name="filter"
+										[(ngModel)]="filter"
+										(keyup.enter)="applyFilters()"
+										[disabled]="isBrandsLoading"
+										maxlength="50"
+									/>
+									<i class="bi bi-search list-toolbar-input-icon" aria-hidden="true"></i>
+								</div>
+								<!-- Buscar -->
+								<button
+									type="button"
+									class="btn btn-sm btn-icon btn-primary"
+									(click)="applyFilters()"
+									[disabled]="isBrandsLoading"
+									aria-label="Buscar marca"
+									title="Buscar marca"
+								>
+									<i *ngIf="!isBrandsLoading" class="bi bi-search"></i>
+									<span *ngIf="isBrandsLoading" class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+								</button>
+								<!-- Restablecer -->
+								<button
+									type="button"
+									class="btn btn-sm btn-icon btn-light-primary"
+									(click)="resetFilters()"
+									[disabled]="isBrandsLoading"
+									aria-label="Restablecer filtros"
+									title="Restablecer filtros"
+								>
+									<i *ngIf="!isBrandsLoading" class="bi bi-arrow-clockwise"></i>
+									<span *ngIf="isBrandsLoading" class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+								</button>
+							</div>
+							<!-- Acciones del lado derecho -->
+							<div class="list-toolbar-actions">
+								<div class="dropdown action-dropdown">
+									<button
+										id="categoryOptionsButton"
+										type="button"
+										class="btn btn-sm btn-dark"
+										data-bs-toggle="dropdown"
+										data-bs-offset="0,10"
+										aria-expanded="false"
+										aria-label="Opciones"
+										title="Opciones"
+										disabled
+									>
+										<ion-icon name="settings-outline" aria-hidden="true"></ion-icon>
+										<span class="app-btn-label">Opciones</span>
+										<ion-icon name="chevron-down-outline" class="app-btn-chevron" aria-hidden="true"></ion-icon>
+									</button>
+									<ul class="dropdown-menu dropdown-menu-end action-dropdown-menu" aria-labelledby="categoryOptionsButton">
+										
+									</ul>
+								</div>
+							</div>
+						</div>
+
+						<div class="list-filter-row my-7">
+							<div class="list-filter-item list-filter-md">
+								<label class="list-filter-label" for="categoryStatus">Estado</label>
+								<ng-select
+									id="categoryStatus"
+									[items]="statusFilters"
+									bindLabel="name"
+									bindValue="value"
+									name="selectedStatus"
+									[(ngModel)]="selectedStatus"
+									placeholder="Seleccionar estado"
+									[clearable]="false"
+									[closeOnSelect]="true"
+									[searchable]="false"
+									[disabled]="isBrandsLoading"
+									appendTo="body"
+									dropdownPanelClass="app-select-panel"
+									class="app-select app-select-sm"
+								>
+									<ng-template ng-option-tmp let-item="item">
+										<div class="app-select-option">
+											<span class="app-select-dot" [ngClass]="'bg-' + item.color"></span>
+											<span class="app-select-option-text">{{ item.name }}</span>
+											<ion-icon name="checkmark-outline" class="app-select-check" aria-hidden="true"></ion-icon>
+										</div>
+									</ng-template>
+									<ng-template ng-label-tmp let-item="item">
+										<div class="app-select-value">
+											<span class="app-select-dot" [ngClass]="'bg-' + item.color"></span>
+											<span class="app-select-value-text">{{ item.name }}</span>
+										</div>
+									</ng-template>
+								</ng-select>
+							</div>
+
+							<div class="list-filter-item list-filter-md">
+								<label class="list-filter-label" for="categorySort">Orden</label>
+								<ng-select
+									id="categorySort"
+									[items]="sortFilters"
+									bindLabel="name"
+									bindValue="value"
+									name="selectedSort"
+									[(ngModel)]="selectedSort"
+									placeholder="Seleccionar orden"
+									[clearable]="false"
+									[closeOnSelect]="true"
+									[searchable]="false"
+									[disabled]="isBrandsLoading"
+									appendTo="body"
+									dropdownPanelClass="app-select-panel"
+									class="app-select app-select-sm"
+								>
+									<ng-template ng-option-tmp let-item="item">
+										<div class="app-select-option">
+											<ion-icon [name]="item.icon" class="app-select-option-icon" aria-hidden="true"></ion-icon>
+											<span class="app-select-option-text">{{ item.name }}</span>
+											<ion-icon name="checkmark-outline" class="app-select-check" aria-hidden="true"></ion-icon>
+										</div>
+									</ng-template>
+									<ng-template ng-label-tmp let-item="item">
+										<div class="app-select-value">
+											<ion-icon [name]="item.icon" class="app-select-value-icon" aria-hidden="true"></ion-icon>
+											<span class="app-select-value-text">{{ item.name }}</span>
+										</div>
+									</ng-template>
+								</ng-select>
+							</div>
+
+							<div class="list-filter-item list-filter-lg">
+								<label class="list-filter-label" for="fieldStatus">Campos</label>
+								<app-menu-countries
+									(applyCountries)="getCountries($event)"
+									[selectedCountries]="selectedCountryCodes"
+									[title]="'Paises'"
+									[placeholder]="'Filtrar por paises'"
+									[sizeClass]="'sm'"
+								></app-menu-countries>
+							</div>
+						</div>
+
 						<div class="row g-3 g-lg-4">
 							<div class="col-12">
-								<div class="d-flex justify-content-between align-items-center flex-nowrap gap-2 mt-5">
-									<div class="d-flex gap-2">
-										<div>
-											<div class="d-flex align-items-center gap-2">
-												<div class="position-relative">
-													<input
-														type="text"
-														class="form-control form-control-sm w-300px pe-10"
-														placeholder="Buscar marca"
-														name="filter"
-														[(ngModel)]="filter"
-														(keyup.enter)="redirect()"
-													/>
-
-													<i class="bi bi-search position-absolute cursor-pointer" style="right: 15px; top: 50%; transform: translateY(-50%)" (click)="redirect()"></i>
-												</div>
-												<button
-													type="button"
-													class="btn btn-sm btn-icon btn-light-primary d-flex align-items-center justify-content-center"
-													(click)="resetFilters()"
-													[disabled]="loading"
-												>
-													<span *ngIf="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-													<i *ngIf="!loading" class="bi bi-arrow-clockwise fs-5"></i>
-												</button>
-											</div>
-										</div>
-									</div>
-									<div class="dropdown">
-										<button
-											disabled
-											class="btn btn-dark btn-sm d-flex align-items-center gap-2 my-1"
-											type="button"
-											id="dropdownMenuButton"
-											data-bs-toggle="dropdown"
-											aria-expanded="false"
-										>
-											<ion-icon name="settings-outline" class="fs-5"></ion-icon>
-											<span>Opciones</span>
-											<ion-icon name="chevron-down-outline" class="fs-6"></ion-icon>
-										</button>
-										<ul class="dropdown-menu menu-state-bg-light-primary" aria-labelledby="dropdownMenuButton"></ul>
-									</div>
-								</div>
-
-								<div class="my-7">
-									<div class="filters-container">
-										<div class="filter-item">
-											<div class="d-flex flex-column mb-1 gap-1">
-												<div class="d-flex align-items-center">
-													<span class="text-gray-700 ls-1px" style="font-size: 0.7rem">ESTADO</span>
-												</div>
-												<ng-select
-													[items]="statusTable"
-													bindLabel="name"
-													bindValue="value"
-													name="status"
-													[(ngModel)]="status"
-													placeholder="Estado"
-													[clearable]="false"
-													[closeOnSelect]="true"
-													class="select-label-sm mb-1"
-													appendTo="body"
-													[searchable]="false"
-												>
-													<!-- Opción en el dropdown -->
-													<ng-template ng-option-tmp let-item="item">
-														<div class="d-flex align-items-center gap-2">
-															<span class="bullet bullet-dot h-8px w-8px" [ngClass]="'bg-' + item.color"></span>
-															<span>{{ item.name }}</span>
-														</div>
-													</ng-template>
-
-													<!-- Opción seleccionada en el input -->
-													<ng-template ng-label-tmp let-item="item">
-														<div class="d-flex align-items-center gap-2">
-															<span class="bullet bullet-dot h-8px w-8px" [ngClass]="'bg-' + item.color"></span>
-															<span>{{ item.name }}</span>
-														</div>
-													</ng-template>
-												</ng-select>
-											</div>
-										</div>
-										<div class="filter-item">
-											<div class="d-flex flex-column mb-1 gap-1">
-												<div class="d-flex align-items-center">
-													<span class="text-gray-700 ls-1px" style="font-size: 0.7rem">ORDEN</span>
-												</div>
-												<ng-select
-													[items]="sortColumns"
-													bindLabel="name"
-													bindValue="value"
-													name="sort"
-													[(ngModel)]="sort"
-													placeholder="Orden"
-													[clearable]="false"
-													[closeOnSelect]="true"
-													class="select-label-sm mb-1"
-													appendTo="body"
-													[searchable]="false"
-												>
-													<!-- Opción en el dropdown -->
-													<ng-template ng-option-tmp let-item="item">
-														<div class="d-flex align-items-center gap-2">
-															<ion-icon [name]="item.icon"></ion-icon>
-															<span>{{ item.name }}</span>
-														</div>
-													</ng-template>
-
-													<!-- Opción seleccionada en el input -->
-													<ng-template ng-label-tmp let-item="item">
-														<div class="d-flex align-items-center gap-2">
-															<ion-icon [name]="item.icon"></ion-icon>
-															<span>{{ item.name }}</span>
-														</div>
-													</ng-template>
-												</ng-select>
-											</div>
-										</div>
-										<div class="filter-item">
-											<div class="d-flex flex-column mb-1 gap-1">
-												<div class="d-flex align-items-center">
-													<span class="text-gray-700 ls-1px" style="font-size: 0.7rem">PAÍS</span>
-												</div>
-												<app-menu-select-countries
-													(applyCountries)="getCountries($event)"
-													[selectedCountries]="countries"
-													[title]="'Paises'"
-													[placeholder]="'Filtrar por paises'"
-													[sizeClass]="'sm'"
-												></app-menu-select-countries>
-											</div>
-										</div>
-										<div class="filter-item"></div>
-									</div>
-									<button class="btn btn-xs bg-light-primary my-3 d-inline-flex align-items-center gap-2" (click)="redirect()" [disabled]="loading">
-										<ng-container *ngIf="!loading; else loadingTpl">
-											<ion-icon name="search-outline" class="fs-6 text-primary"></ion-icon>
-											<span class="text-primary">Buscar</span>
-										</ng-container>
-
-										<ng-template #loadingTpl>
-											<span class="spinner-border spinner-border-sm text-primary" aria-hidden="true"></span>
-											<span class="text-primary">Buscando...</span>
-										</ng-template>
-									</button>
-								</div>
-
 								<div class="table-wrapper mb-7">
 									<table class="table custom-table align-middle mb-0">
 										<thead>
 											<tr>
+												<!-- Acciones múltiples -->
 												<th class="fixed-xs text-center p-0" style="position: unset !important">
 													<div class="dropdown">
 														<button
-															class="btn btn-icon btn-dark h-25px w-25px"
+															id="brandsTableOptions"
 															type="button"
-															placement="top"
-															tooltipClass="tooltip-dark"
-															container="body"
-															[disabled]="!hasSelectedBrands()"
-															id="dropdownTable"
+															class="btn btn-icon btn-dark h-25px w-25px"
 															data-bs-toggle="dropdown"
 															aria-expanded="false"
+															aria-label="Acciones para marcas seleccionadas"
+															title="Acciones"
+															[disabled]="isBrandsLoading"
 														>
-															<ion-icon name="settings-outline" class="fs-5"></ion-icon>
+															<ion-icon name="settings-outline" class="fs-5" aria-hidden="true"></ion-icon>
 														</button>
-														<ul class="dropdown-menu menu-state-bg-light-primary" aria-labelledby="dropdownTable">
-															<li>
-																<a
-																	class="dropdown-item cursor-pointer d-flex align-items-center gap-2 fs-7"
-																	[class.disabled]="selectedIds.size === 0"
-																	[attr.data-bs-toggle]="selectedIds.size > 0 ? 'modal' : null"
-																	[attr.data-bs-target]="selectedIds.size > 0 ? '#modalMultipleActive' : null"
-																	style="text-transform: capitalize !important"
-																>
-																	<ion-icon name="checkmark-circle-outline" class="text-primary"></ion-icon>
-																	Activar
-																</a>
-															</li>
-															<li>
-																<a
-																	class="dropdown-item cursor-pointer d-flex align-items-center gap-2 fs-7"
-																	[class.disabled]="selectedIds.size === 0"
-																	[attr.data-bs-toggle]="selectedIds.size > 0 ? 'modal' : null"
-																	[attr.data-bs-target]="selectedIds.size > 0 ? '#modalMultipleDisabled' : null"
-																	style="text-transform: capitalize !important"
-																>
-																	<ion-icon name="close-circle-outline" class="text-danger"></ion-icon>
-																	Desactivar
-																</a>
-															</li>
-														</ul>
+
+														<div class="dropdown-menu dropdown-menu-end action-dropdown-menu action-dropdown-menu-compact" aria-labelledby="brandsTableOptions">
+															<a
+																class="dropdown-item action-dropdown-item action-dropdown-item-compact"
+																[class.disabled]="selectedBrandsIds.size === 0"
+																[attr.data-bs-toggle]="selectedBrandsIds.size > 0 ? 'modal' : null"
+																[attr.data-bs-target]="selectedBrandsIds.size > 0 ? '#modalMultipleActive' : null"
+																style="text-transform: capitalize !important"
+															>
+																<span class="action-dropdown-item-icon">
+																	<ion-icon class="fs-4 text-primary" name="checkmark-circle-outline" aria-hidden="true"></ion-icon>
+																</span>
+																<span class="action-dropdown-item-title text-primary">Activar</span>
+															</a>
+															<a
+																class="dropdown-item action-dropdown-item action-dropdown-item-compact"
+																[class.disabled]="selectedBrandsIds.size === 0"
+																[attr.data-bs-toggle]="selectedBrandsIds.size > 0 ? 'modal' : null"
+																[attr.data-bs-target]="selectedBrandsIds.size > 0 ? '#modalMultipleDisabled' : null"
+																style="text-transform: capitalize !important"
+															>
+																<span class="action-dropdown-item-icon">
+																	<ion-icon class="fs-4 text-danger" name="close-circle-outline" aria-hidden="true"></ion-icon>
+																</span>
+																<span class="action-dropdown-item-title text-danger">Desactivar</span>
+															</a>
+															<button
+																type="button"
+																class="dropdown-item action-dropdown-item action-dropdown-item-compact"
+																[disabled]="areAllBrandsSelected"
+																(click)="selectAllBrands()"
+															>
+																<span class="action-dropdown-item-icon">
+																	<ion-icon class="fs-4" name="checkbox-outline" aria-hidden="true"></ion-icon>
+																</span>
+
+																<span class="action-dropdown-item-title">Seleccionar todos</span>
+															</button>
+															<button
+																type="button"
+																class="dropdown-item action-dropdown-item action-dropdown-item-compact"
+																[disabled]="selectedBrandsIds.size === 0"
+																(click)="clearBrandsSelection()"
+															>
+																<span class="action-dropdown-item-icon">
+																	<ion-icon class="fs-4" name="square-outline" aria-hidden="true"></ion-icon>
+																</span>
+
+																<span class="action-dropdown-item-title">Quitar selección</span>
+															</button>
+														</div>
 													</div>
 												</th>
+
 												<th class="flex-column">Marca</th>
-												<th class="fixed-md">Sitio Oficial</th>
+
 												<th class="fixed-md">Productos</th>
-												<th class="fixed-md">Estado</th>
-												<th class="fixed-xs text-center text-center"></th>
+
+												<th class="fixed-sm">Estado</th>
+
+												<th class="fixed-xs text-center"></th>
 											</tr>
 										</thead>
+
 										<tbody>
-											@if (loading) {
-												<tr *ngFor="let item of [1, 2, 3, 4, 5, 6]">
+											<!-- Skeleton -->
+											@if (isBrandsLoading) {
+												<tr *ngFor="let item of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]">
 													<td class="fixed-xs text-center p-0">
 														<div class="skeleton skeleton-check"></div>
 													</td>
-													<td class="flex-column fw-medium">
-														<div class="d-flex align-items-center">
-															<div class="skeleton me-4" style="width: 30px !important; height: 30px"></div>
 
-															<div class="d-flex flex-column gap-2" style="width: 100%; max-width: 250px">
-																<div class="skeleton skeleton-text" style="width: 60%"></div>
-																<div class="skeleton skeleton-text" style="width: 40%"></div>
+													<td class="flex-column" style="border-left: 5px solid transparent">
+														<div class="d-flex align-items-center">
+															<div class="skeleton skeleton-square-sm me-3"></div>
+
+															<div class="skeleton-lines d-flex flex-column gap-2">
+																<div class="skeleton skeleton-text skeleton-w-60"></div>
+
+																<div class="skeleton skeleton-text skeleton-w-40"></div>
 															</div>
 														</div>
 													</td>
+
 													<td class="fixed-md">
-														<div class="skeleton skeleton-text" style="width: 60%"></div>
+														<div class="d-flex align-items-center gap-1">
+															<div class="skeleton skeleton-square-sm"></div>
+
+															<div class="skeleton skeleton-square-sm"></div>
+
+															<div class="skeleton skeleton-square-sm"></div>
+														</div>
 													</td>
-													<td class="fixed-md">
-														<div class="skeleton skeleton-badge" style="height: 26.07px !important; width: 150px"></div>
-													</td>
-													<td class="fixed-md">
+
+													<td class="fixed-sm">
 														<div class="skeleton skeleton-badge"></div>
 													</td>
 
@@ -257,120 +296,196 @@
 														<div class="skeleton skeleton-btn"></div>
 													</td>
 												</tr>
-											} @else if (errorMsmServerListBrands) {
+											}
+
+											<!-- Error -->
+											@else if (brandsLoadError) {
 												<tr>
 													<td colspan="5">
-														<app-not-found [error]="errorMsmServerListBrands"></app-not-found>
+														<app-not-found [error]="brandsLoadError"></app-not-found>
 													</td>
 												</tr>
-											} @else if (brands.length >= 1) {
+											}
+
+											<!-- Registros -->
+											@else if (brands.length >= 1) {
 												<tr *ngFor="let item of brands">
+													<!-- Selección -->
 													<td class="fixed-xs text-center p-0">
 														<label class="form-check form-check-customs form-check-sm m-0 d-flex align-items-center justify-content-center h-100">
-															<input class="form-check-input cursor-pointer" type="checkbox" [checked]="selectedIds.has(item.id!)" (change)="toggleItem(item.id!, $event)" />
+															<input
+																class="form-check-input cursor-pointer"
+																type="checkbox"
+																[checked]="selectedBrandsIds.has(item.id!)"
+																(change)="onBrandsSelectionChange(item.id!, $any($event.target).checked)"
+															/>
 														</label>
 													</td>
-													<td class="flex-column fw-medium">
+
+													<!-- Categoría -->
+													<td class="flex-column" >
 														<div class="d-flex align-items-center gap-2" style="min-width: 0">
 															<div class="symbol me-3" style="height: 30px; width: 30px; border: 1px dashed #e3e3e3; flex-shrink: 0">
 																<img [src]="item.logoUrl" class="h-100 w-100" fallbackImage />
 															</div>
-															<div class="d-flex flex-column" style="min-width: 0">
-																<a class="text-gray-700 fs-8 fw-500 text-truncate-1">
-																	{{ item.name }}
-																</a>
 
-																<small class="text-primary fw-400 text-truncate-1 fs-8">#{{ item.prefix }}-{{ item.code! | padCode: 6 }}</small>
+															<div class="d-flex flex-column" style="min-width: 0">
+																<p class="paragraph paragraph-sm text-gray-700 fw-600 lh-tight text-truncate-1 m-0">
+																	{{ item.name }}
+																</p>
+
+																<p class="paragraph paragraph-sm text-gray-400 fs-12 fw-400 lh-tight text-truncate-1 m-0">#{{ item.prefix }}-{{ item.code! | padCode: 6 }}</p>
 															</div>
 														</div>
 													</td>
-													<td class="fixed-md position-relative">
-														<small class="text-gray-700">
-															{{ item.websiteUrl }}
-														</small>
-														<a class="position-absolute pt-1 px-2 bg-white cursor-pointer" [href]="item.websiteUrl" target="_blank" style="right: 7px; bottom: 22%">
-															<ion-icon name="open-outline"></ion-icon>
-														</a>
-													</td>
+
+													<!-- Productos -->
 													<td class="fixed-md">
-														<ng-container *ngIf="item.productsPreview!.length >= 1">
-															<a class="symbol-group symbol-hover flex-nowrap" [routerLink]="['/products/brands/' + item?.id + '/products']">
-																<div
+														@if (item.latestProducts!.length >= 1) {
+															<a
+																class="symbol-group symbol-hover flex-nowrap"
+																[routerLink]="['/products/categories/' + item.id + '/products']"
+																[attr.aria-label]="'Ver productos de ' + item.name"
+															>
+																<span
+																	style="border: 1px dashed #c4cbd3"
 																	class="symbol symbol-25px symbol-circle"
-																	*ngFor="let prev of item.productsPreview"
-																	style="border: 1px dashed #ccc"
+																	*ngFor="let product of item.latestProducts"
 																	placement="top"
-																	[ngbTooltip]="prev.name"
+																	[ngbTooltip]="product.name"
 																	tooltipClass="tooltip-dark"
 																>
-																	<img alt="Pic" [src]="prev.cover" fallbackImage />
-																</div>
-																<a class="symbol symbol-25px symbol-circle" *ngIf="item.moreProducts! >= 1">
-																	<span class="symbol-label bg-dark text-gray-300 fs-8 fw-bold">+{{ item.moreProducts! }}</span>
-																</a>
+																	<img [src]="product.cover" [alt]="product.name" fallbackImage />
+																</span>
+
+																<span class="symbol symbol-25px symbol-circle" *ngIf="item.moreProducts! >= 1">
+																	<span class="symbol-label bg-dark text-gray-300 fs-12 fw-700">+{{ item.moreProducts }}</span>
+																</span>
 															</a>
-														</ng-container>
-														<ng-container *ngIf="item.productsPreview!.length == 0">
+														} @else {
 															<a
-																class="btn btn-xs bg-light text-primary cursor-pointer d-flex align-items-center gap-2 fw-600 text-truncate-1 bg-light-primary fs-8"
-																[routerLink]="['/products/brands/' + item?.id + '/products']"
-																style="border-radius: 3rem !important"
+																class="btn btn-xs btn-light-primary"
+																[routerLink]="['/products/categories/' + item.id + '/products']"
+																[attr.aria-label]="'Ver productos de ' + item.name"
 															>
-																<ion-icon name="open-outline"></ion-icon>
-																<small class="text-uppercase">Productos</small>
+																<ion-icon name="cube-outline" aria-hidden="true"></ion-icon>
+
+																<span>Ver productos</span>
 															</a>
-														</ng-container>
+														}
 													</td>
-													<td class="fixed-md">
-														<span class="badge rounded-pill text-gray-700" [ngClass]="{ 'bg-outline-danger': !item.status, 'bg-outline-success': item.status }">
+
+													<!-- Estado -->
+													<td class="fixed-sm">
+														<span
+															class="badge rounded-pill fw-700"
+															[ngClass]="{
+																'bg-outline-danger': !item.status,
+																'bg-outline-primary': item.status,
+																'text-danger': !item.status,
+																'text-primary': item.status,
+															}"
+														>
 															<span
 																class="d-inline-block rounded-circle me-1"
 																style="width: 6px; height: 6px"
-																[ngClass]="{ 'bg-danger': !item.status, 'bg-success': item.status }"
+																[ngClass]="{
+																	'bg-danger': !item.status,
+																	'bg-primary': item.status,
+																}"
 															></span>
+
 															{{ item.status ? 'Activo' : 'Inactivo' }}
 														</span>
 													</td>
+
+													<!-- Acciones -->
 													<td class="fixed-xs text-center p-0">
 														<div class="dropdown">
-															<button class="icon-btn btn-action dropdown-toggle d-flex align-items-center justify-content-center mx-auto" data-bs-toggle="dropdown">
-																<i class="bi bi-three-dots"></i>
+															<button
+																type="button"
+																class="icon-btn btn-action dropdown-toggle dropdown-toggle-no-arrow d-flex align-items-center justify-content-center mx-auto"
+																data-bs-toggle="dropdown"
+																data-bs-offset="0,7"
+																aria-expanded="false"
+																[attr.aria-label]="'Opciones de la categoría ' + item.name"
+																title="Opciones"
+															>
+																<i class="bi bi-three-dots" aria-hidden="true"></i>
 															</button>
+
 															<app-modal-delete
 																[id]="'modalDelete-' + item.id"
-																[title]="item.status ? 'Desactivar marca' : 'Activar marca'"
+																[title]="item.status ? 'Desactivar categoría' : 'Activar categoría'"
 																[description]="
 																	item.status
-																		? `La marca <b>${item.name}</b> dejará de estar disponible y se ocultará temporalmente del sistema.`
-																		: `La marca <b>${item.name}</b> volverá a estar disponible y visible dentro del sistema.`
+																		? `La categoría <b>${item.name}</b> dejará de estar disponible y se ocultará temporalmente del sistema.`
+																		: `La categoría <b>${item.name}</b> volverá a estar disponible y visible dentro del sistema.`
 																"
 																[textButton]="item.status ? 'Desactivar' : 'Activar'"
-																(actionConfirmed)="setStatus(item.id!, item.status!)"
-																[loadBtnDelete]="loadBtnDelete"
+																(actionConfirmed)="onUpdateStatus(item.id!, item.status!)"
+																[loadBtnDelete]="isUpdatingSingleStatus"
 															></app-modal-delete>
-															<div class="dropdown-menu menu-state-bg-light-primary" data-bs-display="static">
-																<a class="dropdown-item d-flex align-items-center gap-2 cursor-pointer" [routerLink]="['/products/brands/' + item?.id + '/edit']">
-																	<ion-icon name="create-outline"></ion-icon>
-																	Editar
+
+															<div class="dropdown-menu dropdown-menu-end action-dropdown-menu action-dropdown-menu-compact">
+																<!-- Editar -->
+																<a class="dropdown-item action-dropdown-item action-dropdown-item-compact" [routerLink]="['/products/categories/' + item.id + '/edit']">
+																	<span class="action-dropdown-item-icon">
+																		<ion-icon name="create-outline" class="fs-4" aria-hidden="true"></ion-icon>
+																	</span>
+
+																	<span class="action-dropdown-item-title">Editar</span>
 																</a>
 
-																<a class="dropdown-item d-flex align-items-center gap-2 cursor-pointer" data-bs-toggle="modal" [attr.data-bs-target]="'#modalDelete-' + item?.id">
-																	<ion-icon [name]="item?.status ? 'close-circle-outline' : 'checkmark-circle-outline'"></ion-icon>
-																	{{ item?.status ? 'Desactivar' : 'Activar' }}
+																<!-- Productos -->
+																<a class="dropdown-item action-dropdown-item action-dropdown-item-compact" [routerLink]="['/products/categories/' + item.id + '/products']">
+																	<span class="action-dropdown-item-icon">
+																		<ion-icon name="cube-outline" class="fs-4" aria-hidden="true"></ion-icon>
+																	</span>
+
+																	<span class="action-dropdown-item-title">Ver productos</span>
 																</a>
 
-																<a class="dropdown-item d-flex align-items-center gap-2 cursor-pointer" [routerLink]="['/products/brands/' + item?.id + '/products']">
-																	<ion-icon name="cube-outline"></ion-icon>
-																	Ver productos
+																<div class="action-dropdown-divider"></div>
+
+																<!-- Activar o desactivar -->
+																<a
+																	class="dropdown-item action-dropdown-item action-dropdown-item-compact cursor-pointer"
+																	[class.action-dropdown-item-danger]="item.status"
+																	[class.text-primary]="!item.status"
+																	data-bs-toggle="modal"
+																	[attr.data-bs-target]="'#modalDelete-' + item.id"
+																>
+																	<span class="action-dropdown-item-icon">
+																		<ion-icon
+																			class="fs-4"
+																			[class.action-dropdown-item-danger]="item.status"
+																			[class.text-primary]="!item.status"
+																			[name]="item.status ? 'close-circle-outline' : 'checkmark-circle-outline'"
+																			aria-hidden="true"
+																		></ion-icon>
+																	</span>
+
+																	<span class="action-dropdown-item-title">
+																		{{ item.status ? 'Desactivar' : 'Activar' }}
+																	</span>
 																</a>
 															</div>
 														</div>
 													</td>
 												</tr>
-											} @else {
+											}
+
+											<!-- Sin resultados -->
+											@else {
 												<tr>
 													<td colspan="5">
-														<app-not-found [error]="{ message: 'No se encontraron registros.', statusCode: 404 }"></app-not-found>
+														<app-not-found
+															[error]="{
+																message: 'No se encontraron registros.',
+																statusCode: 404,
+															}"
+														></app-not-found>
 													</td>
 												</tr>
 											}
@@ -378,16 +493,27 @@
 									</table>
 								</div>
 
-								<div class="d-flex justify-content-between" *ngIf="brands.length >= 1">
-									<div class="d-flex align-items-center gap-2 text-gray-600 fs-8 text-uppercase ls-1px">
-										Ver
-										<select class="form-select form-select-sm w-auto" name="limit" [(ngModel)]="limit" (change)="setLimit()">
-											<option value="10">10</option>
-											<option value="20">20</option>
-											<option value="25">25</option>
+								<!-- Paginación -->
+								<div class="d-flex justify-content-between pb-10">
+									<label class="page-size-control">
+										<span>Mostrar</span>
+
+										<select
+											class="form-select page-size-select"
+											name="limit"
+											[(ngModel)]="limit"
+											(change)="onLimitChange()"
+											[disabled]="isBrandsLoading"
+											aria-label="Cantidad de categorías por página"
+										>
+											<option [ngValue]="10">10</option>
+											<option [ngValue]="20">20</option>
+											<option [ngValue]="25">25</option>
 										</select>
-										Por pagina
-									</div>
+
+										<span>por página</span>
+									</label>
+
 									<div class="d-flex align-items-center gap-3">
 										<app-pagination [currentPage]="currentPage" [totalPages]="totalPages" (pageChanged)="onPageChange($event)"></app-pagination>
 									</div>
@@ -407,7 +533,7 @@
 	[description]="'El estado de las marcas serán actualizadas. Verifica tu selección antes de continuar, ya que este cambio se aplicará a todos.'"
 	[textButton]="'Activar'"
 	(actionConfirmed)="onUpdateStatusMultiple(true)"
-	[loadBtnDelete]="loadBtnMultipleStatus"
+	[loadBtnDelete]="isUpdatingMultipleStatuses"
 ></app-modal-delete>
 
 <app-modal-delete
@@ -416,5 +542,5 @@
 	[description]="'El estado de las marcas serán actualizadas. Verifica tu selección antes de continuar, ya que este cambio se aplicará a todos.'"
 	[textButton]="'Desactivar'"
 	(actionConfirmed)="onUpdateStatusMultiple(false)"
-	[loadBtnDelete]="loadBtnMultipleStatus"
+	[loadBtnDelete]="isUpdatingSingleStatus"
 ></app-modal-delete>

@@ -1,8 +1,8 @@
-export interface GetCategoriesQPI {
+export interface GetBrandsQPI {
 	filter: string;
 	page: number;
 	limit: number;
 	status: string;
 	sort: string;
-	configurations: string;
+	countries: string;
 }

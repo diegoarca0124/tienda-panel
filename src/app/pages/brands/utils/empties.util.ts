@@ -1,4 +1,5 @@
-import { BrandInterface } from '../interfaces/brand.interface';
+import { BrandInterface } from "../interfaces/data.interface";
+
 
 export function createEmptyBrand(): BrandInterface {
 	return {

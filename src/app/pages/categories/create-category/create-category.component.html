@@ -412,7 +412,7 @@
 
 							<footer class="form-card-footer">
 								<div class="d-flex flex-column-reverse flex-sm-row align-items-stretch align-items-sm-center justify-content-end gap-2">
-									<button type="button" class="btn btn-primary btn-sm px-5" [disabled]="isCreateCategoryLoading" (click)="!isCreateCategoryLoading && create()">
+									<button type="button" class="btn btn-primary btn-sm px-5" [disabled]="isCreateCategoryLoading" (click)="!isCreateCategoryLoading && createCategory()">
 										<span *ngIf="isCreateCategoryLoading" class="spinner-border spinner-border-sm" aria-hidden="true"></span>
 
 										<i *ngIf="!isCreateCategoryLoading" class="bi bi-folder-plus" aria-hidden="true"></i>
