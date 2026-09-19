@@ -524,7 +524,12 @@
 									</label>
 
 									<div class="d-flex align-items-center gap-3">
-										<app-pagination [currentPage]="currentPage" [totalPages]="totalPages" (pageChanged)="onPageChange($event)"></app-pagination>
+										<app-pagination 
+										[currentPage]="currentPage" 
+										[totalPages]="totalPages" 
+										[isLoading]="isCategoriesLoading"
+										(pageChanged)="onPageChange($event)"
+										></app-pagination>
 									</div>
 								</div>
 							</div>

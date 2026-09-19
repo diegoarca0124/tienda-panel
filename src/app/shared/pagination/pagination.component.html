@@ -1,4 +1,4 @@
-<nav class="pagination-container" aria-label="Navegación de páginas">
+<nav class="pagination-container" aria-label="Navegación de páginas" [attr.aria-busy]="isLoading">
 	<ul class="pagination-list">
 		<!-- Primera página -->
 		<li class="pagination-item navigation-edge">
@@ -6,7 +6,7 @@
 				type="button"
 				class="pagination-control edge-control"
 				(click)="changePage(1)"
-				[disabled]="currentPage === 1"
+				[disabled]="isLoading || currentPage === 1"
 				aria-label="Ir a la primera página"
 				title="Primera página"
 			>
@@ -25,7 +25,7 @@
 				type="button"
 				class="pagination-control arrow-control"
 				(click)="changePage(currentPage - 1)"
-				[disabled]="currentPage === 1"
+				[disabled]="isLoading || currentPage === 1"
 				aria-label="Ir a la página anterior"
 				title="Página anterior"
 			>
@@ -44,6 +44,7 @@
 					class="pagination-control page-number"
 					[class.page-number-active]="page === currentPage"
 					(click)="changePageIfNumber(page)"
+					[disabled]="isLoading"
 					[attr.aria-current]="page === currentPage ? 'page' : null"
 					[attr.aria-label]="'Ir a la página ' + page"
 				>
@@ -62,7 +63,7 @@
 				type="button"
 				class="pagination-control arrow-control"
 				(click)="changePage(currentPage + 1)"
-				[disabled]="currentPage === totalPages"
+				[disabled]="isLoading || currentPage === totalPages"
 				aria-label="Ir a la página siguiente"
 				title="Página siguiente"
 			>
@@ -78,7 +79,7 @@
 				type="button"
 				class="pagination-control edge-control"
 				(click)="changePage(totalPages)"
-				[disabled]="currentPage === totalPages"
+				[disabled]="isLoading || currentPage === totalPages"
 				aria-label="Ir a la última página"
 				title="Última página"
 			>

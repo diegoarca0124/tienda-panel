@@ -14,11 +14,12 @@ type PaginationItem = number | '...';
 export class PaginationComponent {
 	@Input() currentPage = 1;
 	@Input() totalPages = 1;
+	@Input() isLoading = false;
 
 	@Output() pageChanged = new EventEmitter<number>();
 
 	changePage(page: number): void {
-		if (page < 1 || page > this.totalPages || page === this.currentPage) {
+		if (this.isLoading || page < 1 || page > this.totalPages || page === this.currentPage) {
 			return;
 		}
 

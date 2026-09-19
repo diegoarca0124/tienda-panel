@@ -162,7 +162,7 @@
 							</div>
 
 							<div class="list-filter-item list-filter-lg">
-								<label class="list-filter-label" for="fieldStatus">Campos</label>
+								<label class="list-filter-label" for="fieldStatus">Paises</label>
 								<app-menu-countries
 									(applyCountries)="getCountries($event)"
 									[selectedCountries]="selectedCountryCodes"
@@ -250,6 +250,8 @@
 
 												<th class="flex-column">Marca</th>
 
+												<th class="fixed-lg">Sitio web</th>
+
 												<th class="fixed-md">Productos</th>
 
 												<th class="fixed-sm">Estado</th>
@@ -278,6 +280,10 @@
 														</div>
 													</td>
 
+													<td class="fixed-lg">
+														<div class="skeleton skeleton-text skeleton-w-100" style="height:24.02px;"></div>
+													</td>
+
 													<td class="fixed-md">
 														<div class="d-flex align-items-center gap-1">
 															<div class="skeleton skeleton-square-sm"></div>
@@ -301,7 +307,7 @@
 											<!-- Error -->
 											@else if (brandsLoadError) {
 												<tr>
-													<td colspan="5">
+													<td colspan="6">
 														<app-not-found [error]="brandsLoadError"></app-not-found>
 													</td>
 												</tr>
@@ -337,6 +343,31 @@
 																<p class="paragraph paragraph-sm text-gray-400 fs-12 fw-400 lh-tight text-truncate-1 m-0">#{{ item.prefix }}-{{ item.code! | padCode: 6 }}</p>
 															</div>
 														</div>
+													</td>
+
+													<!-- Sitio web -->
+													<td class="fixed-lg">
+														@if (item.websiteUrl) {
+															<a
+																class="brand-website-link"
+																[href]="item.websiteUrl"
+																target="_blank"
+																rel="noopener noreferrer"
+																[ngbTooltip]="item.websiteUrl"
+																tooltipClass="tooltip-dark"
+																[attr.aria-label]="'Abrir sitio web de ' + item.name + ' en una nueva ventana'"
+															>
+																<div class="d-flex align-items-center gap-1 text-truncate" style="max-width: 100%">
+																	<span class="brand-website-icon">
+																		<ion-icon name="globe-outline" aria-hidden="true"></ion-icon>
+																	</span>
+																	<span class="brand-website-url">{{ item.websiteUrl }}</span>
+																</div>
+																<ion-icon class="brand-website-external" name="open-outline" aria-hidden="true"></ion-icon>
+															</a>
+														} @else {
+															<span class="brand-website-empty">Sin sitio web</span>
+														}
 													</td>
 
 													<!-- Productos -->
@@ -479,7 +510,7 @@
 											<!-- Sin resultados -->
 											@else {
 												<tr>
-													<td colspan="5">
+													<td colspan="6">
 														<app-not-found
 															[error]="{
 																message: 'No se encontraron registros.',
@@ -515,7 +546,12 @@
 									</label>
 
 									<div class="d-flex align-items-center gap-3">
-										<app-pagination [currentPage]="currentPage" [totalPages]="totalPages" (pageChanged)="onPageChange($event)"></app-pagination>
+										<app-pagination
+											[currentPage]="currentPage"
+											[totalPages]="totalPages"
+											[isLoading]="isBrandsLoading"
+											(pageChanged)="onPageChange($event)"
+										></app-pagination>
 									</div>
 								</div>
 							</div>

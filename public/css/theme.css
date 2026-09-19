@@ -333,6 +333,10 @@ body {
 
 /**************************************************/
 
+.tooltip {
+  font-family: var(--app-font-family) !important;
+}
+
 .tooltip-dark .tooltip-inner {
   background: #000000 !important; /* negro suave transparente */
   backdrop-filter: blur(3px) !important;     /* efecto blur (desenfoque) */
