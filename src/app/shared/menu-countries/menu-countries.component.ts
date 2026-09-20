@@ -72,12 +72,7 @@ export class MenuCountriesComponent {
 	onFilterCountries(): void {
 		const search = this.filter.trim().toLowerCase();
 
-		this.displayCountries = this.countries.filter(
-			(country) =>
-				!search ||
-				country.name.toLowerCase().includes(search) ||
-				country.code.toLowerCase().includes(search),
-		);
+		this.displayCountries = this.countries.filter((country) => !search || country.name.toLowerCase().includes(search) || country.code.toLowerCase().includes(search));
 	}
 
 	clearSelection(): void {
@@ -104,9 +99,7 @@ export class MenuCountriesComponent {
 		}
 
 		const element = this.trigger.nativeElement;
-		const dropdown =
-			(window as any).bootstrap.Dropdown.getInstance(element) ??
-			new (window as any).bootstrap.Dropdown(element);
+		const dropdown = (window as any).bootstrap.Dropdown.getInstance(element) ?? new (window as any).bootstrap.Dropdown(element);
 
 		dropdown.hide();
 	}

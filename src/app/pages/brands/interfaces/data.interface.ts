@@ -13,7 +13,7 @@ export interface BrandInterface {
 	productsPreview?: Array<any>;
 	moreProducts?: number;
 
-    totalProducts?: number;
+	totalProducts?: number;
 	latestProducts?: Array<any>;
 
 	createdAt?: Date;

@@ -33,7 +33,6 @@ export const validateBrandsQueryParams = (route: ActivatedRoute, params: Params,
 	}
 
 	// Validar configuraciones
-	
 
 	const sanitizedParams = {
 		filter,

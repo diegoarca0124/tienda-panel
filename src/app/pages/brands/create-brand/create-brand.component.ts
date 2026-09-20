@@ -14,12 +14,14 @@ import { GLOBAL } from '@app/services/GLOBAL';
 import { AlertComponent } from '@app/shared/alert/alert.component';
 import { IMaskModule } from 'angular-imask';
 import { ValidationPopoverComponent } from '@app/shared/validation-popover/validation-popover.component';
-import { showErrorsBrand } from '../constants/show-errors-brand.constant';
 import { buildShowErrors } from '@app/common/utils/build-show.errors.util';
-import { createEmptyBrand } from '../utils/empties.util';
+import { createEmptyBrand, createEmptyFieldErrorsBrand } from '../utils/empties.util';
 import { TextareaAutoresizeDirective } from '@app/common/directives/textarea-autoresize.directive';
 import { HttpErrorResponse } from '@angular/common/http';
 import { BrandInterface } from '../interfaces/data.interface';
+import { BrandFieldErrors, BrandValidationErrors } from '../interfaces/validation.interface';
+import { prefixMask } from '@app/pages/categories/constants/prefix-mask.constant';
+import { CreateBrandRESI } from '../interfaces/response.interface';
 declare const toastr: any;
 
 @Component({
@@ -42,21 +44,17 @@ declare const toastr: any;
 	schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class CreateBrandComponent {
+	private destroy$ = new Subject<void>();
 	public brand: BrandInterface = createEmptyBrand();
 	public croppedImage: string | null = null;
-	public countries = countries;
-	private destroy$ = new Subject<void>();
-	public loadBtn = false;
-	public msmErrorBrand: any = [];
-	public errorsBrand: any = {
+	public countriesValues = countries;
+	public isCreateBrandLoading = false;
+	public validationBrandError: BrandValidationErrors = {
 		logoUrl: [],
 		bannerUrl: [],
 	};
-	public prefixMask = {
-		mask: /^[A-Z]{0,3}$/,
-		prepare: (str: string) => str.toUpperCase(),
-	};
-	public showErrors = showErrorsBrand;
+	public prefixMask = prefixMask;
+	public fieldErrors: BrandFieldErrors = createEmptyFieldErrorsBrand();
 
 	constructor(
 		private brandService: BrandService,
@@ -70,31 +68,26 @@ export class CreateBrandComponent {
 		this.destroy$.complete();
 	}
 
-	setErrorLogo(event: any) {
-		if (event) {
-			this.errorsBrand.logoUrl[0] = event;
-		}
+	setErrorLogo(error: string | null): void {
+		this.validationBrandError.logoUrl = error ? [error] : [];
 	}
 
-	setErrorBanner(event: any) {
-		if (event) {
-			this.errorsBrand.bannerUrl[0] = event;
-		}
+	setErrorBanner(error: string | null): void {
+		this.validationBrandError.bannerUrl = error ? [error] : [];
 	}
 
 	create() {
-		this.loadBtn = true;
-		this.msmErrorBrand = [];
+		this.isCreateBrandLoading = true;
 		this.brandService
 			.createBrand(this.brand)
 			.pipe(
 				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
 				takeUntil(this.destroy$),
-				finalize(() => (this.loadBtn = false))
+				finalize(() => (this.isCreateBrandLoading = false))
 			)
 			.subscribe({
-				next: (next: { data: BrandInterface; message: string }) => {
-					this.errorsBrand = {
+				next: (next: CreateBrandRESI) => {
+					this.validationBrandError = {
 						logoUrl: [],
 						bannerUrl: [],
 					};
@@ -102,7 +95,7 @@ export class CreateBrandComponent {
 					this._router.navigate(['/products/brands']);
 				},
 				error: (err: HttpErrorResponse) => {
-					this.errorsBrand = {
+					this.validationBrandError = {
 						logoUrl: [],
 						bannerUrl: [],
 					};
@@ -110,12 +103,11 @@ export class CreateBrandComponent {
 					toastr.error(error.message || '¡Error desconocido!');
 
 					if (error.validation) {
-						this.errorsBrand = {
-							...this.errorsBrand,
+						this.validationBrandError = {
+							...this.validationBrandError,
 							...error.validation,
 						};
-						this.msmErrorBrand = Object.values(this.errorsBrand).flat();
-						this.showErrors = buildShowErrors(this.showErrors, this.errorsBrand);
+						this.fieldErrors = buildShowErrors(this.fieldErrors, this.validationBrandError);
 					}
 				},
 			});

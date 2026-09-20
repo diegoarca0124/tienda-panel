@@ -14,37 +14,23 @@
 		placement="top"
 		tooltipClass="tooltip-dark"
 	>
-		<span
-			class="text-truncate"
-			[class.placeholder-text]="!selectedItems.length"
-		>
+		<span class="text-truncate" [class.placeholder-text]="!selectedItems.length">
 			{{ selectedItems.length ? getSelectedNames() : placeholder }}
 		</span>
 
 		<span class="d-inline-flex align-items-center gap-2 flex-shrink-0">
 			@if (selectedItems.length) {
-				<span
-					class="badge rounded-pill bg-light-primary text-primary fw-700"
-					aria-label="Países seleccionados"
-				>
+				<span class="badge rounded-pill bg-light-primary text-primary fw-700" aria-label="Países seleccionados">
 					{{ selectedItems.length }}
 				</span>
 			}
 
-			<ion-icon
-				name="chevron-down-outline"
-				class="app-btn-chevron text-gray-500"
-				style="font-size: 1.1rem"
-				aria-hidden="true"
-			></ion-icon>
+			<ion-icon name="chevron-down-outline" class="app-btn-chevron text-gray-500" style="font-size: 1.1rem" aria-hidden="true"></ion-icon>
 		</span>
 	</button>
 
-	<div
-		class="dropdown-menu dropdown-menu-end action-dropdown-menu countries-menu p-0"
-		(click)="$event.stopPropagation()"
-	>
-		<header class="form-card-header countries-header" style="padding: 1rem 1.24rem !important;">
+	<div class="dropdown-menu dropdown-menu-end action-dropdown-menu countries-menu p-0" (click)="$event.stopPropagation()">
+		<header class="form-card-header countries-header" style="padding: 1rem 1.24rem !important">
 			<div class="d-flex align-items-center justify-content-between gap-3">
 				<div>
 					<h3 class="form-card-title fs-15">
@@ -52,38 +38,22 @@
 					</h3>
 				</div>
 
-				<span
-					class="badge rounded-pill bg-light-primary text-primary fw-700 flex-shrink-0"
-				>
-					{{ selectedItems.length }}/{{ countries.length }}
-				</span>
+				<span class="badge rounded-pill bg-light-primary text-primary fw-700 flex-shrink-0">{{ selectedItems.length }}/{{ countries.length }}</span>
 			</div>
 		</header>
 
-		<div
-			class="countries-list"
-			role="group"
-			[attr.aria-label]="title"
-		>
+		<div class="countries-list" role="group" [attr.aria-label]="title">
 			@if (loadingCountries) {
 				@for (item of [1, 2, 3, 4, 5, 6]; track item) {
-					<div
-						class="country-option country-skeleton d-flex align-items-center gap-3"
-					>
+					<div class="country-option country-skeleton d-flex align-items-center gap-3">
 						<span class="skeleton skeleton-check"></span>
 						<span class="skeleton skeleton-text"></span>
 					</div>
 				}
 			} @else {
 				@for (item of displayCountries; track item.code) {
-					<label
-						class="form-check form-check-customs form-check-sm action-dropdown-item country-option m-0"
-					>
-						<input
-							class="form-check-input flex-shrink-0"
-							type="checkbox"
-							[(ngModel)]="item.checked"
-						/>
+					<label class="form-check form-check-customs form-check-sm action-dropdown-item country-option m-0">
+						<input class="form-check-input flex-shrink-0" type="checkbox" [(ngModel)]="item.checked" />
 
 						<span class="country-flag" aria-hidden="true">
 							<img [src]="item.flag" alt="" />
@@ -91,50 +61,27 @@
 
 						<span class="action-dropdown-item-content">
 							<span class="action-dropdown-item-title">
-								<strong>{{ item.code }}</strong> - {{ item.name }}
+								<strong>{{ item.code }}</strong>
+								- {{ item.name }}
 							</span>
 						</span>
 					</label>
 				} @empty {
 					<div class="countries-empty text-center">
-						<ion-icon
-							name="search-outline"
-							class="text-gray-400"
-							aria-hidden="true"
-						></ion-icon>
+						<ion-icon name="search-outline" class="text-gray-400" aria-hidden="true"></ion-icon>
 
-						<p class="fw-600 text-gray-700 mb-1">
-							No se encontraron países
-						</p>
+						<p class="fw-600 text-gray-700 mb-1">No se encontraron países</p>
 
-						<small class="text-gray-500">
-							Prueba con otro nombre o código.
-						</small>
+						<small class="text-gray-500">Prueba con otro nombre o código.</small>
 					</div>
 				}
 			}
 		</div>
 
-		<footer
-			class="form-card-footer d-flex align-items-center justify-content-end gap-2"
-		>
-			<button
-				type="button"
-				class="btn btn-xs btn-light"
-				[disabled]="loadingCountries || !selectedItems.length"
-				(click)="clearSelection()"
-			>
-				Limpiar
-			</button>
+		<footer class="form-card-footer d-flex align-items-center justify-content-end gap-2">
+			<button type="button" class="btn btn-xs btn-light" [disabled]="loadingCountries || !selectedItems.length" (click)="clearSelection()">Limpiar</button>
 
-			<button
-				type="button"
-				class="btn btn-xs btn-primary"
-				[disabled]="loadingCountries"
-				(click)="confirmSelection()"
-			>
-				Aplicar filtros
-			</button>
+			<button type="button" class="btn btn-xs btn-primary" [disabled]="loadingCountries" (click)="confirmSelection()">Aplicar filtros</button>
 		</footer>
 	</div>
 </div>

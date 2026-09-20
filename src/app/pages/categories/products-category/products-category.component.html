@@ -261,11 +261,25 @@
 
 								<div class="d-flex align-items-center gap-2 w-100">
 									<div class="flex-fill min-w-0">
-										<app-input-dialer class="d-block w-100" [value]="minPrice" (valueChange)="onMinPriceChange($event)" placeholder="Mín." [step]="5" [disabled]="isProductsLoading"></app-input-dialer>
+										<app-input-dialer
+											class="d-block w-100"
+											[value]="minPrice"
+											(valueChange)="onMinPriceChange($event)"
+											placeholder="Mín."
+											[step]="5"
+											[disabled]="isProductsLoading"
+										></app-input-dialer>
 									</div>
 
 									<div class="flex-fill min-w-0">
-										<app-input-dialer class="d-block w-100" [value]="maxPrice" (valueChange)="onMaxPriceChange($event)" placeholder="Máx." [step]="5" [disabled]="isProductsLoading"></app-input-dialer>
+										<app-input-dialer
+											class="d-block w-100"
+											[value]="maxPrice"
+											(valueChange)="onMaxPriceChange($event)"
+											placeholder="Máx."
+											[step]="5"
+											[disabled]="isProductsLoading"
+										></app-input-dialer>
 									</div>
 								</div>
 							</div>

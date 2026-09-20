@@ -276,7 +276,6 @@ export class IndexCollaboratorComponent {
 		this.currentPage = 1;
 	}
 
-
 	get hasSelectedCollaborators(): boolean {
 		return this.selectedCollaboratorsIds.size > 0;
 	}

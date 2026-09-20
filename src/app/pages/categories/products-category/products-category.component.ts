@@ -238,50 +238,33 @@ export class ProductsCategoryComponent {
 		this.isCategoriesLoading = true;
 		this.categoriesLoadError = null;
 
-		return this.categoryService
-			.getCategoriesWithSubcategories()
-			.pipe(
-				withMinLoadingTime(
-					GLOBAL.MIN_LOADING_TIME
-				),
+		return this.categoryService.getCategoriesWithSubcategories().pipe(
+			withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
 
-				tap(
-					(
-						response: GetCategoriesWithSubcategoriesRESI
-					) => {
-						this.categories = response.data.map(
-							(category) => ({
-								...category,
-								safeIcon:
-									this.sanitizer.bypassSecurityTrustHtml(
-										category.icon
-									),
-							})
-						);
-					}
-				),
+			tap((response: GetCategoriesWithSubcategoriesRESI) => {
+				this.categories = response.data.map((category) => ({
+					...category,
+					safeIcon: this.sanitizer.bypassSecurityTrustHtml(category.icon),
+				}));
+			}),
 
-				map(() => void 0),
+			map(() => void 0),
 
-				catchError(
-					(error: HttpErrorResponse) => {
-						this.categories = [];
+			catchError((error: HttpErrorResponse) => {
+				this.categories = [];
 
-						this.categoriesLoadError =
-							error.error ?? {
-								message:
-									'No fue posible cargar las categorías.',
-								statusCode: error.status,
-							};
+				this.categoriesLoadError = error.error ?? {
+					message: 'No fue posible cargar las categorías.',
+					statusCode: error.status,
+				};
 
-						return EMPTY;
-					}
-				),
+				return EMPTY;
+			}),
 
-				finalize(() => {
-					this.isCategoriesLoading = false;
-				})
-			);
+			finalize(() => {
+				this.isCategoriesLoading = false;
+			})
+		);
 	}
 
 	syncCurrentPage(currentPage: number): void {

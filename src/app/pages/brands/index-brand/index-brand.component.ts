@@ -47,7 +47,7 @@ type BrandsLoadResult = { data: GetBrandsRESI; error: null } | { data: null; err
 		NgbTooltipModule,
 		FallbackImageDirective,
 		PadCodePipe,
-		MenuCountriesComponent
+		MenuCountriesComponent,
 	],
 	templateUrl: './index-brand.component.html',
 	styleUrl: './index-brand.component.css',
@@ -116,7 +116,6 @@ export class IndexBrandComponent {
 		});
 	}
 
-
 	private listenBrandsQueries(): void {
 		this.brandsQuery$
 			.pipe(
@@ -173,7 +172,6 @@ export class IndexBrandComponent {
 		});
 	}
 
-	
 	private mapBrands(brands: BrandInterface[]): BrandInterface[] {
 		return brands.map((brand) => ({
 			...brand,
@@ -181,10 +179,9 @@ export class IndexBrandComponent {
 			latestProducts: (brand.latestProducts ?? []).map((product) => ({
 				...product,
 				cover: product.cover ? `${environment.s3_public_url}/products/small/${product.cover}` : '',
-			}))
+			})),
 		}));
 	}
-	
 
 	private loadQueryParams(params: Params): void {
 		this.filter = params['filter'] || '';
