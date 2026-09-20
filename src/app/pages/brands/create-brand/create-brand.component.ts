@@ -20,7 +20,7 @@ import { TextareaAutoresizeDirective } from '@app/common/directives/textarea-aut
 import { HttpErrorResponse } from '@angular/common/http';
 import { BrandInterface } from '../interfaces/data.interface';
 import { BrandFieldErrors, BrandValidationErrors } from '../interfaces/validation.interface';
-import { prefixMask } from '@app/pages/categories/constants/prefix-mask.constant';
+import { prefixMask } from '@app/pages/brands/constants/prefix-mask.constant';
 import { CreateBrandRESI } from '../interfaces/response.interface';
 declare const toastr: any;
 
@@ -76,7 +76,7 @@ export class CreateBrandComponent {
 		this.validationBrandError.bannerUrl = error ? [error] : [];
 	}
 
-	create() {
+	createBrand() {
 		this.isCreateBrandLoading = true;
 		this.brandService
 			.createBrand(this.brand)

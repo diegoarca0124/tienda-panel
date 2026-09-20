@@ -276,7 +276,7 @@
 										type="button"
 										class="btn btn-primary btn-sm d-inline-flex align-items-center justify-content-center gap-2 px-5"
 										[disabled]="isCreateBrandLoading"
-										(click)="!isCreateBrandLoading && create()"
+										(click)="!isCreateBrandLoading && createBrand()"
 									>
 										<span *ngIf="isCreateBrandLoading" class="spinner-border spinner-border-sm" aria-hidden="true"></span>
 
@@ -287,6 +287,8 @@
 										</span>
 									</button>
 								</div>
+
+								
 							</footer>
 						</div>
 					</div>

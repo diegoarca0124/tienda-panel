@@ -20,3 +20,13 @@ export interface CreateBrandRESI {
 	data: string;
 	message: string;
 }
+
+export interface GetBrandRESI {
+	data: BrandInterface;
+	message: string;
+}
+
+export interface UpdateBrandRESI {
+	data: BrandInterface;
+	message: string;
+}

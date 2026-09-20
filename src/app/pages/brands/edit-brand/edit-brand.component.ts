@@ -3,7 +3,6 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { countries } from '@app/common/constants/countries.constant';
-import { withMinLoadingTime } from '@app/common/interface/with-min-loading-time.interface';
 import { BrandService } from '@app/services/brand.service';
 import { GLOBAL } from '@app/services/GLOBAL';
 import { AlertComponent } from '@app/shared/alert/alert.component';
@@ -20,8 +19,12 @@ import { TextFieldModule } from '@angular/cdk/text-field';
 import { TextareaAutoresizeDirective } from '@app/common/directives/textarea-autoresize.directive';
 import { HttpErrorResponse } from '@angular/common/http';
 import { BrandInterface } from '../interfaces/data.interface';
-import { createEmptyFieldErrorsBrand } from '../utils/empties.util';
-import { BrandFieldErrors } from '../interfaces/validation.interface';
+import { createEmptyBrand, createEmptyFieldErrorsBrand } from '../utils/empties.util';
+import { BrandFieldErrors, BrandValidationErrors } from '../interfaces/validation.interface';
+import { withMinLoadingTime } from '@app/common/interface/with-min-loading-time.interface';
+import { prefixMask } from '@app/pages/brands/constants/prefix-mask.constant';
+import { buildShowErrors } from '@app/common/utils/build-show.errors.util';
+import { GetBrandRESI, UpdateBrandRESI } from '../interfaces/response.interface';
 declare const toastr: any;
 declare const $: any;
 
@@ -46,34 +49,26 @@ declare const $: any;
 	schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class EditBrandComponent {
-	public brand: BrandInterface = {
-		name: '',
-		prefix: '',
-		description: '',
-		country: null,
-		websiteUrl: '',
-		logoUrl: undefined as File | undefined,
-		bannerUrl: undefined as File | undefined,
-	};
-	public croppedImage: string | null = null;
-	public countries = countries;
 	private destroy$ = new Subject<void>();
-	public msmErrorBrand: any = [];
-	public loadBtn = false;
+	public brand: BrandInterface = createEmptyBrand();
+	public croppedImage: string | null = null;
+	public countriesValues = countries;
+	
+	public isUpdateBrandLoading = false;
+	public isBrandLoading = true;
+
 	public id: string = '';
-	public loading = true;
-	public errorMsmServerGetBrand: string = '';
-	public logoUrlEdit: any = '';
-	public bannerUrlEdit: any = '';
-	public errorsBrand: any = {
+	
+	public brandLoadError: string = '';
+	public validationBrandError: BrandValidationErrors = {
 		logoUrl: [],
 		bannerUrl: [],
 	};
-	public prefixMask = {
-		mask: /^[A-Z]{0,3}$/,
-		prepare: (str: string) => str.toUpperCase(),
-	};
-	public showErrors: BrandFieldErrors = createEmptyFieldErrorsBrand();
+	
+	public logoUrlEdit: string = '';
+	public bannerUrlEdit: string = '';
+	public prefixMask = prefixMask;
+	public fieldErrors: BrandFieldErrors = createEmptyFieldErrorsBrand();
 
 	constructor(
 		private brandService: BrandService,
@@ -89,24 +84,24 @@ export class EditBrandComponent {
 		this._route.params.pipe(takeUntil(this.destroy$)).subscribe({
 			next: (next) => {
 				this.id = next['id'];
-				this.init_data();
+				this.initData();
 			},
 			error: (error) => {},
 		});
 	}
 
-	init_data() {
-		this.loading = true;
-		this.errorMsmServerGetBrand = '';
+	initData() {
+		this.isBrandLoading = true;
+		this.brandLoadError = '';
 		this.brandService
-			.get_brand(this.id)
+			.getBrand(this.id)
 			.pipe(
 				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
 				takeUntil(this.destroy$),
-				finalize(() => (this.loading = false))
+				finalize(() => (this.isBrandLoading = false))
 			)
 			.subscribe({
-				next: (next: { data: BrandInterface; message: string }) => {
+				next: (next: GetBrandRESI) => {
 					this.brand = next.data;
 					this.logoUrlEdit = `${environment.s3_public_url}/brands/small/${this.brand.logoUrl}`;
 					this.bannerUrlEdit = `${environment.s3_public_url}/brands/small/${this.brand.bannerUrl}`;
@@ -115,45 +110,39 @@ export class EditBrandComponent {
 				},
 				error: (err: HttpErrorResponse) => {
 					const error = err.error;
-					this.errorMsmServerGetBrand = error;
+					this.brandLoadError = error;
 				},
 			});
 	}
 
-	update() {
-		this.loadBtn = true;
-		this.msmErrorBrand = [];
-		this.errorsBrand = {
+	updateBrand() {
+		this.isUpdateBrandLoading = true;
+		this.validationBrandError = {
 			logoUrl: [],
 			bannerUrl: [],
 		};
-		console.log(this.brand);
-
 		this.brandService
-			.update_brand(this.id, this.brand)
+			.updateBrand(this.id, this.brand)
 			.pipe(
 				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
 				takeUntil(this.destroy$),
-				finalize(() => (this.loadBtn = false))
+				finalize(() => (this.isUpdateBrandLoading = false))
 			)
 			.subscribe({
-				next: (next: { data: BrandInterface; message: string }) => {
+				next: (next: UpdateBrandRESI) => {
 					this.brand = next.data;
 					this.logoUrlEdit = `${environment.s3_public_url}/brands/small/${next.data.logoUrl}`;
 					this.bannerUrlEdit = `${environment.s3_public_url}/brands/small/${next.data.bannerUrl}`;
 					this.brand.bannerUrl = undefined;
 					this.brand.logoUrl = undefined;
-					this.loadBtn = false;
 					toastr.success(next.message);
-					this.errorsBrand = {
+					this.validationBrandError = {
 						logoUrl: [],
 						bannerUrl: [],
 					};
 				},
 				error: (err: HttpErrorResponse) => {
-					console.log(err);
-
-					this.errorsBrand = {
+					this.validationBrandError = {
 						logoUrl: [],
 						bannerUrl: [],
 					};
@@ -161,14 +150,12 @@ export class EditBrandComponent {
 					toastr.error(error.message || '¡Error desconocido!');
 
 					if (error.validation) {
-						this.errorsBrand = {
-							...this.errorsBrand,
+						this.validationBrandError = {
+							...this.validationBrandError,
 							...error.validation,
 						};
-						this.msmErrorBrand = Object.values(this.errorsBrand).flat();
-						for (const key in this.showErrors) {
-							this.showErrors[key as keyof typeof this.showErrors] = !!this.errorsBrand?.[key]?.length;
-						}
+						this.validationBrandError = error.validation;
+						this.fieldErrors = buildShowErrors(this.fieldErrors, this.validationBrandError);
 					}
 				},
 			});
@@ -176,11 +163,11 @@ export class EditBrandComponent {
 
 	handleValidationError(event: any, type: string) {
 		if (type == 'banner') {
-			this.errorsBrand.bannerUrl = [];
-			if (event) this.errorsBrand.bannerUrl[0] = event;
+			this.validationBrandError.bannerUrl = [];
+			if (event) this.validationBrandError.bannerUrl[0] = event;
 		} else if (type == 'logo') {
-			this.errorsBrand.logoUrl = [];
-			if (event) this.errorsBrand.logoUrl[0] = event;
+			this.validationBrandError.logoUrl = [];
+			if (event) this.validationBrandError.logoUrl[0] = event;
 		}
 	}
 }

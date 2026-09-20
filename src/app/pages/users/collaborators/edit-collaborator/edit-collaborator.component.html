@@ -24,7 +24,7 @@
 					<div class="app-container container-fluid">
 						<div class="form-card mb-6">
 							<div class="form-card-body">
-								<ng-container *ngIf="isCollaboratorLoading">
+								@if(isCollaboratorLoading){
 									<section class="mb-7">
 										<div class="border-bottom pb-3 mb-4">
 											<h2 class="form-card-title">Datos personales</h2>
@@ -139,11 +139,13 @@
 											</div>
 										</div>
 									</section>
-								</ng-container>
+								}
 
-								<app-not-found *ngIf="!isCollaboratorLoading && collaboratorLoadError" [error]="collaboratorLoadError"></app-not-found>
+								@if(!isCollaboratorLoading && collaboratorLoadError){
+									<app-not-found [error]="collaboratorLoadError"></app-not-found>
+								}
 
-								<ng-container *ngIf="!isCollaboratorLoading && !collaboratorLoadError">
+								@if(!isCollaboratorLoading && !collaboratorLoadError){
 									<section class="mb-7">
 										<div class="border-bottom pb-3 mb-4">
 											<h2 class="form-card-title">Datos personales</h2>
@@ -385,7 +387,8 @@
 											</div>
 										</div>
 									</section>
-								</ng-container>
+								}
+								
 							</div>
 
 							<footer class="form-card-footer" *ngIf="!collaboratorLoadError">

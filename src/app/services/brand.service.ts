@@ -5,7 +5,7 @@ import { AuthService } from './auth.service';
 import { environment } from 'environments/environment.dev';
 import { GetBrandsQPI } from '@app/pages/brands/interfaces/query-params.interface';
 import { BrandInterface } from '@app/pages/brands/interfaces/data.interface';
-import { GetBrandsRESI } from '@app/pages/brands/interfaces/response.interface';
+import { CreateBrandRESI, GetBrandRESI, GetBrandsRESI, UpdateBrandRESI } from '@app/pages/brands/interfaces/response.interface';
 
 @Injectable({
 	providedIn: 'root',
@@ -34,7 +34,7 @@ export class BrandService {
 		private authService: AuthService
 	) {}
 
-	createBrand(brand: any): Observable<any> {
+	createBrand(brand: any): Observable<CreateBrandRESI> {
 		let data = new FormData();
 		data.append('name', brand.name || '');
 		data.append('country', JSON.stringify(brand.country));
@@ -43,7 +43,7 @@ export class BrandService {
 		data.append('logoUrl', brand.logoUrl);
 		data.append('prefix', brand.prefix);
 		data.append('bannerUrl', brand.bannerUrl);
-		return this.http.post(`${this.apiUrl}/brand/create_brand`, data, { headers: this.getHeaders(data) });
+		return this.http.post<CreateBrandRESI>(`${this.apiUrl}/brand/createBrand`, data, { headers: this.getHeaders(data) });
 	}
 
 	getBrands(query: GetBrandsQPI): Observable<GetBrandsRESI> {
@@ -58,15 +58,11 @@ export class BrandService {
 		return this.http.get<GetBrandsRESI>(`${this.apiUrl}/brand/getBrands`, { headers: this.getHeaders(), params });
 	}
 
-	update_status_brand(id: string, data: { status: boolean }): Observable<any> {
-		return this.http.put(`${this.apiUrl}/brand/update_status_brand/${id}`, data, { headers: this.getHeaders() });
+	getBrand(id: string): Observable<GetBrandRESI> {
+		return this.http.get<GetBrandRESI>(`${this.apiUrl}/brand/getBrand/${id}`, { headers: this.getHeaders() });
 	}
 
-	get_brand(id: string): Observable<any> {
-		return this.http.get(`${this.apiUrl}/brand/get_brand/${id}`, { headers: this.getHeaders() });
-	}
-
-	update_brand(id: string, brand: BrandInterface): Observable<any> {
+	updateBrand(id: string, brand: BrandInterface): Observable<UpdateBrandRESI> {
 		let data;
 		if (brand.logoUrl || brand.bannerUrl) {
 			data = new FormData();
@@ -81,8 +77,11 @@ export class BrandService {
 		} else {
 			data = brand;
 		}
+		return this.http.put<UpdateBrandRESI>(`${this.apiUrl}/brand/updateBrand/${id}`, data, { headers: this.getHeaders(data) });
+	}
 
-		return this.http.put(`${this.apiUrl}/brand/update_brand/${id}`, data, { headers: this.getHeaders(data) });
+	update_status_brand(id: string, data: { status: boolean }): Observable<any> {
+		return this.http.put(`${this.apiUrl}/brand/update_status_brand/${id}`, data, { headers: this.getHeaders() });
 	}
 
 	get_product_by_brand(id: string, qp: { filter: string; page: number; limit: number; status: string; sort: string; subcategoryIds: string }): Observable<any> {

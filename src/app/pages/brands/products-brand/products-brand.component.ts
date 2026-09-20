@@ -94,7 +94,7 @@ export class ProductsBrandComponent {
 					this.id = params['id'];
 					this.loadBrand = true;
 
-					return this.brandService.get_brand(this.id).pipe(
+					return this.brandService.getBrand(this.id).pipe(
 						withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
 						finalize(() => (this.loadBrand = false)),
 						switchMap((brand) =>
