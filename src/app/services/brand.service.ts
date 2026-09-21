@@ -69,7 +69,9 @@ export class BrandService {
 			data.append('id', brand.id);
 			data.append('name', brand.name);
 			data.append('country', JSON.stringify(brand.country));
-			data.append('description', brand.description);
+			if (brand.description?.trim()) {
+				data.append('description', brand.description);
+			}
 			data.append('prefix', brand.prefix);
 			data.append('websiteUrl', brand.websiteUrl);
 			if (brand.logoUrl) data.append('logoUrl', brand.logoUrl);
