@@ -69,10 +69,12 @@ export class CreateBrandComponent {
 	}
 
 	setErrorLogo(error: string | null): void {
+		console.log(error);
 		this.validationBrandError.logoUrl = error ? [error] : [];
 	}
 
 	setErrorBanner(error: string | null): void {
+		console.log(error);
 		this.validationBrandError.bannerUrl = error ? [error] : [];
 	}
 

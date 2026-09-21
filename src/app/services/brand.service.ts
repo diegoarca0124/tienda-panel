@@ -67,13 +67,11 @@ export class BrandService {
 		if (brand.logoUrl || brand.bannerUrl) {
 			data = new FormData();
 			data.append('id', brand.id);
-			data.append('name', brand.name);
+			data.append('name', brand.name ?? '');
 			data.append('country', JSON.stringify(brand.country));
-			if (brand.description?.trim()) {
-				data.append('description', brand.description);
-			}
+			data.append('description', brand.description ?? '');
 			data.append('prefix', brand.prefix);
-			data.append('websiteUrl', brand.websiteUrl);
+			data.append('websiteUrl', brand.websiteUrl ?? '');
 			if (brand.logoUrl) data.append('logoUrl', brand.logoUrl);
 			if (brand.bannerUrl) data.append('bannerUrl', brand.bannerUrl);
 		} else {

@@ -227,7 +227,7 @@
 
 												<app-upload-image
 													(fileSelected)="brand.logoUrl = $event ? $event : undefined"
-													(validationError)="setErrorLogo($event)"
+													(imageValidationError)="setErrorLogo($event)"
 													[aspectMode]="'square'"
 													[inputId]="'logoUrl'"
 													[hasError]="validationBrandError?.logoUrl?.[0]"
@@ -253,7 +253,7 @@
 
 												<app-upload-image
 													(fileSelected)="brand.bannerUrl = $event ? $event : undefined"
-													(validationError)="setErrorBanner($event)"
+											(imageValidationError)="setErrorBanner($event)"
 													[aspectMode]="'rectangle'"
 													[inputId]="'bannerUrl'"
 													[hasError]="validationBrandError?.bannerUrl?.[0]"

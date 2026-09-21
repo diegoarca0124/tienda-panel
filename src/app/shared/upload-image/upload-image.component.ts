@@ -19,7 +19,7 @@ export class UploadImageComponent {
 	fileName: string | null = null;
 
 	@Output() fileSelected = new EventEmitter<File | null>();
-	@Output() validationError = new EventEmitter<string | null>();
+	@Output() imageValidationError = new EventEmitter<string | null>();
 	@Input() aspectMode: 'square' | 'rectangle' | '2:1' | 'all' = 'square';
 	@Input() inputId: any = `fileInput-${Math.random().toString(36).substring(2, 9)}`;
 	@Input() hasError: any = '';
@@ -66,7 +66,7 @@ export class UploadImageComponent {
 					this.fileName = file.name;
 					this.imagePreview = e.target.result;
 					this.fileSelected.emit(file);
-					this.validationError.emit(null); // limpia error
+					this.imageValidationError.emit(null); // limpia error
 					this.hasError = false;
 					console.log(this.hasError);
 				};
@@ -80,7 +80,7 @@ export class UploadImageComponent {
 		this.imagePreview = null;
 		this.fileName = null;
 		this.fileSelected.emit(null);
-		this.validationError.emit(null);
+		this.imageValidationError.emit(null);
 		this.hasError = false;
 		$('#' + this.inputId).val('');
 	}
@@ -89,8 +89,9 @@ export class UploadImageComponent {
 		toastr.error(message);
 		this.imagePreview = null;
 		this.fileName = null;
-		this.fileSelected.emit(null);
-		this.validationError.emit(message);
 		this.hasError = true;
+
+		this.imageValidationError.emit(message);
+		this.fileSelected.emit(null);
 	}
 }
