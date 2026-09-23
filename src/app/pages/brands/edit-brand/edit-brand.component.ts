@@ -169,5 +169,6 @@ export class EditBrandComponent {
 			this.validationBrandError.logoUrl = [];
 			if (event) this.validationBrandError.logoUrl[0] = event;
 		}
+		this.fieldErrors = buildShowErrors(this.fieldErrors, this.validationBrandError);
 	}
 }

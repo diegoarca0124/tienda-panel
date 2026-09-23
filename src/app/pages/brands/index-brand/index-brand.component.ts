@@ -24,7 +24,7 @@ import { countries } from '@app/common/constants/countries.constant';
 import { HttpErrorResponse } from '@angular/common/http';
 import { GetBrandsQPI } from '../interfaces/query-params.interface';
 import { sortOptions, statusOptions } from '../constants/selectors.constant';
-import { GetBrandsRESI } from '../interfaces/response.interface';
+import { GetBrandsRESI, UpdateBrandsStatusRESI, UpdateBrandStatusRESI } from '../interfaces/response.interface';
 import { BrandInterface } from '../interfaces/data.interface';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MenuCountriesComponent } from '@app/shared/menu-countries/menu-countries.component';
@@ -322,31 +322,31 @@ export class IndexBrandComponent {
 	}
 
 	onUpdateStatus(id: string, status: boolean) {
-		/* this.isUpdatingSingleStatus.set(true);
-		this.categoryService
-			.updateCategoryStatus(id, { status: !status })
+		this.isUpdatingSingleStatus.set(true);
+		this.brandService
+			.updateBrandStatus(id, { status: !status })
 			.pipe(
 				takeUntil(this.destroy$),
 				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
 				finalize(() => this.isUpdatingSingleStatus.set(false))
 			)
 			.subscribe({
-				next: (next: UpdateCategoryStatusRESI) => {
+				next: (next: UpdateBrandStatusRESI) => {
 					toastr.success(next.message);
 					closeModal(`modalDelete-${id}`);
-					this.refreshCategories();
+					this.refreshBrands();
 				},
 				error: (error: HttpErrorResponse) => {
 					toastr.error(error.error?.message || 'No fue posible actualizar el estado.');
 				},
-			}); */
+			});
 	}
 
 	onUpdateStatusMultiple(status: boolean) {
-		/* this.isUpdatingMultipleStatuses.set(true);
+		this.isUpdatingMultipleStatuses.set(true);
 		this.brandService
-			.updateCategoriesStatus({
-				ids: [...this.selectedCategoriesIds],
+			.updateBrandsStatus({
+				ids: [...this.selectedBrandsIds],
 				status,
 			})
 			.pipe(
@@ -355,15 +355,15 @@ export class IndexBrandComponent {
 				finalize(() => this.isUpdatingMultipleStatuses.set(false))
 			)
 			.subscribe({
-				next: (next: UpdateCategoriesStatusRESI) => {
+				next: (next: UpdateBrandsStatusRESI) => {
 					toastr.success(next.message);
 					closeModal(status ? 'modalMultipleActive' : 'modalMultipleDisabled');
-					this.selectedCategoriesIds.clear();
-					this.refreshCategories();
+					this.selectedBrandsIds.clear();
+					this.refreshBrands();
 				},
 				error: (error: HttpErrorResponse) => {
 					toastr.error(error.error?.message || 'No fue posible actualizar el estado.');
 				},
-			}); */
+			});
 	}
 }

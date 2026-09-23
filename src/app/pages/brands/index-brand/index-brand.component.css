@@ -16,8 +16,8 @@
 	gap: 0.45rem;
 	width: 100%;
 	padding: 0.35rem 0.55rem;
-	color: var(--bs-primary);
-	background: var(--bs-primary-light, #eef6ff);
+	color: #4b5d87;
+	background: #f1f5f9;
 	border: 1px solid rgba(var(--bs-primary-rgb), 0.2);
 	border-radius: 0.55rem;
 	font-size: 0.75rem;

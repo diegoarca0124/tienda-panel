@@ -5,7 +5,9 @@ import { AuthService } from './auth.service';
 import { environment } from 'environments/environment.dev';
 import { GetBrandsQPI } from '@app/pages/brands/interfaces/query-params.interface';
 import { BrandInterface } from '@app/pages/brands/interfaces/data.interface';
-import { CreateBrandRESI, GetBrandRESI, GetBrandsRESI, UpdateBrandRESI } from '@app/pages/brands/interfaces/response.interface';
+import { CreateBrandRESI, GetBrandRESI, GetBrandsRESI, UpdateBrandRESI, UpdateBrandsStatusRESI, UpdateBrandStatusRESI } from '@app/pages/brands/interfaces/response.interface';
+import { FindBrandProductsREQI, UpdateBrandsStatusREQI, UpdateBrandStatusREQI } from '@app/pages/brands/interfaces/request.interface';
+import { FindCategoryProductsRESI } from '@app/pages/categories/interfaces/response.interface';
 
 @Injectable({
 	providedIn: 'root',
@@ -14,15 +16,13 @@ export class BrandService {
 	private apiUrl = environment.apiUrl;
 	private getHeaders(body?: any): HttpHeaders {
 		const token = this.authService.getToken() || '';
-
-		// Si el body es FormData → NO PONEMOS Content-Type
+		
 		if (body instanceof FormData) {
 			return new HttpHeaders({
 				Authorization: `Bearer ${token}`,
 			});
 		}
 
-		// Si es JSON normal → Content-Type: application/json
 		return new HttpHeaders({
 			'Content-Type': 'application/json',
 			Authorization: `Bearer ${token}`,
@@ -36,10 +36,10 @@ export class BrandService {
 
 	createBrand(brand: any): Observable<CreateBrandRESI> {
 		let data = new FormData();
-		data.append('name', brand.name || '');
+		data.append('name', brand.name ?? '');
 		data.append('country', JSON.stringify(brand.country));
-		data.append('description', brand.description || '');
-		data.append('websiteUrl', brand.websiteUrl || '');
+		data.append('description', brand.description ?? '');
+		data.append('websiteUrl', brand.websiteUrl ?? '');
 		data.append('logoUrl', brand.logoUrl);
 		data.append('prefix', brand.prefix);
 		data.append('bannerUrl', brand.bannerUrl);
@@ -80,26 +80,38 @@ export class BrandService {
 		return this.http.put<UpdateBrandRESI>(`${this.apiUrl}/brand/updateBrand/${id}`, data, { headers: this.getHeaders(data) });
 	}
 
-	update_status_brand(id: string, data: { status: boolean }): Observable<any> {
-		return this.http.put(`${this.apiUrl}/brand/update_status_brand/${id}`, data, { headers: this.getHeaders() });
+	updateBrandStatus(id: string, data: UpdateBrandStatusREQI): Observable<UpdateBrandStatusRESI> {
+		return this.http.put<UpdateBrandStatusRESI>(`${this.apiUrl}/brand/updateBrandStatus/${id}`, data, { headers: this.getHeaders() });
+	}
+	
+	updateBrandsStatus(data: UpdateBrandsStatusREQI): Observable<UpdateBrandsStatusRESI> {
+		return this.http.post<UpdateBrandsStatusRESI>(`${this.apiUrl}/brand/updateBrandsStatus`, data, { headers: this.getHeaders() });
 	}
 
-	get_product_by_brand(id: string, qp: { filter: string; page: number; limit: number; status: string; sort: string; subcategoryIds: string }): Observable<any> {
-		console.log(qp);
+	findBrandProducts(id: string, qp: FindBrandProductsREQI): Observable<any> {
+		let params = new HttpParams()
+			.set('filter', qp.filter)
+			.set('page', qp.page)
+			.set('limit', qp.limit)
+			.set('status', qp.status)
+			.set('sort', qp.sort)
+			.set('subcategoryIds', qp.subcategoryIds)
+			.set('quality', qp.quality)
+			.set('visibility', qp.visibility);
 
-		return this.http.get(
-			`${this.apiUrl}/brand/get_product_by_brand/${id}?filter=${qp.filter}&page=${qp.page}&limit=${qp.limit}&status=${qp.status}&sort=${qp.sort}&subcategoryIds=${qp.subcategoryIds}`,
-			{
-				headers: this.getHeaders(),
-			}
-		);
+		if (qp.minPrice != null) {
+			params = params.set('minPrice', qp.minPrice);
+		}
+
+		if (qp.maxPrice != null) {
+			params = params.set('maxPrice', qp.maxPrice);
+		}
+
+		return this.http.get<FindBrandProductsREQI>(`${this.apiUrl}/brand/findBrandProducts/${id}`, { params, headers: this.getHeaders() });
 	}
 
 	get_brands_by_select(): Observable<any> {
 		return this.http.get(`${this.apiUrl}/brand/get_brands_by_select`, { headers: this.getHeaders() });
 	}
 
-	update_status_brands(data: { ids: Array<string>; status: boolean }): Observable<any> {
-		return this.http.post(`${this.apiUrl}/brand/update_status_brands`, data, { headers: this.getHeaders() });
-	}
 }

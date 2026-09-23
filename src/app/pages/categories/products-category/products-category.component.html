@@ -442,7 +442,7 @@
 														[ngClass]="{
 															'bg-danger': item.quality_label === 'low',
 															'bg-warning': item.quality_label === 'medium',
-															'bg-primary': item.quality_label === 'high',
+															'bg-success': item.quality_label === 'high',
 														}"
 													></span>
 
@@ -496,8 +496,8 @@
 												<span
 													class="badge rounded-pill fw-700"
 													[ngClass]="{
-														'bg-outline-warning text-warning': item.status === 'draft',
-														'bg-outline-primary text-primary': item.status === 'published',
+														'bg-outline-warning text-gray-700': item.status === 'draft',
+														'bg-outline-success text-success': item.status === 'published',
 													}"
 												>
 													<span
@@ -505,7 +505,7 @@
 														style="width: 6px; height: 6px"
 														[ngClass]="{
 															'bg-warning': item.status === 'draft',
-															'bg-primary': item.status === 'published',
+															'bg-success': item.status === 'published',
 														}"
 													></span>
 

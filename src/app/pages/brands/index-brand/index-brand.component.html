@@ -365,7 +365,7 @@
 														@if (item.latestProducts!.length >= 1) {
 															<a
 																class="symbol-group symbol-hover flex-nowrap"
-																[routerLink]="['/products/categories/' + item.id + '/products']"
+																[routerLink]="['/products/brands/' + item.id + '/products']"
 																[attr.aria-label]="'Ver productos de ' + item.name"
 															>
 																<span
@@ -386,7 +386,7 @@
 														} @else {
 															<a
 																class="btn btn-xs btn-light-primary"
-																[routerLink]="['/products/categories/' + item.id + '/products']"
+																[routerLink]="['/products/brands/' + item.id + '/products']"
 																[attr.aria-label]="'Ver productos de ' + item.name"
 															>
 																<ion-icon name="cube-outline" aria-hidden="true"></ion-icon>
