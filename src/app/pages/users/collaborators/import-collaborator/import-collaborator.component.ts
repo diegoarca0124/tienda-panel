@@ -12,11 +12,12 @@ import { TopbarComponent } from '@app/shared/topbar/topbar.component';
 import { UploadFileImportComponent } from '@app/shared/upload-file-import/upload-file-import.component';
 import { NgbPopover, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgClearButtonTemplateDirective } from '@ng-select/ng-select';
-import { finalize, Subject, takeUntil } from 'rxjs';
+import { finalize, of, Subject, takeUntil } from 'rxjs';
 import * as XLSX from 'xlsx-js-style';
 import { fieldImportOptions } from '../constants/selectors.constants';
 import { ExportCollaboratorsXlsxUtil } from '../utils/export-collaborators-xlsx.util';
 import { ImportInterface } from '../interfaces/validation.interface';
+import { HttpErrorResponse } from '@angular/common/http';
 
 declare const toastr: any;
 
@@ -141,17 +142,25 @@ export class ImportCollaboratorComponent implements OnDestroy {
 	}
 
 	hasCellError(rowIndex: number, fieldKey: string): boolean {
-		const validationRows = this.dataValidationErrors?.data?.[0] || [];
+		const validationRows = this.getValidationRows();
 		const rowErrors = validationRows.find((item: any) => item[rowIndex]);
 		return !!rowErrors?.[rowIndex]?.[fieldKey];
 	}
 
 	getCellErrors(rowIndex: number, fieldKey: string): string[] {
-		const validationRows = this.dataValidationErrors?.data?.[0] || [];
+		const validationRows = this.getValidationRows();
 		const rowErrors = validationRows.find((item: any) => item[rowIndex]);
 		const fieldErrors = rowErrors?.[rowIndex]?.[fieldKey];
 		if (!fieldErrors) return [];
 		return Array.isArray(fieldErrors) ? fieldErrors : [fieldErrors];
+	}
+
+	private getValidationRows(): any[] {
+		const dataErrors = this.dataValidationErrors?.data;
+		if (!Array.isArray(dataErrors)) return [];
+
+		const validationRows = dataErrors[0];
+		return Array.isArray(validationRows) ? validationRows : [];
 	}
 
 	hasFieldMapping(fieldKey: string): boolean {
@@ -262,16 +271,15 @@ export class ImportCollaboratorComponent implements OnDestroy {
 					this.dataValidationErrors = { data: [] };
 					toastr.success(response.message);
 				},
-				error: (httpError) => {
-					const error = httpError.error;
+				error: (httpError: HttpErrorResponse) => {
+					const error = httpError.error ?? {};
 					toastr.error(error.message || '¡Error desconocido!');
 
-					if (error.validation) {
-						this.dataValidationErrors = error.validation;
-					}
+					if (!error.validation) return;
 
-					this.validationSummary.total = this.dataValidationErrors.total[0];
-					this.validationSummary.errors = this.dataValidationErrors.errors[0];
+					this.dataValidationErrors = error.validation;
+					this.validationSummary.total = this.dataValidationErrors?.total?.[0] ?? this.importedRows.length;
+					this.validationSummary.errors = this.dataValidationErrors?.errors?.[0] ?? 0;
 				},
 			});
 	}
@@ -291,11 +299,57 @@ export class ImportCollaboratorComponent implements OnDestroy {
 		});
 	}
 
+	autoMapColumns(): void {
+		this.isMappingColumns = true;
+
+		of(true)
+			.pipe(
+				takeUntil(this.destroy$),
+				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
+				finalize(() => (this.isMappingColumns = false))
+			)
+			.subscribe(() => this.performAutoMapping());
+	}
+
+	private performAutoMapping(): void {
+		this.importedColumns.forEach((column) => {
+			column.key = '';
+			column.inputType = '';
+			column.inputValues = [];
+		});
+
+		const mappedFields = new Set<string>();
+		let mappedColumns = 0;
+
+		for (const column of this.importedColumns) {
+			const normalizedColumnLabel = column.label.trim().toLowerCase();
+			const field = this.availableFields.find((item) => item.key.trim().toLowerCase() === normalizedColumnLabel);
+
+			if (!field || mappedFields.has(field.key)) continue;
+
+			this.applyFieldToColumn(column, field);
+			mappedFields.add(field.key);
+			mappedColumns++;
+		}
+
+		if (mappedColumns > 0) {
+			toastr.success(`Se vincularon automáticamente ${mappedColumns} columnas.`);
+			return;
+		}
+
+		toastr.warning('No se encontraron columnas que coincidan.');
+	}
+
 	private applyFieldToColumn(column: ImportColumn, field: (typeof this.availableFields)[number]): void {
 		column.key = field.key;
-		const mappedColumn = this.importedColumns.find((item) => item.key === field.key)!;
-		mappedColumn.inputType = field.inputType;
-		mappedColumn.inputValues = field.inputValues;
+		column.inputType = field.inputType;
+		column.inputValues = field.inputValues;
+
+		if (field.key === 'status') {
+			this.importedRows.forEach((row) => {
+				row[column.label] = this.normalizeImportedValue('status', row[column.label]);
+			});
+		}
 	}
 
 	private mapRowsToSystemFields(includeRowIndex: boolean): any[] {
@@ -308,11 +362,23 @@ export class ImportCollaboratorComponent implements OnDestroy {
 						}
 
 						const mappedColumn = this.importedColumns.find((column) => column.label === columnLabel && column.key);
-						return mappedColumn ? [mappedColumn.key, value] : null;
+						return mappedColumn ? [mappedColumn.key, this.normalizeImportedValue(mappedColumn.key, value)] : null;
 					})
 					.filter(Boolean) as [string, any][]
 			)
 		);
+	}
+
+	private normalizeImportedValue(fieldKey: string, value: any): any {
+		if (fieldKey !== 'status') return value;
+		if (typeof value === 'boolean') return value ? 'Activo' : 'Inactivo';
+		if (typeof value !== 'string') return value;
+
+		const normalizedStatus = value.trim().toLowerCase();
+		if (normalizedStatus === 'activo') return 'Activo';
+		if (normalizedStatus === 'inactivo') return 'Inactivo';
+
+		return value;
 	}
 
 	getFieldLabel(fieldKey: string): string {

@@ -1,6 +1,6 @@
 .column-drag-over {
 	background: rgba(54, 153, 255, 0.12) !important;
-	transition: all 0.15s ease;
+	transition: background-color 0.15s ease;
 }
 
 .form-control:disabled {
@@ -27,8 +27,12 @@
 }
 
 .field-dropdown-menu {
+	position: fixed !important;
+	z-index: 1055;
 	width: 18rem;
 	max-width: calc(100vw - 2rem);
+	max-height: calc(100vh - 2rem);
+	overflow-y: auto;
 }
 
 .field-dropdown-label {

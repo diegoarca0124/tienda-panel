@@ -109,16 +109,33 @@
 								</button>
 							</div>
 
-							<button
-								type="button"
-								class="btn btn-sm btn-dark d-flex align-items-center justify-content-center gap-2"
-								data-bs-toggle="modal"
-								[attr.data-bs-target]="importedRows.length > 0 ? '#modalMapColumns' : null"
-								[disabled]="isImportLoading || importedRows.length === 0"
-							>
-								<ion-icon name="git-compare-outline"></ion-icon>
-								Mapear columnas
-							</button>
+							<div class="d-flex gap-3">
+								<button
+									type="button"
+									class="btn btn-sm btn-dark d-flex align-items-center justify-content-center gap-2"
+									data-bs-toggle="modal"
+									[attr.data-bs-target]="importedRows.length > 0 ? '#modalMapColumns' : null"
+									[disabled]="isImportLoading || importedRows.length === 0"
+								>
+									<ion-icon name="git-compare-outline"></ion-icon>
+									Mapear manual
+								</button>
+								<button
+									type="button"
+									class="btn btn-sm btn-dark d-flex align-items-center justify-content-center gap-2"
+									[disabled]="isImportLoading || isMappingColumns || importedRows.length === 0"
+									(click)="autoMapColumns()"
+								>
+									<ng-container *ngIf="!isMappingColumns; else autoMappingLoading">
+										<ion-icon name="sparkles-outline"></ion-icon>
+										Mapear automático
+									</ng-container>
+									<ng-template #autoMappingLoading>
+										<span class="spinner-border spinner-border-sm"></span>
+										Mapeando...
+									</ng-template>
+								</button>
+							</div>
 						</div>
 
 						<div class="table-wrapper mt-4 mb-7">
@@ -382,6 +399,8 @@
 													[(ngModel)]="row[column.label]"
 													[name]="'cell-' + rowIndex + '-' + column.label"
 													[ngbPopover]="popoverTemplate"
+													popoverClass="validation-import-popover"
+													container="body"
 													triggers="mouseenter:mouseleave"
 													placement="bottom"
 													[disablePopover]="getCellErrors(rowIndex, column.key).length === 0"
@@ -398,6 +417,8 @@
 													[(ngModel)]="row[column.label]"
 													[name]="'cell-' + rowIndex + '-' + column.label"
 													[ngbPopover]="popoverTemplate"
+													popoverClass="validation-import-popover"
+													container="body"
 													triggers="mouseenter:mouseleave"
 													placement="bottom"
 													[disablePopover]="getCellErrors(rowIndex, column.key).length === 0"

@@ -396,6 +396,18 @@ body {
     0 12px 32px rgba(0, 0, 0, .14) !important;
 }
 
+.validation-import-popover {
+	z-index: 1080;
+	max-width: min(26rem, calc(100vw - 2rem));
+	font-family: var(--app-font-family) !important;
+}
+
+.validation-import-popover .popover-body {
+	max-height: calc(100vh - 2rem);
+	overflow-y: auto;
+	font-family: var(--app-font-family) !important;
+}
+
 .filters-container{
     display:grid;
     gap:1.25rem;

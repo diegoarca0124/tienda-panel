@@ -46,6 +46,7 @@ export class IndexCollaboratorComponent {
 
 	public currentPage: number = 1;
 	public totalPages: number = 0;
+	public totalCollaborators: number = 0;
 	public limit: number = 10;
 
 	public readonly statusFilters = statusOptions;
@@ -140,6 +141,7 @@ export class IndexCollaboratorComponent {
 				this.selectedCollaboratorsIds.clear();
 				this.collaborators = data.collaborators;
 				this.totalPages = data.meta.totalPages;
+				this.totalCollaborators = data.meta.totalCollaborators;
 				this.syncCurrentPage(data.meta.currentPage);
 			});
 	}
@@ -159,6 +161,7 @@ export class IndexCollaboratorComponent {
 					this.collaborators = response.collaborators;
 
 					this.totalPages = response.meta.totalPages;
+					this.totalCollaborators = response.meta.totalCollaborators;
 
 					this.syncCurrentPage(response.meta.currentPage);
 				},
@@ -278,6 +281,16 @@ export class IndexCollaboratorComponent {
 
 	get hasSelectedCollaborators(): boolean {
 		return this.selectedCollaboratorsIds.size > 0;
+	}
+
+	get firstVisibleCollaborator(): number {
+		if (this.totalCollaborators === 0 || this.collaborators.length === 0) return 0;
+		return (this.currentPage - 1) * this.limit + 1;
+	}
+
+	get lastVisibleCollaborator(): number {
+		if (this.totalCollaborators === 0 || this.collaborators.length === 0) return 0;
+		return Math.min(this.firstVisibleCollaborator + this.collaborators.length - 1, this.totalCollaborators);
 	}
 
 	clearCollaboratorSelection(): void {

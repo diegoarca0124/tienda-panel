@@ -207,8 +207,8 @@ export const fieldImportOptions = [
 		description: 'Estado actual del colaborador',
 		inputType: 'select',
 		inputValues: [
-			{ name: 'Activo', value: true },
-			{ name: 'Inactivo', value: false },
+			{ name: 'Activo', value: 'Activo' },
+			{ name: 'Inactivo', value: 'Inactivo' },
 		],
 	},
 ];

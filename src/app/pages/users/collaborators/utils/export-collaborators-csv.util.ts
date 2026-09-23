@@ -4,6 +4,14 @@ export interface ExportCsvOptions {
 	fileName?: string;
 }
 
+const sanitizeCsvCell = (value: unknown): string => {
+	const text = String(value ?? '');
+
+	// Excel puede evaluar como fórmula el contenido de una celda CSV aunque esté
+	// entre comillas. El apóstrofo fuerza su interpretación como texto.
+	return /^(?:[\t\r\n]|\s*[=+\-@])/.test(text) ? `'${text}` : text;
+};
+
 export const ExportCollaboratorsCsvUtil = (data: any[], options?: ExportCsvOptions) => {
 	if (!data?.length) {
 		return;
@@ -27,12 +35,12 @@ export const ExportCollaboratorsCsvUtil = (data: any[], options?: ExportCsvOptio
 
 	const rows = formattedData.map((row) => {
 		return Object.values(row)
-			.map((value: any) => {
+			.map((value: unknown) => {
 				if (value === null || value === undefined) {
 					return '';
 				}
 
-				const escaped = String(value).replace(/"/g, '""');
+				const escaped = sanitizeCsvCell(value).replace(/"/g, '""');
 
 				return `"${escaped}"`;
 			})
