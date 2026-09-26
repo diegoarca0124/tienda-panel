@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { withMinLoadingTime } from '@app/common/interface/with-min-loading-time.interface';
@@ -17,14 +17,29 @@ import { CollaboratorInterface } from '../interfaces/collaborator.interface';
 import { ValidationPopoverComponent } from '@app/shared/validation-popover/validation-popover.component';
 import { buildShowErrors } from '@app/common/utils/build-show.errors.util';
 import { CollaboratorFieldErrors, CollaboratorValidationErrors } from '../interfaces/validation.interface';
-import { GetCollaboratorRESI, UpdateCollaboratorRESI } from '../interfaces/responses.interface';
+import { GetCollaboratorRESI, UpdateCollaboratorRESI, UpdateCollaboratorStatusRESI } from '../interfaces/responses.interface';
 import { HttpErrorResponse } from '@angular/common/http';
 import { documentsOptions, rolesOptions } from '../constants/selectors.constants';
+import { ModalDeleteComponent } from '@app/shared/modal-delete/modal-delete.component';
+import { closeModal } from '@app/common/utils/close-modal.util';
+import { COLLABORATOR_STATUS_DETAILS } from '../constants/collaborator-status.constants';
 declare const toastr: any;
 
 @Component({
 	selector: 'app-edit-collaborator',
-	imports: [SidebarComponent, TopbarComponent, CommonModule, RouterModule, FormsModule, IMaskModule, NotFoundComponent, NgSelectModule, AlertComponent, ValidationPopoverComponent],
+	imports: [
+		SidebarComponent, 
+		TopbarComponent, 
+		CommonModule, 
+		RouterModule, 
+		FormsModule, 
+		IMaskModule, 
+		NotFoundComponent, 
+		NgSelectModule, 
+		AlertComponent, 
+		ValidationPopoverComponent, 
+		ModalDeleteComponent
+	],
 	templateUrl: './edit-collaborator.component.html',
 	styleUrl: './edit-collaborator.component.css',
 	schemas: [CUSTOM_ELEMENTS_SCHEMA],
@@ -33,12 +48,14 @@ export class EditCollaboratorComponent {
 	private destroy$ = new Subject<void>();
 	public collaborator: CollaboratorInterface = createEmptyCollaborator();
 	public isEditCollaboratorLoading: boolean = false;
+	public readonly isUpdateStatusLoading = signal(false);
 	public isCollaboratorLoading: boolean = true;
 	public id: string = '';
 	public validationCollaboratioError: CollaboratorValidationErrors = {};
 	public collaboratorLoadError: string = '';
 	public rolesOptions = rolesOptions;
 	public documentsOptions = documentsOptions;
+	public readonly collaboratorStatusDetails = COLLABORATOR_STATUS_DETAILS;
 	public fieldErrors: CollaboratorFieldErrors = createEmptyFieldErrors();
 
 	constructor(
@@ -118,6 +135,30 @@ export class EditCollaboratorComponent {
 						this.validationCollaboratioError = error.validation;
 						this.fieldErrors = buildShowErrors(this.fieldErrors, this.validationCollaboratioError);
 					}
+				},
+			});
+	}
+
+	updateCollaboratorStatus(): void {
+		const nextStatus = !this.collaborator.status;
+		this.isUpdateStatusLoading.set(true);
+
+		this.collaboratorService
+			.updateCollaboratorStatus(this.id, { status: nextStatus })
+			.pipe(
+				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
+				takeUntil(this.destroy$),
+				finalize(() => this.isUpdateStatusLoading.set(false))
+			)
+			.subscribe({
+				next: (next: UpdateCollaboratorStatusRESI) => {
+					this.collaborator.status = next.data.status;
+					this.collaborator.statusAt = next.data.statusAt ? new Date(next.data.statusAt) : new Date();
+					closeModal('modalCollaboratorStatus');
+					toastr.success(next.message);
+				},
+				error: (error: HttpErrorResponse) => {
+					toastr.error(error.error?.message || 'No fue posible actualizar el estado.');
 				},
 			});
 	}

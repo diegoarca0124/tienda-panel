@@ -8,7 +8,7 @@ export const validateCollaboratorsQueryParams = (route: ActivatedRoute, params: 
 	const filter = params['filter'] ?? '';
 
 	const validStatusValues = ['Todos', 'Activos', 'Inactivos'];
-	const validLimitValues = [10, 20, 25];
+	const validLimitValues = [10, 25, 50];
 	const validSortValues = sortArray ?? [];
 
 	if (!Number.isInteger(page) || page < 1) {

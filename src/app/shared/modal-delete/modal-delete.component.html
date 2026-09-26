@@ -13,6 +13,23 @@
 
 			<div class="modal-body confirm-modal-body">
 				<div class="confirm-modal-description" [id]="id + '-description'" [innerHTML]="description"></div>
+
+				<div
+					*ngIf="details.length > 0"
+					class="confirm-modal-details"
+					[ngClass]="{
+						'confirm-modal-details--danger': textButton === 'Desactivar' || textButton === 'Eliminar',
+						'confirm-modal-details--primary': textButton === 'Activar',
+					}"
+				>
+					<p *ngIf="detailsTitle" class="confirm-modal-details__title">{{ detailsTitle }}</p>
+					<ul class="confirm-modal-details__list">
+						<li *ngFor="let detail of details" class="confirm-modal-details__item">
+							<span class="confirm-modal-details__bullet" aria-hidden="true"></span>
+							<span>{{ detail }}</span>
+						</li>
+					</ul>
+				</div>
 			</div>
 
 			<div class="modal-footer confirm-modal-footer">

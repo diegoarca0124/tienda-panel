@@ -76,6 +76,7 @@ export class EditCategoryComponent {
 	public id: string = '';
 	public isGetCategoryLoading = true;
 	public isGetSubcategoriesLoading = true;
+	public showVisualIdentity = false;
 
 	public subcategories: SubcategoryInterface[] = [];
 
@@ -229,6 +230,7 @@ export class EditCategoryComponent {
 					if (error.validation) {
 						this.validationCategoryError = error.validation;
 						this.fieldCategoryErrors = buildShowErrors(this.fieldCategoryErrors, this.validationCategoryError);
+						this.showVisualIdentity = this.showVisualIdentity || !!this.validationCategoryError.icon;
 					}
 				},
 			});

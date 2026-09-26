@@ -12,6 +12,8 @@ export class ModalDeleteComponent {
 	@Input() id: string = '';
 	@Input() title: string = '';
 	@Input() description: string = '';
+	@Input() detailsTitle: string = '';
+	@Input() details: readonly string[] = [];
 	@Input() textButton: string = '';
 	@Output() actionConfirmed = new EventEmitter(); // Emite el ID del elemento a eliminar
 	@Input() loadBtnDelete: Signal<boolean> = signal(false);

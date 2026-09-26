@@ -25,6 +25,7 @@ import { PaginationMetaInterface } from '@app/common/interface/pagination-meta.i
 import { GetCollaboratorsQPI } from '../interfaces/query-params.interface';
 import { GetCollaboratorsRESI, UpdateCollaboratorsStatusRESI, UpdateCollaboratorStatusRESI } from '../interfaces/responses.interface';
 import { sortOptions, statusOptions } from '../constants/selectors.constants';
+import { COLLABORATOR_STATUS_DETAILS } from '../constants/collaborator-status.constants';
 declare const toastr: any;
 
 type CollaboratorsLoadResult = { data: GetCollaboratorsRESI; error: null } | { data: null; error: HttpErrorResponse };
@@ -51,6 +52,7 @@ export class IndexCollaboratorComponent {
 
 	public readonly statusFilters = statusOptions;
 	public readonly sortFilters = sortOptions;
+	public readonly collaboratorStatusDetails = COLLABORATOR_STATUS_DETAILS;
 
 	public selectedCollaboratorsIds = new Set<string>();
 	public isCollaboratorsLoading: boolean = true;

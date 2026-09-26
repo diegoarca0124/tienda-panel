@@ -3,11 +3,13 @@
 ========================================================= */
 
 :root {
-	--skeleton-background: #e9ecef;
-	--skeleton-highlight: rgba(255, 255, 255, 0.5);
-	--skeleton-radius: 0.5rem;
-	--skeleton-duration: 1.2s;
-	--skeleton-shimmer-width: 150px;
+	--skeleton-background: #edf0f5;
+	--skeleton-highlight: rgba(255, 255, 255, 0.58);
+	--skeleton-border: #e1e7f0;
+	--skeleton-surface: #f8faff;
+	--skeleton-radius: 0.55rem;
+	--skeleton-duration: 1.65s;
+	--skeleton-shimmer-width: 45%;
 
 	--skeleton-textarea-height-sm:
 		var(--form-textarea-height-sm, 7rem);
@@ -53,29 +55,25 @@
 .skeleton::after {
 	content: "";
 	position: absolute;
-	top: 0;
-	left: calc(var(--skeleton-shimmer-width) * -1);
+	inset: 0 auto 0 calc(var(--skeleton-shimmer-width) * -1);
 	width: var(--skeleton-shimmer-width);
-	height: 100%;
-	background: linear-gradient(
-		90deg,
-		transparent,
-		var(--skeleton-highlight),
-		transparent
-	);
-	animation: skeleton-shimmer var(--skeleton-duration) infinite;
+	background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.18) 25%, var(--skeleton-highlight) 50%, rgba(255, 255, 255, 0.18) 75%, transparent 100%);
+	transform: translateX(0);
+	will-change: transform;
+	animation: skeleton-shimmer var(--skeleton-duration) cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 
 @keyframes skeleton-shimmer {
 	100% {
-		left: 100%;
+		transform: translateX(325%);
 	}
 }
 
 /* Variantes */
 
 .skeleton-text {
-	height: 9px;
+	height: 0.6rem;
+	border-radius: 999px;
 }
 
 .skeleton-check {
@@ -89,6 +87,7 @@
 	width: 30px;
 	height: 30px;
 	margin: auto;
+	border-radius: 0.55rem;
 }
 
 .skeleton-badge {
@@ -215,4 +214,77 @@
 	min-height: var(
 		--skeleton-textarea-height-md
 	) !important;
+}
+
+/* =========================================================
+   ALERTA
+========================================================= */
+
+.skeleton-alert {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 1rem;
+	padding: 1rem;
+	border: 1px dashed var(--skeleton-border);
+	border-radius: 0.625rem;
+	background-color: var(--skeleton-surface);
+}
+
+.skeleton-alert__content {
+	display: flex;
+	min-width: 0;
+	flex: 1 1 auto;
+	align-items: center;
+	gap: 1rem;
+}
+
+.skeleton-alert__icon {
+	width: 1.75rem;
+	height: 1.75rem;
+	flex: 0 0 1.75rem;
+	border-radius: 0.45rem;
+}
+
+.skeleton-alert__body {
+	display: flex;
+	width: min(42rem, 100%);
+	min-width: 0;
+	flex: 1 1 auto;
+	flex-direction: column;
+	gap: 0.55rem;
+}
+
+.skeleton-alert__title {
+	display: block;
+	width: 11rem;
+	max-width: 55%;
+}
+
+.skeleton-alert__description {
+	display: block;
+	width: 100%;
+}
+
+.skeleton-alert__action {
+	width: 8.5rem;
+	height: var(--skeleton-input-height-sm);
+	flex: 0 0 8.5rem;
+	border-radius: 0.425rem;
+}
+
+@media (max-width: 767.98px) {
+	.skeleton-alert {
+		align-items: stretch;
+		flex-direction: column;
+	}
+
+	.skeleton-alert__content {
+		align-items: flex-start;
+	}
+
+	.skeleton-alert__action {
+		width: 100%;
+		flex-basis: var(--skeleton-input-height-sm);
+	}
 }

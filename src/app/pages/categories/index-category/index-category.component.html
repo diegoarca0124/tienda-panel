@@ -431,6 +431,8 @@
 																		? `La categoría <b>${item.name}</b> dejará de estar disponible y se ocultará temporalmente del sistema.`
 																		: `La categoría <b>${item.name}</b> volverá a estar disponible y visible dentro del sistema.`
 																"
+																				[detailsTitle]="item.status ? 'Al desactivar esta categoría:' : 'Al activar esta categoría:'"
+																				[details]="item.status ? categoryStatusDetails.deactivate : categoryStatusDetails.activate"
 																[textButton]="item.status ? 'Desactivar' : 'Activar'"
 																(actionConfirmed)="onUpdateStatus(item.id!, item.status!)"
 																[loadBtnDelete]="isUpdatingSingleStatus"
@@ -540,6 +542,8 @@
 	[id]="'modalMultipleActive'"
 	[title]="'Activación Multiple'"
 	[description]="'El estado de las categorias serán actualizadas. Verifica tu selección antes de continuar, ya que este cambio se aplicará a todos.'"
+	[detailsTitle]="'Al activar estas categorías:'"
+	[details]="categoryStatusDetails.activate"
 	[textButton]="'Activar'"
 	(actionConfirmed)="onUpdateStatusMultiple(true)"
 	[loadBtnDelete]="isUpdatingMultipleStatuses"
@@ -549,6 +553,8 @@
 	[id]="'modalMultipleDisabled'"
 	[title]="'Desactivación Multiple'"
 	[description]="'El estado de las categorias serán actualizadas. Verifica tu selección antes de continuar, ya que este cambio se aplicará a todos.'"
+	[detailsTitle]="'Al desactivar estas categorías:'"
+	[details]="categoryStatusDetails.deactivate"
 	[textButton]="'Desactivar'"
 	(actionConfirmed)="onUpdateStatusMultiple(false)"
 	[loadBtnDelete]="isUpdatingMultipleStatuses"

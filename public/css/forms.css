@@ -411,3 +411,58 @@ textarea.form-control-md {
 		border-left: 0 !important;
 	}
 }
+
+/* =========================================================
+   RECORD METADATA
+========================================================= */
+
+.record-meta {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.5rem 0;
+	margin: 0 0 2.5rem;
+	color: #8a94aa;
+	font-size: 0.75rem;
+}
+
+.record-meta__item {
+	display: inline-flex;
+	min-width: 0;
+	align-items: baseline;
+	gap: 0.35rem;
+}
+
+.record-meta__item + .record-meta__item::before {
+	content: '•';
+	margin: 0 0.75rem;
+	color: #c4cad6;
+}
+
+.record-meta dt,
+.record-meta dd {
+	margin: 0;
+}
+
+.record-meta dt {
+	font-weight: 500;
+}
+
+.record-meta dd {
+	color: #53617c;
+	font-weight: 600;
+}
+
+@media (max-width: 767.98px) {
+	.record-meta {
+		align-items: flex-start;
+		flex-direction: column;
+		gap: 0.45rem;
+		margin-bottom: 1.75rem;
+	}
+
+	.record-meta__item + .record-meta__item::before {
+		display: none;
+	}
+}
+

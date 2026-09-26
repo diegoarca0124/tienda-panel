@@ -129,12 +129,26 @@
 
 										<section class="mb-7">
 											<header class="border-bottom pb-3 mb-4">
-												<h2 class="form-card-title">Identidad visual</h2>
+												<div class="d-flex align-items-center justify-content-between gap-3">
+													<h2 class="form-card-title mb-0">Identidad visual</h2>
+
+													<button
+														type="button"
+														class="btn btn-sm btn-light-primary d-inline-flex align-items-center gap-2 flex-shrink-0"
+														[attr.aria-expanded]="showVisualIdentity"
+														aria-controls="categoryVisualIdentity"
+														[disabled]="isGetCategoryLoading"
+														(click)="showVisualIdentity = !showVisualIdentity"
+													>
+														<i class="bi" [ngClass]="showVisualIdentity ? 'bi-chevron-up' : 'bi-chevron-down'" aria-hidden="true"></i>
+														<span>{{ showVisualIdentity ? 'Ocultar' : 'Mostrar' }}</span>
+													</button>
+												</div>
 
 												<p class="form-card-description">Selecciona el icono que representa la categoría.</p>
 											</header>
 
-											<div class="form-field">
+											<div *ngIf="showVisualIdentity" id="categoryVisualIdentity" class="form-field">
 												<div class="d-flex align-items-center justify-content-between gap-2">
 													<label class="form-field-label">Icono</label>
 
@@ -399,12 +413,25 @@
 
 										<section class="mb-7">
 											<header class="border-bottom pb-3 mb-4">
-												<h2 class="form-card-title">Identidad visual</h2>
-
-												<p class="form-card-description">Selecciona el icono que representa la categoría.</p>
+												<div class="d-flex align-items-center justify-content-between gap-3">
+													<div>
+														<h2 class="form-card-title mb-0">Identidad visual</h2>
+														<p class="form-card-description">Selecciona el icono que representa la categoría.</p>
+													</div>
+													<button
+														type="button"
+														class="btn btn-xs btn-light-primary d-inline-flex align-items-center gap-2 flex-shrink-0"
+														[attr.aria-expanded]="showVisualIdentity"
+														aria-controls="categoryVisualIdentity"
+														(click)="showVisualIdentity = !showVisualIdentity"
+													>
+														<i class="bi" [ngClass]="showVisualIdentity ? 'bi-chevron-up' : 'bi-chevron-down'" aria-hidden="true"></i>
+														<span>{{ showVisualIdentity ? 'Ocultar' : 'Mostrar' }}</span>
+													</button>
+												</div>
 											</header>
 
-											<div class="form-field">
+											<div *ngIf="showVisualIdentity" id="categoryVisualIdentity" class="form-field">
 												<div class="d-flex align-items-center justify-content-between gap-2">
 													<label class="form-field-label">Icono</label>
 

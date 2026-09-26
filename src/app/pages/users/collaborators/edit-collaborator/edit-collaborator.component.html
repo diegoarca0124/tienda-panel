@@ -137,8 +137,22 @@
 													<p class="form-field-help">Mínimo ocho caracteres; puedes generarla automáticamente.</p>
 												</div>
 											</div>
+
+											<div class="col-12">
+												<section class="skeleton-alert" aria-hidden="true">
+													<div class="skeleton-alert__content">
+														<span class="skeleton skeleton-alert__icon"></span>
+														<div class="skeleton-alert__body">
+															<span class="skeleton skeleton-text skeleton-alert__title"></span>
+															<span class="skeleton skeleton-text skeleton-alert__description"></span>
+														</div>
+													</div>
+													<span class="skeleton skeleton-alert__action"></span>
+												</section>
+											</div>
 										</div>
 									</section>
+
 								}
 
 								@if(!isCollaboratorLoading && collaboratorLoadError){
@@ -377,7 +391,8 @@
 															name="password"
 															[(ngModel)]="collaborator.password"
 														/>
-														<button type="button" class="btn btn-md btn-light-primary" (click)="generatePassword()">Generar</button>
+														<button type="button" class="btn btn-md btn-light-primary" (click)="generatePassword()"
+														style="font-size: .8rem !important;">Generar</button>
 													</div>
 													<p class="form-field-help">Mínimo ocho caracteres; puedes generarla automáticamente.</p>
 													<div class="validation-wrapper" [class.open]="fieldErrors.password">
@@ -385,8 +400,80 @@
 													</div>
 												</div>
 											</div>
+											<div class="col-12">
+												<section
+													class="alert d-flex flex-column flex-md-row align-items-stretch align-items-md-center justify-content-between gap-4 p-4 mb-0 border border-dashed rounded-3"
+													[class.alert-danger]="collaborator.status"
+													[class.alert-primary]="!collaborator.status"
+													aria-labelledby="accountStatusTitle"
+												>
+													<div class="d-flex align-items-start align-items-md-center gap-3 overflow-hidden">
+														<span
+															class="d-inline-flex align-items-center justify-content-center flex-shrink-0"
+															[class.text-danger]="collaborator.status"
+															[class.text-primary]="!collaborator.status"
+															aria-hidden="true"
+														>
+															@if (collaborator.status) {
+																<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+																	<circle cx="9" cy="7" r="4"></circle>
+																	<path d="M3 21v-2a4 4 0 0 1 4-4h4"></path>
+																	<path d="m17 8 5 5"></path>
+																	<path d="m22 8-5 5"></path>
+																</svg>
+															} @else {
+																<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+																	<circle cx="9" cy="7" r="4"></circle>
+																	<path d="M3 21v-2a4 4 0 0 1 4-4h4"></path>
+																	<path d="m16 11 2 2 4-4"></path>
+																</svg>
+															}
+														</span>
+														<div class="overflow-hidden">
+															<h2 id="accountStatusTitle" class="fs-7 fw-600 mb-1">
+																{{ collaborator.status ? 'Desactivar esta cuenta' : 'Activar esta cuenta' }}
+															</h2>
+															<p class="fs-9 fw-400 lh-base text-gray-600 mb-0">
+																@if (collaborator.status) {
+																	Perderá el acceso inmediatamente, se cerrarán sus sesiones activas y no podrá iniciar sesión hasta que vuelvas a activar la cuenta.
+																} @else {
+																	Recuperará el acceso al sistema y podrá iniciar sesión nuevamente con los permisos correspondientes a su rol.
+																}
+															</p>
+														</div>
+													</div>
+													<button
+														type="button"
+														class="btn btn-sm w-100 w-md-auto flex-shrink-0 text-nowrap"
+														[class.btn-danger]="collaborator.status"
+														[class.btn-primary]="!collaborator.status"
+														[disabled]="isEditCollaboratorLoading || isUpdateStatusLoading()"
+														data-bs-toggle="modal"
+														data-bs-target="#modalCollaboratorStatus"
+													>
+														{{ collaborator.status ? 'Desactivar cuenta' : 'Activar cuenta' }}
+													</button>
+												</section>
+
+												<app-modal-delete
+													[id]="'modalCollaboratorStatus'"
+													[title]="collaborator.status ? 'Desactivar colaborador' : 'Activar colaborador'"
+													[description]="
+														collaborator.status
+															? 'El colaborador perderá el acceso y sus sesiones activas serán cerradas. Podrás volver a activar la cuenta posteriormente.'
+															: 'El colaborador recuperará el acceso al sistema y podrá iniciar sesión nuevamente.'
+													"
+													[detailsTitle]="collaborator.status ? 'Al desactivar esta cuenta:' : 'Al activar esta cuenta:'"
+													[details]="collaborator.status ? collaboratorStatusDetails.deactivate : collaboratorStatusDetails.activate"
+													[textButton]="collaborator.status ? 'Desactivar' : 'Activar'"
+													[loadBtnDelete]="isUpdateStatusLoading"
+													(actionConfirmed)="updateCollaboratorStatus()"
+												></app-modal-delete>
+											</div>
 										</div>
 									</section>
+
+									
 								}
 								
 							</div>
@@ -407,43 +494,20 @@
 							</footer>
 						</div>
 
-						<div *ngIf="!isCollaboratorLoading && !collaboratorLoadError" class="border-top pt-4 mb-10">
-							<div class="row g-3 g-md-0">
-								<div class="col-12 col-md-4">
-									<div class="d-flex flex-row flex-md-column align-items-center align-items-md-start justify-content-between justify-content-md-start gap-1">
-										<span class="text-gray-500 fw-600 fs-9 text-uppercase ls-1px">Fecha de creación</span>
-
-										<span class="text-gray-700 fw-500 fs-8 text-end text-md-start">
-											{{ collaborator.createdAt | date: 'medium' }}
-										</span>
-									</div>
-								</div>
-
-								<div class="col-12 col-md-4">
-									<div
-										class="d-flex flex-row flex-md-column align-items-center align-items-md-start justify-content-between justify-content-md-start gap-1 border-md-start border-gray-300 ps-md-4"
-									>
-										<span class="text-gray-500 fw-600 fs-9 text-uppercase ls-1px">Última actualización</span>
-
-										<span class="text-gray-700 fw-500 fs-8 text-end text-md-start">
-											{{ collaborator.updatedAt | date: 'medium' }}
-										</span>
-									</div>
-								</div>
-
-								<div class="col-12 col-md-4">
-									<div
-										class="d-flex flex-row flex-md-column align-items-center align-items-md-start justify-content-between justify-content-md-start gap-1 border-md-start border-gray-300 ps-md-4"
-									>
-										<span class="text-gray-500 fw-600 fs-9 text-uppercase ls-1px">Cambio de estado</span>
-
-										<span class="text-gray-700 fw-500 fs-8 text-end text-md-start">
-											{{ collaborator.statusAt | date: 'medium' }}
-										</span>
-									</div>
-								</div>
+						<dl *ngIf="!isCollaboratorLoading && !collaboratorLoadError" class="record-meta" aria-label="Fechas del registro">
+							<div class="record-meta__item">
+								<dt>Creado</dt>
+								<dd><time>{{ collaborator.createdAt | date: 'dd/MM/yyyy, HH:mm' }}</time></dd>
 							</div>
-						</div>
+							<div class="record-meta__item">
+								<dt>Actualizado</dt>
+								<dd><time>{{ collaborator.updatedAt | date: 'dd/MM/yyyy, HH:mm' }}</time></dd>
+							</div>
+							<div class="record-meta__item">
+								<dt>Estado modificado</dt>
+								<dd><time>{{ (collaborator.statusAt | date: 'dd/MM/yyyy, HH:mm') || 'Sin cambios' }}</time></dd>
+							</div>
+						</dl>
 					</div>
 				</div>
 			</div>

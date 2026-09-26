@@ -407,6 +407,8 @@
 																? `El colaborador <b>${item.names} ${item.surname}</b> dejará de tener acceso y quedará deshabilitado temporalmente.`
 																: `El colaborador <b>${item.names} ${item.surname}</b> volverá a estar activo y podrá acceder nuevamente al sistema.`
 														"
+																		[detailsTitle]="item.status ? 'Al desactivar esta cuenta:' : 'Al activar esta cuenta:'"
+																		[details]="item.status ? collaboratorStatusDetails.deactivate : collaboratorStatusDetails.activate"
 														[textButton]="item.status ? 'Desactivar' : 'Activar'"
 														(actionConfirmed)="onUpdateStatus(item.id!, item.status!)"
 														[loadBtnDelete]="isUpdatingSingleStatus"
@@ -510,8 +512,8 @@
 									aria-label="Cantidad de registros por página"
 								>
 									<option [ngValue]="10">10</option>
-									<option [ngValue]="20">20</option>
 									<option [ngValue]="25">25</option>
+									<option [ngValue]="50">50</option>
 								</select>
 								<span>por página</span>
 							</label>
@@ -529,6 +531,8 @@
 	[id]="'modalMultipleActive'"
 	[title]="'Activación Multiple'"
 	[description]="'El estado de los usuarios seleccionados será actualizado. Verifica tu selección antes de continuar, ya que este cambio se aplicará a todos.'"
+	[detailsTitle]="'Al activar estas cuentas:'"
+	[details]="collaboratorStatusDetails.activate"
 	[textButton]="'Activar'"
 	(actionConfirmed)="onUpdateStatusMultiple(true)"
 	[loadBtnDelete]="isUpdatingMultipleStatuses"
@@ -537,6 +541,8 @@
 	[id]="'modalMultipleDisabled'"
 	[title]="'Desactivación Multiple'"
 	[description]="'El estado de los usuarios seleccionados será actualizado. Verifica tu selección antes de continuar, ya que este cambio se aplicará a todos.'"
+	[detailsTitle]="'Al desactivar estas cuentas:'"
+	[details]="collaboratorStatusDetails.deactivate"
 	[textButton]="'Desactivar'"
 	(actionConfirmed)="onUpdateStatusMultiple(false)"
 	[loadBtnDelete]="isUpdatingMultipleStatuses"

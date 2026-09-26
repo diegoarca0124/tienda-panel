@@ -26,6 +26,7 @@ import { GetCategoriesRESI, UpdateCategoriesStatusRESI, UpdateCategoryStatusRESI
 import { CategoryInterface } from '../interfaces/data.interface';
 import { GetCategoriesQPI } from '../interfaces/query-params.interface';
 import { configurationsOptions, sortOptions, statusOptions } from '../constants/selectors.constant';
+import { CATEGORY_STATUS_DETAILS } from '../constants/category-status.constants';
 declare const toastr: any;
 declare const $: any;
 
@@ -67,6 +68,7 @@ export class IndexCategoryComponent {
 
 	public readonly statusFilters = statusOptions;
 	public readonly sortFilters = sortOptions;
+	public readonly categoryStatusDetails = CATEGORY_STATUS_DETAILS;
 
 	public selectedCategoriesIds = new Set<string>();
 	public isCategoriesLoading: boolean = true;

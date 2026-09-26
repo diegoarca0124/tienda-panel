@@ -30,6 +30,7 @@ export interface UpdateCollaboratorStatusRESI {
 		id: string;
 		names: string;
 		status: boolean;
+		statusAt?: Date;
 	};
 	message: string;
 }
