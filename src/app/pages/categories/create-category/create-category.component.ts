@@ -1,13 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, CUSTOM_ELEMENTS_SCHEMA, ElementRef, ViewChild } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { SidebarComponent } from '@app/shared/sidebar/sidebar.component';
 import { TopbarComponent } from '@app/shared/topbar/topbar.component';
 import { finalize, Subject, takeUntil } from 'rxjs';
-import { EditorState } from '@codemirror/state';
-import { html } from '@codemirror/lang-html';
-import { oneDark } from '@codemirror/theme-one-dark';
 import { CategoryService } from '@app/services/category.service';
 import { withMinLoadingTime } from '@app/common/interface/with-min-loading-time.interface';
 import { GLOBAL } from '@app/services/GLOBAL';
@@ -17,9 +14,6 @@ import { IMaskModule } from 'angular-imask';
 import { createEmptyCategory, createEmptyFieldErrorsCategory } from '../utils/empties.util';
 import { ValidationPopoverComponent } from '@app/shared/validation-popover/validation-popover.component';
 declare const toastr: any;
-import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
-import { MonacoOptions } from '../constants/monaco-options.constant';
-import { DomSanitizer } from '@angular/platform-browser';
 import { InputSvgComponent } from '@app/shared/input-svg/input-svg.component';
 import { TextareaAutoresizeDirective } from '@app/common/directives/textarea-autoresize.directive';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -50,7 +44,6 @@ import { prefixMask } from '../constants/prefix-mask.constant';
 	schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class CreateCategoryComponent {
-	@ViewChild('editorContainer', { static: true }) editorContainer!: ElementRef;
 	private destroy$ = new Subject<void>();
 	public isCreateCategoryLoading: boolean = false;
 	public validationCategoryError: CategoryValidationErrors = {};

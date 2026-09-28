@@ -126,7 +126,7 @@ export class CategoryService {
 	moveProductsToSubcategory(data: MoveProductsInterface): Observable<MoveProductsToSubcategoryRESI> {
 		return this.http.post<MoveProductsToSubcategoryRESI>(`${this.apiUrl}/category/moveProductsToSubcategory`, data, { headers: this.getHeaders() });
 	}
-	
+
 	updateSubcategoriesStatus(data: UpdateSubcategoriesStatusREQI): Observable<UpdateSubcategoriesStatusRESI> {
 		return this.http.post<UpdateSubcategoriesStatusRESI>(`${this.apiUrl}/category/updateSubcategoriesStatus`, data, { headers: this.getHeaders() });
 	}
@@ -146,6 +146,4 @@ export class CategoryService {
 	get_subcategories_by_select(id: string): Observable<any> {
 		return this.http.get(`${this.apiUrl}/category/get_subcategories_by_select/${id}`, { headers: this.getHeaders() });
 	}
-
-	
 }

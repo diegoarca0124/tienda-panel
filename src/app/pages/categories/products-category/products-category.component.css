@@ -7,6 +7,15 @@
 	min-width: 100%;
 }
 
+.products-table-wrapper .dropdown-menu {
+	position: fixed !important;
+	z-index: 1080;
+}
+
+.category-destination {
+	border-color: #e3e3e3 !important;
+}
+
 .h-48px {
 	height: 48px !important;
 }

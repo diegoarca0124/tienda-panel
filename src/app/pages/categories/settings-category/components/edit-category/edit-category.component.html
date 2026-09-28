@@ -1,0 +1,632 @@
+<section class="form-card mb-10">
+	<header class="form-card-header">
+		<h2 class="form-card-title">Editar categoría</h2>
+		<p class="form-card-description">Actualiza la información general y las características de la categoría.</p>
+	</header>
+	@if (isGetCategoryLoading) {
+		<div class="form-card-body">
+			<section class="mb-7">
+				<header class="border-bottom pb-3 mb-4">
+					<h2 class="form-card-title">Información general</h2>
+
+					<p class="form-card-description">Datos principales con los que se identifica la categoría.</p>
+				</header>
+
+				<div class="row g-4">
+					<div class="col-12 col-md-4">
+						<div class="form-field">
+							<div class="d-flex align-items-center justify-content-between gap-2">
+								<label class="form-field-label required" for="categoryName">Nombre</label>
+							</div>
+
+							<div class="skeleton skeleton-input"></div>
+
+							<p class="form-field-help">Nombre visible en el panel y en la tienda.</p>
+						</div>
+					</div>
+
+					<div class="col-12 col-md-4">
+						<div class="form-field">
+							<div class="d-flex align-items-center justify-content-between gap-2">
+								<label class="form-field-label required" for="categoryColor">Color</label>
+							</div>
+
+							<div class="skeleton skeleton-input"></div>
+
+							<p class="form-field-help">Color de identificación.</p>
+						</div>
+					</div>
+
+					<div class="col-12 col-md-4">
+						<div class="form-field">
+							<div class="d-flex align-items-center justify-content-between gap-2">
+								<label class="form-field-label required" for="categoryPrefix">Prefijo</label>
+							</div>
+
+							<div class="skeleton skeleton-input"></div>
+
+							<p class="form-field-help">Máximo tres letras identificadoras.</p>
+						</div>
+					</div>
+
+					<div class="col-12">
+						<div class="form-field">
+							<div class="d-flex align-items-center justify-content-between gap-2">
+								<label class="form-field-label required" for="categoryDescription">Descripción</label>
+							</div>
+
+							<div class="skeleton skeleton-textarea"></div>
+
+							<p class="form-field-help">Ayuda a comprender el alcance de la categoría.</p>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section class="mb-7">
+				<header class="border-bottom pb-3 mb-4">
+					<div class="d-flex align-items-center justify-content-between gap-3">
+						<div>
+							<h2 class="form-card-title mb-0">Identidad visual</h2>
+							<p class="form-card-description">Selecciona el icono que representa la categoría.</p>
+						</div>
+						<button type="button" class="btn btn-xs btn-light-primary d-inline-flex align-items-center gap-2 flex-shrink-0">
+							<i class="bi" [ngClass]="showVisualIdentity ? 'bi-chevron-up' : 'bi-chevron-down'" aria-hidden="true"></i>
+							<span>{{ showVisualIdentity ? 'Ocultar' : 'Mostrar' }}</span>
+						</button>
+					</div>
+				</header>
+
+				<div *ngIf="showVisualIdentity" id="categoryVisualIdentity" class="form-field">
+					<div class="d-flex align-items-center justify-content-between gap-2">
+						<label class="form-field-label">Icono</label>
+
+						<button *ngIf="validationCategoryError?.icon" type="button" class="form-error-toggle" (click)="fieldCategoryErrors.icon = !fieldCategoryErrors.icon">
+							{{ fieldCategoryErrors.icon ? 'Ocultar errores' : 'Ver errores' }}
+						</button>
+					</div>
+
+					<div class="skeleton skeleton-textarea" style="height: 253px !important"></div>
+
+					<p class="form-field-help">Se mostrará junto al nombre de la categoría.</p>
+
+					<div class="validation-wrapper" [class.open]="fieldCategoryErrors.icon">
+						<app-validation-popover [errors]="validationCategoryError?.icon!"></app-validation-popover>
+					</div>
+				</div>
+			</section>
+
+			<section>
+				<header class="border-bottom pb-3 mb-4">
+					<h2 class="form-card-title">Configuraciones del producto</h2>
+
+					<p class="form-card-description">Activa los bloques de información que usarán los productos.</p>
+				</header>
+
+				<div class="row g-3">
+					<div class="col-12 col-md-6">
+						<label class="form-check form-check-customs form-check-sm d-flex align-items-start gap-3 border rounded p-3 m-0 h-100 w-100 cursor-pointer bg-light">
+							<input class="form-check-input float-none flex-shrink-0 ms-0 mt-1" type="checkbox" disabled />
+
+							<span class="form-check-label d-flex flex-column align-items-start">
+								<span class="fw-semibold text-gray-700 fs-8">Dimensiones</span>
+
+								<small class="form-field-help mt-0">Alto, ancho, largo, peso y otras medidas.</small>
+							</span>
+						</label>
+					</div>
+
+					<div class="col-12 col-md-6">
+						<label class="form-check form-check-customs form-check-sm d-flex align-items-start gap-3 border rounded p-3 m-0 h-100 w-100 cursor-pointer bg-light">
+							<input class="form-check-input float-none flex-shrink-0 ms-0 mt-1" type="checkbox" disabled />
+
+							<span class="form-check-label d-flex flex-column align-items-start">
+								<span class="fw-semibold text-gray-700 fs-8">Características</span>
+
+								<small class="form-field-help mt-0">Funciones, ventajas y detalles técnicos.</small>
+							</span>
+						</label>
+					</div>
+
+					<div class="col-12 col-md-6">
+						<label class="form-check form-check-customs form-check-sm d-flex align-items-start gap-3 border rounded p-3 m-0 h-100 w-100 cursor-pointer bg-light">
+							<input class="form-check-input float-none flex-shrink-0 ms-0 mt-1" type="checkbox" disabled />
+
+							<span class="form-check-label d-flex flex-column align-items-start">
+								<span class="fw-semibold text-gray-700 fs-8">Condición</span>
+
+								<small class="form-field-help mt-0">Estado nuevo, usado o reacondicionado.</small>
+							</span>
+						</label>
+					</div>
+
+					<div class="col-12 col-md-6">
+						<label class="form-check form-check-customs form-check-sm d-flex align-items-start gap-3 border rounded p-3 m-0 h-100 w-100 cursor-pointer bg-light">
+							<input class="form-check-input float-none flex-shrink-0 ms-0 mt-1" type="checkbox" disabled />
+
+							<span class="form-check-label d-flex flex-column align-items-start">
+								<span class="fw-semibold text-gray-700 fs-8">Garantía</span>
+
+								<small class="form-field-help mt-0">Tiempo, tipo y condiciones de cobertura.</small>
+							</span>
+						</label>
+					</div>
+
+					<div class="col-12 col-md-6">
+						<label class="form-check form-check-customs form-check-sm d-flex align-items-start gap-3 border rounded p-3 m-0 h-100 w-100 cursor-pointer bg-light">
+							<input class="form-check-input float-none flex-shrink-0 ms-0 mt-1" type="checkbox" disabled />
+
+							<span class="form-check-label d-flex flex-column align-items-start">
+								<span class="fw-semibold text-gray-700 fs-8">País de origen</span>
+
+								<small class="form-field-help mt-0">Lugar de fabricación o ensamblaje.</small>
+							</span>
+						</label>
+					</div>
+
+					<div class="col-12 col-md-6">
+						<label class="form-check form-check-customs form-check-sm d-flex align-items-start gap-3 border rounded p-3 m-0 h-100 w-100 cursor-pointer bg-light">
+							<input class="form-check-input float-none flex-shrink-0 ms-0 mt-1" type="checkbox" disabled />
+
+							<span class="form-check-label d-flex flex-column align-items-start">
+								<span class="fw-semibold text-gray-700 fs-8">Material principal</span>
+
+								<small class="form-field-help mt-0">Material predominante de fabricación.</small>
+							</span>
+						</label>
+					</div>
+
+					<div class="col-12 col-md-6">
+						<label class="form-check form-check-customs form-check-sm d-flex align-items-start gap-3 border rounded p-3 m-0 h-100 w-100 cursor-pointer bg-light">
+							<input class="form-check-input float-none flex-shrink-0 ms-0 mt-1" type="checkbox" disabled />
+
+							<span class="form-check-label d-flex flex-column align-items-start">
+								<span class="fw-semibold text-gray-700 fs-8">Temperatura</span>
+
+								<small class="form-field-help mt-0">Rango ideal de uso o almacenamiento.</small>
+							</span>
+						</label>
+					</div>
+				</div>
+			</section>
+		</div>
+	} @else if (categoryLoadError) {
+		<div class="form-card-body">
+			<app-not-found [error]="categoryLoadError"></app-not-found>
+		</div>
+	} @else {
+		<div class="form-card-body">
+			<section class="mb-7">
+				<header class="border-bottom pb-3 mb-4">
+					<h2 class="form-card-title">Información general</h2>
+
+					<p class="form-card-description">Datos principales con los que se identifica la categoría.</p>
+				</header>
+
+				<div class="row g-4">
+					<div class="col-12 col-md-4">
+						<div class="form-field">
+							<div class="d-flex align-items-center justify-content-between gap-2">
+								<label class="form-field-label required" for="categoryName">Nombre</label>
+
+								<button *ngIf="validationCategoryError?.name" type="button" class="form-error-toggle" (click)="fieldCategoryErrors.name = !fieldCategoryErrors.name">
+									{{ fieldCategoryErrors.name ? 'Ocultar errores' : 'Ver errores' }}
+								</button>
+							</div>
+
+							<input
+								id="categoryName"
+								type="text"
+								class="form-control form-control-md"
+								placeholder="Ej. Frutas y verduras"
+								name="name"
+								[(ngModel)]="category.name"
+								[class.is-invalid]="validationCategoryError?.name"
+							/>
+
+							<p class="form-field-help">Nombre visible en el panel y en la tienda.</p>
+
+							<div class="validation-wrapper" [class.open]="fieldCategoryErrors.name">
+								<app-validation-popover [errors]="validationCategoryError?.name!"></app-validation-popover>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-12 col-md-4">
+						<div class="form-field">
+							<div class="d-flex align-items-center justify-content-between gap-2">
+								<label class="form-field-label required" for="categoryColor">Color</label>
+
+								<button *ngIf="validationCategoryError?.color" type="button" class="form-error-toggle" (click)="fieldCategoryErrors.color = !fieldCategoryErrors.color">
+									{{ fieldCategoryErrors.color ? 'Ocultar errores' : 'Ver errores' }}
+								</button>
+							</div>
+
+							<div class="input-group form-input-group input-group-md">
+								<input
+									id="categoryColor"
+									type="color"
+									class="form-control form-control-md p-2"
+									name="color"
+									[(ngModel)]="category.color"
+									[class.is-invalid]="validationCategoryError?.color"
+								/>
+
+								<span class="input-group-text text-uppercase justify-content-center" style="width: 6.5rem">
+									{{ category.color }}
+								</span>
+							</div>
+
+							<p class="form-field-help">Color de identificación.</p>
+
+							<div class="validation-wrapper" [class.open]="fieldCategoryErrors.color">
+								<app-validation-popover [errors]="validationCategoryError?.color!"></app-validation-popover>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-12 col-md-4">
+						<div class="form-field">
+							<div class="d-flex align-items-center justify-content-between gap-2">
+								<label class="form-field-label required" for="categoryPrefix">Prefijo</label>
+
+								<button *ngIf="validationCategoryError?.prefix" type="button" class="form-error-toggle" (click)="fieldCategoryErrors.prefix = !fieldCategoryErrors.prefix">
+									{{ fieldCategoryErrors.prefix ? 'Ocultar errores' : 'Ver errores' }}
+								</button>
+							</div>
+
+							<input
+								id="categoryPrefix"
+								type="text"
+								class="form-control form-control-md text-uppercase"
+								placeholder="Ej. FRU"
+								name="prefix"
+								[(ngModel)]="category.prefix"
+								[imask]="prefixMask"
+								[class.is-invalid]="validationCategoryError?.prefix"
+							/>
+
+							<p class="form-field-help">Máximo tres letras identificadoras.</p>
+
+							<div class="validation-wrapper" [class.open]="fieldCategoryErrors.prefix">
+								<app-validation-popover [errors]="validationCategoryError?.prefix!"></app-validation-popover>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-12">
+						<div class="form-field">
+							<div class="d-flex align-items-center justify-content-between gap-2">
+								<label class="form-field-label required" for="categoryDescription">Descripción</label>
+
+								<button
+									*ngIf="validationCategoryError?.description"
+									type="button"
+									class="form-error-toggle"
+									(click)="fieldCategoryErrors.description = !fieldCategoryErrors.description"
+								>
+									{{ fieldCategoryErrors.description ? 'Ocultar errores' : 'Ver errores' }}
+								</button>
+							</div>
+
+							<textarea
+								id="categoryDescription"
+								class="form-control form-control-md"
+								placeholder="Describe qué productos pertenecen a esta categoría"
+								name="description"
+								[(ngModel)]="category.description"
+								[class.is-invalid]="validationCategoryError?.description"
+								textAreaAutoResize
+								rows="3"
+							></textarea>
+
+							<p class="form-field-help">Ayuda a comprender el alcance de la categoría.</p>
+
+							<div class="validation-wrapper" [class.open]="fieldCategoryErrors.description">
+								<app-validation-popover [errors]="validationCategoryError?.description!"></app-validation-popover>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section class="mb-7">
+				<header class="border-bottom pb-3 mb-4">
+					<div class="d-flex align-items-center justify-content-between gap-3">
+						<div>
+							<h2 class="form-card-title mb-0">Identidad visual</h2>
+							<p class="form-card-description">Selecciona el icono que representa la categoría.</p>
+						</div>
+						<button
+							type="button"
+							class="btn btn-xs btn-light-primary d-inline-flex align-items-center gap-2 flex-shrink-0"
+							[attr.aria-expanded]="showVisualIdentity"
+							aria-controls="categoryVisualIdentity"
+							(click)="showVisualIdentity = !showVisualIdentity"
+						>
+							<i class="bi" [ngClass]="showVisualIdentity ? 'bi-chevron-up' : 'bi-chevron-down'" aria-hidden="true"></i>
+							<span>{{ showVisualIdentity ? 'Ocultar' : 'Mostrar' }}</span>
+						</button>
+					</div>
+				</header>
+
+				<div *ngIf="showVisualIdentity" id="categoryVisualIdentity" class="form-field">
+					<div class="d-flex align-items-center justify-content-between gap-2">
+						<label class="form-field-label">Icono</label>
+
+						<button *ngIf="validationCategoryError?.icon" type="button" class="form-error-toggle" (click)="fieldCategoryErrors.icon = !fieldCategoryErrors.icon">
+							{{ fieldCategoryErrors.icon ? 'Ocultar errores' : 'Ver errores' }}
+						</button>
+					</div>
+
+					<app-input-svg [errors]="validationCategoryError" [data]="category"></app-input-svg>
+
+					<p class="form-field-help">Se mostrará junto al nombre de la categoría.</p>
+
+					<div class="validation-wrapper" [class.open]="fieldCategoryErrors.icon">
+						<app-validation-popover [errors]="validationCategoryError?.icon!"></app-validation-popover>
+					</div>
+				</div>
+			</section>
+
+			<section>
+				<header class="border-bottom pb-3 mb-4">
+					<h2 class="form-card-title">Configuraciones del producto</h2>
+
+					<p class="form-card-description">Activa los bloques de información que usarán los productos.</p>
+				</header>
+
+				<div class="row g-3">
+					<div class="col-12 col-md-6">
+						<div class="form-field h-100">
+							<div class="d-flex align-items-center justify-content-between gap-2">
+								<button
+									*ngIf="validationCategoryError?.isDimensions"
+									type="button"
+									class="form-error-toggle"
+									(click)="fieldCategoryErrors.isDimensions = !fieldCategoryErrors.isDimensions"
+								>
+									{{ fieldCategoryErrors.isDimensions ? 'Ocultar errores' : 'Ver errores' }}
+								</button>
+							</div>
+
+							<label
+								class="form-check form-check-customs form-check-sm d-flex align-items-start gap-3 border rounded p-3 m-0 w-100 cursor-pointer"
+								[class.is-invalid]="validationCategoryError?.isDimensions"
+								style="background: #f9f9f9 !important"
+							>
+								<input class="form-check-input float-none flex-shrink-0 ms-0 mt-1" type="checkbox" name="isDimensions" [(ngModel)]="category.isDimensions" />
+
+								<span class="form-check-label d-flex flex-column align-items-start">
+									<span class="fw-semibold text-gray-700 fs-8">Dimensiones</span>
+
+									<small class="form-field-help mt-0">Alto, ancho, largo, peso y otras medidas físicas.</small>
+								</span>
+							</label>
+
+							<div class="validation-wrapper" [class.open]="fieldCategoryErrors.isDimensions">
+								<app-validation-popover [errors]="validationCategoryError?.isDimensions!"></app-validation-popover>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-12 col-md-6">
+						<div class="form-field h-100">
+							<div class="d-flex align-items-center justify-content-between gap-2">
+								<button
+									*ngIf="validationCategoryError?.isCharacteristics"
+									type="button"
+									class="form-error-toggle"
+									(click)="fieldCategoryErrors.isCharacteristics = !fieldCategoryErrors.isCharacteristics"
+								>
+									{{ fieldCategoryErrors.isCharacteristics ? 'Ocultar errores' : 'Ver errores' }}
+								</button>
+							</div>
+
+							<label
+								class="form-check form-check-customs form-check-sm d-flex align-items-start gap-3 border rounded p-3 m-0 w-100 cursor-pointer"
+								[class.is-invalid]="validationCategoryError?.isCharacteristics"
+								style="background: #f9f9f9 !important"
+							>
+								<input class="form-check-input float-none flex-shrink-0 ms-0 mt-1" type="checkbox" name="isCharacteristics" [(ngModel)]="category.isCharacteristics" />
+
+								<span class="form-check-label d-flex flex-column align-items-start">
+									<span class="fw-semibold text-gray-700 fs-8">Características</span>
+
+									<small class="form-field-help mt-0">Funciones, ventajas y detalles técnicos principales.</small>
+								</span>
+							</label>
+
+							<div class="validation-wrapper" [class.open]="fieldCategoryErrors.isCharacteristics">
+								<app-validation-popover [errors]="validationCategoryError?.isCharacteristics!"></app-validation-popover>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-12 col-md-6">
+						<div class="form-field h-100">
+							<div class="d-flex align-items-center justify-content-between gap-2">
+								<button
+									*ngIf="validationCategoryError?.isCondition"
+									type="button"
+									class="form-error-toggle"
+									(click)="fieldCategoryErrors.isCondition = !fieldCategoryErrors.isCondition"
+								>
+									{{ fieldCategoryErrors.isCondition ? 'Ocultar errores' : 'Ver errores' }}
+								</button>
+							</div>
+
+							<label
+								class="form-check form-check-customs form-check-sm d-flex align-items-start gap-3 border rounded p-3 m-0 w-100 cursor-pointer"
+								[class.is-invalid]="validationCategoryError?.isCondition"
+								style="background: #f9f9f9 !important"
+							>
+								<input class="form-check-input float-none flex-shrink-0 ms-0 mt-1" type="checkbox" name="isCondition" [(ngModel)]="category.isCondition" />
+
+								<span class="form-check-label d-flex flex-column align-items-start">
+									<span class="fw-semibold text-gray-700 fs-8">Condición</span>
+
+									<small class="form-field-help mt-0">Estado nuevo, usado o reacondicionado.</small>
+								</span>
+							</label>
+
+							<div class="validation-wrapper" [class.open]="fieldCategoryErrors.isCondition">
+								<app-validation-popover [errors]="validationCategoryError?.isCondition!"></app-validation-popover>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-12 col-md-6">
+						<div class="form-field h-100">
+							<div class="d-flex align-items-center justify-content-between gap-2">
+								<button
+									*ngIf="validationCategoryError?.isWarranty"
+									type="button"
+									class="form-error-toggle"
+									(click)="fieldCategoryErrors.isWarranty = !fieldCategoryErrors.isWarranty"
+								>
+									{{ fieldCategoryErrors.isWarranty ? 'Ocultar errores' : 'Ver errores' }}
+								</button>
+							</div>
+
+							<label
+								class="form-check form-check-customs form-check-sm d-flex align-items-start gap-3 border rounded p-3 m-0 w-100 cursor-pointer"
+								[class.is-invalid]="validationCategoryError?.isWarranty"
+								style="background: #f9f9f9 !important"
+							>
+								<input class="form-check-input float-none flex-shrink-0 ms-0 mt-1" type="checkbox" name="isWarranty" [(ngModel)]="category.isWarranty" />
+
+								<span class="form-check-label d-flex flex-column align-items-start">
+									<span class="fw-semibold text-gray-700 fs-8">Garantía</span>
+
+									<small class="form-field-help mt-0">Tiempo, tipo y condiciones de cobertura.</small>
+								</span>
+							</label>
+
+							<div class="validation-wrapper" [class.open]="fieldCategoryErrors.isWarranty">
+								<app-validation-popover [errors]="validationCategoryError?.isWarranty!"></app-validation-popover>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-12 col-md-6">
+						<div class="form-field h-100">
+							<div class="d-flex align-items-center justify-content-between gap-2">
+								<button
+									*ngIf="validationCategoryError?.isCountryOfOrigin"
+									type="button"
+									class="form-error-toggle"
+									(click)="fieldCategoryErrors.isCountryOfOrigin = !fieldCategoryErrors.isCountryOfOrigin"
+								>
+									{{ fieldCategoryErrors.isCountryOfOrigin ? 'Ocultar errores' : 'Ver errores' }}
+								</button>
+							</div>
+
+							<label
+								class="form-check form-check-customs form-check-sm d-flex align-items-start gap-3 border rounded p-3 m-0 w-100 cursor-pointer"
+								[class.is-invalid]="validationCategoryError?.isCountryOfOrigin"
+								style="background: #f9f9f9 !important"
+							>
+								<input class="form-check-input float-none flex-shrink-0 ms-0 mt-1" type="checkbox" name="isCountryOfOrigin" [(ngModel)]="category.isCountryOfOrigin" />
+
+								<span class="form-check-label d-flex flex-column align-items-start">
+									<span class="fw-semibold text-gray-700 fs-8">País de origen</span>
+
+									<small class="form-field-help mt-0">Lugar de fabricación, producción o ensamblaje.</small>
+								</span>
+							</label>
+
+							<div class="validation-wrapper" [class.open]="fieldCategoryErrors.isCountryOfOrigin">
+								<app-validation-popover [errors]="validationCategoryError?.isCountryOfOrigin!"></app-validation-popover>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-12 col-md-6">
+						<div class="form-field h-100">
+							<div class="d-flex align-items-center justify-content-between gap-2">
+								<button
+									*ngIf="validationCategoryError?.isMaterial"
+									type="button"
+									class="form-error-toggle"
+									(click)="fieldCategoryErrors.isMaterial = !fieldCategoryErrors.isMaterial"
+								>
+									{{ fieldCategoryErrors.isMaterial ? 'Ocultar errores' : 'Ver errores' }}
+								</button>
+							</div>
+
+							<label
+								class="form-check form-check-customs form-check-sm d-flex align-items-start gap-3 border rounded p-3 m-0 w-100 cursor-pointer"
+								[class.is-invalid]="validationCategoryError?.isMaterial"
+								style="background: #f9f9f9 !important"
+							>
+								<input class="form-check-input float-none flex-shrink-0 ms-0 mt-1" type="checkbox" name="isMaterial" [(ngModel)]="category.isMaterial" />
+
+								<span class="form-check-label d-flex flex-column align-items-start">
+									<span class="fw-semibold text-gray-700 fs-8">Material principal</span>
+
+									<small class="form-field-help mt-0">Material predominante utilizado en la fabricación.</small>
+								</span>
+							</label>
+
+							<div class="validation-wrapper" [class.open]="fieldCategoryErrors.isMaterial">
+								<app-validation-popover [errors]="validationCategoryError?.isMaterial!"></app-validation-popover>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-12 col-md-6">
+						<div class="form-field h-100">
+							<div class="d-flex align-items-center justify-content-between gap-2">
+								<button
+									*ngIf="validationCategoryError?.isTemperature"
+									type="button"
+									class="form-error-toggle"
+									(click)="fieldCategoryErrors.isTemperature = !fieldCategoryErrors.isTemperature"
+								>
+									{{ fieldCategoryErrors.isTemperature ? 'Ocultar errores' : 'Ver errores' }}
+								</button>
+							</div>
+
+							<label
+								class="form-check form-check-customs form-check-sm d-flex align-items-start gap-3 border rounded p-3 m-0 w-100 cursor-pointer"
+								[class.is-invalid]="validationCategoryError?.isTemperature"
+								style="background: #f9f9f9 !important"
+							>
+								<input class="form-check-input float-none flex-shrink-0 ms-0 mt-1" type="checkbox" name="isTemperature" [(ngModel)]="category.isTemperature" />
+
+								<span class="form-check-label d-flex flex-column align-items-start">
+									<span class="fw-semibold text-gray-700 fs-8">Temperatura</span>
+
+									<small class="form-field-help mt-0">Rango ideal de uso, conservación o almacenaje.</small>
+								</span>
+							</label>
+
+							<div class="validation-wrapper" [class.open]="fieldCategoryErrors.isTemperature">
+								<app-validation-popover [errors]="validationCategoryError?.isTemperature!"></app-validation-popover>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+		</div>
+		<footer class="form-card-footer">
+			<div class="d-flex flex-column-reverse flex-sm-row align-items-stretch align-items-sm-center justify-content-end gap-2">
+				<button
+					type="button"
+					class="btn btn-sm btn-primary px-5"
+					[disabled]="isUpdateCategoryLoading || !!categoryLoadError"
+					(click)="!isUpdateCategoryLoading && !categoryLoadError && updateCategory()"
+				>
+					<span *ngIf="isUpdateCategoryLoading" class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+
+					<i *ngIf="!isUpdateCategoryLoading" class="bi bi-folder-check" aria-hidden="true"></i>
+
+					<span>
+						{{ isUpdateCategoryLoading ? 'Actualizando...' : 'Actualizar categoría' }}
+					</span>
+				</button>
+			</div>
+		</footer>
+	}
+</section>

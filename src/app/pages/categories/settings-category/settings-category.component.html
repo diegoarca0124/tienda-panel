@@ -1,0 +1,75 @@
+<div class="app-page flex-column flex-column-fluid" id="kt_app_page">
+	<app-topbar></app-topbar>
+
+	<div class="app-wrapper flex-column flex-row-fluid" id="kt_app_wrapper">
+		<app-sidebar></app-sidebar>
+
+		<div class="app-main flex-column flex-row-fluid">
+			<div class="d-flex flex-column flex-column-fluid">
+				<div id="kt_app_toolbar" class="app-toolbar py-3 py-lg-6">
+					<div id="kt_app_toolbar_container" class="app-container container-fluid page-header-layout">
+						<div class="page-header-content">
+							<nav aria-label="Navegación actual">
+								<ol class="page-header-breadcrumb">
+									<li class="page-header-breadcrumb-item">
+										<a class="page-header-breadcrumb-link" routerLink="/products/categories">Categorías</a>
+									</li>
+									<li class="page-header-breadcrumb-item page-header-breadcrumb-active" aria-current="page">Configuración</li>
+								</ol>
+							</nav>
+
+							<h1 class="page-header-title">Configuración de categoría</h1>
+						</div>
+					</div>
+				</div>
+
+				<div class="app-content flex-column-fluid mt-5">
+					<div class="app-container container-fluid">
+						<div class="settings-layout">
+							<aside class="settings-navigation" aria-label="Secciones de configuración">
+								<div class="form-card settings-navigation-card">
+									<nav class="settings-menu">
+										@for (item of menuItems; track item.id) {
+											<button
+												type="button"
+												class="settings-menu-item"
+												[class.active]="activeSection === item.id"
+												[attr.aria-current]="activeSection === item.id ? 'page' : null"
+												(click)="setActiveSection(item.id)"
+											>
+												<span class="settings-menu-icon" aria-hidden="true">
+													<i [class]="'bi ' + item.icon"></i>
+												</span>
+												<span class="settings-menu-copy">
+													<strong>{{ item.label }}</strong>
+													<small>{{ item.description }}</small>
+												</span>
+											</button>
+										}
+									</nav>
+								</div>
+							</aside>
+
+							<main class="settings-content">
+								@switch (activeSection) {
+									@case ('category') {
+										<app-edit-category></app-edit-category>
+									}
+									@case ('create-subcategory') {
+										<app-create-subcategory></app-create-subcategory>
+									}
+									@case ('subcategories') {
+										<app-index-subcategory></app-index-subcategory>
+									}
+									@case ('products') {
+										<app-articles-category></app-articles-category>
+									}
+								}
+							</main>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

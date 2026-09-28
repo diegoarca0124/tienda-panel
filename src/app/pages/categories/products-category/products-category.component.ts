@@ -53,6 +53,7 @@ export class ProductsCategoryComponent {
 	private destroy$ = new Subject<void>();
 
 	public id: string = '';
+	public categoryName: string = '';
 	public categories: CategoryInterface[] = [];
 	public products: ProductInterface[] = [];
 
@@ -74,7 +75,7 @@ export class ProductsCategoryComponent {
 	public moveProductsPayload: MoveProductsInterface = createMoveProducts();
 	public movingToSubcategoryId: string | null = null;
 
-	public expandedCategoryIndex: number | null = 0;
+	public expandedCategoryIndex: number | null = null;
 
 	public isCategoriesLoading: boolean = false;
 	public isProductsLoading: boolean = true;
@@ -145,15 +146,10 @@ export class ProductsCategoryComponent {
 		this.limit = Number(params['limit']);
 		this.selectedStatus = params['status'];
 		this.selectedSort = params['sort'];
-
 		this.selectedSubcategoryIds = params['subcategoryIds'] ?? 'Todos';
-
 		this.selectedQuality = params['quality'] ?? 'Todos';
-
 		this.selectedVisibility = params['visibility'] ?? 'Todos';
-
 		this.minPrice = params['minPrice'] !== undefined ? Number(params['minPrice']) : null;
-
 		this.maxPrice = params['maxPrice'] !== undefined ? Number(params['maxPrice']) : null;
 	}
 
@@ -182,7 +178,7 @@ export class ProductsCategoryComponent {
 		return productsRequest$.pipe(
 			tap((response: FindCategoryProductsRESI) => {
 				this.productsLoadError = null;
-
+				this.categoryName = response.category;
 				this.products = response.products.map((product: ProductInterface) => ({
 					...product,
 					cover: `${environment.s3_public_url}/products/small/${product.cover}`,
@@ -242,10 +238,19 @@ export class ProductsCategoryComponent {
 			withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
 
 			tap((response: GetCategoriesWithSubcategoriesRESI) => {
-				this.categories = response.data.map((category) => ({
-					...category,
-					safeIcon: this.sanitizer.bypassSecurityTrustHtml(category.icon),
-				}));
+				this.categories = response.data
+					.map((category) => ({
+						...category,
+						safeIcon: this.sanitizer.bypassSecurityTrustHtml(category.icon),
+					}))
+					.sort((firstCategory, secondCategory) => {
+						if (firstCategory.id === this.id) return -1;
+						if (secondCategory.id === this.id) return 1;
+						return 0;
+					});
+
+				const currentCategoryIndex = this.categories.findIndex((category) => category.id === this.id);
+				this.expandedCategoryIndex = currentCategoryIndex >= 0 ? currentCategoryIndex : null;
 			}),
 
 			map(() => void 0),
@@ -445,6 +450,7 @@ export class ProductsCategoryComponent {
 		this.categoryService
 			.moveProductsToSubcategory(payload)
 			.pipe(
+				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
 				takeUntil(this.destroy$),
 				finalize(() => {
 					this.isMovingProducts = false;

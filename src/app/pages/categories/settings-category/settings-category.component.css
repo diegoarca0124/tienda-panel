@@ -1,0 +1,144 @@
+:host {
+	display: block;
+}
+
+.settings-layout {
+	display: grid;
+	grid-template-columns: minmax(18rem, 21rem) minmax(0, 1fr);
+	align-items: start;
+	gap: 1.5rem;
+	padding-bottom: 2rem;
+}
+
+.settings-navigation {
+	position: sticky;
+	top: 1.5rem;
+}
+
+.settings-navigation-card {
+	overflow: hidden;
+}
+
+.settings-menu {
+	display: grid;
+	gap: 0.375rem;
+	padding: 0.75rem;
+}
+
+.settings-menu-item {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	width: 100%;
+	padding: 0.75rem;
+	border: 0;
+	border-radius: 0.475rem;
+	color: var(--bs-gray-700);
+	text-align: left;
+	background: transparent;
+	transition:
+		color 160ms ease,
+		background-color 160ms ease;
+}
+
+.settings-menu-item:hover {
+	color: var(--bs-primary);
+	background: var(--bs-primary-light);
+}
+
+.settings-menu-item.active {
+	color: var(--bs-primary);
+	background: var(--bs-primary-light);
+}
+
+.settings-menu-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 2rem;
+	height: 2rem;
+	font-size: 1rem;
+	flex: 0 0 auto;
+}
+
+.settings-menu-copy {
+	display: grid;
+	min-width: 0;
+}
+
+.settings-menu-copy strong {
+	font-size: 0.875rem;
+	font-weight: 600;
+}
+
+.settings-menu-copy small {
+	color: var(--bs-gray-500);
+	font-size: 0.75rem;
+}
+
+.settings-content {
+	min-width: 0;
+}
+
+.settings-option-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 1rem;
+	padding-bottom: 1rem;
+	border-bottom: 1px solid var(--bs-gray-200);
+}
+
+.settings-option-row:last-child {
+	padding-bottom: 0;
+	border-bottom: 0;
+}
+
+.settings-option-row h3 {
+	margin: 0 0 0.25rem;
+	color: var(--bs-gray-800);
+	font-size: 0.9rem;
+	font-weight: 600;
+}
+
+.settings-option-row p {
+	margin: 0;
+	color: var(--bs-gray-500);
+	font-size: 0.8rem;
+}
+
+@media (max-width: 1249.98px) {
+	.settings-layout {
+		grid-template-columns: 1fr;
+		gap: 1rem;
+	}
+
+	.settings-navigation {
+		position: static;
+	}
+
+	.settings-menu {
+		display: flex;
+		overflow-x: auto;
+		scrollbar-width: thin;
+	}
+
+	.settings-menu-item {
+		width: auto;
+		min-width: max-content;
+	}
+
+	.settings-menu-copy small {
+		display: none;
+	}
+}
+
+@media (max-width: 575.98px) {
+	.settings-menu-item {
+		padding: 0.625rem 0.75rem;
+	}
+
+	.settings-option-row {
+		align-items: flex-start;
+	}
+}

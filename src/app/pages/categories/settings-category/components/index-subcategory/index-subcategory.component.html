@@ -1,0 +1,439 @@
+@if (typeForm === 'edit') {
+<section class="form-card mb-10">
+		<div class="form-card-body">
+			<section class="mb-7">
+				<header class="border-bottom pb-3 mb-4">
+					<h2 class="form-card-title">Editar subcategoría</h2>
+
+					<p class="form-card-description">
+						Actualiza la información de la subcategoría seleccionada.
+					</p>
+				</header>
+
+				<div class="row g-4">
+					<div class="col-12 col-md-6">
+						<div class="form-field">
+							<div class="d-flex align-items-center justify-content-between gap-2">
+								<label class="form-field-label required" for="subcategoryName">Nombre</label>
+
+								<button *ngIf="validationSubcategoryError?.name" type="button" class="form-error-toggle" (click)="fieldSubcategoryErrors.name = !fieldSubcategoryErrors.name">
+									{{ fieldSubcategoryErrors.name ? 'Ocultar errores' : 'Ver errores' }}
+								</button>
+							</div>
+
+							<div class="position-relative">
+								<input
+									id="subcategoryName"
+									type="text"
+									class="form-control form-control-md pe-15"
+									placeholder="Ej. Bayas"
+									name="subcategoryName"
+									[(ngModel)]="subcategory.name"
+									[class.is-invalid]="validationSubcategoryError?.name"
+									(keyup.enter)="updateSubcategory()"
+								/>
+
+								<span
+									class="position-absolute top-50 end-0 translate-middle-y me-3 text-primary fw-600 fs-8"
+									style="pointer-events: none; background-color: #ffffff; padding: 0.125rem 0.25rem"
+								>
+									ENTER
+								</span>
+							</div>
+
+							<p class="form-field-help">Nombre visible en el panel y en la tienda.</p>
+
+							<div class="validation-wrapper" [class.open]="fieldSubcategoryErrors.name">
+								<app-validation-popover [errors]="validationSubcategoryError?.name!"></app-validation-popover>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-12 col-md-6">
+						<div class="form-field">
+							<div class="d-flex align-items-center justify-content-between gap-2">
+								<label class="form-field-label required" for="subcategoryPrefix">Prefijo</label>
+
+								<button *ngIf="validationSubcategoryError?.prefix" type="button" class="form-error-toggle" (click)="fieldSubcategoryErrors.prefix = !fieldSubcategoryErrors.prefix">
+									{{ fieldSubcategoryErrors.prefix ? 'Ocultar errores' : 'Ver errores' }}
+								</button>
+							</div>
+
+							<input
+								id="subcategoryPrefix"
+								type="text"
+								class="form-control form-control-md text-uppercase"
+								placeholder="Ej. BA"
+								name="subcategoryPrefix"
+								[(ngModel)]="subcategory.prefix"
+								[imask]="prefixMask"
+								[class.is-invalid]="validationSubcategoryError?.prefix"
+								(keyup.enter)="updateSubcategory()"
+							/>
+
+							<p class="form-field-help">Dos caracteres que identifican la subcategoría.</p>
+
+							<div class="validation-wrapper" [class.open]="fieldSubcategoryErrors.prefix">
+								<app-validation-popover [errors]="validationSubcategoryError?.prefix!"></app-validation-popover>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-12">
+						<div class="form-field">
+							<div class="d-flex align-items-center justify-content-between gap-2">
+								<label class="form-field-label">Icono</label>
+
+								<button *ngIf="validationSubcategoryError?.icon" type="button" class="form-error-toggle" (click)="fieldSubcategoryErrors.icon = !fieldSubcategoryErrors.icon">
+									{{ fieldSubcategoryErrors.icon ? 'Ocultar errores' : 'Ver errores' }}
+								</button>
+							</div>
+
+							<app-input-svg [errors]="validationSubcategoryError" [data]="subcategory"></app-input-svg>
+
+							<p class="form-field-help">Se mostrará junto al nombre de la subcategoría.</p>
+
+							<div class="validation-wrapper" [class.open]="fieldSubcategoryErrors.icon">
+								<app-validation-popover [errors]="validationSubcategoryError?.icon!"></app-validation-popover>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="d-flex flex-column-reverse flex-sm-row align-items-stretch align-items-sm-center justify-content-end gap-2 mt-5">
+					<button
+						type="button"
+						class="btn btn-warning btn-sm text-dark"
+						[disabled]="isGetSubcategoriesLoading || isCreateSubcategoryLoading"
+						(click)="cancelEdit()"
+					>
+						<i class="bi bi-x-circle text-dark" aria-hidden="true"></i>
+
+						Cancelar edición
+					</button>
+
+					<button
+						type="button"
+						class="btn btn-primary btn-sm"
+						[disabled]="isGetSubcategoriesLoading || isCreateSubcategoryLoading || !!subcategoryLoadError"
+						(click)="!isGetSubcategoriesLoading && !isCreateSubcategoryLoading && !subcategoryLoadError && updateSubcategory()"
+					>
+						<span *ngIf="isCreateSubcategoryLoading" class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+
+						<i *ngIf="!isCreateSubcategoryLoading" class="bi bi-folder-check" aria-hidden="true"></i>
+
+						<span>
+							{{ isCreateSubcategoryLoading ? 'Actualizando...' : 'Actualizar subcategoría' }}
+						</span>
+					</button>
+				</div>
+			</section>
+
+		</div>
+
+</section>
+}
+
+
+<section>
+	<header class="pb-3 mb-4 d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between gap-3">
+		<div>
+			<h2 class="form-card-title">Subcategorías</h2>
+
+			<p class="form-card-description">
+				Administra las subcategorías asociadas a
+				{{ category.name }}.
+			</p>
+		</div>
+
+		<div class="d-flex flex-wrap align-items-center gap-2">
+			@if (getSelectedIds().length > 0) {
+				<button
+					type="button"
+					class="btn btn-light-primary btn-xs"
+					data-bs-toggle="modal"
+					[attr.data-bs-target]="'#modalMultipleActive'"
+					[disabled]="isGetSubcategoriesLoading"
+				>
+					<i class="bi bi-check-circle" aria-hidden="true"></i>
+
+					Activar
+				</button>
+
+				<button
+					type="button"
+					class="btn btn-light-danger btn-xs"
+					data-bs-toggle="modal"
+					[attr.data-bs-target]="'#modalMultipleDisabled'"
+					[disabled]="isGetSubcategoriesLoading"
+				>
+					<i class="bi bi-x-circle" aria-hidden="true"></i>
+
+					Desactivar
+				</button>
+			}
+
+			<button
+				type="button"
+				class="btn btn-icon btn-light btn-xs"
+				(click)="initSubcategories(id)"
+				[disabled]="isGetSubcategoriesLoading"
+				placement="top"
+				[ngbTooltip]="'Recargar subcategorías'"
+				tooltipClass="tooltip-dark"
+				aria-label="Recargar subcategorías"
+			>
+				<span *ngIf="isGetSubcategoriesLoading" class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+
+				<ion-icon *ngIf="!isGetSubcategoriesLoading" name="refresh-outline" aria-hidden="true"></ion-icon>
+			</button>
+		</div>
+	</header>
+
+	<div class="table-wrapper mb-7">
+		<table class="table custom-table align-middle mb-0">
+			<thead>
+				<tr>
+					<th class="fixed-xs text-center p-0" style="position: unset !important">
+						<div class="dropdown">
+							<button
+								id="subcategoryTableOptions"
+								type="button"
+								class="btn btn-icon btn-dark h-25px w-25px"
+								data-bs-toggle="dropdown"
+								aria-expanded="false"
+								aria-label="Acciones para subcategorías seleccionadas"
+								title="Acciones"
+								[disabled]="isGetSubcategoriesLoading"
+							>
+								<ion-icon name="settings-outline" class="fs-5" aria-hidden="true"></ion-icon>
+							</button>
+
+							<div class="dropdown-menu dropdown-menu-end action-dropdown-menu action-dropdown-menu-compact" aria-labelledby="subcategoryTableOptions">
+								<a
+									class="dropdown-item action-dropdown-item action-dropdown-item-compact"
+									[class.disabled]="selectedSubcategoriesIds.size === 0"
+									[attr.data-bs-toggle]="selectedSubcategoriesIds.size > 0 ? 'modal' : null"
+									[attr.data-bs-target]="selectedSubcategoriesIds.size > 0 ? '#modalMultipleActive' : null"
+									style="text-transform: capitalize !important"
+								>
+									<span class="action-dropdown-item-icon">
+										<ion-icon name="checkmark-circle-outline" class="fs-4 text-primary" aria-hidden="true"></ion-icon>
+									</span>
+
+									<span class="action-dropdown-item-title text-primary">Activar</span>
+								</a>
+
+								<a
+									class="dropdown-item action-dropdown-item action-dropdown-item-compact"
+									[class.disabled]="selectedSubcategoriesIds.size === 0"
+									[attr.data-bs-toggle]="selectedSubcategoriesIds.size > 0 ? 'modal' : null"
+									[attr.data-bs-target]="selectedSubcategoriesIds.size > 0 ? '#modalMultipleDisabled' : null"
+									style="text-transform: capitalize !important"
+								>
+									<span class="action-dropdown-item-icon">
+										<ion-icon name="close-circle-outline" class="fs-4 text-danger" aria-hidden="true"></ion-icon>
+									</span>
+
+									<span class="action-dropdown-item-title text-danger">Desactivar</span>
+								</a>
+							</div>
+						</div>
+					</th>
+
+					<th class="flex-column">Subcategoría</th>
+
+					<th class="fixed-sm">Estado</th>
+
+					<th class="fixed-xs text-center"></th>
+				</tr>
+			</thead>
+
+			<tbody>
+				@if (isGetSubcategoriesLoading) {
+					<tr *ngFor="let item of [1, 2, 3, 4, 5, 6]">
+						<td class="fixed-xs text-center p-0">
+							<div class="skeleton skeleton-check"></div>
+						</td>
+
+						<td class="flex-column">
+							<div class="d-flex align-items-center">
+								<div class="skeleton skeleton-square-sm me-3"></div>
+
+								<div class="skeleton-lines d-flex flex-column gap-2">
+									<div class="skeleton skeleton-text skeleton-w-60"></div>
+
+									<div class="skeleton skeleton-text skeleton-w-40"></div>
+								</div>
+							</div>
+						</td>
+
+						<td class="fixed-sm">
+							<div class="skeleton skeleton-badge"></div>
+						</td>
+
+						<td class="fixed-xs text-center p-0">
+							<div class="skeleton skeleton-btn"></div>
+						</td>
+					</tr>
+				} @else if (subcategoryLoadError) {
+					<tr>
+						<td colspan="4">
+							<app-not-found [error]="subcategoryLoadError"></app-not-found>
+						</td>
+					</tr>
+				} @else if (subcategories.length >= 1) {
+					<tr *ngFor="let item of subcategories">
+						<td class="fixed-xs text-center p-0">
+							<label class="form-check form-check-customs form-check-sm m-0 d-flex align-items-center justify-content-center h-100">
+								<input
+									class="form-check-input cursor-pointer"
+									type="checkbox"
+									[checked]="selectedSubcategoriesIds.has(item.id!)"
+									(change)="toggleItem(item.id!, $event)"
+									[attr.aria-label]="'Seleccionar subcategoría ' + item.name"
+								/>
+							</label>
+						</td>
+
+						<td class="flex-column">
+							<div class="d-flex align-items-center gap-2" style="min-width: 0">
+								<div class="symbol me-3" style="flex-shrink: 0">
+									<span *ngIf="item.icon" class="symbol-label fw-700" style="width: 30px; height: 30px" [innerHTML]="item.safeIcon"></span>
+
+									<span *ngIf="!item.icon" class="symbol-label bg-light-primary text-primary" style="width: 30px; height: 30px">
+										<ion-icon name="folder-outline" class="fs-4" aria-hidden="true"></ion-icon>
+									</span>
+								</div>
+
+								<div class="d-flex flex-column" style="min-width: 0">
+									<p class="paragraph paragraph-sm text-gray-700 fw-600 lh-tight text-truncate-1 m-0">
+										{{ item.name }}
+									</p>
+
+									<p class="paragraph paragraph-sm text-gray-400 fs-12 fw-400 lh-tight text-truncate-1 m-0">#{{ item.prefix }}-{{ item.code! | padCode: 6 }}</p>
+								</div>
+							</div>
+						</td>
+
+						<td class="fixed-sm">
+							<span
+								class="badge rounded-pill fw-700"
+								[ngClass]="{
+									'bg-outline-danger': !item.status,
+									'bg-outline-primary': item.status,
+									'text-danger': !item.status,
+									'text-primary': item.status,
+								}"
+							>
+								<span
+									class="d-inline-block rounded-circle me-1"
+									style="width: 6px; height: 6px"
+									[ngClass]="{
+										'bg-danger': !item.status,
+										'bg-primary': item.status,
+									}"
+								></span>
+
+								{{ item.status ? 'Activo' : 'Inactivo' }}
+							</span>
+						</td>
+
+						<td class="fixed-xs text-center p-0">
+							<div class="dropdown">
+								<button
+									type="button"
+									class="icon-btn btn-action dropdown-toggle dropdown-toggle-no-arrow d-flex align-items-center justify-content-center mx-auto"
+									data-bs-toggle="dropdown"
+									data-bs-offset="0,7"
+									aria-expanded="false"
+									[attr.aria-label]="'Opciones de la subcategoría ' + item.name"
+									title="Opciones"
+								>
+									<i class="bi bi-three-dots" aria-hidden="true"></i>
+								</button>
+
+								<app-modal-delete
+									[id]="'modalDelete-' + item.id"
+									[title]="item.status ? 'Desactivar subcategoría' : 'Activar subcategoría'"
+									[description]="
+										item.status
+											? `La subcategoría <b>${item.name}</b> dejará de estar disponible y se ocultará temporalmente del sistema.`
+											: `La subcategoría <b>${item.name}</b> volverá a estar disponible y visible dentro del sistema.`
+									"
+									[textButton]="item.status ? 'Desactivar' : 'Activar'"
+									(actionConfirmed)="onUpdateStatus(item.id!, item.status!)"
+									[loadBtnDelete]="isUpdatingSingleStatus"
+								></app-modal-delete>
+
+								<div class="dropdown-menu dropdown-menu-end action-dropdown-menu action-dropdown-menu-compact">
+									<button type="button" class="dropdown-item action-dropdown-item action-dropdown-item-compact" (click)="editSubcategory(item)">
+										<span class="action-dropdown-item-icon">
+											<ion-icon name="create-outline" class="fs-4" aria-hidden="true"></ion-icon>
+										</span>
+
+										<span class="action-dropdown-item-title">Editar</span>
+									</button>
+
+									<div class="action-dropdown-divider"></div>
+
+									<a
+										class="dropdown-item action-dropdown-item action-dropdown-item-compact cursor-pointer"
+										[class.action-dropdown-item-danger]="item.status"
+										[class.text-primary]="!item.status"
+										data-bs-toggle="modal"
+										[attr.data-bs-target]="'#modalDelete-' + item.id"
+									>
+										<span class="action-dropdown-item-icon">
+											<ion-icon
+												class="fs-4"
+												[class.action-dropdown-item-danger]="item.status"
+												[class.text-primary]="!item.status"
+												[name]="item.status ? 'close-circle-outline' : 'checkmark-circle-outline'"
+												aria-hidden="true"
+											></ion-icon>
+										</span>
+
+										<span class="action-dropdown-item-title">
+											{{ item.status ? 'Desactivar' : 'Activar' }}
+										</span>
+									</a>
+								</div>
+							</div>
+						</td>
+					</tr>
+				} @else {
+					<tr>
+						<td colspan="4">
+							<app-not-found
+								[error]="{
+									message: 'No se encontraron registros.',
+									statusCode: 404,
+								}"
+							></app-not-found>
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+</section>
+
+<app-modal-delete
+	[id]="'modalMultipleActive'"
+	[title]="'Activación Multiple'"
+	[description]="'El estado de las subcategorias serán actualizadas. Verifica tu selección antes de continuar, ya que este cambio se aplicará a todos.'"
+	[textButton]="'Activar'"
+	(actionConfirmed)="onUpdateStatusMultiple(true)"
+	[loadBtnDelete]="isUpdatingMultipleStatus"
+></app-modal-delete>
+
+<app-modal-delete
+	[id]="'modalMultipleDisabled'"
+	[title]="'Desactivación Multiple'"
+	[description]="'El estado de las subcategorias serán actualizadas. Verifica tu selección antes de continuar, ya que este cambio se aplicará a todos.'"
+	[textButton]="'Desactivar'"
+	(actionConfirmed)="onUpdateStatusMultiple(false)"
+	[loadBtnDelete]="isUpdatingMultipleStatus"
+></app-modal-delete>
+

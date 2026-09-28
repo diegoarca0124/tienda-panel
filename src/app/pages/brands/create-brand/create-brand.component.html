@@ -120,7 +120,7 @@
 												>
 													<ng-template ng-option-tmp let-item="item">
 														<div class="app-select-option">
-															<img [src]="item.flag" class="w-20px h-15px rounded-1 flex-shrink-0" alt=""/>
+															<img [src]="item.flag" class="w-20px h-15px rounded-1 flex-shrink-0" alt="" />
 
 															<span class="app-select-option-text">
 																{{ item.name }}
@@ -253,7 +253,7 @@
 
 												<app-upload-image
 													(fileSelected)="brand.bannerUrl = $event ? $event : undefined"
-											(imageValidationError)="setErrorBanner($event)"
+													(imageValidationError)="setErrorBanner($event)"
 													[aspectMode]="'rectangle'"
 													[inputId]="'bannerUrl'"
 													[hasError]="validationBrandError?.bannerUrl?.[0]"
@@ -287,8 +287,6 @@
 										</span>
 									</button>
 								</div>
-
-								
 							</footer>
 						</div>
 					</div>

@@ -431,21 +431,21 @@
 																		? `La categoría <b>${item.name}</b> dejará de estar disponible y se ocultará temporalmente del sistema.`
 																		: `La categoría <b>${item.name}</b> volverá a estar disponible y visible dentro del sistema.`
 																"
-																				[detailsTitle]="item.status ? 'Al desactivar esta categoría:' : 'Al activar esta categoría:'"
-																				[details]="item.status ? categoryStatusDetails.deactivate : categoryStatusDetails.activate"
+																[detailsTitle]="item.status ? 'Al desactivar esta categoría:' : 'Al activar esta categoría:'"
+																[details]="item.status ? categoryStatusDetails.deactivate : categoryStatusDetails.activate"
 																[textButton]="item.status ? 'Desactivar' : 'Activar'"
 																(actionConfirmed)="onUpdateStatus(item.id!, item.status!)"
 																[loadBtnDelete]="isUpdatingSingleStatus"
 															></app-modal-delete>
 
 															<div class="dropdown-menu dropdown-menu-end action-dropdown-menu action-dropdown-menu-compact">
-																<!-- Editar -->
-																<a class="dropdown-item action-dropdown-item action-dropdown-item-compact" [routerLink]="['/products/categories/' + item.id + '/edit']">
+																<!-- Configuración -->
+																<a class="dropdown-item action-dropdown-item action-dropdown-item-compact" [routerLink]="['/products/categories/' + item.id + '/settings']">
 																	<span class="action-dropdown-item-icon">
-																		<ion-icon name="create-outline" class="fs-4" aria-hidden="true"></ion-icon>
+																		<ion-icon name="settings-outline" class="fs-4" aria-hidden="true"></ion-icon>
 																	</span>
 
-																	<span class="action-dropdown-item-title">Editar</span>
+																	<span class="action-dropdown-item-title">Configuración</span>
 																</a>
 
 																<!-- Productos -->

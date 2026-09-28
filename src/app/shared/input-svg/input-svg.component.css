@@ -1,58 +1,24 @@
 .editor-invalid {
-	border: 1px solid #f1416c;
-	border-radius: 0.475rem;
+	border-color: #f1416c !important;
+	box-shadow: 0 0 0 0.2rem rgba(241, 65, 108, 0.08);
 }
 
-.svg-preview-card {
-	position: relative;
+.code-editor-shell {
 	height: 250px;
+	overflow: hidden;
+	background-color: #ffffff;
 	border: 1px solid #dbdfe9;
 	border-radius: 0.475rem;
-	overflow: hidden;
-	background-color: #fafafa;
-	background-image: radial-gradient(#cbcbcb 1px, transparent 1px);
-	background-size: 20px 20px;
+	transition:
+		border-color 0.2s ease,
+		box-shadow 0.2s ease;
 }
 
-.svg-placeholder {
-	position: absolute;
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	font-size: 14px;
-	font-weight: 600;
-	letter-spacing: 4px;
-	text-transform: uppercase;
-	color: #b5b5c3;
-	pointer-events: none;
+.code-editor-shell:focus-within {
+	border-color: #1b84ff;
+	box-shadow: 0 0 0 0.2rem rgba(27, 132, 255, 0.08);
 }
 
-.svg-preview-body {
-	width: 100%;
+.code-editor-host {
 	height: 100%;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	padding: 1rem;
-}
-
-.svg-preview-body svg {
-	max-width: 100%;
-	max-height: 100%;
-}
-
-.svg-upload-btn {
-	position: absolute;
-	left: 50%;
-	bottom: 12px;
-	transform: translateX(-50%);
-	border-radius: 999px;
-	padding: 0.45rem 0.9rem;
-	z-index: 10;
-	backdrop-filter: blur(8px);
-	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
 }

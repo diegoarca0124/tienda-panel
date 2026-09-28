@@ -53,18 +53,18 @@ export class EditBrandComponent {
 	public brand: BrandInterface = createEmptyBrand();
 	public croppedImage: string | null = null;
 	public countriesValues = countries;
-	
+
 	public isUpdateBrandLoading = false;
 	public isBrandLoading = true;
 
 	public id: string = '';
-	
+
 	public brandLoadError: string = '';
 	public validationBrandError: BrandValidationErrors = {
 		logoUrl: [],
 		bannerUrl: [],
 	};
-	
+
 	public logoUrlEdit: string = '';
 	public bannerUrlEdit: string = '';
 	public prefixMask = prefixMask;

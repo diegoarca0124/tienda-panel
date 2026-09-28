@@ -27,7 +27,7 @@
 				<div class="app-content flex-column-fluid mt-5">
 					<div class="app-container container-fluid">
 						<div class="form-card mb-10">
-							@if(isBrandLoading){
+							@if (isBrandLoading) {
 								<div class="form-card-body">
 									<section class="mb-7">
 										<header class="border-bottom pb-3 mb-4">
@@ -140,7 +140,7 @@
 								</div>
 							}
 
-							@if(!isBrandLoading && !brandLoadError){
+							@if (!isBrandLoading && !brandLoadError) {
 								<div class="form-card-body">
 									<section class="mb-7">
 										<header class="border-bottom pb-3 mb-4">
@@ -234,7 +234,7 @@
 													>
 														<ng-template ng-option-tmp let-item="item">
 															<div class="app-select-option">
-																<img [src]="item.flag" class="w-20px h-15px rounded-1 flex-shrink-0" alt=""/>
+																<img [src]="item.flag" class="w-20px h-15px rounded-1 flex-shrink-0" alt="" />
 
 																<span class="app-select-option-text">
 																	{{ item.name }}
@@ -341,7 +341,7 @@
 
 													<app-upload-image
 														(fileSelected)="brand.logoUrl = $event ? $event : undefined"
-												(imageValidationError)="handleValidationError($event, 'logo')"
+														(imageValidationError)="handleValidationError($event, 'logo')"
 														[aspectMode]="'square'"
 														[inputId]="'logoUrl'"
 														[hasError]="validationBrandError?.logoUrl?.[0]"
@@ -361,14 +361,19 @@
 													<div class="d-flex align-items-center justify-content-between gap-2">
 														<label class="form-field-label required">Banner</label>
 
-														<button *ngIf="validationBrandError?.bannerUrl?.length" type="button" class="form-error-toggle" (click)="fieldErrors.bannerUrl = !fieldErrors.bannerUrl">
+														<button
+															*ngIf="validationBrandError?.bannerUrl?.length"
+															type="button"
+															class="form-error-toggle"
+															(click)="fieldErrors.bannerUrl = !fieldErrors.bannerUrl"
+														>
 															{{ fieldErrors.bannerUrl ? 'Ocultar errores' : 'Ver errores' }}
 														</button>
 													</div>
 
 													<app-upload-image
 														(fileSelected)="brand.bannerUrl = $event ? $event : undefined"
-												(imageValidationError)="handleValidationError($event, 'banner')"
+														(imageValidationError)="handleValidationError($event, 'banner')"
 														[aspectMode]="'rectangle'"
 														[inputId]="'bannerUrl'"
 														[hasError]="validationBrandError?.bannerUrl?.[0]"

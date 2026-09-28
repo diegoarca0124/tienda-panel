@@ -52,7 +52,7 @@ declare const toastr: any;
 })
 export class ProductsBrandComponent {
 	private destroy$ = new Subject<void>();
-	
+
 	public id: string = '';
 	public categories: CategoryInterface[] = [];
 	public products: ProductInterface[] = [];
@@ -385,7 +385,6 @@ export class ProductsBrandComponent {
 	hasSelectedProducts(): boolean {
 		return this.selectedProductsIds.size > 0;
 	}
-
 
 	onProductSelectionChange(id: string, event: Event) {
 		const checked = (event.target as HTMLInputElement).checked;

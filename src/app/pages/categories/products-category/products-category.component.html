@@ -17,7 +17,14 @@
 								</ol>
 							</nav>
 
-							<h1 class="page-header-title">Productos por categoría</h1>
+							<h1 class="page-header-title d-flex align-items-center gap-2">
+								<span>Productos de</span>
+								@if (isProductsLoading && !categoryName) {
+									<span class="skeleton skeleton-title" aria-label="Cargando nombre de la categoría"></span>
+								} @else {
+									<span>{{ categoryName || 'la categoría' }}</span>
+								}
+							</h1>
 						</div>
 					</div>
 				</div>
@@ -285,7 +292,7 @@
 							</div>
 						</div>
 
-						<div class="table-wrapper mb-7">
+						<div class="table-wrapper products-table-wrapper mb-7">
 							<table class="table custom-table align-middle mb-0">
 								<thead>
 									<tr>
@@ -528,6 +535,16 @@
 													</button>
 
 													<div class="dropdown-menu dropdown-menu-end action-dropdown-menu action-dropdown-menu-compact">
+														<a class="dropdown-item action-dropdown-item action-dropdown-item-compact" [routerLink]="['/products/articles/' + item.id + '/edit']">
+															<span class="action-dropdown-item-icon">
+																<ion-icon name="settings-outline" class="fs-4" aria-hidden="true"></ion-icon>
+															</span>
+
+															<span class="action-dropdown-item-title">Configuración</span>
+														</a>
+
+														<div class="action-dropdown-divider"></div>
+
 														<a
 															class="dropdown-item action-dropdown-item action-dropdown-item-compact cursor-pointer"
 															data-bs-toggle="modal"
@@ -650,11 +667,12 @@
 					<!-- Listado de categorías -->
 					@else if (categories.length >= 1) {
 						<div class="d-flex flex-column gap-3">
-							<div *ngFor="let category of categories; let categoryIndex = index" class="border rounded overflow-hidden" style="border-color: #e3e3e3 !important">
+							<div *ngFor="let category of categories; let categoryIndex = index" class="category-destination border rounded overflow-hidden">
 								<!-- Categoría -->
 								<button
 									type="button"
 									class="d-flex align-items-center justify-content-between gap-3 w-100 border-0 bg-light px-4 py-3 text-start"
+									[class.bg-light-primary]="category.id === id"
 									(click)="category.subcategories.length > 0 ? toggleCategory(categoryIndex) : null"
 									[disabled]="category.subcategories.length === 0 || isMovingProducts"
 									[attr.aria-expanded]="category.subcategories.length > 0 ? expandedCategoryIndex === categoryIndex : null"
@@ -670,17 +688,16 @@
 										</span>
 
 										<span class="d-flex flex-column min-w-0">
-											<span class="fs-7 text-gray-700 fw-600 text-truncate m-0" [attr.title]="category.name">
-												{{ category.name }}
+											<span class="d-flex align-items-center gap-2 min-w-0">
+												<span class="fs-7 text-gray-700 fw-600 text-truncate m-0" [attr.title]="category.name">
+													{{ category.name }}
+												</span>
+												<span *ngIf="category.id === id" class="badge rounded-pill bg-primary text-white fs-9 flex-shrink-0">Actual</span>
 											</span>
 
 											<span class="fs-8 text-gray-500 fw-400 m-0">
 												{{
-													category.subcategories.length === 0
-														? 'Sin subcategorías'
-														: category.subcategories.length === 1
-															? '1 subcategoría'
-															: category.subcategories.length + ' subcategorías'
+													category.subcategories.length === 0 ? '---' : category.subcategories.length === 1 ? '1 subcategoría' : category.subcategories.length + ' subcategorías'
 												}}
 											</span>
 										</span>
@@ -693,7 +710,7 @@
 										aria-hidden="true"
 									></ion-icon>
 
-									<span *ngIf="category.subcategories.length === 0" class="fs-9 text-gray-400 fw-500 m-0">Vacía</span>
+									<span *ngIf="category.subcategories.length === 0" class="fs-9 text-danger fw-500 m-0">Vacía</span>
 								</button>
 
 								<!-- Subcategorías -->

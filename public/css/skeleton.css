@@ -76,6 +76,14 @@
 	border-radius: 999px;
 }
 
+.skeleton-title {
+	display: inline-block;
+	width: 10rem;
+	height: 1.1rem;
+	border-radius: 999px;
+	vertical-align: middle;
+}
+
 .skeleton-check {
 	width: 20px;
 	height: 20px;

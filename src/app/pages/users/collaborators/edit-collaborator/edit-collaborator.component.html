@@ -24,7 +24,7 @@
 					<div class="app-container container-fluid">
 						<div class="form-card mb-6">
 							<div class="form-card-body">
-								@if(isCollaboratorLoading){
+								@if (isCollaboratorLoading) {
 									<section class="mb-7">
 										<div class="border-bottom pb-3 mb-4">
 											<h2 class="form-card-title">Datos personales</h2>
@@ -152,14 +152,13 @@
 											</div>
 										</div>
 									</section>
-
 								}
 
-								@if(!isCollaboratorLoading && collaboratorLoadError){
+								@if (!isCollaboratorLoading && collaboratorLoadError) {
 									<app-not-found [error]="collaboratorLoadError"></app-not-found>
 								}
 
-								@if(!isCollaboratorLoading && !collaboratorLoadError){
+								@if (!isCollaboratorLoading && !collaboratorLoadError) {
 									<section class="mb-7">
 										<div class="border-bottom pb-3 mb-4">
 											<h2 class="form-card-title">Datos personales</h2>
@@ -391,8 +390,7 @@
 															name="password"
 															[(ngModel)]="collaborator.password"
 														/>
-														<button type="button" class="btn btn-md btn-light-primary" (click)="generatePassword()"
-														style="font-size: .8rem !important;">Generar</button>
+														<button type="button" class="btn btn-md btn-light-primary" (click)="generatePassword()" style="font-size: 0.8rem !important">Generar</button>
 													</div>
 													<p class="form-field-help">Mínimo ocho caracteres; puedes generarla automáticamente.</p>
 													<div class="validation-wrapper" [class.open]="fieldErrors.password">
@@ -472,10 +470,7 @@
 											</div>
 										</div>
 									</section>
-
-									
 								}
-								
 							</div>
 
 							<footer class="form-card-footer" *ngIf="!collaboratorLoadError">
@@ -497,15 +492,21 @@
 						<dl *ngIf="!isCollaboratorLoading && !collaboratorLoadError" class="record-meta" aria-label="Fechas del registro">
 							<div class="record-meta__item">
 								<dt>Creado</dt>
-								<dd><time>{{ collaborator.createdAt | date: 'dd/MM/yyyy, HH:mm' }}</time></dd>
+								<dd>
+									<time>{{ collaborator.createdAt | date: 'dd/MM/yyyy, HH:mm' }}</time>
+								</dd>
 							</div>
 							<div class="record-meta__item">
 								<dt>Actualizado</dt>
-								<dd><time>{{ collaborator.updatedAt | date: 'dd/MM/yyyy, HH:mm' }}</time></dd>
+								<dd>
+									<time>{{ collaborator.updatedAt | date: 'dd/MM/yyyy, HH:mm' }}</time>
+								</dd>
 							</div>
 							<div class="record-meta__item">
 								<dt>Estado modificado</dt>
-								<dd><time>{{ (collaborator.statusAt | date: 'dd/MM/yyyy, HH:mm') || 'Sin cambios' }}</time></dd>
+								<dd>
+									<time>{{ (collaborator.statusAt | date: 'dd/MM/yyyy, HH:mm') || 'Sin cambios' }}</time>
+								</dd>
 							</div>
 						</dl>
 					</div>

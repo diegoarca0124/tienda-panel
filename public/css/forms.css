@@ -32,7 +32,7 @@
 input::placeholder,
 textarea::placeholder,
 .placeholder-text {
-	font-size: var(--form-text-sm) !important;
+	font-size: var(--form-text-md) !important;
 	font-weight: 400 !important;
 	color: #99a1c0 !important;
 	opacity: 1;

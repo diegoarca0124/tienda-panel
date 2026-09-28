@@ -57,8 +57,13 @@ export const routes: Routes = [
 			},
 			{
 				path: ':id/edit',
+				redirectTo: ':id/settings',
+				pathMatch: 'full',
+			},
+			{
+				path: ':id/settings',
 				canActivate: [AuthGuard],
-				loadComponent: () => import('./pages/categories/edit-category/edit-category.component').then((m) => m.EditCategoryComponent),
+				loadComponent: () => import('./pages/categories/settings-category/settings-category.component').then((m) => m.SettingsCategoryComponent),
 			},
 			{
 				path: ':id/products',

@@ -16,7 +16,7 @@ export class BrandService {
 	private apiUrl = environment.apiUrl;
 	private getHeaders(body?: any): HttpHeaders {
 		const token = this.authService.getToken() || '';
-		
+
 		if (body instanceof FormData) {
 			return new HttpHeaders({
 				Authorization: `Bearer ${token}`,
@@ -83,7 +83,7 @@ export class BrandService {
 	updateBrandStatus(id: string, data: UpdateBrandStatusREQI): Observable<UpdateBrandStatusRESI> {
 		return this.http.put<UpdateBrandStatusRESI>(`${this.apiUrl}/brand/updateBrandStatus/${id}`, data, { headers: this.getHeaders() });
 	}
-	
+
 	updateBrandsStatus(data: UpdateBrandsStatusREQI): Observable<UpdateBrandsStatusRESI> {
 		return this.http.post<UpdateBrandsStatusRESI>(`${this.apiUrl}/brand/updateBrandsStatus`, data, { headers: this.getHeaders() });
 	}
@@ -113,5 +113,4 @@ export class BrandService {
 	get_brands_by_select(): Observable<any> {
 		return this.http.get(`${this.apiUrl}/brand/get_brands_by_select`, { headers: this.getHeaders() });
 	}
-
 }

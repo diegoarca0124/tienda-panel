@@ -16,7 +16,12 @@
 							<h1 class="page-header-title">Colaboradores</h1>
 						</div>
 
-						<a [routerLink]="['/users/collaborators/create']" class="btn btn-sm btn-primary page-header-action collaborator-header-action" aria-label="Crear nuevo colaborador" title="Nuevo colaborador">
+						<a
+							[routerLink]="['/users/collaborators/create']"
+							class="btn btn-sm btn-primary page-header-action collaborator-header-action"
+							aria-label="Crear nuevo colaborador"
+							title="Nuevo colaborador"
+						>
 							<ion-icon name="person-add-outline" aria-hidden="true"></ion-icon>
 
 							<span class="page-header-action-text">Nuevo colaborador</span>
@@ -407,8 +412,8 @@
 																? `El colaborador <b>${item.names} ${item.surname}</b> dejará de tener acceso y quedará deshabilitado temporalmente.`
 																: `El colaborador <b>${item.names} ${item.surname}</b> volverá a estar activo y podrá acceder nuevamente al sistema.`
 														"
-																		[detailsTitle]="item.status ? 'Al desactivar esta cuenta:' : 'Al activar esta cuenta:'"
-																		[details]="item.status ? collaboratorStatusDetails.deactivate : collaboratorStatusDetails.activate"
+														[detailsTitle]="item.status ? 'Al desactivar esta cuenta:' : 'Al activar esta cuenta:'"
+														[details]="item.status ? collaboratorStatusDetails.deactivate : collaboratorStatusDetails.activate"
 														[textButton]="item.status ? 'Desactivar' : 'Activar'"
 														(actionConfirmed)="onUpdateStatus(item.id!, item.status!)"
 														[loadBtnDelete]="isUpdatingSingleStatus"

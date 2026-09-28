@@ -1,0 +1,8 @@
+.dropdown-menu {
+	position: fixed !important;
+	z-index: 1050;
+}
+
+.editor-invalid {
+	border-radius: 0.475rem;
+}

@@ -89,6 +89,7 @@ export interface GetCategoriesWithSubcategoriesRESI {
 }
 
 export interface FindCategoryProductsRESI {
+	category: string;
 	products: ProductInterface[];
 	meta: {
 		totalProducts: number;
