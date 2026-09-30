@@ -1,0 +1,212 @@
+<div class="modal fade" id="modalMove" tabindex="-1" aria-labelledby="modalMoveTitle" aria-describedby="modalMoveDescription" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered mw-650px">
+		<div class="modal-content form-card overflow-hidden" style="height: min(700px, calc(100vh - 2rem))">
+			<!-- Encabezado -->
+			<header class="form-card-header flex-shrink-0">
+				<div class="d-flex align-items-start justify-content-between gap-3">
+					<div class="min-w-0">
+						<h2 id="modalMoveTitle" class="form-card-title">Mover productos</h2>
+
+						<p id="modalMoveDescription" class="form-card-description">Selecciona la categoría y subcategoría de destino.</p>
+					</div>
+
+					<button type="button" class="btn btn-icon btn-light btn-xs flex-shrink-0" data-bs-dismiss="modal" aria-label="Cerrar" title="Cerrar" [disabled]="isMovingProducts">
+						<ion-icon name="close-outline" aria-hidden="true"></ion-icon>
+					</button>
+				</div>
+			</header>
+
+			<!-- Cuerpo -->
+			<div class="modal-body form-card-body d-flex flex-column overflow-hidden">
+				<!-- Resumen -->
+				<div class="d-flex align-items-center justify-content-between gap-3 border-bottom pb-3 mb-5 flex-shrink-0">
+					<div class="min-w-0">
+						<h3 class="form-card-title">Categoría de destino</h3>
+
+						<p class="form-card-description">
+							{{ selectedProductsCount === 1 ? 'Se moverá 1 producto seleccionado.' : 'Se moverán ' + selectedProductsCount + ' productos seleccionados.' }}
+						</p>
+					</div>
+
+					<button
+						type="button"
+						class="btn btn-xs btn-light-primary flex-shrink-0"
+						(click)="!isCategoriesLoading ? refresh.emit() : null"
+						[disabled]="isCategoriesLoading || isMovingProducts"
+						aria-label="Actualizar categorías"
+						title="Actualizar categorías"
+					>
+						<span *ngIf="isCategoriesLoading" class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+
+						<ion-icon *ngIf="!isCategoriesLoading" name="refresh-outline" aria-hidden="true"></ion-icon>
+
+						<span class="d-none d-sm-inline">Actualizar</span>
+					</button>
+				</div>
+
+				<!-- Área desplazable -->
+				<div class="flex-grow-1 overflow-auto min-h-0 pe-2" style="overflow: scroll !important">
+					<!-- Estado de carga -->
+					@if (isCategoriesLoading) {
+						<div class="d-flex flex-column gap-3">
+							<div *ngFor="let item of [1, 2, 3, 4, 5]" class="border rounded p-4">
+								<div class="d-flex align-items-center gap-3">
+									<div class="skeleton skeleton-square-sm flex-shrink-0"></div>
+
+									<div class="d-flex flex-column gap-2 flex-grow-1">
+										<div class="skeleton skeleton-text skeleton-w-60"></div>
+
+										<div class="skeleton skeleton-text skeleton-w-40"></div>
+									</div>
+								</div>
+							</div>
+						</div>
+					}
+
+					<!-- Estado de error -->
+					@else if (categoriesLoadError) {
+						<div class="d-flex align-items-center justify-content-center h-100">
+							<div class="border rounded p-5 text-center w-100">
+								<p class="paragraph paragraph-sm text-gray-700 fw-600 mb-1">No fue posible cargar las categorías.</p>
+
+								<p class="paragraph paragraph-sm text-gray-500 fw-400 mb-4">Actualiza la lista para intentarlo nuevamente.</p>
+
+								<button type="button" class="btn btn-sm btn-light-primary" (click)="refresh.emit()" [disabled]="isCategoriesLoading">
+									<ion-icon name="refresh-outline" aria-hidden="true"></ion-icon>
+
+									<span>Intentar nuevamente</span>
+								</button>
+							</div>
+						</div>
+					}
+
+					<!-- Listado de categorías -->
+					@else if (categories.length >= 1) {
+						<div class="d-flex flex-column gap-3">
+							<div *ngFor="let category of categories; let categoryIndex = index" class="category-destination border rounded overflow-hidden">
+								<!-- Categoría -->
+								<button
+									type="button"
+									class="d-flex align-items-center justify-content-between gap-3 w-100 border-0 bg-light px-4 py-3 text-start"
+									[class.bg-light-primary]="category.id === currentCategoryId"
+									(click)="category.subcategories.length > 0 ? toggleCategory(categoryIndex) : null"
+									[disabled]="category.subcategories.length === 0 || isMovingProducts"
+									[attr.aria-expanded]="category.subcategories.length > 0 ? expandedCategoryIndex === categoryIndex : null"
+									[attr.aria-controls]="'category-content-' + categoryIndex"
+								>
+									<span class="d-flex align-items-center gap-3 min-w-0">
+										<span class="symbol symbol-30px flex-shrink-0" style="border: 1px dashed #ccc">
+											<span *ngIf="category.icon" class="symbol-label bg-white" [innerHTML]="category.safeIcon"></span>
+
+											<span *ngIf="!category.icon" class="symbol-label bg-white text-primary">
+												<ion-icon name="folder-outline" aria-hidden="true"></ion-icon>
+											</span>
+										</span>
+
+										<span class="d-flex flex-column min-w-0">
+											<span class="d-flex align-items-center gap-2 min-w-0">
+												<span class="fs-7 text-gray-700 fw-600 text-truncate m-0" [attr.title]="category.name">
+													{{ category.name }}
+												</span>
+												<span *ngIf="category.id === currentCategoryId" class="badge rounded-pill bg-primary text-white fs-9 flex-shrink-0">Actual</span>
+											</span>
+
+											<span class="fs-8 text-gray-500 fw-400 m-0">
+												{{
+													category.subcategories.length === 0 ? '---' : category.subcategories.length === 1 ? '1 subcategoría' : category.subcategories.length + ' subcategorías'
+												}}
+											</span>
+										</span>
+									</span>
+
+									<ion-icon
+										*ngIf="category.subcategories.length > 0"
+										[name]="expandedCategoryIndex === categoryIndex ? 'chevron-up-outline' : 'chevron-down-outline'"
+										class="text-gray-500 flex-shrink-0"
+										aria-hidden="true"
+									></ion-icon>
+
+									<span *ngIf="category.subcategories.length === 0" class="fs-9 text-danger fw-500 m-0">Vacía</span>
+								</button>
+
+								<!-- Subcategorías -->
+								@if (expandedCategoryIndex === categoryIndex) {
+									<div [id]="'category-content-' + categoryIndex" class="border-top">
+										<div
+											*ngFor="let subcategory of category.subcategories; let isLast = last"
+											class="d-flex align-items-center justify-content-between gap-3 px-4 py-3 bg-white"
+											[class.border-bottom]="!isLast"
+										>
+											<div class="d-flex align-items-center gap-3 min-w-0">
+												<div class="d-flex flex-column min-w-0">
+													<div class="d-flex align-items-center gap-2 min-w-0">
+														<p class="fs-9 text-gray-700 fw-600 text-truncate mb-0" [attr.title]="subcategory.name">
+															{{ subcategory.name }}
+														</p>
+														<span
+															class="badge rounded-pill fw-700 fs-9 flex-shrink-0"
+															[class.bg-light-primary]="subcategory.status"
+															[class.text-primary]="subcategory.status"
+															[class.bg-light-danger]="!subcategory.status"
+															[class.text-danger]="!subcategory.status"
+														>
+															{{ subcategory.status ? 'Activo' : 'Inactivo' }}
+														</span>
+													</div>
+
+													<p *ngIf="subcategory.prefix || subcategory.code" class="paragraph paragraph-sm text-gray-400 fw-400 text-truncate mb-0">
+														#{{ subcategory.prefix }}-{{ subcategory.code | padCode: 6 }}
+													</p>
+												</div>
+											</div>
+
+											<button
+												type="button"
+												class="btn btn-xs btn-light-primary flex-shrink-0"
+												(click)="moveRequested.emit({ category, subcategory })"
+												[disabled]="isMovingProducts"
+												[attr.aria-label]="'Mover productos a ' + subcategory.name"
+												[attr.title]="'Mover a ' + subcategory.name"
+											>
+												@if (isMovingProducts && movingToSubcategoryId === subcategory.id) {
+													<span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+
+													<span class="d-none d-sm-inline">Moviendo...</span>
+												} @else {
+													<ion-icon name="arrow-forward-outline" aria-hidden="true"></ion-icon>
+
+													<span class="d-none d-sm-inline">Mover</span>
+												}
+											</button>
+										</div>
+									</div>
+								}
+							</div>
+						</div>
+					}
+
+					<!-- Estado vacío -->
+					@else {
+						<div class="d-flex align-items-center justify-content-center h-100">
+							<div class="border rounded p-5 text-center w-100">
+								<p class="paragraph paragraph-sm text-gray-700 fw-600 mb-1">No hay categorías disponibles.</p>
+
+								<p class="paragraph paragraph-sm text-gray-500 fw-400 m-0">Primero debes crear una categoría con subcategorías.</p>
+							</div>
+						</div>
+					}
+				</div>
+			</div>
+
+			<!-- Pie -->
+			<footer class="form-card-footer flex-shrink-0">
+				<div class="d-flex justify-content-center align-items-start gap-2">
+					<ion-icon name="information-circle-outline" class="text-primary flex-shrink-0" aria-hidden="true"></ion-icon>
+
+					<p class="fs-9 text-gray-500 fw-400 m-0">Los productos movidos se guardarán como borrador para revisar su configuración.</p>
+				</div>
+			</footer>
+		</div>
+	</div>
+</div>
+

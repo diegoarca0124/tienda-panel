@@ -1,13 +1,11 @@
 @if (typeForm === 'edit') {
-<section class="form-card mb-10">
+	<section class="form-card mb-10">
 		<div class="form-card-body">
 			<section class="mb-7">
 				<header class="border-bottom pb-3 mb-4">
 					<h2 class="form-card-title">Editar subcategoría</h2>
 
-					<p class="form-card-description">
-						Actualiza la información de la subcategoría seleccionada.
-					</p>
+					<p class="form-card-description">Actualiza la información de la subcategoría seleccionada.</p>
 				</header>
 
 				<div class="row g-4">
@@ -101,12 +99,7 @@
 				</div>
 
 				<div class="d-flex flex-column-reverse flex-sm-row align-items-stretch align-items-sm-center justify-content-end gap-2 mt-5">
-					<button
-						type="button"
-						class="btn btn-warning btn-sm text-dark"
-						[disabled]="isGetSubcategoriesLoading || isCreateSubcategoryLoading"
-						(click)="cancelEdit()"
-					>
+					<button type="button" class="btn btn-warning btn-sm text-dark" [disabled]="isGetSubcategoriesLoading || isCreateSubcategoryLoading" (click)="cancelEdit()">
 						<i class="bi bi-x-circle text-dark" aria-hidden="true"></i>
 
 						Cancelar edición
@@ -128,12 +121,9 @@
 					</button>
 				</div>
 			</section>
-
 		</div>
-
-</section>
+	</section>
 }
-
 
 <section>
 	<header class="pb-3 mb-4 d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between gap-3">
@@ -148,25 +138,13 @@
 
 		<div class="d-flex flex-wrap align-items-center gap-2">
 			@if (getSelectedIds().length > 0) {
-				<button
-					type="button"
-					class="btn btn-light-primary btn-xs"
-					data-bs-toggle="modal"
-					[attr.data-bs-target]="'#modalMultipleActive'"
-					[disabled]="isGetSubcategoriesLoading"
-				>
+				<button type="button" class="btn btn-light-primary btn-xs" data-bs-toggle="modal" [attr.data-bs-target]="'#modalMultipleActive'" [disabled]="isGetSubcategoriesLoading">
 					<i class="bi bi-check-circle" aria-hidden="true"></i>
 
 					Activar
 				</button>
 
-				<button
-					type="button"
-					class="btn btn-light-danger btn-xs"
-					data-bs-toggle="modal"
-					[attr.data-bs-target]="'#modalMultipleDisabled'"
-					[disabled]="isGetSubcategoriesLoading"
-				>
+				<button type="button" class="btn btn-light-danger btn-xs" data-bs-toggle="modal" [attr.data-bs-target]="'#modalMultipleDisabled'" [disabled]="isGetSubcategoriesLoading">
 					<i class="bi bi-x-circle" aria-hidden="true"></i>
 
 					Desactivar
@@ -237,6 +215,32 @@
 
 									<span class="action-dropdown-item-title text-danger">Desactivar</span>
 								</a>
+
+								<button
+									type="button"
+									class="dropdown-item action-dropdown-item action-dropdown-item-compact"
+									[disabled]="areAllSubcategoriesSelected"
+									(click)="selectAllSubcategories()"
+								>
+									<span class="action-dropdown-item-icon">
+										<ion-icon class="fs-4" name="checkbox-outline" aria-hidden="true"></ion-icon>
+									</span>
+
+									<span class="action-dropdown-item-title">Seleccionar todos</span>
+								</button>
+
+								<button
+									type="button"
+									class="dropdown-item action-dropdown-item action-dropdown-item-compact"
+									[disabled]="selectedSubcategoriesIds.size === 0"
+									(click)="clearSubcategorySelection()"
+								>
+									<span class="action-dropdown-item-icon">
+										<ion-icon class="fs-4" name="square-outline" aria-hidden="true"></ion-icon>
+									</span>
+
+									<span class="action-dropdown-item-title">Quitar selección</span>
+								</button>
 							</div>
 						</div>
 					</th>
@@ -436,4 +440,3 @@
 	(actionConfirmed)="onUpdateStatusMultiple(false)"
 	[loadBtnDelete]="isUpdatingMultipleStatus"
 ></app-modal-delete>
-

@@ -527,9 +527,9 @@
 											[disabled]="isBrandsLoading"
 											aria-label="Cantidad de categorías por página"
 										>
-											<option [ngValue]="10">10</option>
-											<option [ngValue]="20">20</option>
-											<option [ngValue]="25">25</option>
+											@for (pageLimit of paginationLimits; track pageLimit) {
+												<option [ngValue]="pageLimit">{{ pageLimit }}</option>
+											}
 										</select>
 
 										<span>por página</span>

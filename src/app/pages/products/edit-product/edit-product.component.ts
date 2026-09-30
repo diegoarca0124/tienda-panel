@@ -196,8 +196,8 @@ export class EditProductComponent {
 		this.loadingSubcategories = true;
 		this.errorMsmSeverListSubcategories = '';
 		this.subcategories = [];
-		return this.categoryService.get_subcategories_by_select(id).pipe(
-			tap((next: { data: SubcategoryInterface[]; message: string }) => {
+		return this.categoryService.getSubcategoriesByCategorySelect(id).pipe(
+			tap((next: { data: any[]; message: string }) => {
 				this.subcategories = next.data;
 				this.subcategories = this.subcategories.map((v: any) => ({
 					...v,

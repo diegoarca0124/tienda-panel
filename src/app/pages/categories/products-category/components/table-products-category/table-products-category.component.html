@@ -1,0 +1,285 @@
+<div class="table-wrapper products-table-wrapper mb-7">
+	<table class="table custom-table align-middle mb-0">
+		<thead>
+			<tr>
+				<th class="fixed-xs text-center p-0" style="position: unset !important">
+					<div class="dropdown">
+						<button
+							id="productTableOptions"
+							type="button"
+							class="btn btn-icon btn-dark h-25px w-25px"
+							data-bs-toggle="dropdown"
+							aria-expanded="false"
+							aria-label="Acciones para productos seleccionados"
+							title="Acciones"
+							[disabled]="isLoading"
+						>
+							<ion-icon name="settings-outline" class="fs-5" aria-hidden="true"></ion-icon>
+						</button>
+
+						<div class="dropdown-menu dropdown-menu-end action-dropdown-menu action-dropdown-menu-compact" aria-labelledby="productTableOptions">
+							<a
+								class="dropdown-item action-dropdown-item action-dropdown-item-compact"
+								[class.disabled]="selectedProductsIds.size === 0"
+								[attr.data-bs-toggle]="selectedProductsIds.size > 0 ? 'modal' : null"
+								[attr.data-bs-target]="selectedProductsIds.size > 0 ? '#modalMove' : null"
+							>
+								<span class="action-dropdown-item-icon">
+									<ion-icon name="folder-open-outline" class="fs-4" aria-hidden="true"></ion-icon>
+								</span>
+
+								<span class="action-dropdown-item-title" style="text-transform: capitalize !important">Mover productos</span>
+							</a>
+						</div>
+					</div>
+				</th>
+
+				<th class="flex-column min-w-250px">Producto</th>
+
+				<th class="fixed-sm">Calidad</th>
+
+				<th class="fixed-sm">Precio</th>
+
+				<th class="fixed-md">Subcategoría</th>
+
+				<th class="fixed-sm">Stock</th>
+
+				<th class="fixed-sm">Estado</th>
+
+				<th class="fixed-xs text-center"></th>
+			</tr>
+		</thead>
+
+		<tbody>
+			@if (isLoading) {
+				<tr *ngFor="let item of [1, 2, 3, 4, 5, 6]">
+					<td class="fixed-xs text-center p-0">
+						<div class="skeleton skeleton-check"></div>
+					</td>
+
+					<td class="flex-column">
+						<div class="d-flex align-items-center">
+							<div class="skeleton skeleton-square-sm me-3"></div>
+
+							<div class="skeleton-lines d-flex flex-column gap-2">
+								<div class="skeleton skeleton-text skeleton-w-60"></div>
+
+								<div class="skeleton skeleton-text skeleton-w-40"></div>
+							</div>
+						</div>
+					</td>
+
+					<td class="fixed-sm">
+						<div class="skeleton skeleton-text skeleton-w-60"></div>
+					</td>
+
+					<td class="fixed-sd">
+						<div class="skeleton skeleton-text skeleton-w-60"></div>
+					</td>
+
+					<td class="fixed-md">
+						<div class="skeleton-lines d-flex flex-column gap-2">
+							<div class="skeleton skeleton-text skeleton-w-60"></div>
+
+							<div class="skeleton skeleton-text skeleton-w-40"></div>
+						</div>
+					</td>
+
+					<td class="fixed-sm">
+						<div class="skeleton skeleton-text skeleton-w-40"></div>
+					</td>
+
+					<td class="fixed-sm">
+						<div class="skeleton skeleton-badge"></div>
+					</td>
+
+					<td class="fixed-xs text-center p-0">
+						<div class="skeleton skeleton-btn"></div>
+					</td>
+				</tr>
+			} @else if (loadError) {
+				<tr>
+						<td colspan="8">
+						<app-not-found [error]="loadError"></app-not-found>
+					</td>
+				</tr>
+			} @else if (products.length >= 1) {
+				<tr *ngFor="let item of products">
+					<td class="fixed-xs text-center p-0">
+						<label class="form-check form-check-customs form-check-sm m-0 d-flex align-items-center justify-content-center h-100">
+							<input
+								class="form-check-input cursor-pointer"
+								type="checkbox"
+								[checked]="selectedProductsIds.has(item.id!)"
+								(change)="toggleProduct(item.id!, $event)"
+								[attr.aria-label]="'Seleccionar producto ' + item.name"
+							/>
+						</label>
+					</td>
+
+					<td class="flex-column">
+						<div class="d-flex align-items-center gap-2" style="min-width: 0">
+							<div class="symbol me-3" style="flex-shrink: 0">
+								<span class="symbol-label" style="width: 30px; height: 30px; border: 1px dashed #e3e3e3">
+									<img [src]="item.cover" [alt]="item.name" class="w-100 h-100" style="object-fit: cover" fallbackImage />
+								</span>
+							</div>
+
+							<div class="d-flex flex-column" style="min-width: 0">
+								<p class="paragraph paragraph-sm text-gray-700 fw-600 lh-tight text-truncate-1 m-0">
+									{{ item.name }}
+								</p>
+
+								<p class="paragraph paragraph-xs text-gray-400 fw-400 lh-tight text-truncate-1 m-0">
+									{{ item.brand.name }}
+								</p>
+							</div>
+						</div>
+					</td>
+
+					<td class="fixed-sm">
+						<div class="d-flex align-items-center">
+							<span
+								class="d-inline-block rounded-circle me-2"
+								style="width: 6px; height: 6px"
+								[ngClass]="{
+									'bg-danger': item.quality_label === 'low',
+									'bg-warning': item.quality_label === 'medium',
+									'bg-success': item.quality_label === 'high',
+								}"
+							></span>
+
+							<span class="paragraph paragraph-sm text-gray-700 fw-500 text-truncate-1 m-0">
+								{{ qualityLabels[item.quality_label!] }}
+							</span>
+						</div>
+					</td>
+
+					<td class="fixed-sd">
+						<div class="d-flex flex-column">
+							<span class="paragraph paragraph-sm fw-600 m-0" [class.text-danger]="item.priceDiscount > 0" [class.text-gray-700]="!(item.priceDiscount > 0)">
+								{{ 'PE' | currencySymbol }}
+								{{ (item.priceDiscount > 0 ? item.priceDiscount : item.priceRegular) | number: '1.2-2' }}
+							</span>
+
+							<span *ngIf="item.priceDiscount > 0" class="paragraph paragraph-sm text-gray-400 text-decoration-line-through m-0">
+								{{ 'PE' | currencySymbol }}
+								{{ item.priceRegular | number: '1.2-2' }}
+							</span>
+						</div>
+					</td>
+
+					<td class="fixed-md">
+						<div class="d-flex flex-column">
+							<p class="paragraph paragraph-sm text-gray-700 fw-500 text-truncate-1 m-0">
+								{{ item.subcategory.name }}
+							</p>
+
+							<p class="paragraph paragraph-sm text-gray-400 fw-400 text-truncate-1 m-0">#{{ item.subcategory.prefix }}-{{ item.subcategory.code | padCode: 6 }}</p>
+						</div>
+					</td>
+
+					<td class="fixed-sm">
+						<span class="paragraph paragraph-sm text-gray-700 fw-600 m-0">0</span>
+					</td>
+
+					<td class="fixed-sm">
+						<span
+							class="badge rounded-pill fw-700"
+							[ngClass]="{
+								'bg-outline-warning text-gray-700': item.status === 'draft',
+								'bg-outline-success text-success': item.status === 'published',
+							}"
+						>
+							<span
+								class="d-inline-block rounded-circle me-1"
+								style="width: 6px; height: 6px"
+								[ngClass]="{
+									'bg-warning': item.status === 'draft',
+									'bg-success': item.status === 'published',
+								}"
+							></span>
+
+							{{ item.status === 'published' ? 'Publicado' : 'Borrador' }}
+						</span>
+					</td>
+
+					<td class="fixed-xs text-center p-0">
+						<div class="dropdown">
+							<button
+								type="button"
+								class="icon-btn btn-action dropdown-toggle dropdown-toggle-no-arrow d-flex align-items-center justify-content-center mx-auto"
+								data-bs-toggle="dropdown"
+								data-bs-offset="0,7"
+								aria-expanded="false"
+								[attr.aria-label]="'Opciones del producto ' + item.name"
+								title="Opciones"
+							>
+								<i class="bi bi-three-dots" aria-hidden="true"></i>
+							</button>
+
+							<div class="dropdown-menu dropdown-menu-end action-dropdown-menu action-dropdown-menu-compact">
+								<a class="dropdown-item action-dropdown-item action-dropdown-item-compact" [routerLink]="['/products/articles/' + item.id + '/edit']">
+									<span class="action-dropdown-item-icon">
+										<ion-icon name="settings-outline" class="fs-4" aria-hidden="true"></ion-icon>
+									</span>
+
+									<span class="action-dropdown-item-title">Configuración</span>
+								</a>
+
+								<div class="action-dropdown-divider"></div>
+
+								<a
+									class="dropdown-item action-dropdown-item action-dropdown-item-compact cursor-pointer"
+									data-bs-toggle="modal"
+									data-bs-target="#modalMove"
+									(click)="productMoveRequested.emit(item.id!)"
+								>
+									<span class="action-dropdown-item-icon">
+										<ion-icon name="folder-open-outline" class="fs-4" aria-hidden="true"></ion-icon>
+									</span>
+
+									<span class="action-dropdown-item-title">Mover producto</span>
+								</a>
+							</div>
+						</div>
+					</td>
+				</tr>
+			} @else {
+				<tr>
+						<td colspan="8">
+						<app-not-found
+							[error]="{
+								message: 'No se encontraron registros.',
+								statusCode: 404,
+							}"
+						></app-not-found>
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+</div>
+
+<div class="d-flex flex-column flex-sm-row align-items-start align-items-sm-center justify-content-between gap-4 pb-10">
+	<label class="page-size-control">
+		<span>Mostrar</span>
+
+		<select
+			class="form-select page-size-select"
+			name="limit"
+			[(ngModel)]="limit"
+			(change)="onLimitChange()"
+			[disabled]="isLoading"
+			aria-label="Cantidad de productos por página"
+		>
+			@for (pageLimit of paginationLimits; track pageLimit) {
+				<option [ngValue]="pageLimit">{{ pageLimit }}</option>
+			}
+		</select>
+
+		<span>por página</span>
+	</label>
+
+	<app-pagination [currentPage]="currentPage" [totalPages]="totalPages" [isLoading]="isLoading" (pageChanged)="pageChanged.emit($event)"></app-pagination>
+</div>

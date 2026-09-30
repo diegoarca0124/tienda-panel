@@ -64,7 +64,7 @@ export class MenuSubcategoriesComponent {
 		this.subcategories = [];
 		this.filter = '';
 		this.categoryService
-			.get_subcategories_by_select(this.categoryId)
+			.getSubcategoriesByCategorySelect(this.categoryId)
 			.pipe(
 				takeUntil(this.destroy$),
 				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),

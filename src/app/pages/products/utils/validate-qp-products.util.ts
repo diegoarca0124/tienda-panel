@@ -1,4 +1,5 @@
 import { ActivatedRoute, Router } from '@angular/router';
+import { PAGINATION_LIMITS } from '@app/common/constants/pageLimit.constant';
 
 export const ValidateQPProducts = (route: ActivatedRoute, params: any, router: Router, sortArray?: Array<string>): boolean => {
 	//filter: string, page: number, status: string, limit: number, subcategoryIds
@@ -12,7 +13,6 @@ export const ValidateQPProducts = (route: ActivatedRoute, params: any, router: R
 	const validStatusValues = ['Todos', 'draft', 'published'];
 	const validVisibilityValues = ['Todos', 'public', 'private'];
 	const validQualityValues = ['Todos', 'low', 'medium', 'high'];
-	const validLimitValues = [10, 20, 25];
 	let validSort: Array<string> = [];
 	if (sortArray) validSort = sortArray;
 
@@ -22,7 +22,7 @@ export const ValidateQPProducts = (route: ActivatedRoute, params: any, router: R
 	}
 
 	//corregir limit
-	if (!validLimitValues.includes(limit)) {
+	if (!PAGINATION_LIMITS.includes(limit)) {
 		limit = 10;
 	}
 

@@ -27,6 +27,7 @@ import { CategoryInterface } from '../interfaces/data.interface';
 import { GetCategoriesQPI } from '../interfaces/query-params.interface';
 import { configurationsOptions, sortOptions, statusOptions } from '../constants/selectors.constant';
 import { CATEGORY_STATUS_DETAILS } from '../constants/category-status.constants';
+import { PAGINATION_LIMITS } from '@app/common/constants/pageLimit.constant';
 declare const toastr: any;
 declare const $: any;
 
@@ -54,6 +55,7 @@ type CategoriesLoadResult = { data: GetCategoriesRESI; error: null } | { data: n
 	schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class IndexCategoryComponent {
+	public readonly paginationLimits = PAGINATION_LIMITS;
 	private destroy$ = new Subject<void>();
 	private readonly categoriesQuery$ = new Subject<GetCategoriesQPI>();
 

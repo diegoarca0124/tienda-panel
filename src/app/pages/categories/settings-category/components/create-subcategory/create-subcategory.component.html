@@ -62,12 +62,7 @@
 					<div class="form-field">
 						<div class="d-flex align-items-center justify-content-between gap-2">
 							<label class="form-field-label required" for="createSubcategoryName">Nombre</label>
-							<button
-								*ngIf="validationSubcategoryError?.name"
-								type="button"
-								class="form-error-toggle"
-								(click)="fieldSubcategoryErrors.name = !fieldSubcategoryErrors.name"
-							>
+							<button *ngIf="validationSubcategoryError?.name" type="button" class="form-error-toggle" (click)="fieldSubcategoryErrors.name = !fieldSubcategoryErrors.name">
 								{{ fieldSubcategoryErrors.name ? 'Ocultar errores' : 'Ver errores' }}
 							</button>
 						</div>
@@ -97,12 +92,7 @@
 					<div class="form-field">
 						<div class="d-flex align-items-center justify-content-between gap-2">
 							<label class="form-field-label required" for="createSubcategoryPrefix">Prefijo</label>
-							<button
-								*ngIf="validationSubcategoryError?.prefix"
-								type="button"
-								class="form-error-toggle"
-								(click)="fieldSubcategoryErrors.prefix = !fieldSubcategoryErrors.prefix"
-							>
+							<button *ngIf="validationSubcategoryError?.prefix" type="button" class="form-error-toggle" (click)="fieldSubcategoryErrors.prefix = !fieldSubcategoryErrors.prefix">
 								{{ fieldSubcategoryErrors.prefix ? 'Ocultar errores' : 'Ver errores' }}
 							</button>
 						</div>
@@ -130,12 +120,7 @@
 					<div class="form-field">
 						<div class="d-flex align-items-center justify-content-between gap-2">
 							<label class="form-field-label">Icono</label>
-							<button
-								*ngIf="validationSubcategoryError?.icon"
-								type="button"
-								class="form-error-toggle"
-								(click)="fieldSubcategoryErrors.icon = !fieldSubcategoryErrors.icon"
-							>
+							<button *ngIf="validationSubcategoryError?.icon" type="button" class="form-error-toggle" (click)="fieldSubcategoryErrors.icon = !fieldSubcategoryErrors.icon">
 								{{ fieldSubcategoryErrors.icon ? 'Ocultar errores' : 'Ver errores' }}
 							</button>
 						</div>
@@ -151,12 +136,7 @@
 		</div>
 
 		<footer class="form-card-footer d-flex justify-content-end">
-			<button
-				type="button"
-				class="btn btn-sm btn-primary"
-				[disabled]="isCreateSubcategoryLoading"
-				(click)="!isCreateSubcategoryLoading && createSubcategory()"
-			>
+			<button type="button" class="btn btn-sm btn-primary" [disabled]="isCreateSubcategoryLoading" (click)="!isCreateSubcategoryLoading && createSubcategory()">
 				<span *ngIf="isCreateSubcategoryLoading" class="spinner-border spinner-border-sm" aria-hidden="true"></span>
 				<i *ngIf="!isCreateSubcategoryLoading" class="bi bi-folder-plus" aria-hidden="true"></i>
 				<span>{{ isCreateSubcategoryLoading ? 'Creando...' : 'Crear subcategoría' }}</span>
@@ -164,4 +144,3 @@
 		</footer>
 	}
 </section>
-

@@ -10,6 +10,7 @@ import {
 	GetCategoriesRESI,
 	GetCategoriesWithSubcategoriesRESI,
 	GetCategoryRESI,
+	GetSubcategoriesByCategorySelectRESI,
 	GetSubcategoriesRESI,
 	MoveProductsToSubcategoryRESI,
 	MoveSubcategoryRESI,
@@ -143,7 +144,7 @@ export class CategoryService {
 		return this.http.get(`${this.apiUrl}/category/get_subcat_by_select`, { headers: this.getHeaders() });
 	}
 
-	get_subcategories_by_select(id: string): Observable<any> {
-		return this.http.get(`${this.apiUrl}/category/get_subcategories_by_select/${id}`, { headers: this.getHeaders() });
+	getSubcategoriesByCategorySelect(id: string): Observable<GetSubcategoriesByCategorySelectRESI> {
+		return this.http.get<GetSubcategoriesByCategorySelectRESI>(`${this.apiUrl}/category/getSubcategoriesByCategorySelect/${id}`, { headers: this.getHeaders() });
 	}
 }

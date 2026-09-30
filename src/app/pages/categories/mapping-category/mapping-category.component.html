@@ -124,9 +124,16 @@
 														</span>
 													</div>
 
-													<button class="btn btn-xs btn-icon btn-light-primary drag-handle" type="button" tabindex="-1" [disabled]="loadingMove" aria-hidden="true">
-														<ion-icon name="reorder-three-outline" aria-hidden="true"></ion-icon>
-													</button>
+													<div class="subcategory-actions">
+														<span class="subcategory-status" [class.subcategory-status-active]="subcategory.status">
+															<span class="subcategory-status-dot" aria-hidden="true"></span>
+															{{ subcategory.status ? 'Activo' : 'Inactivo' }}
+														</span>
+
+														<button class="btn btn-xs btn-icon btn-light-primary drag-handle" type="button" tabindex="-1" [disabled]="loadingMove" aria-hidden="true">
+															<ion-icon name="reorder-three-outline" aria-hidden="true"></ion-icon>
+														</button>
+													</div>
 												</div>
 
 												<p class="subcategory-empty" *ngIf="category.subcategories.length === 0 && dragOverCategoryId !== category.id">Arrastra aquí una subcategoría</p>

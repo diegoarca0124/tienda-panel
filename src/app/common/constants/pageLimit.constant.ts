@@ -1,5 +1,6 @@
-export const pageLimit = [
-	{ name: '10', value: 10 },
-	{ name: '20', value: 20 },
-	{ name: '25', value: 25 },
-];
+export const PAGINATION_LIMITS: number[] = [10, 25, 50];
+
+export const pageLimit = PAGINATION_LIMITS.map((value) => ({
+	name: String(value),
+	value,
+}));

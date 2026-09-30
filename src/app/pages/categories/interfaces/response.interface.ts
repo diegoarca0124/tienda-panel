@@ -73,6 +73,11 @@ export interface MoveSubcategoryRESI {
 	data: number;
 }
 
+export interface GetSubcategoriesByCategorySelectRESI {
+	message: string;
+	data: SubcategoryInterface[];
+}
+
 export interface CategoryWithSubcategoriesRESI {
 	id: string;
 	name: string;

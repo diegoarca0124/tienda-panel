@@ -1,0 +1,213 @@
+<aside class="form-card product-filter-sidebar" aria-label="Filtros de productos">
+	<header class="product-filter-header">
+		<div>
+			<h2>Filtros</h2>
+			<p>Refina los productos de esta categor&iacute;a.</p>
+		</div>
+	</header>
+
+	<div class="product-filter-list">
+		<div class="list-filter-item">
+			<label class="list-filter-label" for="categoryStatus">Estado</label>
+			<ng-select
+				id="categoryStatus"
+				[items]="statusFilters"
+				bindLabel="name"
+				bindValue="value"
+				name="selectedStatus"
+				[(ngModel)]="selectedStatus"
+				(ngModelChange)="selectedStatusChange.emit($event)"
+				[clearable]="false"
+				[searchable]="false"
+				[disabled]="isLoading"
+				appendTo="body"
+				dropdownPanelClass="app-select-panel"
+				class="app-select app-select-sm"
+			>
+				<ng-template ng-option-tmp let-item="item">
+					<div class="app-select-option">
+						<span class="app-select-dot" [ngClass]="'bg-' + item.color"></span>
+						<span class="app-select-option-text">{{ item.name }}</span>
+						<ion-icon name="checkmark-outline" class="app-select-check"></ion-icon>
+					</div>
+				</ng-template>
+				<ng-template ng-label-tmp let-item="item">
+					<div class="app-select-value">
+						<span class="app-select-dot" [ngClass]="'bg-' + item.color"></span>
+						<span class="app-select-value-text">{{ item.name }}</span>
+					</div>
+				</ng-template>
+			</ng-select>
+		</div>
+
+		<div class="list-filter-item">
+			<label class="list-filter-label" for="categorySort">Orden</label>
+			<ng-select
+				id="categorySort"
+				[items]="sortFilters"
+				bindLabel="name"
+				bindValue="value"
+				name="selectedSort"
+				[(ngModel)]="selectedSort"
+				(ngModelChange)="selectedSortChange.emit($event)"
+				[clearable]="false"
+				[searchable]="false"
+				[disabled]="isLoading"
+				appendTo="body"
+				dropdownPanelClass="app-select-panel"
+				class="app-select app-select-sm"
+			>
+				<ng-template ng-option-tmp let-item="item">
+					<div class="app-select-option">
+						<ion-icon [name]="item.icon" class="app-select-option-icon"></ion-icon>
+						<span class="app-select-option-text">{{ item.name }}</span>
+						<ion-icon name="checkmark-outline" class="app-select-check"></ion-icon>
+					</div>
+				</ng-template>
+				<ng-template ng-label-tmp let-item="item">
+					<div class="app-select-value">
+						<ion-icon [name]="item.icon" class="app-select-value-icon"></ion-icon>
+						<span class="app-select-value-text">{{ item.name }}</span>
+					</div>
+				</ng-template>
+			</ng-select>
+		</div>
+
+		<div class="list-filter-item">
+			<label class="list-filter-label" for="productQuality">Calidad</label>
+			<ng-select
+				id="productQuality"
+				[items]="qualityFilters"
+				bindLabel="name"
+				bindValue="value"
+				name="selectedQuality"
+				[(ngModel)]="selectedQuality"
+				(ngModelChange)="selectedQualityChange.emit($event)"
+				[clearable]="false"
+				[searchable]="false"
+				[disabled]="isLoading"
+				appendTo="body"
+				dropdownPanelClass="app-select-panel"
+				class="app-select app-select-sm"
+			>
+				<ng-template ng-option-tmp let-item="item">
+					<div class="app-select-option">
+						<span class="app-select-dot" [ngClass]="'bg-' + item.color"></span>
+						<span class="app-select-option-text">{{ item.name }}</span>
+						<ion-icon name="checkmark-outline" class="app-select-check"></ion-icon>
+					</div>
+				</ng-template>
+				<ng-template ng-label-tmp let-item="item">
+					<div class="app-select-value">
+						<span class="app-select-dot" [ngClass]="'bg-' + item.color"></span>
+						<span class="app-select-value-text">{{ item.name }}</span>
+					</div>
+				</ng-template>
+			</ng-select>
+		</div>
+
+		<div class="list-filter-item">
+			<label class="list-filter-label" for="productVisibility">Visibilidad</label>
+			<ng-select
+				id="productVisibility"
+				[items]="visibilityFilters"
+				bindLabel="name"
+				bindValue="value"
+				name="selectedVisibility"
+				[(ngModel)]="selectedVisibility"
+				(ngModelChange)="selectedVisibilityChange.emit($event)"
+				[clearable]="false"
+				[searchable]="false"
+				[disabled]="isLoading"
+				appendTo="body"
+				dropdownPanelClass="app-select-panel"
+				class="app-select app-select-sm"
+			>
+				<ng-template ng-option-tmp let-item="item">
+					<div class="app-select-option">
+						<ion-icon [name]="item.icon" class="app-select-option-icon"></ion-icon>
+						<span class="app-select-option-text">{{ item.name }}</span>
+						<ion-icon name="checkmark-outline" class="app-select-check"></ion-icon>
+					</div>
+				</ng-template>
+				<ng-template ng-label-tmp let-item="item">
+					<div class="app-select-value">
+						<ion-icon [name]="item.icon" class="app-select-value-icon"></ion-icon>
+						<span class="app-select-value-text">{{ item.name }}</span>
+					</div>
+				</ng-template>
+			</ng-select>
+		</div>
+
+		<div class="list-filter-item">
+			<label class="list-filter-label">Precios</label>
+			<div class="d-flex align-items-center gap-2 w-100">
+				<div class="flex-fill min-w-0">
+					<app-input-dialer
+						class="d-block w-100"
+						[value]="minPrice"
+						(valueChange)="minPriceChange.emit($event)"
+						placeholder="M&iacute;n."
+						[step]="5"
+						[disabled]="isLoading"
+					></app-input-dialer>
+				</div>
+				<div class="flex-fill min-w-0">
+					<app-input-dialer
+						class="d-block w-100"
+						[value]="maxPrice"
+						(valueChange)="maxPriceChange.emit($event)"
+						placeholder="M&aacute;x."
+						[step]="5"
+						[disabled]="isLoading"
+					></app-input-dialer>
+				</div>
+			</div>
+		</div>
+
+		<div class="list-filter-item">
+			<label class="list-filter-label" for="productSubcategories">Subcategorías</label>
+			<ng-select
+				id="productSubcategories"
+				[items]="subcategories"
+				bindLabel="name"
+				bindValue="id"
+				name="selectedSubcategories"
+				[ngModel]="selectedSubcategoryValues"
+				(ngModelChange)="onSubcategoriesChange($event)"
+				[multiple]="true"
+				[closeOnSelect]="false"
+				[clearable]="false"
+				[searchable]="true"
+				[disabled]="isLoading || isSubcategoriesLoading"
+				[loading]="isSubcategoriesLoading"
+				placeholder="Seleccionar subcategorías"
+				[ngbTooltip]="getSelectedSubcategoryNames()"
+				[disableTooltip]="selectedSubcategoryValues.length === 0"
+				placement="top"
+				tooltipClass="tooltip-dark"
+				container="body"
+				appendTo="body"
+				dropdownPanelClass="app-select-panel"
+				class="app-select app-select-sm"
+			>
+				<ng-template ng-option-tmp let-item="item">
+					<div class="app-select-option">
+						<span class="app-select-option-text"><strong>{{ item.prefix }}</strong> - {{ item.name }}</span>
+						<ion-icon name="checkmark-outline" class="app-select-check"></ion-icon>
+					</div>
+				</ng-template>
+				<ng-template ng-multi-label-tmp let-items="items" let-clear="clear">
+					<div class="app-select-value">
+						<span class="app-select-value-text">{{ items.length === 1 ? items[0].name : items.length + ' seleccionadas' }}</span>
+					</div>
+				</ng-template>
+			</ng-select>
+		</div>
+
+		<button type="button" class="btn btn-primary btn-sm w-100" (click)="apply.emit()" [disabled]="isLoading">
+			<i class="bi bi-funnel" aria-hidden="true"></i>
+			Aplicar filtros
+		</button>
+	</div>
+</aside>

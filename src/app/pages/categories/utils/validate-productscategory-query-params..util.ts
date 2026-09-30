@@ -1,4 +1,5 @@
 import { ActivatedRoute, Params, Router } from '@angular/router';
+import { PAGINATION_LIMITS } from '@app/common/constants/pageLimit.constant';
 
 export const validateProductsCategoryQueryParams = (route: ActivatedRoute, params: Params, router: Router, sortArray: string[] = []): boolean => {
 	const filter = params['filter'] ?? '';
@@ -17,7 +18,6 @@ export const validateProductsCategoryQueryParams = (route: ActivatedRoute, param
 
 	const validVisibilityValues = ['Todos', 'public', 'private'];
 
-	const validLimitValues = [10, 20, 25];
 
 	const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
@@ -27,7 +27,7 @@ export const validateProductsCategoryQueryParams = (route: ActivatedRoute, param
 	}
 
 	// Validar límite
-	if (!validLimitValues.includes(limit)) {
+	if (!PAGINATION_LIMITS.includes(limit)) {
 		limit = 10;
 	}
 

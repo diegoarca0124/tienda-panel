@@ -227,7 +227,7 @@ export class CreateProductComponent {
 		this.errorMsmSeverListSubcategories = '';
 		this.subcategories = [];
 		this.categoryService
-			.get_subcategories_by_select(id!)
+			.getSubcategoriesByCategorySelect(id!)
 			.pipe(
 				takeUntil(this.destroy$),
 				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),

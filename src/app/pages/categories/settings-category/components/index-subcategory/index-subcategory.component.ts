@@ -190,6 +190,18 @@ export class IndexSubcategoryComponent {
 		return [...this.selectedSubcategoriesIds];
 	}
 
+	selectAllSubcategories(): void {
+		this.selectedSubcategoriesIds = new Set(this.subcategories.map((subcategory) => subcategory.id).filter((id): id is string => Boolean(id)));
+	}
+
+	clearSubcategorySelection(): void {
+		this.selectedSubcategoriesIds.clear();
+	}
+
+	get areAllSubcategoriesSelected(): boolean {
+		return this.subcategories.length > 0 && this.subcategories.every((subcategory) => Boolean(subcategory.id) && this.selectedSubcategoriesIds.has(subcategory.id!));
+	}
+
 	onUpdateStatus(id: string, status: boolean): void {
 		this.isUpdatingSingleStatus.set(true);
 

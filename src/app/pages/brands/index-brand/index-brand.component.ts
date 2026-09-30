@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, signal, WritableSignal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
-import { pageLimit } from '@app/common/constants/pageLimit.constant';
+import { PAGINATION_LIMITS } from '@app/common/constants/pageLimit.constant';
 import { withMinLoadingTime } from '@app/common/interface/with-min-loading-time.interface';
 import { closeModal } from '@app/common/utils/close-modal.util';
 import { BrandService } from '@app/services/brand.service';
@@ -54,6 +54,7 @@ type BrandsLoadResult = { data: GetBrandsRESI; error: null } | { data: null; err
 	schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class IndexBrandComponent {
+	public readonly paginationLimits = PAGINATION_LIMITS;
 	private destroy$ = new Subject<void>();
 	private readonly brandsQuery$ = new Subject<GetBrandsQPI>();
 

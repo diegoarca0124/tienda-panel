@@ -26,6 +26,7 @@ import { GetCollaboratorsQPI } from '../interfaces/query-params.interface';
 import { GetCollaboratorsRESI, UpdateCollaboratorsStatusRESI, UpdateCollaboratorStatusRESI } from '../interfaces/responses.interface';
 import { sortOptions, statusOptions } from '../constants/selectors.constants';
 import { COLLABORATOR_STATUS_DETAILS } from '../constants/collaborator-status.constants';
+import { PAGINATION_LIMITS } from '@app/common/constants/pageLimit.constant';
 declare const toastr: any;
 
 type CollaboratorsLoadResult = { data: GetCollaboratorsRESI; error: null } | { data: null; error: HttpErrorResponse };
@@ -38,6 +39,7 @@ type CollaboratorsLoadResult = { data: GetCollaboratorsRESI; error: null } | { d
 	styleUrl: './index-collaborator.component.css',
 })
 export class IndexCollaboratorComponent {
+	public readonly paginationLimits = PAGINATION_LIMITS;
 	private destroy$ = new Subject<void>();
 	private readonly collaboratorsQuery$ = new Subject<GetCollaboratorsQPI>();
 

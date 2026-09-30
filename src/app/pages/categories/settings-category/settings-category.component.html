@@ -25,22 +25,22 @@
 
 				<div class="app-content flex-column-fluid mt-5">
 					<div class="app-container container-fluid">
-						<div class="settings-layout">
-							<aside class="settings-navigation" aria-label="Secciones de configuración">
-								<div class="form-card settings-navigation-card">
-									<nav class="settings-menu">
+						<div class="section-sidebar-layout">
+							<aside class="section-sidebar" aria-label="Secciones de configuración">
+								<div class="form-card section-sidebar-card">
+									<nav class="section-sidebar-menu">
 										@for (item of menuItems; track item.id) {
 											<button
 												type="button"
-												class="settings-menu-item"
+												class="section-sidebar-item"
 												[class.active]="activeSection === item.id"
 												[attr.aria-current]="activeSection === item.id ? 'page' : null"
 												(click)="setActiveSection(item.id)"
 											>
-												<span class="settings-menu-icon" aria-hidden="true">
+												<span class="section-sidebar-icon" aria-hidden="true">
 													<i [class]="'bi ' + item.icon"></i>
 												</span>
-												<span class="settings-menu-copy">
+												<span class="section-sidebar-copy">
 													<strong>{{ item.label }}</strong>
 													<small>{{ item.description }}</small>
 												</span>
@@ -50,7 +50,7 @@
 								</div>
 							</aside>
 
-							<main class="settings-content">
+							<main class="section-sidebar-content">
 								@switch (activeSection) {
 									@case ('category') {
 										<app-edit-category></app-edit-category>

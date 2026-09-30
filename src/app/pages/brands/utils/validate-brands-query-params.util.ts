@@ -1,4 +1,5 @@
 import { ActivatedRoute, Params, Router } from '@angular/router';
+import { PAGINATION_LIMITS } from '@app/common/constants/pageLimit.constant';
 
 export const validateBrandsQueryParams = (route: ActivatedRoute, params: Params, router: Router, sortArray: string[] = [], countriesArray: string[] = []): boolean => {
 	const filter = params['filter'] ?? '';
@@ -10,7 +11,6 @@ export const validateBrandsQueryParams = (route: ActivatedRoute, params: Params,
 	let countries = params['countries'] ?? 'Todos';
 
 	const validStatusValues = ['Todos', 'Activos', 'Inactivos'];
-	const validLimitValues = [10, 20, 25];
 
 	// Validar página
 	if (!Number.isInteger(page) || page < 1) {
@@ -18,7 +18,7 @@ export const validateBrandsQueryParams = (route: ActivatedRoute, params: Params,
 	}
 
 	// Validar límite
-	if (!validLimitValues.includes(limit)) {
+	if (!PAGINATION_LIMITS.includes(limit)) {
 		limit = 10;
 	}
 

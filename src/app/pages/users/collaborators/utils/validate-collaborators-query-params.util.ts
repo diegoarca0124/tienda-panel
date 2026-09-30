@@ -1,4 +1,5 @@
 import { ActivatedRoute, Router } from '@angular/router';
+import { PAGINATION_LIMITS } from '@app/common/constants/pageLimit.constant';
 
 export const validateCollaboratorsQueryParams = (route: ActivatedRoute, params: Record<string, string>, router: Router, sortArray: string[]): boolean => {
 	let page = Number(params['page']);
@@ -8,14 +9,13 @@ export const validateCollaboratorsQueryParams = (route: ActivatedRoute, params: 
 	const filter = params['filter'] ?? '';
 
 	const validStatusValues = ['Todos', 'Activos', 'Inactivos'];
-	const validLimitValues = [10, 25, 50];
 	const validSortValues = sortArray ?? [];
 
 	if (!Number.isInteger(page) || page < 1) {
 		page = 1;
 	}
 
-	if (!validLimitValues.includes(limit)) {
+	if (!PAGINATION_LIMITS.includes(limit)) {
 		limit = 10;
 	}
 

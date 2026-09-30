@@ -1,0 +1,52 @@
+:host {
+	position: sticky;
+	top: 1.5rem;
+	display: block;
+	grid-column: 1;
+	grid-row: 1;
+	align-self: start;
+}
+.product-filter-header {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 1rem;
+	padding: 1rem;
+	background: #f8fafc;
+	border-bottom: 1px solid #e7ebf0;
+}
+.product-filter-header h2 {
+	margin: 0;
+	font-size: 0.9375rem;
+	font-weight: 700;
+	color: var(--bs-gray-800);
+}
+.product-filter-header p {
+	margin: 0.25rem 0 0;
+	font-size: 0.75rem;
+	line-height: 1.4;
+	color: var(--bs-gray-500);
+}
+.product-filter-list {
+	display: grid;
+	gap: 1rem;
+	padding: 1rem;
+}
+.list-filter-item {
+	width: 100%;
+	min-width: 0;
+	max-width: none;
+}
+@media (max-width: 1249.98px) {
+	:host {
+		position: static;
+		grid-column: 1;
+		grid-row: 1;
+	}
+}
+@media (max-width: 575.98px) {
+	.product-filter-header,
+	.product-filter-list {
+		padding: 0.875rem;
+	}
+}

@@ -412,6 +412,11 @@
 	line-height: 1.5;
 }
 
+.paragraph-xs {
+	font-size: 0.75rem;
+	line-height: 1.35;
+}
+
 .paragraph-sm {
 	font-size: 0.875rem;
 	line-height: 1.4;

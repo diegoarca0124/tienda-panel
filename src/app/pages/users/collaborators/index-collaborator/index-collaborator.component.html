@@ -516,9 +516,9 @@
 									[disabled]="isCollaboratorsLoading"
 									aria-label="Cantidad de registros por página"
 								>
-									<option [ngValue]="10">10</option>
-									<option [ngValue]="25">25</option>
-									<option [ngValue]="50">50</option>
+									@for (pageLimit of paginationLimits; track pageLimit) {
+										<option [ngValue]="pageLimit">{{ pageLimit }}</option>
+									}
 								</select>
 								<span>por página</span>
 							</label>

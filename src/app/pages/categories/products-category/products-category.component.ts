@@ -12,20 +12,17 @@ import { ProductInterface } from '@app/pages/products/interfaces/product.interfa
 import { FormsModule } from '@angular/forms';
 import { PaginationComponent } from '@app/shared/pagination/pagination.component';
 import { validateProductsCategoryQueryParams } from '../utils/validate-productscategory-query-params..util';
-import { NgSelectModule } from '@ng-select/ng-select';
 import { MenuSubcategoriesComponent } from '@app/shared/menu-subcategories/menu-subcategories.component';
-import { NotFoundComponent } from '@app/shared/not-found/not-found.component';
 import { createEmptyCategory, createMoveProducts } from '../utils/empties.util';
-import { FallbackImageDirective } from '@app/common/directives/fallback-image.directive';
 import { environment } from 'environments/environment.dev';
-import { PadCodePipe } from '../../../common/pipes/pad-code.pipe';
 import { HttpErrorResponse } from '@angular/common/http';
-import { CurrencySymbolPipe } from '../../../common/pipes/currency-symbol.pipe';
-import { InputDialerComponent } from '@app/shared/input-dialer/input-dialer.component';
 import { CategoryInterface, MoveProductsInterface, SubcategoryInterface } from '../interfaces/data.interface';
 import { FindCategoryProductsRESI, GetCategoriesWithSubcategoriesRESI, MoveProductsToSubcategoryRESI, MoveSubcategoryRESI } from '../interfaces/response.interface';
-import { qualityOptions, sortOptions, statusOptions, visibilityOptions } from '@app/pages/products/constants/selectors.constant';
+import { sortOptions } from '@app/pages/products/constants/selectors.constant';
 import { GetProductsCategoryQPI } from '../interfaces/query-params.interface';
+import { SidebarProductsCategoryComponent } from './components/sidebar-products-category/sidebar-products-category.component';
+import { TableProductsCategoryComponent } from './components/table-products-category/table-products-category.component';
+import { MoveProductsCategoryComponent } from './components/move-products-category/move-products-category.component';
 declare var toastr: any;
 
 @Component({
@@ -37,13 +34,10 @@ declare var toastr: any;
 		RouterModule,
 		FormsModule,
 		PaginationComponent,
-		NgSelectModule,
 		MenuSubcategoriesComponent,
-		NotFoundComponent,
-		FallbackImageDirective,
-		PadCodePipe,
-		CurrencySymbolPipe,
-		InputDialerComponent,
+		SidebarProductsCategoryComponent,
+		TableProductsCategoryComponent,
+		MoveProductsCategoryComponent,
 	],
 	templateUrl: './products-category.component.html',
 	styleUrl: './products-category.component.css',
@@ -75,8 +69,6 @@ export class ProductsCategoryComponent {
 	public moveProductsPayload: MoveProductsInterface = createMoveProducts();
 	public movingToSubcategoryId: string | null = null;
 
-	public expandedCategoryIndex: number | null = null;
-
 	public isCategoriesLoading: boolean = false;
 	public isProductsLoading: boolean = true;
 	public isMovingProducts: boolean = false;
@@ -85,17 +77,7 @@ export class ProductsCategoryComponent {
 	public categoriesLoadError: Record<string, any> | null = null;
 	public productsLoadError: Record<string, any> | null = null;
 
-	public readonly statusFilters = statusOptions;
-	public readonly qualityFilters = qualityOptions;
-	public readonly visibilityFilters = visibilityOptions;
-	public readonly sortFilters = sortOptions;
 	public readonly sortValues = sortOptions.map((item) => item.value);
-
-	readonly qualityLabels: Record<string, string> = {
-		low: 'Baja',
-		medium: 'Media',
-		high: 'Alta',
-	};
 
 	constructor(
 		private router: Router,
@@ -249,8 +231,6 @@ export class ProductsCategoryComponent {
 						return 0;
 					});
 
-				const currentCategoryIndex = this.categories.findIndex((category) => category.id === this.id);
-				this.expandedCategoryIndex = currentCategoryIndex >= 0 ? currentCategoryIndex : null;
 			}),
 
 			map(() => void 0),
@@ -424,10 +404,6 @@ export class ProductsCategoryComponent {
 		});
 	}
 
-	toggleCategory(index: number) {
-		this.expandedCategoryIndex = this.expandedCategoryIndex === index ? null : index;
-	}
-
 	hasSelectedProducts(): boolean {
 		return this.selectedProductsIds.size > 0;
 	}
@@ -478,5 +454,10 @@ export class ProductsCategoryComponent {
 		} else {
 			this.selectedProductsIds.delete(id);
 		}
+	}
+
+	selectProductForMove(id: string): void {
+		this.selectedProductsIds.clear();
+		this.selectedProductsIds.add(id);
 	}
 }

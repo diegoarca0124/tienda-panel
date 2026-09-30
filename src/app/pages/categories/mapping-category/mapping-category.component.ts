@@ -98,6 +98,7 @@ export class MappingCategoryComponent {
 			)
 			.subscribe({
 				next: (next: GetCategoriesWithSubcategoriesRESI) => {
+					console.log('next', next);
 					this.categories = next.data.map((i) => ({
 						...i,
 						safeIcon: this.sanitizer.bypassSecurityTrustHtml(i.icon),
