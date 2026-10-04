@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, CUSTOM_ELEMENTS_SCHEMA, signal, WritableSignal } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, ElementRef, signal, ViewChild, WritableSignal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { withMinLoadingTime } from '@app/common/interface/with-min-loading-time.interface';
@@ -26,16 +26,28 @@ import { buildShowErrors } from '@app/common/utils/build-show.errors.util';
 declare const toastr: any;
 
 @Component({
-	selector: 'app-index-subcategory',
+	selector: 'app-index-subcategory-settings-category',
 	imports: [CommonModule, FormsModule, IMaskModule, NgbTooltipModule, NotFoundComponent, ModalDeleteComponent, ValidationPopoverComponent, InputSvgComponent, PadCodePipe],
-	templateUrl: './index-subcategory.component.html',
-	styleUrl: './index-subcategory.component.css',
+	templateUrl: './index-subcategory-settings-category.component.html',
+	styleUrl: './index-subcategory-settings-category.component.css',
 	schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class IndexSubcategoryComponent {
+export class IndexSubcategorySettingsCategoryComponent {
 	private readonly destroy$ = new Subject<void>();
+	@ViewChild('editSubcategoryModal', { static: true }) private editModal!: ElementRef<HTMLDivElement>;
+	private readonly preventCloseWhileSaving = (event: Event): void => {
+		if (this.isCreateSubcategoryLoading) event.preventDefault();
+	};
+	private readonly resetEdit = (): void => {
+		this.subcategory = createEmptySubcategory();
+		this.subcategory.categoryId = this.id;
+		this.validationSubcategoryError = {};
+		this.fieldSubcategoryErrors = createEmptyFieldErrorsSubcategory();
+	};
 
 	public id = '';
+	public filter = '';
+	private appliedFilter = '';
 	public category: CategoryInterface = createEmptyCategory();
 	public subcategory: SubcategoryInterface = createEmptySubcategory();
 	public subcategories: SubcategoryInterface[] = [];
@@ -43,12 +55,10 @@ export class IndexSubcategoryComponent {
 	public validationSubcategoryError: SubcategoryValidationErrors = {};
 	public selectedSubcategoriesIds = new Set<string>();
 	public prefixMask = prefixMask;
-	public typeForm: 'create' | 'edit' = 'create';
 	public isGetCategoryLoading = true;
 	public isGetSubcategoriesLoading = true;
 	public isCreateSubcategoryLoading = false;
 	public categoryLoadError = '';
-	public subcategoryLoadError = '';
 	public isUpdatingMultipleStatus: WritableSignal<boolean> = signal(false);
 	public isUpdatingSingleStatus: WritableSignal<boolean> = signal(false);
 
@@ -59,7 +69,7 @@ export class IndexSubcategoryComponent {
 	) {}
 
 	ngOnInit(): void {
-		this.route.paramMap
+		(this.route.parent ?? this.route).paramMap
 			.pipe(
 				takeUntil(this.destroy$),
 				switchMap((params) => {
@@ -77,6 +87,7 @@ export class IndexSubcategoryComponent {
 							},
 							error: (error: HttpErrorResponse) => {
 								this.categoryLoadError = error.error;
+								this.isGetSubcategoriesLoading = false;
 							},
 						})
 					);
@@ -86,16 +97,24 @@ export class IndexSubcategoryComponent {
 			.subscribe({ error: () => {} });
 	}
 
+	ngAfterViewInit(): void {
+		this.editModal.nativeElement.addEventListener('hide.bs.modal', this.preventCloseWhileSaving);
+		this.editModal.nativeElement.addEventListener('hidden.bs.modal', this.resetEdit);
+	}
+
 	ngOnDestroy(): void {
+		this.editModal.nativeElement.removeEventListener('hide.bs.modal', this.preventCloseWhileSaving);
+		this.editModal.nativeElement.removeEventListener('hidden.bs.modal', this.resetEdit);
+		if (this.editModal.nativeElement.classList.contains('show')) closeModal('modalEditSubcategory');
 		this.destroy$.next();
 		this.destroy$.complete();
 	}
 
 	initSubcategories$(id: string): Observable<GetSubcategoriesRESI> {
 		this.isGetSubcategoriesLoading = true;
-		this.subcategoryLoadError = '';
+		this.categoryLoadError = '';
 
-		return this.categoryService.getSubcategories(id).pipe(
+		return this.categoryService.getSubcategories(id, this.appliedFilter).pipe(
 			withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
 			finalize(() => (this.isGetSubcategoriesLoading = false)),
 			tap({
@@ -103,7 +122,7 @@ export class IndexSubcategoryComponent {
 					this.setSubcategories(response.data);
 				},
 				error: (error: HttpErrorResponse) => {
-					this.subcategoryLoadError = error.error;
+					this.categoryLoadError = error.error;
 				},
 			})
 		);
@@ -115,13 +134,30 @@ export class IndexSubcategoryComponent {
 			.subscribe({ error: () => {} });
 	}
 
+	applyFilter(): void {
+		if (this.isGetCategoryLoading || this.isGetSubcategoriesLoading || this.categoryLoadError) return;
+		this.filter = this.filter.trim().slice(0, 150);
+		this.appliedFilter = this.filter;
+		this.selectedSubcategoriesIds.clear();
+		this.initSubcategories(this.id);
+	}
+
+	resetFilter(): void {
+		if (this.isGetCategoryLoading || this.isGetSubcategoriesLoading || this.categoryLoadError) return;
+		this.filter = '';
+		this.applyFilter();
+	}
+
 	private refreshSubcategories(): void {
 		this.categoryService
-			.getSubcategories(this.id)
+			.getSubcategories(this.id, this.appliedFilter)
 			.pipe(takeUntil(this.destroy$))
 			.subscribe({
 				next: (response: GetSubcategoriesRESI) => this.setSubcategories(response.data),
-				error: (error: HttpErrorResponse) => toastr.error(error.error?.message || 'No fue posible actualizar la lista.'),
+				error: (error: HttpErrorResponse) => {
+					this.categoryLoadError = error.error;
+					toastr.error(error.error?.message || 'No fue posible actualizar la lista.');
+				},
 			});
 	}
 
@@ -133,6 +169,7 @@ export class IndexSubcategoryComponent {
 	}
 
 	updateSubcategory(): void {
+		if (!this.subcategory.id || this.isCreateSubcategoryLoading || this.isGetSubcategoriesLoading || this.categoryLoadError) return;
 		this.isCreateSubcategoryLoading = true;
 
 		this.categoryService
@@ -152,6 +189,7 @@ export class IndexSubcategoryComponent {
 					this.validationSubcategoryError = {};
 					this.subcategories = this.subcategories.map((item) => (item.id === updated.id ? updated : item));
 					toastr.success(response.message);
+					this.isCreateSubcategoryLoading = false;
 					this.cancelEdit();
 				},
 				error: (errorResponse: HttpErrorResponse) => this.handleValidationError(errorResponse),
@@ -169,16 +207,16 @@ export class IndexSubcategoryComponent {
 	}
 
 	cancelEdit(): void {
-		this.subcategory = createEmptySubcategory();
-		this.subcategory.categoryId = this.id;
-		this.validationSubcategoryError = {};
-		this.typeForm = 'create';
+		if (this.isCreateSubcategoryLoading) return;
+		(window as any).bootstrap.Modal.getInstance(this.editModal.nativeElement)?.hide();
 	}
 
 	editSubcategory(subcategory: SubcategoryInterface): void {
+		if (this.isCreateSubcategoryLoading) return;
 		this.validationSubcategoryError = {};
-		this.typeForm = 'edit';
+		this.fieldSubcategoryErrors = createEmptyFieldErrorsSubcategory();
 		this.subcategory = { ...subcategory };
+		(window as any).bootstrap.Modal.getOrCreateInstance(this.editModal.nativeElement).show();
 	}
 
 	toggleItem(id: string, event: Event): void {

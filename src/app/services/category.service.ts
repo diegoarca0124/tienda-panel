@@ -7,6 +7,7 @@ import {
 	CreateCategoryRESI,
 	CreateSubcategoryRESI,
 	FindCategoryProductsRESI,
+	GetBrandsByCategoryRESI,
 	GetCategoriesRESI,
 	GetCategoriesWithSubcategoriesRESI,
 	GetCategoryRESI,
@@ -86,8 +87,9 @@ export class CategoryService {
 		return this.http.post<CreateSubcategoryRESI>(`${this.apiUrl}/category/createSubcategory`, subcategory, { headers: this.getHeaders() });
 	}
 
-	getSubcategories(id: string): Observable<GetSubcategoriesRESI> {
-		return this.http.get<GetSubcategoriesRESI>(`${this.apiUrl}/category/getSubcategories/${id}`, { headers: this.getHeaders() });
+	getSubcategories(id: string, filter: string = ''): Observable<GetSubcategoriesRESI> {
+		const params = new HttpParams().set('filter', filter);
+		return this.http.get<GetSubcategoriesRESI>(`${this.apiUrl}/category/getSubcategories/${id}`, { headers: this.getHeaders(), params });
 	}
 
 	updateSubcategoryStatus(id: string, data: UpdateSubcategoryStatusREQI): Observable<UpdateSubcategoryStatusRESI> {
@@ -106,6 +108,7 @@ export class CategoryService {
 			.set('status', qp.status)
 			.set('sort', qp.sort)
 			.set('subcategoryIds', qp.subcategoryIds)
+			.set('brandIds', qp.brandIds)
 			.set('quality', qp.quality)
 			.set('visibility', qp.visibility);
 
@@ -146,5 +149,9 @@ export class CategoryService {
 
 	getSubcategoriesByCategorySelect(id: string): Observable<GetSubcategoriesByCategorySelectRESI> {
 		return this.http.get<GetSubcategoriesByCategorySelectRESI>(`${this.apiUrl}/category/getSubcategoriesByCategorySelect/${id}`, { headers: this.getHeaders() });
+	}
+
+	getBrandsByCategory(id: string): Observable<GetBrandsByCategoryRESI> {
+		return this.http.get<GetBrandsByCategoryRESI>(`${this.apiUrl}/category/getBrandsByCategory/${id}`, { headers: this.getHeaders() });
 	}
 }

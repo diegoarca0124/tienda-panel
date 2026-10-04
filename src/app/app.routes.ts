@@ -64,6 +64,44 @@ export const routes: Routes = [
 				path: ':id/settings',
 				canActivate: [AuthGuard],
 				loadComponent: () => import('./pages/categories/settings-category/settings-category.component').then((m) => m.SettingsCategoryComponent),
+				children: [
+					{ path: '', redirectTo: 'category', pathMatch: 'full' },
+					{
+						path: 'category',
+						loadComponent: () =>
+							import('./pages/categories/settings-category/views/edit-category-settings-category/edit-category-settings-category.component').then(
+								(m) => m.EditCategorySettingsCategoryComponent
+							),
+					},
+					{
+						path: 'create-subcategory',
+						loadComponent: () =>
+							import('./pages/categories/settings-category/views/create-subcategory-settings-category/create-subcategory-settings-category.component').then(
+								(m) => m.CreateSubcategorySettingsCategoryComponent
+							),
+					},
+					{
+						path: 'subcategories',
+						loadComponent: () =>
+							import('./pages/categories/settings-category/views/index-subcategory-settings-category/index-subcategory-settings-category.component').then(
+								(m) => m.IndexSubcategorySettingsCategoryComponent
+							),
+					},
+					{
+						path: 'products',
+						loadComponent: () =>
+							import('./pages/categories/settings-category/views/index-products-settings-category/index-products-settings-category.component').then(
+								(m) => m.IndexProductsSettingsCategoryComponent
+							),
+					},
+					{
+						path: 'brands',
+						loadComponent: () =>
+							import('./pages/categories/settings-category/views/index-brands-settings-category/index-brands-settings-category.component').then(
+								(m) => m.IndexBrandsSettingsCategoryComponent
+							),
+					},
+				],
 			},
 			{
 				path: ':id/products',

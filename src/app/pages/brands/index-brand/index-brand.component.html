@@ -152,14 +152,44 @@
 							</div>
 
 							<div class="list-filter-item list-filter-lg">
-								<label class="list-filter-label" for="fieldStatus">Paises</label>
-								<app-menu-countries
-									(applyCountries)="getCountries($event)"
-									[selectedCountries]="selectedCountryCodes"
-									[title]="'Paises'"
-									[placeholder]="'Filtrar por paises'"
-									[sizeClass]="'sm'"
-								></app-menu-countries>
+								<label class="list-filter-label" for="brandCountries">Países</label>
+								<ng-select
+									id="brandCountries"
+									[items]="countryFilters"
+									bindLabel="name"
+									bindValue="code"
+									name="selectedCountryCodes"
+									[ngModel]="selectedCountryCodes"
+									(ngModelChange)="getCountries($event)"
+									[multiple]="true"
+									[closeOnSelect]="false"
+									[clearable]="false"
+									[searchable]="false"
+									[disabled]="isBrandsLoading"
+									placeholder="Filtrar por países"
+									appendTo="body"
+									dropdownPanelClass="app-select-panel"
+									class="app-select app-select-sm"
+								>
+									<ng-template ng-option-tmp let-item="item">
+										<div class="app-select-option">
+											<img [src]="item.flag" class="w-20px h-15px rounded-1 flex-shrink-0" alt="" />
+											<span class="app-select-option-text">{{ item.name }}</span>
+											<ion-icon name="checkmark-outline" class="app-select-check" aria-hidden="true"></ion-icon>
+										</div>
+									</ng-template>
+									<ng-template ng-multi-label-tmp let-items="items">
+										<div class="app-select-value">
+											@if (items.length === 1) {
+												<img [src]="items[0].flag" class="w-20px h-15px rounded-1 flex-shrink-0" alt="" />
+											}
+											<span class="app-select-value-text">{{ items.length === 1 ? items[0].name : items.length + ' seleccionados' }}</span>
+										</div>
+									</ng-template>
+								</ng-select>
+							</div>
+							<div class="table-counter" aria-live="polite">
+								<span>Mostrando {{ firstVisibleBrand }}–{{ lastVisibleBrand }} de {{ totalBrands }} marcas</span>
 							</div>
 						</div>
 

@@ -201,7 +201,7 @@ export class CreateProductComponent {
 		this.errorMsmSeverListBrands = '';
 		this.brands = [];
 		this.brandService
-			.get_brands_by_select()
+			.getBrandsSelect()
 			.pipe(
 				takeUntil(this.destroy$),
 				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),

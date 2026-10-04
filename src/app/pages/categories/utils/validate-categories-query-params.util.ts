@@ -1,81 +1,52 @@
-import { ActivatedRoute, Params, Router } from '@angular/router';
+﻿import type { Params } from '@angular/router';
 import { PAGINATION_LIMITS } from '@app/common/constants/pageLimit.constant';
+import { configurationsOptions, sortOptions, statusOptions } from '../constants/selectors.constant';
+import type { GetCategoriesQPI } from '../interfaces/query-params.interface';
 
-export const validateCategoriesQueryParams = (route: ActivatedRoute, params: Params, router: Router, sortArray: string[] = [], configurationsArray: string[] = []): boolean => {
-	const filter = params['filter'] ?? '';
+interface CategoriesQueryParamsValidation {
+	isValid: boolean;
+	queryParams: GetCategoriesQPI;
+}
 
-	let page = Number(params['page']);
-	let limit = Number(params['limit']);
-	let status = params['status'];
-	let sort = params['sort'];
-	let configurations = params['configurations'] ?? 'Predeterminado';
+const validStatuses = new Set(statusOptions.map(({ value }) => value));
+const validSorts = new Set(sortOptions.map(({ value }) => value));
+const validConfigurations = new Set(configurationsOptions.map(({ value }) => value));
+const defaultSort = sortOptions[0]?.value ?? 'Predeterminado';
 
-	const validStatusValues = ['Todos', 'Activos', 'Inactivos'];
+const parseNumber = (value: unknown): number => (typeof value === 'string' || typeof value === 'number' ? Number(value) : NaN);
 
-	// Validar página
-	if (!Number.isInteger(page) || page < 1) {
-		page = 1;
-	}
+const normalizeConfigurations = (value: unknown): string => {
+	const values = Array.isArray(value) ? value : [value];
+	const configurations = values
+		.filter((item): item is string => typeof item === 'string')
+		.flatMap((item) => item.split(','))
+		.map((item) => item.trim())
+		.filter((item) => validConfigurations.has(item));
 
-	// Validar límite
-	if (!PAGINATION_LIMITS.includes(limit)) {
-		limit = 10;
-	}
+	return [...new Set(configurations)].join(',') || 'Predeterminado';
+};
 
-	// Validar estado
-	if (!validStatusValues.includes(status)) {
-		status = 'Todos';
-	}
-
-	// Validar orden
-	if (!sortArray.includes(sort)) {
-		sort = sortArray[0] ?? 'Predeterminado';
-	}
-
-	// Validar configuraciones
-	if (configurations !== 'Predeterminado') {
-		const configurationsList = Array.isArray(configurations)
-			? configurations
-			: String(configurations)
-					.split(',')
-					.map((item) => item.trim())
-					.filter(Boolean);
-
-		const validConfigurationsList = [...new Set(configurationsList.filter((item) => configurationsArray.includes(item)))];
-
-		configurations = validConfigurationsList.length > 0 ? validConfigurationsList.join(',') : 'Predeterminado';
-	}
-
-	const sanitizedParams = {
-		filter,
-		page,
-		limit,
-		status,
-		sort,
-		configurations,
+/** Normaliza los filtros de categorías sin modificar la URL ni los parámetros originales. */
+export const validateCategoriesQueryParams = (params: Params): CategoriesQueryParamsValidation => {
+	const page = parseNumber(params['page']);
+	const limit = parseNumber(params['limit']);
+	const queryParams: GetCategoriesQPI = {
+		filter: typeof params['filter'] === 'string' ? params['filter'] : '',
+		page: Number.isInteger(page) && page >= 1 ? page : 1,
+		limit: PAGINATION_LIMITS.includes(limit) ? limit : 10,
+		status: validStatuses.has(params['status']) ? params['status'] : 'Todos',
+		sort: validSorts.has(params['sort']) ? params['sort'] : defaultSort,
+		configurations: normalizeConfigurations(params['configurations']),
 	};
 
-	const allowedKeys = Object.keys(sanitizedParams);
-
-	const hasUnknownParams = Object.keys(params).some((key) => !allowedKeys.includes(key));
-
+	const hasUnknownParams = Object.keys(params).some((key) => !Object.prototype.hasOwnProperty.call(queryParams, key));
 	const hasInvalidValues =
-		filter !== (params['filter'] ?? '') ||
-		page !== Number(params['page']) ||
-		limit !== Number(params['limit']) ||
-		status !== params['status'] ||
-		sort !== params['sort'] ||
-		configurations !== (params['configurations'] ?? 'Predeterminado');
+		queryParams.filter !== (params['filter'] ?? '') ||
+		queryParams.page !== page ||
+		queryParams.limit !== limit ||
+		queryParams.status !== params['status'] ||
+		queryParams.sort !== params['sort'] ||
+		queryParams.configurations !== (params['configurations'] ?? 'Predeterminado');
 
-	if (hasUnknownParams || hasInvalidValues) {
-		router.navigate([], {
-			relativeTo: route,
-			queryParams: sanitizedParams,
-			replaceUrl: true,
-		});
-
-		return false;
-	}
-
-	return true;
+	return { isValid: !hasUnknownParams && !hasInvalidValues, queryParams };
 };

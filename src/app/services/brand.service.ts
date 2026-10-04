@@ -110,7 +110,7 @@ export class BrandService {
 		return this.http.get<FindBrandProductsREQI>(`${this.apiUrl}/brand/findBrandProducts/${id}`, { params, headers: this.getHeaders() });
 	}
 
-	get_brands_by_select(): Observable<any> {
-		return this.http.get(`${this.apiUrl}/brand/get_brands_by_select`, { headers: this.getHeaders() });
+	getBrandsSelect(): Observable<any> {
+		return this.http.get(`${this.apiUrl}/brand/getBrandsSelect`, { headers: this.getHeaders() });
 	}
 }

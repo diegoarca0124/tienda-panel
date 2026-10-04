@@ -1,0 +1,19 @@
+:host {
+	display: block;
+}
+
+.brand-card {
+	min-height: 100px;
+}
+
+.brand-card-content {
+	min-width: 0;
+}
+
+.brand-card-logo {
+	object-fit: contain;
+}
+
+.brand-card-website {
+	z-index: 2;
+}

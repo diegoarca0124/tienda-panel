@@ -18,9 +18,8 @@ import { environment } from 'environments/environment.dev';
 import { HttpErrorResponse } from '@angular/common/http';
 import { CategoryInterface, MoveProductsInterface, SubcategoryInterface } from '../interfaces/data.interface';
 import { FindCategoryProductsRESI, GetCategoriesWithSubcategoriesRESI, MoveProductsToSubcategoryRESI, MoveSubcategoryRESI } from '../interfaces/response.interface';
-import { sortOptions } from '@app/pages/products/constants/selectors.constant';
 import { GetProductsCategoryQPI } from '../interfaces/query-params.interface';
-import { SidebarProductsCategoryComponent } from './components/sidebar-products-category/sidebar-products-category.component';
+import { SidebarProductsCategoryComponent } from './shared/sidebar-products-category/sidebar-products-category.component';
 import { TableProductsCategoryComponent } from './components/table-products-category/table-products-category.component';
 import { MoveProductsCategoryComponent } from './components/move-products-category/move-products-category.component';
 declare var toastr: any;
@@ -57,6 +56,7 @@ export class ProductsCategoryComponent {
 	public selectedVisibility: string = 'Todos';
 	public selectedSort: string = 'Predeterminado';
 	public selectedSubcategoryIds: string = 'Todos';
+	public selectedBrandIds: string = 'Todos';
 	public minPrice: number | null = null;
 	public maxPrice: number | null = null;
 
@@ -77,8 +77,6 @@ export class ProductsCategoryComponent {
 	public categoriesLoadError: Record<string, any> | null = null;
 	public productsLoadError: Record<string, any> | null = null;
 
-	public readonly sortValues = sortOptions.map((item) => item.value);
-
 	constructor(
 		private router: Router,
 		private categoryService: CategoryService,
@@ -94,7 +92,7 @@ export class ProductsCategoryComponent {
 	private listenRouteChanges(): void {
 		combineLatest([this.route.paramMap, this.route.queryParams])
 			.pipe(
-				switchMap(([paramMap, queryParams]) => {
+				switchMap(([paramMap, params]) => {
 					const categoryId = paramMap.get('id');
 
 					if (!categoryId) {
@@ -106,9 +104,14 @@ export class ProductsCategoryComponent {
 						return EMPTY;
 					}
 
-					const validParams = validateProductsCategoryQueryParams(this.route, queryParams, this.router, this.sortValues);
+					const { isValid, queryParams } = validateProductsCategoryQueryParams(params);
 
-					if (!validParams) {
+					if (!isValid) {
+						this.router.navigate([], {
+							relativeTo: this.route,
+							queryParams,
+							replaceUrl: true,
+						});
 						return EMPTY;
 					}
 
@@ -122,17 +125,18 @@ export class ProductsCategoryComponent {
 			.subscribe();
 	}
 
-	private loadQueryParams(params: Params): void {
-		this.filter = params['filter'] ?? '';
-		this.currentPage = Number(params['page']);
-		this.limit = Number(params['limit']);
-		this.selectedStatus = params['status'];
-		this.selectedSort = params['sort'];
-		this.selectedSubcategoryIds = params['subcategoryIds'] ?? 'Todos';
-		this.selectedQuality = params['quality'] ?? 'Todos';
-		this.selectedVisibility = params['visibility'] ?? 'Todos';
-		this.minPrice = params['minPrice'] !== undefined ? Number(params['minPrice']) : null;
-		this.maxPrice = params['maxPrice'] !== undefined ? Number(params['maxPrice']) : null;
+	private loadQueryParams(params: GetProductsCategoryQPI): void {
+		this.filter = params.filter;
+		this.currentPage = params.page;
+		this.limit = params.limit;
+		this.selectedStatus = params.status;
+		this.selectedSort = params.sort;
+		this.selectedSubcategoryIds = params.subcategoryIds;
+		this.selectedBrandIds = params.brandIds;
+		this.selectedQuality = params.quality;
+		this.selectedVisibility = params.visibility;
+		this.minPrice = params.minPrice ?? null;
+		this.maxPrice = params.maxPrice ?? null;
 	}
 
 	private loadProducts$(showSpinner: boolean = true): Observable<void> {
@@ -149,6 +153,7 @@ export class ProductsCategoryComponent {
 			status: this.selectedStatus,
 			sort: this.selectedSort,
 			subcategoryIds: this.selectedSubcategoryIds,
+			brandIds: this.selectedBrandIds,
 			quality: this.selectedQuality,
 			visibility: this.selectedVisibility,
 			minPrice: this.minPrice,
@@ -230,7 +235,6 @@ export class ProductsCategoryComponent {
 						if (secondCategory.id === this.id) return 1;
 						return 0;
 					});
-
 			}),
 
 			map(() => void 0),
@@ -265,6 +269,7 @@ export class ProductsCategoryComponent {
 				status: this.selectedStatus,
 				sort: this.selectedSort,
 				subcategoryIds: this.selectedSubcategoryIds,
+				brandIds: this.selectedBrandIds,
 				quality: this.selectedQuality,
 				visibility: this.selectedVisibility,
 				minPrice: this.minPrice,
@@ -319,6 +324,7 @@ export class ProductsCategoryComponent {
 		this.limit = 10;
 		this.selectedSort = 'Predeterminado';
 		this.selectedSubcategoryIds = 'Todos';
+		this.selectedBrandIds = 'Todos';
 		this.selectedQuality = 'Todos';
 		this.selectedVisibility = 'Todos';
 		this.minPrice = null;
@@ -332,6 +338,7 @@ export class ProductsCategoryComponent {
 				status: null,
 				sort: null,
 				subcategoryIds: null,
+				brandIds: null,
 				quality: null,
 				visibility: null,
 				minPrice: null,
@@ -363,6 +370,7 @@ export class ProductsCategoryComponent {
 			status: this.selectedStatus,
 			sort: this.selectedSort,
 			subcategoryIds: this.selectedSubcategoryIds,
+			brandIds: this.selectedBrandIds,
 			quality: this.selectedQuality,
 			visibility: this.selectedVisibility,
 		};
@@ -388,6 +396,7 @@ export class ProductsCategoryComponent {
 			(current['status'] ?? 'Todos') === this.selectedStatus &&
 			(current['sort'] ?? 'Predeterminado') === this.selectedSort &&
 			(current['subcategoryIds'] ?? 'Todos') === this.selectedSubcategoryIds &&
+			(current['brandIds'] ?? 'Todos') === this.selectedBrandIds &&
 			(current['quality'] ?? 'Todos') === this.selectedQuality &&
 			(current['visibility'] ?? 'Todos') === this.selectedVisibility &&
 			currentMinPrice === this.minPrice &&

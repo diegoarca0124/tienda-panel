@@ -5,7 +5,6 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, EventEmitter, Input, Output, signal,
 	selector: 'app-modal-delete',
 	imports: [CommonModule],
 	templateUrl: './modal-delete.component.html',
-	styleUrl: './modal-delete.component.css',
 	schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class ModalDeleteComponent {

@@ -1,6 +1,7 @@
 import { SafeHtml } from '@angular/platform-browser';
 import { CategoryInterface, SubcategoryInterface } from './data.interface';
 import { ProductInterface } from '@app/pages/products/interfaces/product.interface';
+import { BrandInterface } from '@app/pages/brands/interfaces/data.interface';
 
 export interface GetCategoriesRESI {
 	categories: CategoryInterface[];
@@ -78,6 +79,11 @@ export interface GetSubcategoriesByCategorySelectRESI {
 	data: SubcategoryInterface[];
 }
 
+export interface GetBrandsByCategoryRESI {
+	message: string;
+	data: BrandInterface[];
+}
+
 export interface CategoryWithSubcategoriesRESI {
 	id: string;
 	name: string;
@@ -106,7 +112,8 @@ export interface FindCategoryProductsRESI {
 		filter: string;
 		status: 'Todos' | 'published' | 'draft';
 		sort: string;
-		subcategoryIds: string[];
+		subcategoryIds: string;
+		brandIds: string;
 		quality: string;
 		visibility: string;
 		minPrice: string;

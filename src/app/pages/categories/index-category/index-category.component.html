@@ -78,6 +78,7 @@
 										aria-expanded="false"
 										aria-label="Opciones"
 										title="Opciones"
+										[disabled]="isCategoriesLoading"
 									>
 										<ion-icon name="settings-outline" aria-hidden="true"></ion-icon>
 										<span class="app-btn-label">Opciones</span>
@@ -171,10 +172,14 @@
 								<app-menu-settings-categories
 									(applyData)="getConfigurations($event)"
 									[selectedData]="selectedConfigurations"
+									[disabled]="isCategoriesLoading"
 									[title]="'Configuraciones'"
 									[placeholder]="'Filtrar por configuraciones'"
 									[sizeClass]="'sm'"
 								></app-menu-settings-categories>
+							</div>
+							<div class="table-counter" aria-live="polite">
+								<span>Mostrando {{ firstVisibleCategory }}–{{ lastVisibleCategory }} de {{ totalCategories }} categorías</span>
 							</div>
 						</div>
 

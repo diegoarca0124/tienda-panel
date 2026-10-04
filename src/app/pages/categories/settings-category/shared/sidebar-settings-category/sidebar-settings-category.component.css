@@ -1,0 +1,83 @@
+:host {
+	display: block;
+	position: sticky;
+	top: 1.5rem;
+	align-self: start;
+	min-width: 0;
+}
+
+.settings-sidebar-header {
+	padding: 1rem;
+	background: #f8fafc;
+	border-bottom: 1px solid #e7ebf0;
+}
+
+.settings-sidebar-header h2 {
+	margin: 0;
+	font-size: 0.9375rem;
+	font-weight: 700;
+	color: var(--bs-gray-800);
+}
+
+.settings-sidebar-header p {
+	margin: 0.25rem 0 0;
+	font-size: 0.75rem;
+	line-height: 1.4;
+	color: var(--bs-gray-500);
+}
+
+.settings-sidebar-menu {
+	gap: 1rem;
+	padding: 1rem;
+}
+
+.settings-sidebar .section-sidebar-item {
+	align-items: flex-start;
+	border: 1px solid var(--bs-gray-200);
+}
+
+.settings-sidebar .section-sidebar-item.active {
+	border-color: rgba(var(--bs-primary-rgb), 0.3);
+}
+
+.settings-sidebar .section-sidebar-copy {
+	gap: 0.25rem;
+}
+
+.settings-sidebar .section-sidebar-copy small {
+	line-height: 1.4;
+}
+
+@media (max-width: 1249.98px) {
+	.settings-sidebar-menu {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		overflow: visible;
+	}
+
+	.settings-sidebar .section-sidebar-item {
+		width: 100%;
+		min-width: 0;
+	}
+
+	.settings-sidebar .section-sidebar-copy small {
+		display: block;
+	}
+}
+
+@media (max-width: 1249.98px) {
+	:host {
+		position: static;
+	}
+}
+
+@media (max-width: 575.98px) {
+	.settings-sidebar-header,
+	.settings-sidebar-menu {
+		padding: 0.875rem;
+	}
+
+	.settings-sidebar-menu {
+		gap: 0.875rem 0.625rem;
+	}
+}

@@ -23,6 +23,7 @@ export interface FindCategoryProductsREQI {
 	status: string;
 	sort: string;
 	subcategoryIds: string;
+	brandIds: string;
 	quality: string;
 	visibility: string;
 	minPrice: number | null;

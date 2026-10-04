@@ -3,6 +3,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { TextareaAutoresizeDirective } from '@app/common/directives/textarea-autoresize.directive';
 import { withMinLoadingTime } from '@app/common/interface/with-min-loading-time.interface';
 import { CategoryService } from '@app/services/category.service';
 import { GLOBAL } from '@app/services/GLOBAL';
@@ -12,32 +13,32 @@ import { ValidationPopoverComponent } from '@app/shared/validation-popover/valid
 import { IMaskModule } from 'angular-imask';
 import { finalize, Subject, switchMap, takeUntil, tap } from 'rxjs';
 import { prefixMask } from '../../../constants/prefix-mask.constant';
-import { CategoryInterface, SubcategoryInterface } from '../../../interfaces/data.interface';
-import { SubcategoryFieldErrors, SubcategoryValidationErrors } from '../../../interfaces/validation.interface';
-import { createEmptyCategory, createEmptyFieldErrorsSubcategory, createEmptySubcategory } from '../../../utils/empties.util';
+import { CategoryInterface } from '../../../interfaces/data.interface';
+import { CategoryFieldErrors, CategoryValidationErrors } from '../../../interfaces/validation.interface';
+import { createEmptyCategory, createEmptyFieldErrorsCategory } from '../../../utils/empties.util';
 import { buildShowErrors } from '@app/common/utils/build-show.errors.util';
 
 declare const toastr: any;
 
 @Component({
-	selector: 'app-create-subcategory',
-	imports: [CommonModule, FormsModule, IMaskModule, NotFoundComponent, ValidationPopoverComponent, InputSvgComponent],
-	templateUrl: './create-subcategory.component.html',
-	styleUrl: './create-subcategory.component.css',
+	selector: 'app-edit-category-settings-category',
+	imports: [CommonModule, FormsModule, IMaskModule, NotFoundComponent, ValidationPopoverComponent, InputSvgComponent, TextareaAutoresizeDirective],
+	templateUrl: './edit-category-settings-category.component.html',
+	styleUrl: './edit-category-settings-category.component.css',
 	schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class CreateSubcategoryComponent {
+export class EditCategorySettingsCategoryComponent {
 	private readonly destroy$ = new Subject<void>();
 
 	public id = '';
 	public category: CategoryInterface = createEmptyCategory();
-	public subcategory: SubcategoryInterface = createEmptySubcategory();
-	public fieldSubcategoryErrors: SubcategoryFieldErrors = createEmptyFieldErrorsSubcategory();
-	public validationSubcategoryError: SubcategoryValidationErrors = {};
+	public fieldCategoryErrors: CategoryFieldErrors = createEmptyFieldErrorsCategory();
+	public validationCategoryError: CategoryValidationErrors = {};
 	public prefixMask = prefixMask;
 	public isGetCategoryLoading = true;
-	public isCreateSubcategoryLoading = false;
+	public isUpdateCategoryLoading = false;
 	public categoryLoadError = '';
+	public showVisualIdentity = false;
 
 	constructor(
 		private readonly categoryService: CategoryService,
@@ -45,12 +46,11 @@ export class CreateSubcategoryComponent {
 	) {}
 
 	ngOnInit(): void {
-		this.route.paramMap
+		(this.route.parent ?? this.route).paramMap
 			.pipe(
 				takeUntil(this.destroy$),
 				switchMap((params) => {
 					this.id = params.get('id') ?? '';
-					this.subcategory.categoryId = this.id;
 					this.isGetCategoryLoading = true;
 					this.categoryLoadError = '';
 
@@ -76,23 +76,20 @@ export class CreateSubcategoryComponent {
 		this.destroy$.complete();
 	}
 
-	createSubcategory(): void {
-		this.isCreateSubcategoryLoading = true;
-		this.subcategory.categoryId = this.id;
+	updateCategory(): void {
+		this.isUpdateCategoryLoading = true;
 
 		this.categoryService
-			.createSubcategory(this.subcategory)
+			.updateCategory(this.id, this.category)
 			.pipe(
-				takeUntil(this.destroy$),
 				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
-				finalize(() => (this.isCreateSubcategoryLoading = false))
+				takeUntil(this.destroy$),
+				finalize(() => (this.isUpdateCategoryLoading = false))
 			)
 			.subscribe({
-				next: (response: { data: SubcategoryInterface; message: string }) => {
-					this.validationSubcategoryError = {};
-					this.fieldSubcategoryErrors = createEmptyFieldErrorsSubcategory();
-					this.subcategory = createEmptySubcategory();
-					this.subcategory.categoryId = this.id;
+				next: (response: { data: CategoryInterface; message: string }) => {
+					this.validationCategoryError = {};
+					this.category = response.data;
 					toastr.success(response.message);
 				},
 				error: (errorResponse: HttpErrorResponse) => {
@@ -100,8 +97,9 @@ export class CreateSubcategoryComponent {
 					toastr.error(error.message || '¡Error desconocido!');
 
 					if (error.validation) {
-						this.validationSubcategoryError = error.validation;
-						this.fieldSubcategoryErrors = buildShowErrors(this.fieldSubcategoryErrors, this.validationSubcategoryError);
+						this.validationCategoryError = error.validation;
+						this.fieldCategoryErrors = buildShowErrors(this.fieldCategoryErrors, this.validationCategoryError);
+						this.showVisualIdentity ||= !!this.validationCategoryError.icon;
 					}
 				},
 			});

@@ -139,7 +139,7 @@
 			</ng-select>
 		</div>
 
-		<div class="list-filter-item">
+		<div class="list-filter-item product-filter-price">
 			<label class="list-filter-label">Precios</label>
 			<div class="d-flex align-items-center gap-2 w-100">
 				<div class="flex-fill min-w-0">
@@ -193,7 +193,10 @@
 			>
 				<ng-template ng-option-tmp let-item="item">
 					<div class="app-select-option">
-						<span class="app-select-option-text"><strong>{{ item.prefix }}</strong> - {{ item.name }}</span>
+						<span class="app-select-option-text">
+							<strong>{{ item.prefix }}</strong>
+							- {{ item.name }}
+						</span>
 						<ion-icon name="checkmark-outline" class="app-select-check"></ion-icon>
 					</div>
 				</ng-template>
@@ -205,7 +208,47 @@
 			</ng-select>
 		</div>
 
-		<button type="button" class="btn btn-primary btn-sm w-100" (click)="apply.emit()" [disabled]="isLoading">
+		<div class="list-filter-item">
+			<label class="list-filter-label" for="productBrands">Marcas</label>
+			<ng-select
+				id="productBrands"
+				[items]="brands"
+				bindLabel="name"
+				bindValue="id"
+				name="selectedBrands"
+				[ngModel]="selectedBrandValues"
+				(ngModelChange)="onBrandsChange($event)"
+				[multiple]="true"
+				[closeOnSelect]="false"
+				[clearable]="false"
+				[searchable]="true"
+				[disabled]="isLoading || isBrandsLoading"
+				[loading]="isBrandsLoading"
+				placeholder="Seleccionar marcas"
+				[ngbTooltip]="getSelectedBrandNames()"
+				[disableTooltip]="selectedBrandValues.length === 0"
+				placement="top"
+				tooltipClass="tooltip-dark"
+				container="body"
+				appendTo="body"
+				dropdownPanelClass="app-select-panel"
+				class="app-select app-select-sm"
+			>
+				<ng-template ng-option-tmp let-item="item">
+					<div class="app-select-option">
+						<span class="app-select-option-text">{{ item.name }}</span>
+						<ion-icon name="checkmark-outline" class="app-select-check"></ion-icon>
+					</div>
+				</ng-template>
+				<ng-template ng-multi-label-tmp let-items="items" let-clear="clear">
+					<div class="app-select-value">
+						<span class="app-select-value-text">{{ items.length === 1 ? items[0].name : items.length + ' seleccionadas' }}</span>
+					</div>
+				</ng-template>
+			</ng-select>
+		</div>
+
+		<button type="button" class="btn btn-primary btn-sm w-100 product-filter-apply" (click)="apply.emit()" [disabled]="isLoading">
 			<i class="bi bi-funnel" aria-hidden="true"></i>
 			Aplicar filtros
 		</button>

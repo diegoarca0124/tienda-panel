@@ -1,0 +1,80 @@
+<section class="form-card mb-10" aria-labelledby="category-brands-title" [attr.aria-busy]="isGetCategoryLoading || isGetBrandsLoading">
+	<header class="form-card-header">
+		<h2 id="category-brands-title" class="form-card-title">Marcas</h2>
+		<p class="form-card-description">Marcas asociadas a los productos {{ category.name || 'esta categoría' }}.</p>
+	</header>
+
+	<div class="form-card-body">
+		@if (categoryLoadError) {
+			<app-not-found [error]="categoryLoadError"></app-not-found>
+		} @else if (isGetCategoryLoading || isGetBrandsLoading) {
+			<span class="visually-hidden" role="status">Cargando marcas…</span>
+			<div class="row g-5" aria-hidden="true">
+				@for (card of loadingCards; track card) {
+					<div class="col-12 col-md-6 col-xl-4">
+						<div class="form-card rounded-3 h-100 d-flex align-items-center gap-4 p-4 position-relative brand-card">
+							<div class="skeleton rounded-3 w-70px h-70px flex-shrink-0"></div>
+							<div class="flex-grow-1 brand-card-content">
+								<div class="skeleton skeleton-title w-50 mb-3"></div>
+								<div class="skeleton skeleton-text w-100"></div>
+							</div>
+						</div>
+					</div>
+				}
+			</div>
+		} @else if (brands.length === 0) {
+			<app-not-found
+				[error]="{
+					message: 'No se encontraron registros.',
+					statusCode: 404,
+				}"
+			></app-not-found>
+		} @else {
+			<div class="row g-5">
+				@for (brand of brands; track brand.id) {
+					<div class="col-12 col-md-6 col-xl-4">
+						<article class="form-card rounded-3 h-100 d-flex align-items-center gap-4 p-4 position-relative brand-card">
+							<div class="w-70px h-70px flex-shrink-0 p-2">
+								<img class="w-100 h-100 brand-card-logo" [src]="brand.logoUrl" [alt]="'Logo de ' + brand.name" fallbackImage loading="lazy" />
+							</div>
+							<div class="flex-grow-1 brand-card-content">
+								<h3 class="form-card-title mb-1 text-break">
+									<a
+										class="stretched-link text-reset text-decoration-none"
+										[routerLink]="['/products/categories', id, 'products']"
+										[queryParams]="{
+											filter: '',
+											page: 1,
+											limit: 10,
+											status: 'Todos',
+											sort: 'Predeterminado',
+											subcategoryIds: 'Todos',
+											brandIds: brand.id,
+											quality: 'Todos',
+											visibility: 'Todos',
+										}"
+										[attr.aria-label]="'Ver productos de ' + brand.name"
+									>
+										{{ brand.name }}
+									</a>
+								</h3>
+								@if (brand.websiteUrl) {
+									<a
+										class="form-card-description d-block text-break text-primary text-decoration-underline position-relative brand-card-website"
+										[href]="brand.websiteUrl"
+										target="_blank"
+										rel="noopener noreferrer"
+									>
+										{{ brand.websiteUrl }}
+									</a>
+								} @else {
+									<p class="form-card-description">Sin sitio web</p>
+								}
+							</div>
+						</article>
+					</div>
+				}
+			</div>
+		}
+	</div>
+</section>

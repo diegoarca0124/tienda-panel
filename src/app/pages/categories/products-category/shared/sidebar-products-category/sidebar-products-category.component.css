@@ -5,6 +5,8 @@
 	grid-column: 1;
 	grid-row: 1;
 	align-self: start;
+	min-width: 0;
+	container-type: inline-size;
 }
 .product-filter-header {
 	display: flex;
@@ -29,13 +31,18 @@
 }
 .product-filter-list {
 	display: grid;
+	grid-template-columns: minmax(0, 1fr);
 	gap: 1rem;
 	padding: 1rem;
 }
 .list-filter-item {
+	grid-column: auto;
 	width: 100%;
 	min-width: 0;
 	max-width: none;
+}
+.product-filter-apply {
+	grid-column: 1 / -1;
 }
 @media (max-width: 1249.98px) {
 	:host {
@@ -43,10 +50,25 @@
 		grid-column: 1;
 		grid-row: 1;
 	}
+	.product-filter-list {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		align-items: end;
+	}
+	.product-filter-price {
+		grid-column: span 2;
+	}
+	@container (min-width: 44rem) {
+		.product-filter-list {
+			grid-template-columns: repeat(4, minmax(0, 1fr));
+		}
+	}
 }
 @media (max-width: 575.98px) {
 	.product-filter-header,
 	.product-filter-list {
 		padding: 0.875rem;
+	}
+	.product-filter-list {
+		gap: 0.875rem 0.625rem;
 	}
 }

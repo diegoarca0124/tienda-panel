@@ -1,69 +1,65 @@
-import { ActivatedRoute, Params, Router } from '@angular/router';
+import { countries } from '@app/common/constants/countries.constant';
 import { PAGINATION_LIMITS } from '@app/common/constants/pageLimit.constant';
+import { sortOptions, statusOptions } from '../constants/selectors.constant';
+import type { GetBrandsQPI } from '../interfaces/query-params.interface';
 
-export const validateBrandsQueryParams = (route: ActivatedRoute, params: Params, router: Router, sortArray: string[] = [], countriesArray: string[] = []): boolean => {
-	const filter = params['filter'] ?? '';
+export interface BrandsQueryParamsValidation {
+	isValid: boolean;
+	queryParams: GetBrandsQPI;
+}
 
-	let page = Number(params['page']);
-	let limit = Number(params['limit']);
-	let status = params['status'];
-	let sort = params['sort'];
-	let countries = params['countries'] ?? 'Todos';
+const validStatuses = new Set(statusOptions.map(({ value }) => value));
+const validSorts = new Set(sortOptions.map(({ value }) => value));
+const validCountryCodes = new Set(countries.map(({ code }) => code));
+const defaultSort = sortOptions[0]?.value ?? 'Predeterminado';
 
-	const validStatusValues = ['Todos', 'Activos', 'Inactivos'];
+const parseNumber = (value: unknown): number => (typeof value === 'string' || typeof value === 'number' ? Number(value) : NaN);
 
-	// Validar página
-	if (!Number.isInteger(page) || page < 1) {
-		page = 1;
+const normalizeCountries = (value: unknown): string => {
+	if (value === undefined || value === null || value === 'Todos') {
+		return 'Todos';
 	}
 
-	// Validar límite
-	if (!PAGINATION_LIMITS.includes(limit)) {
-		limit = 10;
-	}
+	const values = Array.isArray(value) ? value : [value];
+	const textValues = values.filter((item): item is string => typeof item === 'string');
+	const codes = textValues.flatMap((item) => item.split(','));
+	const normalizedCodes = codes.map((code) => code.trim().toUpperCase());
+	const validCodes = normalizedCodes.filter((code) => validCountryCodes.has(code));
+	const uniqueCodes = [...new Set(validCodes)];
 
-	// Validar estado
-	if (!validStatusValues.includes(status)) {
-		status = 'Todos';
-	}
+	return uniqueCodes.join(',') || 'Todos';
+};
 
-	// Validar orden
-	if (!sortArray.includes(sort)) {
-		sort = sortArray[0] ?? 'Predeterminado';
-	}
+/** Normaliza los filtros de marcas sin modificar la URL ni los parámetros originales. */
+export const validateBrandsQueryParams = (params: Readonly<Record<string, unknown>>): BrandsQueryParamsValidation => {
+	// Leer los valores originales antes de validarlos.
+	const filter = params['filter'];
+	const page = parseNumber(params['page']);
+	const limit = parseNumber(params['limit']);
+	const status = params['status'];
+	const sort = params['sort'];
+	const countries = params['countries'];
 
-	// Validar configuraciones
-
-	const sanitizedParams = {
-		filter,
-		page,
-		limit,
-		status,
-		sort,
-		countries,
+	// Aplicar las opciones permitidas y los valores predeterminados.
+	const queryParams: GetBrandsQPI = {
+		filter: typeof filter === 'string' ? filter : '',
+		page: Number.isInteger(page) && page >= 1 ? page : 1,
+		limit: PAGINATION_LIMITS.includes(limit) ? limit : 10,
+		status: typeof status === 'string' && validStatuses.has(status) ? status : 'Todos',
+		sort: typeof sort === 'string' && validSorts.has(sort) ? sort : defaultSort,
+		countries: normalizeCountries(countries),
 	};
 
-	const allowedKeys = Object.keys(sanitizedParams);
-
+	// Indicar al componente si debe corregir los parámetros de la URL.
+	const allowedKeys = Object.keys(queryParams);
 	const hasUnknownParams = Object.keys(params).some((key) => !allowedKeys.includes(key));
-
 	const hasInvalidValues =
-		filter !== (params['filter'] ?? '') ||
-		page !== Number(params['page']) ||
-		limit !== Number(params['limit']) ||
-		status !== params['status'] ||
-		sort !== params['sort'] ||
-		countries !== (params['countries'] ?? 'Predeterminado');
+		queryParams.filter !== (filter ?? '') ||
+		queryParams.page !== page ||
+		queryParams.limit !== limit ||
+		queryParams.status !== status ||
+		queryParams.sort !== sort ||
+		queryParams.countries !== (countries ?? 'Todos');
 
-	if (hasUnknownParams || hasInvalidValues) {
-		router.navigate([], {
-			relativeTo: route,
-			queryParams: sanitizedParams,
-			replaceUrl: true,
-		});
-
-		return false;
-	}
-
-	return true;
+	return { isValid: !hasUnknownParams && !hasInvalidValues, queryParams };
 };

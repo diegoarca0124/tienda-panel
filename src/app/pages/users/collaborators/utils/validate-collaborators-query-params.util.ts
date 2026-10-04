@@ -1,57 +1,38 @@
-import { ActivatedRoute, Router } from '@angular/router';
+import type { Params } from '@angular/router';
 import { PAGINATION_LIMITS } from '@app/common/constants/pageLimit.constant';
+import { sortOptions, statusOptions } from '../constants/selectors.constants';
+import type { GetCollaboratorsQPI } from '../interfaces/query-params.interface';
 
-export const validateCollaboratorsQueryParams = (route: ActivatedRoute, params: Record<string, string>, router: Router, sortArray: string[]): boolean => {
-	let page = Number(params['page']);
-	let limit = Number(params['limit']);
-	let status = params['status'];
-	let sort = params['sort'];
-	const filter = params['filter'] ?? '';
+interface CollaboratorsQueryParamsValidation {
+	isValid: boolean;
+	queryParams: GetCollaboratorsQPI;
+}
 
-	const validStatusValues = ['Todos', 'Activos', 'Inactivos'];
-	const validSortValues = sortArray ?? [];
+const validStatuses = new Set(statusOptions.map(({ value }) => value));
+const validSorts = new Set(sortOptions.map(({ value }) => value));
+const defaultSort = sortOptions[0]?.value ?? 'Predeterminado';
 
-	if (!Number.isInteger(page) || page < 1) {
-		page = 1;
-	}
+const parseNumber = (value: unknown): number => (typeof value === 'string' || typeof value === 'number' ? Number(value) : NaN);
 
-	if (!PAGINATION_LIMITS.includes(limit)) {
-		limit = 10;
-	}
-
-	if (!validStatusValues.includes(status)) {
-		status = 'Todos';
-	}
-
-	if (!validSortValues.includes(sort)) {
-		sort = validSortValues[0] ?? 'Predeterminado';
-	}
-
-	const sanitizedParams = {
-		filter,
-		page,
-		limit,
-		status,
-		sort,
+/** Normaliza los filtros de colaboradores sin modificar la URL ni los parámetros originales. */
+export const validateCollaboratorsQueryParams = (params: Params): CollaboratorsQueryParamsValidation => {
+	const page = parseNumber(params['page']);
+	const limit = parseNumber(params['limit']);
+	const queryParams: GetCollaboratorsQPI = {
+		filter: typeof params['filter'] === 'string' ? params['filter'] : '',
+		page: Number.isInteger(page) && page >= 1 ? page : 1,
+		limit: PAGINATION_LIMITS.includes(limit) ? limit : 10,
+		status: validStatuses.has(params['status']) ? params['status'] : 'Todos',
+		sort: validSorts.has(params['sort']) ? params['sort'] : defaultSort,
 	};
 
-	const currentKeys = Object.keys(params);
-	const validKeys = Object.keys(sanitizedParams);
-
-	const hasUnknownParams = currentKeys.some((key) => !validKeys.includes(key));
-
+	const hasUnknownParams = Object.keys(params).some((key) => !Object.prototype.hasOwnProperty.call(queryParams, key));
 	const hasInvalidValues =
-		filter !== (params['filter'] ?? '') || page !== Number(params['page']) || limit !== Number(params['limit']) || status !== params['status'] || sort !== params['sort'];
+		queryParams.filter !== (params['filter'] ?? '') ||
+		queryParams.page !== page ||
+		queryParams.limit !== limit ||
+		queryParams.status !== params['status'] ||
+		queryParams.sort !== params['sort'];
 
-	if (hasUnknownParams || hasInvalidValues) {
-		router.navigate([], {
-			relativeTo: route,
-			queryParams: sanitizedParams,
-			replaceUrl: true,
-		});
-
-		return false;
-	}
-
-	return true;
+	return { isValid: !hasUnknownParams && !hasInvalidValues, queryParams };
 };

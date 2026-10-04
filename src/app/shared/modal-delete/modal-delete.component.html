@@ -1,45 +1,45 @@
 <div class="modal fade" [id]="id" tabindex="-1" [attr.aria-labelledby]="id + '-title'" [attr.aria-describedby]="id + '-description'" aria-hidden="true">
-	<div class="modal-dialog modal-dialog-centered confirm-modal-dialog">
-		<div class="modal-content confirm-modal-content">
-			<div class="modal-header confirm-modal-header">
-				<div class="confirm-modal-heading">
-					<h2 class="confirm-modal-title" [id]="id + '-title'">
+	<div class="modal-dialog modal-dialog-centered app-modal-dialog">
+		<div class="modal-content app-modal-content">
+			<div class="modal-header app-modal-header">
+				<div class="app-modal-heading">
+					<h2 class="app-modal-title" [id]="id + '-title'">
 						{{ title }}
 					</h2>
 				</div>
 
-				<button type="button" class="btn-close confirm-modal-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+				<button type="button" class="btn-close app-modal-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
 			</div>
 
-			<div class="modal-body confirm-modal-body">
-				<div class="confirm-modal-description" [id]="id + '-description'" [innerHTML]="description"></div>
+			<div class="modal-body app-modal-body">
+				<div class="app-modal-description" [id]="id + '-description'" [innerHTML]="description"></div>
 
 				<div
 					*ngIf="details.length > 0"
-					class="confirm-modal-details"
+					class="app-modal-details"
 					[ngClass]="{
-						'confirm-modal-details--danger': textButton === 'Desactivar' || textButton === 'Eliminar',
-						'confirm-modal-details--primary': textButton === 'Activar',
+						'app-modal-details--danger': textButton === 'Desactivar' || textButton === 'Eliminar',
+						'app-modal-details--primary': textButton === 'Activar',
 					}"
 				>
-					<p *ngIf="detailsTitle" class="confirm-modal-details__title">{{ detailsTitle }}</p>
-					<ul class="confirm-modal-details__list">
-						<li *ngFor="let detail of details" class="confirm-modal-details__item">
-							<span class="confirm-modal-details__bullet" aria-hidden="true"></span>
+					<p *ngIf="detailsTitle" class="app-modal-details__title">{{ detailsTitle }}</p>
+					<ul class="app-modal-details__list">
+						<li *ngFor="let detail of details" class="app-modal-details__item">
+							<span class="app-modal-details__bullet" aria-hidden="true"></span>
 							<span>{{ detail }}</span>
 						</li>
 					</ul>
 				</div>
 			</div>
 
-			<div class="modal-footer confirm-modal-footer">
-				<button type="button" class="btn btn-sm btn-light-dark confirm-modal-button" data-bs-dismiss="modal" [disabled]="loadBtnDelete()">
+			<div class="modal-footer app-modal-footer">
+				<button type="button" class="btn btn-sm btn-light-dark app-modal-button" data-bs-dismiss="modal" [disabled]="loadBtnDelete()">
 					<span>Cancelar</span>
 				</button>
 
 				<button
 					type="button"
-					class="btn btn-sm confirm-modal-button"
+					class="btn btn-sm app-modal-button"
 					[ngClass]="{
 						'btn-danger': textButton === 'Desactivar' || textButton === 'Eliminar',
 						'btn-primary': textButton === 'Activar',

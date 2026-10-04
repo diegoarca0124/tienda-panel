@@ -136,23 +136,25 @@
 	</div>
 </div>
 
-<div class="modal fade" id="modalProducts" tabindex="-1" style="display: none" aria-hidden="true">
-	<div class="modal-dialog mw-650px modal-dialog-centered">
-		<div class="modal-content">
-			<div class="modal-header pb-0 border-0 justify-content-end">
-				<span class="svg-icon svg-icon-muted svg-icon-1 cursor-pointer" data-bs-dismiss="modal">
-					<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-						<rect opacity="0.5" x="6" y="17.3137" width="16" height="2" rx="1" transform="rotate(-45 6 17.3137)" fill="currentColor" />
-						<rect x="7.41422" y="6" width="16" height="2" rx="1" transform="rotate(45 7.41422 6)" fill="currentColor" />
-					</svg>
-				</span>
-			</div>
-			<div class="modal-body mx-5 mx-xl-18 pt-0 pb-15">
-				<div class="text-center mb-10">
-					<h2 class="mb-5 fw-700">Copiar Atributos</h2>
-					<div class="text-gray-600 fs-7 fw-400 my-1">Selecciona un producto existente y copia sus atributos al producto actual con un solo clic.</div>
+<div
+	class="modal fade"
+	id="modalProducts"
+	tabindex="-1"
+	style="display: none"
+	aria-labelledby="modalProductsTitle"
+	aria-describedby="modalProductsTitleDescription"
+	aria-hidden="true"
+>
+	<div class="modal-dialog modal-dialog-centered app-modal-dialog app-modal-dialog--wide">
+		<div class="modal-content app-modal-content app-modal-content--tall">
+			<div class="modal-header app-modal-header">
+				<div class="min-w-0">
+					<h2 id="modalProductsTitle" class="app-modal-title">Copiar Atributos</h2>
+					<p id="modalProductsTitleDescription" class="app-modal-description">Selecciona un producto existente y copia sus atributos al producto actual con un solo clic.</p>
 				</div>
-
+				<button type="button" class="btn-close app-modal-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+			</div>
+			<div class="modal-body app-modal-body app-modal-body--panel">
 				<div class="d-flex align-items-center w-100 mb-5">
 					<div class="flex-grow-1 me-2">
 						<div class="position-relative">
@@ -183,7 +185,7 @@
 					</button>
 				</div>
 
-				<div class="h-375px scroll-y">
+				<div class="app-modal-scroll">
 					@if (loadProducts) {
 						<div
 							class="d-flex justify-content-between align-items-center py-3"

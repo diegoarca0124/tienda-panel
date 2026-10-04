@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, HostListener, signal, WritableSignal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { withMinLoadingTime } from '@app/common/interface/with-min-loading-time.interface';
 import { closeModal } from '@app/common/utils/close-modal.util';
 import { copyToClipboard } from '@app/common/utils/copy-clipboard.util';
@@ -65,7 +65,6 @@ export class IndexCollaboratorComponent {
 
 	public collaborators: CollaboratorInterface[] = [];
 	public screenHeight: number = window.innerHeight;
-	public readonly sortValues = sortOptions.map((item) => item.value);
 
 	constructor(
 		private router: Router,
@@ -76,9 +75,16 @@ export class IndexCollaboratorComponent {
 	ngOnInit(): void {
 		this.listenCollaboratorsQueries();
 		this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params) => {
-			const validParams = validateCollaboratorsQueryParams(this.route, params, this.router, this.sortValues);
-			if (!validParams) return;
-			this.loadQueryParams(params);
+			const { isValid, queryParams } = validateCollaboratorsQueryParams(params);
+			if (!isValid) {
+				this.router.navigate([], {
+					relativeTo: this.route,
+					queryParams,
+					replaceUrl: true,
+				});
+				return;
+			}
+			this.loadQueryParams(queryParams);
 			this.loadCollaborators();
 		});
 	}
@@ -93,12 +99,12 @@ export class IndexCollaboratorComponent {
 		this.destroy$.complete();
 	}
 
-	private loadQueryParams(params: Params): void {
-		this.filter = params['filter'] || '';
-		this.currentPage = Number(params['page'] ?? 1);
-		this.limit = Number(params['limit'] ?? 10);
-		this.selectedStatus = params['status'];
-		this.selectedSort = params['sort'];
+	private loadQueryParams(params: GetCollaboratorsQPI): void {
+		this.filter = params.filter;
+		this.currentPage = params.page;
+		this.limit = params.limit;
+		this.selectedStatus = params.status;
+		this.selectedSort = params.sort;
 	}
 
 	private loadCollaborators(): void {

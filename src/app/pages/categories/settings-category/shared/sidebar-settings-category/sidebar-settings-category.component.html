@@ -1,0 +1,21 @@
+<aside class="settings-sidebar" aria-labelledby="settingsSidebarTitle">
+	<div class="form-card section-sidebar-card">
+		<header class="settings-sidebar-header">
+			<h2 id="settingsSidebarTitle">Configuración</h2>
+			<p>Administra la categoría y sus subcategorías.</p>
+		</header>
+		<nav class="section-sidebar-menu settings-sidebar-menu" aria-label="Secciones de configuración">
+			@for (item of menuItems; track item.id) {
+				<a class="section-sidebar-item" [routerLink]="[item.id]" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" ariaCurrentWhenActive="page">
+					<span class="section-sidebar-icon" aria-hidden="true">
+						<i [class]="'bi ' + item.icon"></i>
+					</span>
+					<span class="section-sidebar-copy">
+						<strong>{{ item.label }}</strong>
+						<small>{{ item.description }}</small>
+					</span>
+				</a>
+			}
+		</nav>
+	</div>
+</aside>

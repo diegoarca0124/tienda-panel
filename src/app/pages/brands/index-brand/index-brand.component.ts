@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, signal, WritableSignal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { PAGINATION_LIMITS } from '@app/common/constants/pageLimit.constant';
 import { withMinLoadingTime } from '@app/common/interface/with-min-loading-time.interface';
 import { closeModal } from '@app/common/utils/close-modal.util';
@@ -27,7 +27,6 @@ import { sortOptions, statusOptions } from '../constants/selectors.constant';
 import { GetBrandsRESI, UpdateBrandsStatusRESI, UpdateBrandStatusRESI } from '../interfaces/response.interface';
 import { BrandInterface } from '../interfaces/data.interface';
 import { DomSanitizer } from '@angular/platform-browser';
-import { MenuCountriesComponent } from '@app/shared/menu-countries/menu-countries.component';
 declare const toastr: any;
 declare const $: any;
 type BrandsLoadResult = { data: GetBrandsRESI; error: null } | { data: null; error: HttpErrorResponse };
@@ -47,7 +46,6 @@ type BrandsLoadResult = { data: GetBrandsRESI; error: null } | { data: null; err
 		NgbTooltipModule,
 		FallbackImageDirective,
 		PadCodePipe,
-		MenuCountriesComponent,
 	],
 	templateUrl: './index-brand.component.html',
 	styleUrl: './index-brand.component.css',
@@ -66,10 +64,12 @@ export class IndexBrandComponent {
 
 	public currentPage: number = 1;
 	public totalPages: number = 0;
+	public totalBrands: number = 0;
 	public limit: number = 10;
 
 	public readonly statusFilters = statusOptions;
 	public readonly sortFilters = sortOptions;
+	public readonly countryFilters = countries;
 
 	public selectedBrandsIds = new Set<string>();
 	public isBrandsLoading: boolean = true;
@@ -80,9 +80,6 @@ export class IndexBrandComponent {
 
 	public brands: BrandInterface[] = [];
 	public screenHeight = window.innerHeight;
-
-	public readonly sortValues = sortOptions.map((item) => item.value);
-	public readonly countriesValues = countries.map((item) => item.code);
 
 	constructor(
 		private router: Router,
@@ -99,9 +96,16 @@ export class IndexBrandComponent {
 	ngOnInit() {
 		this.listenBrandsQueries();
 		this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params) => {
-			const validParams = validateBrandsQueryParams(this.route, params, this.router, this.sortValues, this.countriesValues);
-			if (!validParams) return;
-			this.loadQueryParams(params);
+			const { isValid, queryParams } = validateBrandsQueryParams(params);
+			if (!isValid) {
+				this.router.navigate([], {
+					relativeTo: this.route,
+					queryParams,
+					replaceUrl: true,
+				});
+				return;
+			}
+			this.loadQueryParams(queryParams);
 			this.loadBrands();
 		});
 	}
@@ -151,6 +155,7 @@ export class IndexBrandComponent {
 				this.selectedBrandsIds.clear();
 				this.brands = this.mapBrands(data.brands);
 				this.totalPages = data.meta.totalPages;
+				this.totalBrands = data.meta.totalBrands;
 				this.syncCurrentPage(data.meta.currentPage);
 			});
 	}
@@ -184,13 +189,13 @@ export class IndexBrandComponent {
 		}));
 	}
 
-	private loadQueryParams(params: Params): void {
-		this.filter = params['filter'] || '';
-		this.currentPage = Number(params['page']);
-		this.limit = Number(params['limit']);
-		this.selectedStatus = params['status'];
-		this.selectedSort = params['sort'];
-		this.selectedCountries = params['countries'];
+	private loadQueryParams(params: GetBrandsQPI): void {
+		this.filter = params.filter;
+		this.currentPage = params.page;
+		this.limit = params.limit;
+		this.selectedStatus = params.status;
+		this.selectedSort = params.sort;
+		this.selectedCountries = params.countries;
 		this.selectedCountryCodes = this.selectedCountries === 'Todos' ? [] : this.selectedCountries.split(',').filter(Boolean);
 	}
 
@@ -209,6 +214,7 @@ export class IndexBrandComponent {
 				next: (response: GetBrandsRESI) => {
 					this.brands = this.mapBrands(response.brands);
 					this.totalPages = response.meta.totalPages;
+					this.totalBrands = response.meta.totalBrands;
 					this.syncCurrentPage(response.meta.currentPage);
 				},
 				error: (error: HttpErrorResponse) => {
@@ -236,6 +242,16 @@ export class IndexBrandComponent {
 
 	get hasSelectedBrands(): boolean {
 		return this.selectedBrandsIds.size > 0;
+	}
+
+	get firstVisibleBrand(): number {
+		if (this.totalBrands === 0 || this.brands.length === 0) return 0;
+		return (this.currentPage - 1) * this.limit + 1;
+	}
+
+	get lastVisibleBrand(): number {
+		if (this.totalBrands === 0 || this.brands.length === 0) return 0;
+		return Math.min(this.firstVisibleBrand + this.brands.length - 1, this.totalBrands);
 	}
 
 	clearBrandsSelection(): void {

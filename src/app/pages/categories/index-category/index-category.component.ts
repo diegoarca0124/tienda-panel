@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, HostListener, signal, WritableSignal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
-import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { withMinLoadingTime } from '@app/common/interface/with-min-loading-time.interface';
 import { closeModal } from '@app/common/utils/close-modal.util';
 import { getColorBasedOnLetter } from '@app/common/utils/get-color-based-on-letter.util';
@@ -25,7 +25,7 @@ import { MenuSettingsCategoriesComponent } from '@app/shared/menu-settings-categ
 import { GetCategoriesRESI, UpdateCategoriesStatusRESI, UpdateCategoryStatusRESI } from '../interfaces/response.interface';
 import { CategoryInterface } from '../interfaces/data.interface';
 import { GetCategoriesQPI } from '../interfaces/query-params.interface';
-import { configurationsOptions, sortOptions, statusOptions } from '../constants/selectors.constant';
+import { sortOptions, statusOptions } from '../constants/selectors.constant';
 import { CATEGORY_STATUS_DETAILS } from '../constants/category-status.constants';
 import { PAGINATION_LIMITS } from '@app/common/constants/pageLimit.constant';
 declare const toastr: any;
@@ -66,6 +66,7 @@ export class IndexCategoryComponent {
 
 	public currentPage: number = 1;
 	public totalPages: number = 0;
+	public totalCategories: number = 0;
 	public limit: number = 10;
 
 	public readonly statusFilters = statusOptions;
@@ -82,9 +83,6 @@ export class IndexCategoryComponent {
 	public categories: CategoryInterface[] = [];
 	public screenHeight = window.innerHeight;
 
-	public readonly sortValues = sortOptions.map((item) => item.value);
-	public readonly configurationsValues = configurationsOptions.map((item) => item.value);
-
 	constructor(
 		private router: Router,
 		private categoryService: CategoryService,
@@ -95,9 +93,16 @@ export class IndexCategoryComponent {
 	ngOnInit() {
 		this.listenCategoriesQueries();
 		this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params) => {
-			const validParams = validateCategoriesQueryParams(this.route, params, this.router, this.sortValues, this.configurationsValues);
-			if (!validParams) return;
-			this.loadQueryParams(params);
+			const { isValid, queryParams } = validateCategoriesQueryParams(params);
+			if (!isValid) {
+				this.router.navigate([], {
+					relativeTo: this.route,
+					queryParams,
+					replaceUrl: true,
+				});
+				return;
+			}
+			this.loadQueryParams(queryParams);
 			this.loadCategories();
 		});
 	}
@@ -112,13 +117,13 @@ export class IndexCategoryComponent {
 		this.destroy$.complete();
 	}
 
-	private loadQueryParams(params: Params): void {
-		this.filter = params['filter'] || '';
-		this.currentPage = Number(params['page']);
-		this.limit = Number(params['limit']);
-		this.selectedStatus = params['status'];
-		this.selectedSort = params['sort'];
-		this.selectedConfigurations = params['configurations'];
+	private loadQueryParams(params: GetCategoriesQPI): void {
+		this.filter = params.filter;
+		this.currentPage = params.page;
+		this.limit = params.limit;
+		this.selectedStatus = params.status;
+		this.selectedSort = params.sort;
+		this.selectedConfigurations = params.configurations;
 	}
 
 	private listenCategoriesQueries(): void {
@@ -155,6 +160,7 @@ export class IndexCategoryComponent {
 				this.selectedCategoriesIds.clear();
 				this.categories = this.mapCategories(data.categories);
 				this.totalPages = data.meta.totalPages;
+				this.totalCategories = data.meta.totalCategories;
 				this.syncCurrentPage(data.meta.currentPage);
 			});
 	}
@@ -174,6 +180,7 @@ export class IndexCategoryComponent {
 				next: (response: GetCategoriesRESI) => {
 					this.categories = this.mapCategories(response.categories);
 					this.totalPages = response.meta.totalPages;
+					this.totalCategories = response.meta.totalCategories;
 					this.syncCurrentPage(response.meta.currentPage);
 				},
 				error: (error: HttpErrorResponse) => {
@@ -313,6 +320,16 @@ export class IndexCategoryComponent {
 
 	get hasSelectedCategories(): boolean {
 		return this.selectedCategoriesIds.size > 0;
+	}
+
+	get firstVisibleCategory(): number {
+		if (this.totalCategories === 0 || this.categories.length === 0) return 0;
+		return (this.currentPage - 1) * this.limit + 1;
+	}
+
+	get lastVisibleCategory(): number {
+		if (this.totalCategories === 0 || this.categories.length === 0) return 0;
+		return Math.min(this.firstVisibleCategory + this.categories.length - 1, this.totalCategories);
 	}
 
 	clearCategorySelection(): void {

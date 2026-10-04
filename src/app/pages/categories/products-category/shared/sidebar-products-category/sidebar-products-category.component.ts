@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { SubcategoryInterface } from '@app/pages/categories/interfaces/data.interface';
 import { qualityOptions, sortOptions, statusOptions, visibilityOptions } from '@app/pages/products/constants/selectors.constant';
 import { CategoryService } from '@app/services/category.service';
+import { BrandService } from '@app/services/brand.service';
 import { InputDialerComponent } from '@app/shared/input-dialer/input-dialer.component';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgSelectModule } from '@ng-select/ng-select';
@@ -29,6 +30,8 @@ export class SidebarProductsCategoryComponent implements OnChanges, OnDestroy {
 	@Output() selectedVisibilityChange = new EventEmitter<string>();
 	@Input() selectedSubcategoryIds: string = 'Todos';
 	@Output() selectedSubcategoryIdsChange = new EventEmitter<string>();
+	@Input() selectedBrandIds: string = 'Todos';
+	@Output() selectedBrandIdsChange = new EventEmitter<string>();
 	@Input() minPrice: number | null = null;
 	@Output() minPriceChange = new EventEmitter<number | null>();
 	@Input() maxPrice: number | null = null;
@@ -43,17 +46,30 @@ export class SidebarProductsCategoryComponent implements OnChanges, OnDestroy {
 	subcategories: SubcategoryInterface[] = [];
 	selectedSubcategoryValues: string[] = [];
 	isSubcategoriesLoading: boolean = false;
+
+	brands: any[] = [];
+	selectedBrandValues: string[] = [];
+	isBrandsLoading: boolean = false;
+
 	private destroy$ = new Subject<void>();
 
-	constructor(private categoryService: CategoryService) {}
+	constructor(
+		private categoryService: CategoryService,
+		private brandService: BrandService
+	) {}
 
 	ngOnChanges(changes: SimpleChanges): void {
 		if (changes['selectedSubcategoryIds']) {
 			this.selectedSubcategoryValues = this.toSubcategoryArray(this.selectedSubcategoryIds);
 		}
 
+		if (changes['selectedBrandIds']) {
+			this.selectedBrandValues = this.toBrandArray(this.selectedBrandIds);
+		}
+
 		if (changes['categoryId'] && this.categoryId) {
 			this.loadSubcategories();
+			this.loadBrands();
 		}
 	}
 
@@ -71,9 +87,30 @@ export class SidebarProductsCategoryComponent implements OnChanges, OnDestroy {
 			});
 	}
 
+	loadBrands(): void {
+		this.isBrandsLoading = true;
+		this.brandService
+			.getBrandsSelect()
+			.pipe(
+				takeUntil(this.destroy$),
+				finalize(() => (this.isBrandsLoading = false))
+			)
+			.subscribe({
+				next: (response) => {
+					this.brands = Array.isArray(response) ? response : response.data || [];
+				},
+				error: () => (this.brands = []),
+			});
+	}
+
 	onSubcategoriesChange(ids: string[] | null): void {
 		this.selectedSubcategoryValues = ids ?? [];
 		this.selectedSubcategoryIdsChange.emit(this.selectedSubcategoryValues.length ? this.selectedSubcategoryValues.join(',') : 'Todos');
+	}
+
+	onBrandsChange(ids: string[] | null): void {
+		this.selectedBrandValues = ids ?? [];
+		this.selectedBrandIdsChange.emit(this.selectedBrandValues.length ? this.selectedBrandValues.join(',') : 'Todos');
 	}
 
 	getSelectedSubcategoryNames(): string {
@@ -84,12 +121,34 @@ export class SidebarProductsCategoryComponent implements OnChanges, OnDestroy {
 			.join(', ');
 	}
 
+	getSelectedBrandNames(): string {
+		const selectedIds = new Set(this.selectedBrandValues);
+		return this.brands
+			.filter((brand) => selectedIds.has(brand.id))
+			.map((brand) => brand.name)
+			.join(', ');
+	}
+
 	ngOnDestroy(): void {
 		this.destroy$.next();
 		this.destroy$.complete();
 	}
 
 	private toSubcategoryArray(value: string): string[] {
-		return !value || value === 'Todos' ? [] : value.split(',').map((id) => id.trim()).filter(Boolean);
+		return !value || value === 'Todos'
+			? []
+			: value
+					.split(',')
+					.map((id) => id.trim())
+					.filter(Boolean);
+	}
+
+	private toBrandArray(value: string): string[] {
+		return !value || value === 'Todos'
+			? []
+			: value
+					.split(',')
+					.map((id) => id.trim())
+					.filter(Boolean);
 	}
 }

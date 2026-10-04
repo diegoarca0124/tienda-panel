@@ -1,35 +1,46 @@
-<div class="dropdown action-dropdown countries-dropdown">
-	<button
-		#trigger
-		type="button"
+<div
+	ngbDropdown
+	#menuDropdown="ngbDropdown"
+	[autoClose]="'outside'"
+	placement="bottom-end top-end"
+	[popperOptions]="popperOptions"
+	class="dropdown action-dropdown countries-dropdown countries-trigger-wrapper"
+	[class.has-selection]="selectedItems.length > 0"
+	[class.countries-disabled]="disabled"
+>
+	<input
+		ngbDropdownAnchor
+		type="text"
+		readonly
+		role="button"
+		[value]="getSelectedNames()"
+		[placeholder]="placeholder"
 		class="form-control countries-trigger dropdown-toggle dropdown-toggle-no-arrow text-gray-700 fw-500"
 		[ngClass]="sizeClass === 'sm' ? 'form-control-sm' : 'form-control-md'"
-		data-bs-toggle="dropdown"
-		data-bs-auto-close="outside"
-		data-bs-offset="0,8"
+		[disabled]="disabled || loadingCountries"
+		[attr.disabled]="disabled || loadingCountries ? '' : null"
+		[attr.aria-disabled]="disabled || loadingCountries"
 		aria-haspopup="true"
-		aria-expanded="false"
 		[attr.aria-label]="title"
+		(click)="toggleMenu($event)"
+		(keydown.enter)="toggleMenu($event)"
+		(keydown.space)="toggleMenu($event)"
 		[ngbTooltip]="selectedItems.length ? getSelectedNames() : null"
+		[disableTooltip]="disabled || loadingCountries"
 		placement="top"
 		tooltipClass="tooltip-dark"
-	>
-		<span class="text-truncate" [class.placeholder-text]="!selectedItems.length">
-			{{ selectedItems.length ? getSelectedNames() : placeholder }}
-		</span>
+	/>
+	<span class="countries-trigger-indicators d-inline-flex align-items-center gap-2">
+		@if (selectedItems.length) {
+			<span class="badge rounded-pill bg-light-primary text-primary fw-700" aria-label="Países seleccionados">
+				{{ selectedItems.length }}
+			</span>
+		}
 
-		<span class="d-inline-flex align-items-center gap-2 flex-shrink-0">
-			@if (selectedItems.length) {
-				<span class="badge rounded-pill bg-light-primary text-primary fw-700" aria-label="Países seleccionados">
-					{{ selectedItems.length }}
-				</span>
-			}
+		<ion-icon name="chevron-down-outline" class="app-btn-chevron text-gray-500" style="font-size: 1.1rem" aria-hidden="true"></ion-icon>
+	</span>
 
-			<ion-icon name="chevron-down-outline" class="app-btn-chevron text-gray-500" style="font-size: 1.1rem" aria-hidden="true"></ion-icon>
-		</span>
-	</button>
-
-	<div class="dropdown-menu dropdown-menu-end action-dropdown-menu countries-menu p-0" (click)="$event.stopPropagation()">
+	<div ngbDropdownMenu class="dropdown-menu dropdown-menu-end action-dropdown-menu countries-menu p-0" (click)="$event.stopPropagation()">
 		<header class="form-card-header countries-header" style="padding: 1rem 1.24rem !important">
 			<div class="d-flex align-items-center justify-content-between gap-3">
 				<div>
@@ -53,7 +64,7 @@
 			} @else {
 				@for (item of displayCountries; track item.code) {
 					<label class="form-check form-check-customs form-check-sm action-dropdown-item country-option m-0">
-						<input class="form-check-input flex-shrink-0" type="checkbox" [(ngModel)]="item.checked" />
+						<input class="form-check-input flex-shrink-0" type="checkbox" [(ngModel)]="item.checked" [disabled]="disabled || loadingCountries" />
 
 						<span class="country-flag" aria-hidden="true">
 							<img [src]="item.flag" alt="" />
@@ -79,9 +90,9 @@
 		</div>
 
 		<footer class="form-card-footer d-flex align-items-center justify-content-end gap-2">
-			<button type="button" class="btn btn-xs btn-light" [disabled]="loadingCountries || !selectedItems.length" (click)="clearSelection()">Limpiar</button>
+			<button type="button" class="btn btn-xs btn-light" [disabled]="disabled || loadingCountries || !selectedItems.length" (click)="clearSelection()">Limpiar</button>
 
-			<button type="button" class="btn btn-xs btn-primary" [disabled]="loadingCountries" (click)="confirmSelection()">Aplicar filtros</button>
+			<button type="button" class="btn btn-xs btn-primary" [disabled]="disabled || loadingCountries" (click)="confirmSelection()">Aplicar filtros</button>
 		</footer>
 	</div>
 </div>

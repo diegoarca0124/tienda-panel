@@ -14,8 +14,9 @@ export interface GetProductsCategoryQPI {
 	status: string;
 	sort: string;
 	subcategoryIds: string;
+	brandIds: string;
 	quality: string;
 	visibility: string;
-	minPrice: number;
-	maxPrice: number;
+	minPrice?: number;
+	maxPrice?: number;
 }

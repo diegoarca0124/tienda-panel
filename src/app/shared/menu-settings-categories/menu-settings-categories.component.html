@@ -1,35 +1,45 @@
-<div class="dropdown action-dropdown settings-dropdown">
-	<button
-		#trigger
-		type="button"
+<div
+	ngbDropdown
+	#menuDropdown="ngbDropdown"
+	[autoClose]="'outside'"
+	placement="bottom-end top-end"
+	[popperOptions]="popperOptions"
+	class="dropdown action-dropdown settings-dropdown settings-trigger-wrapper"
+	[class.has-selection]="selectedItems.length > 0"
+	[class.settings-disabled]="disabled"
+>
+	<input
+		ngbDropdownAnchor
+		type="text"
+		readonly
+		role="button"
+		[value]="getSelectedNames()"
+		[placeholder]="placeholder"
 		class="form-control settings-trigger dropdown-toggle dropdown-toggle-no-arrow text-gray-700 fw-500"
 		[ngClass]="sizeClass === 'sm' ? 'form-control-sm' : 'form-control-md'"
-		data-bs-toggle="dropdown"
-		data-bs-auto-close="outside"
-		data-bs-offset="0,8"
+		[disabled]="disabled"
+		[attr.disabled]="disabled ? '' : null"
+		[attr.aria-disabled]="disabled"
 		aria-haspopup="true"
-		aria-expanded="false"
 		[attr.aria-label]="title"
+		(click)="toggleMenu($event)"
+		(keydown.enter)="toggleMenu($event)"
+		(keydown.space)="toggleMenu($event)"
 		[ngbTooltip]="selectedItems.length ? getSelectedNames() : null"
+		[disableTooltip]="disabled"
 		placement="top"
 		tooltipClass="tooltip-dark"
-	>
-		<span class="text-truncate" [class.placeholder-text]="!selectedItems.length">
-			{{ selectedItems.length ? getSelectedNames() : placeholder }}
-		</span>
+	/>
+	<span class="settings-trigger-indicators d-inline-flex align-items-center gap-2">
+		@if (selectedItems.length) {
+			<span class="badge rounded-pill bg-light-primary text-primary fw-700" aria-label="Configuraciones seleccionadas">
+				{{ selectedItems.length }}
+			</span>
+		}
 
-		<span class="d-inline-flex align-items-center gap-2 flex-shrink-0">
-			@if (selectedItems.length) {
-				<span class="badge rounded-pill bg-light-primary text-primary fw-700" aria-label="Configuraciones seleccionadas">
-					{{ selectedItems.length }}
-				</span>
-			}
-
-			<ion-icon style="font-size: 1.1rem" name="chevron-down-outline" class="app-btn-chevron text-gray-500" aria-hidden="true"></ion-icon>
-		</span>
-	</button>
-
-	<div class="dropdown-menu dropdown-menu-end action-dropdown-menu settings-menu p-0" (click)="$event.stopPropagation()">
+		<ion-icon style="font-size: 1.1rem" name="chevron-down-outline" class="app-btn-chevron text-gray-500" aria-hidden="true"></ion-icon>
+	</span>
+	<div ngbDropdownMenu class="dropdown-menu dropdown-menu-end action-dropdown-menu settings-menu p-0" (click)="$event.stopPropagation()">
 		<header class="form-card-header d-flex align-items-center justify-content-between gap-3" style="padding: 1rem 1.24rem !important">
 			<div>
 				<h3 class="form-card-title fs-15">
@@ -42,7 +52,7 @@
 
 		<div class="settings-list" role="group" [attr.aria-label]="title">
 			<label class="form-check form-check-customs form-check-sm action-dropdown-item settings-option m-0" *ngFor="let item of displayData">
-				<input class="form-check-input flex-shrink-0" type="checkbox" [(ngModel)]="item.checked" />
+				<input class="form-check-input flex-shrink-0" type="checkbox" [(ngModel)]="item.checked" [disabled]="disabled" />
 
 				<span class="action-dropdown-item-content">
 					<span class="action-dropdown-item-title">
@@ -57,9 +67,9 @@
 		</div>
 
 		<footer class="form-card-footer d-flex align-items-center justify-content-end gap-2">
-			<button type="button" class="btn btn-xs btn-light" [disabled]="!selectedItems.length" (click)="clearSelection()">Limpiar</button>
+			<button type="button" class="btn btn-xs btn-light" [disabled]="disabled || !selectedItems.length" (click)="clearSelection()">Limpiar</button>
 
-			<button type="button" class="btn btn-xs btn-primary" (click)="confirmSelection()">Aplicar filtros</button>
+			<button type="button" class="btn btn-xs btn-primary" [disabled]="disabled" (click)="confirmSelection()">Aplicar filtros</button>
 		</footer>
 	</div>
 </div>

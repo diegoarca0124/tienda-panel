@@ -10,11 +10,22 @@
    TRIGGER
 ========================================================= */
 
+.settings-trigger-wrapper {
+	position: relative;
+}
+
+.settings-disabled {
+	pointer-events: none;
+}
+
+.settings-disabled .settings-menu {
+	display: none !important;
+}
+
 .settings-trigger {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: 0.75rem;
+	padding-right: 2.75rem;
+	text-overflow: ellipsis;
+	caret-color: transparent;
 
 	text-align: left;
 	background-color: #ffffff;
@@ -22,12 +33,43 @@
 	cursor: pointer;
 }
 
-.settings-trigger[aria-expanded='true'] {
+.settings-trigger-wrapper.has-selection .settings-trigger {
+	padding-right: 5rem;
+}
+
+.settings-trigger-indicators {
+	position: absolute;
+	top: 50%;
+	right: 0.75rem;
+	transform: translateY(-50%);
+	pointer-events: none;
+}
+
+.form-control.settings-trigger:disabled {
+	color: #98a2b3 !important;
+	background-color: #f5f7fa !important;
+	border-color: #d7dee8 !important;
+	box-shadow: none !important;
+	cursor: default;
+	opacity: 1 !important;
+}
+
+.settings-trigger:disabled::placeholder,
+.settings-trigger:disabled ~ .settings-trigger-indicators .app-btn-chevron {
+	color: #98a2b3 !important;
+}
+
+.settings-trigger:disabled ~ .settings-trigger-indicators .badge {
+	color: #98a2b3 !important;
+	background-color: #e9edf2 !important;
+}
+
+.settings-trigger:not(:disabled)[aria-expanded='true'] {
 	border-color: var(--form-control-focus);
 	box-shadow: 0 0 0 0.1875rem rgba(27, 132, 255, 0.1);
 }
 
-.settings-trigger[aria-expanded='true'] .app-btn-chevron {
+.settings-trigger[aria-expanded='true'] ~ .settings-trigger-indicators .app-btn-chevron {
 	transform: rotate(180deg);
 }
 
@@ -76,14 +118,6 @@
 	margin-left: 0;
 
 	cursor: pointer;
-}
-
-/* =========================================================
-   ESTADO SELECCIONADO
-========================================================= */
-
-.settings-option:has(.form-check-input:checked) {
-	background-color: #eef5ff;
 }
 
 /* =========================================================

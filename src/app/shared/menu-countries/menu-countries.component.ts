@@ -1,9 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, CUSTOM_ELEMENTS_SCHEMA, ElementRef, EventEmitter, Input, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { booleanAttribute, Component, CUSTOM_ELEMENTS_SCHEMA, EventEmitter, Input, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { countries } from '@app/common/constants/countries.constant';
-import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDropdown, NgbDropdownModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+import { Options } from '@popperjs/core';
 
 interface CountryOption {
 	code: string;
@@ -14,18 +15,19 @@ interface CountryOption {
 
 @Component({
 	selector: 'app-menu-countries',
-	imports: [RouterModule, CommonModule, FormsModule, NgbTooltipModule],
+	imports: [RouterModule, CommonModule, FormsModule, NgbTooltipModule, NgbDropdownModule],
 	templateUrl: './menu-countries.component.html',
 	styleUrl: './menu-countries.component.css',
 	schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class MenuCountriesComponent {
-	@ViewChild('trigger') trigger!: ElementRef;
+	@ViewChild('menuDropdown') menuDropdown?: NgbDropdown;
 
 	@Input() title = '';
 	@Input() placeholder = '';
 	@Input() sizeClass: 'sm' | 'lg' = 'sm';
 	@Input() selectedCountries: string[] = [];
+	@Input({ transform: booleanAttribute }) disabled = false;
 
 	@Output() applyCountries = new EventEmitter<string[]>();
 
@@ -34,6 +36,10 @@ export class MenuCountriesComponent {
 	public errorMsmSeverListCountries = '';
 	public countries: CountryOption[] = [];
 	public displayCountries: CountryOption[] = [];
+	public readonly popperOptions = (options: Partial<Options>): Partial<Options> => ({
+		...options,
+		modifiers: [...(options.modifiers ?? []), { name: 'offset', options: { offset: [0, 8] } }],
+	});
 
 	get selectedItems(): CountryOption[] {
 		return this.countries.filter((country) => country.checked);
@@ -44,6 +50,10 @@ export class MenuCountriesComponent {
 	}
 
 	ngOnChanges(changes: SimpleChanges): void {
+		if (changes['disabled']?.currentValue) {
+			this.closeMenu();
+		}
+
 		if (changes['selectedCountries']) {
 			this.syncSelectedCountries();
 		}
@@ -76,12 +86,14 @@ export class MenuCountriesComponent {
 	}
 
 	clearSelection(): void {
+		if (this.disabled || this.loadingCountries) return;
 		this.countries.forEach((country) => {
 			country.checked = false;
 		});
 	}
 
 	confirmSelection(): void {
+		if (this.disabled || this.loadingCountries) return;
 		const selectedCodes = this.selectedItems.map((item) => item.code);
 
 		this.selectedCountries = selectedCodes;
@@ -93,14 +105,15 @@ export class MenuCountriesComponent {
 		return this.selectedItems.map((item) => item.code).join(', ');
 	}
 
+	toggleMenu(event: Event): void {
+		event.preventDefault();
+		event.stopPropagation();
+		if (this.disabled || this.loadingCountries) return;
+
+		this.menuDropdown?.toggle();
+	}
+
 	private closeMenu(): void {
-		if (!this.trigger?.nativeElement) {
-			return;
-		}
-
-		const element = this.trigger.nativeElement;
-		const dropdown = (window as any).bootstrap.Dropdown.getInstance(element) ?? new (window as any).bootstrap.Dropdown(element);
-
-		dropdown.hide();
+		this.menuDropdown?.close();
 	}
 }

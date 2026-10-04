@@ -219,7 +219,7 @@ export class EditProductComponent {
 		this.loadingBrands = true;
 		this.errorMsmSeverListBrands = '';
 		this.brands = [];
-		return this.brandService.get_brands_by_select().pipe(
+		return this.brandService.getBrandsSelect().pipe(
 			tap((data: BrandInterface[]) => {
 				this.brands = data;
 				this.brands = this.brands.map((brand: any) => ({
