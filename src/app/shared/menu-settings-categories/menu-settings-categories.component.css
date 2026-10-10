@@ -23,7 +23,10 @@
 }
 
 .settings-trigger {
-	padding-right: 2.75rem;
+	/* Los tamaños del formulario definen padding con !important. */
+	padding-right: 2.75rem !important;
+	overflow: hidden;
+	white-space: nowrap;
 	text-overflow: ellipsis;
 	caret-color: transparent;
 
@@ -34,7 +37,7 @@
 }
 
 .settings-trigger-wrapper.has-selection .settings-trigger {
-	padding-right: 5rem;
+	padding-right: 5rem !important;
 }
 
 .settings-trigger-indicators {

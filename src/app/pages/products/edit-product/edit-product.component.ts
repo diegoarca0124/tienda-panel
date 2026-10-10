@@ -1,3 +1,4 @@
+import { getHttpErrorBody, type HttpErrorBody } from '@app/common/utils/get-http-error-body.util';
 import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, ElementRef, HostListener, signal, ViewChild, WritableSignal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -101,7 +102,7 @@ export class EditProductComponent {
 	public loadImport: boolean = false;
 	public id: string = '';
 	public msmErrorProduct: any = [];
-	public errorMsmServerGetProduct: string = '';
+	public errorMsmServerGetProduct: HttpErrorBody | null = null;
 	readonly qualityLabels: Record<string, string> = {
 		low: 'Baja',
 		medium: 'Media',
@@ -157,11 +158,11 @@ export class EditProductComponent {
 	} */
 
 	loadProductData$(id: string) {
-		this.errorMsmServerGetProduct = '';
+		this.errorMsmServerGetProduct = null;
 		return this.productService.get_product(id).pipe(
 			withMinLoadingTime(400),
 			catchError((err) => {
-				const error = err.error;
+				const error = getHttpErrorBody(err);
 				this.errorMsmServerGetProduct = error;
 				return EMPTY;
 			})
@@ -184,7 +185,7 @@ export class EditProductComponent {
 				this.categorySelected = this.categories.find((item: any) => item.id == this.product.categoryId);
 			}),
 			catchError((err) => {
-				this.errorMsmSeverListCategories = err?.error?.message || 'Error cargando categorías';
+				this.errorMsmSeverListCategories = getHttpErrorBody(err, 'Error cargando categorías').message;
 
 				return of([]);
 			}),
@@ -206,7 +207,7 @@ export class EditProductComponent {
 			}),
 
 			catchError((err) => {
-				this.errorMsmSeverListSubcategories = err?.error?.message || 'Error cargando caracteristicas';
+				this.errorMsmSeverListSubcategories = getHttpErrorBody(err, 'Error cargando caracteristicas').message;
 
 				return of([]);
 			}),
@@ -229,7 +230,7 @@ export class EditProductComponent {
 			}),
 
 			catchError((err) => {
-				this.errorMsmSeverListBrands = err?.error?.message || 'Error cargando subcategorías';
+				this.errorMsmSeverListBrands = getHttpErrorBody(err, 'Error cargando subcategorías').message;
 				return of([]);
 			}),
 
@@ -323,7 +324,7 @@ export class EditProductComponent {
 				},
 				error: (err) => {
 					this.errorsProduct = {};
-					const error = err.error;
+					const error = getHttpErrorBody(err);
 					toastr.error(error.message || '¡Error desconocido!');
 					console.log(error.validation);
 					if (error.validation) {

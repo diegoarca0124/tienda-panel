@@ -1,3 +1,4 @@
+import { getHttpErrorBody } from '@app/common/utils/get-http-error-body.util';
 import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, HostListener, signal, WritableSignal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -74,6 +75,7 @@ export class IndexCategoryComponent {
 	public readonly categoryStatusDetails = CATEGORY_STATUS_DETAILS;
 
 	public selectedCategoriesIds = new Set<string>();
+	public readonly maxSelectedCategories = 20;
 	public isCategoriesLoading: boolean = true;
 	public categoriesLoadError: Record<string, any> | null = null;
 
@@ -132,6 +134,7 @@ export class IndexCategoryComponent {
 				switchMap((query) => {
 					this.isCategoriesLoading = true;
 					this.categoriesLoadError = null;
+					this.clearCategoriesTable();
 					return this.categoryService.getCategories(query).pipe(
 						withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
 						map(
@@ -153,7 +156,8 @@ export class IndexCategoryComponent {
 			.subscribe(({ data, error }) => {
 				this.isCategoriesLoading = false;
 				if (error) {
-					this.categoriesLoadError = error.error;
+					this.clearCategoriesTable();
+					this.categoriesLoadError = getHttpErrorBody(error);
 					return;
 				}
 				if (!data) return;
@@ -166,27 +170,21 @@ export class IndexCategoryComponent {
 	}
 
 	private refreshCategories(): void {
-		this.categoryService
-			.getCategories({
-				filter: this.filter,
-				page: this.currentPage,
-				limit: this.limit,
-				status: this.selectedStatus,
-				sort: this.selectedSort,
-				configurations: this.selectedConfigurations,
-			})
-			.pipe(takeUntil(this.destroy$))
-			.subscribe({
-				next: (response: GetCategoriesRESI) => {
-					this.categories = this.mapCategories(response.categories);
-					this.totalPages = response.meta.totalPages;
-					this.totalCategories = response.meta.totalCategories;
-					this.syncCurrentPage(response.meta.currentPage);
-				},
-				error: (error: HttpErrorResponse) => {
-					toastr.error(error.error?.message || 'No fue posible actualizar la lista.');
-				},
-			});
+		this.loadCategories();
+	}
+
+	private clearCategoriesTable(): void {
+		this.categories = [];
+		this.totalCategories = 0;
+		this.totalPages = 0;
+		this.selectedCategoriesIds.clear();
+	}
+
+	get canUpdateSelectedCategories(): boolean {
+		return !this.isCategoriesLoading && !this.categoriesLoadError && !this.isUpdatingMultipleStatuses() && !this.isUpdatingSingleStatus()
+			&& this.selectedCategoriesIds.size > 0
+			&& this.selectedCategoriesIds.size <= this.maxSelectedCategories
+			&& [...this.selectedCategoriesIds].every((id) => this.categories.some((category) => category.id === id));
 	}
 
 	syncCurrentPage(currentPage: number): void {
@@ -298,7 +296,7 @@ export class IndexCategoryComponent {
 					this.refreshCategories();
 				},
 				error: (error: HttpErrorResponse) => {
-					toastr.error(error.error?.message || 'No fue posible actualizar el estado.');
+					toastr.error(getHttpErrorBody(error, 'No fue posible actualizar el estado.').message);
 				},
 			});
 	}
@@ -337,7 +335,15 @@ export class IndexCategoryComponent {
 	}
 
 	selectAllCategories(): void {
-		this.selectedCategoriesIds = new Set(this.categories.map((category) => category.id).filter((id): id is string => Boolean(id)));
+		if (this.isCategoriesLoading || this.categoriesLoadError) return;
+		const ids = [...new Set(this.categories.map((category) => category.id).filter((id): id is string => Boolean(id)))];
+		for (const id of ids) {
+			if (this.selectedCategoriesIds.size >= this.maxSelectedCategories) break;
+			this.selectedCategoriesIds.add(id);
+		}
+		if (ids.some((id) => !this.selectedCategoriesIds.has(id))) {
+			toastr.info(`Puedes seleccionar un máximo de ${this.maxSelectedCategories} registros.`);
+		}
 	}
 
 	get areAllCategoriesSelected(): boolean {
@@ -366,7 +372,9 @@ export class IndexCategoryComponent {
 	}
 
 	onCategorySelectionChange(id: string, checked: boolean): void {
+		if (!id || this.isCategoriesLoading || this.categoriesLoadError) return;
 		if (checked) {
+			if (!this.selectedCategoriesIds.has(id) && this.selectedCategoriesIds.size >= this.maxSelectedCategories) return;
 			this.selectedCategoriesIds.add(id);
 		} else {
 			this.selectedCategoriesIds.delete(id);
@@ -374,6 +382,7 @@ export class IndexCategoryComponent {
 	}
 
 	onUpdateStatusMultiple(status: boolean) {
+		if (!this.canUpdateSelectedCategories) return;
 		this.isUpdatingMultipleStatuses.set(true);
 		this.categoryService
 			.updateCategoriesStatus({
@@ -393,7 +402,7 @@ export class IndexCategoryComponent {
 					this.refreshCategories();
 				},
 				error: (error: HttpErrorResponse) => {
-					toastr.error(error.error?.message || 'No fue posible actualizar el estado.');
+					toastr.error(getHttpErrorBody(error, 'No fue posible actualizar el estado.').message);
 				},
 			});
 	}

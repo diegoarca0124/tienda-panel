@@ -1,3 +1,4 @@
+import { getHttpErrorBody } from '@app/common/utils/get-http-error-body.util';
 import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -74,12 +75,13 @@ export class CreateCollaboratorComponent {
 			)
 			.subscribe({
 				next: (next: CreateCollaboratorRESI) => {
+					this.fieldErrors = createEmptyFieldErrors();
 					this.validationCollaboratorError = {};
 					toastr.success(next.message);
 					this._router.navigate(['/users/collaborators']);
 				},
 				error: (err: HttpErrorResponse) => {
-					const error = err?.error ?? {};
+					const error = getHttpErrorBody(err);
 					toastr.error(error.message || '¡Error desconocido!');
 
 					if (error.validation) {

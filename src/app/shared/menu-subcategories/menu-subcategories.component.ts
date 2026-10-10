@@ -1,3 +1,4 @@
+import { getHttpErrorBody, type HttpErrorBody } from '@app/common/utils/get-http-error-body.util';
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, EventEmitter, Input, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -32,7 +33,7 @@ export class MenuSubcategoriesComponent {
 
 	public subcategories: any[] = [];
 	public displaySubcategories: any[] = [];
-	public errorMsmSeverListCategories: string = '';
+	public errorMsmSeverListCategories: HttpErrorBody | null = null;
 
 	constructor(private categoryService: CategoryService) {}
 
@@ -59,7 +60,7 @@ export class MenuSubcategoriesComponent {
 
 	initSubcategories() {
 		this.loadingSubcategories = true;
-		this.errorMsmSeverListCategories = '';
+		this.errorMsmSeverListCategories = null;
 		this.displaySubcategories = [];
 		this.subcategories = [];
 		this.filter = '';
@@ -86,7 +87,7 @@ export class MenuSubcategoriesComponent {
 					this.syncSelectedCategories();
 				},
 				error: (err) => {
-					const error = err.error;
+					const error = getHttpErrorBody(err);
 					this.errorMsmSeverListCategories = error;
 				},
 			});

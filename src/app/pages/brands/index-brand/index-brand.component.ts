@@ -1,3 +1,4 @@
+import { getHttpErrorBody } from '@app/common/utils/get-http-error-body.util';
 import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, signal, WritableSignal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -148,7 +149,7 @@ export class IndexBrandComponent {
 			.subscribe(({ data, error }) => {
 				this.isBrandsLoading = false;
 				if (error) {
-					this.brandsLoadError = error.error;
+					this.brandsLoadError = getHttpErrorBody(error);
 					return;
 				}
 				if (!data) return;
@@ -218,7 +219,7 @@ export class IndexBrandComponent {
 					this.syncCurrentPage(response.meta.currentPage);
 				},
 				error: (error: HttpErrorResponse) => {
-					toastr.error(error.error?.message || 'No fue posible actualizar la lista.');
+					toastr.error(getHttpErrorBody(error, 'No fue posible actualizar la lista.').message);
 				},
 			});
 	}
@@ -354,7 +355,7 @@ export class IndexBrandComponent {
 					this.refreshBrands();
 				},
 				error: (error: HttpErrorResponse) => {
-					toastr.error(error.error?.message || 'No fue posible actualizar el estado.');
+					toastr.error(getHttpErrorBody(error, 'No fue posible actualizar el estado.').message);
 				},
 			});
 	}
@@ -379,7 +380,7 @@ export class IndexBrandComponent {
 					this.refreshBrands();
 				},
 				error: (error: HttpErrorResponse) => {
-					toastr.error(error.error?.message || 'No fue posible actualizar el estado.');
+					toastr.error(getHttpErrorBody(error, 'No fue posible actualizar el estado.').message);
 				},
 			});
 	}

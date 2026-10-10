@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { SubcategoryInterface } from '@app/pages/categories/interfaces/data.interface';
+import { BrandSelectInterface, SubcategorySelectInterface } from '@app/pages/categories/interfaces/response.interface';
 import { qualityOptions, sortOptions, statusOptions, visibilityOptions } from '@app/pages/products/constants/selectors.constant';
 import { CategoryService } from '@app/services/category.service';
 import { BrandService } from '@app/services/brand.service';
@@ -43,15 +43,16 @@ export class SidebarProductsCategoryComponent implements OnChanges, OnDestroy {
 	readonly qualityFilters = qualityOptions;
 	readonly visibilityFilters = visibilityOptions;
 
-	subcategories: SubcategoryInterface[] = [];
+	subcategories: SubcategorySelectInterface[] = [];
 	selectedSubcategoryValues: string[] = [];
 	isSubcategoriesLoading: boolean = false;
 
-	brands: any[] = [];
+	brands: BrandSelectInterface[] = [];
 	selectedBrandValues: string[] = [];
 	isBrandsLoading: boolean = false;
 
 	private destroy$ = new Subject<void>();
+	private readonly cancelSubcategoriesLoad$ = new Subject<void>();
 
 	constructor(
 		private categoryService: CategoryService,
@@ -74,10 +75,13 @@ export class SidebarProductsCategoryComponent implements OnChanges, OnDestroy {
 	}
 
 	loadSubcategories(): void {
+		this.cancelSubcategoriesLoad$.next();
+		this.subcategories = [];
 		this.isSubcategoriesLoading = true;
 		this.categoryService
 			.getSubcategoriesByCategorySelect(this.categoryId)
 			.pipe(
+				takeUntil(this.cancelSubcategoriesLoad$),
 				takeUntil(this.destroy$),
 				finalize(() => (this.isSubcategoriesLoading = false))
 			)
@@ -96,8 +100,8 @@ export class SidebarProductsCategoryComponent implements OnChanges, OnDestroy {
 				finalize(() => (this.isBrandsLoading = false))
 			)
 			.subscribe({
-				next: (response) => {
-					this.brands = Array.isArray(response) ? response : response.data || [];
+				next: (response: BrandSelectInterface[]) => {
+					this.brands = response;
 				},
 				error: () => (this.brands = []),
 			});
@@ -132,6 +136,7 @@ export class SidebarProductsCategoryComponent implements OnChanges, OnDestroy {
 	ngOnDestroy(): void {
 		this.destroy$.next();
 		this.destroy$.complete();
+		this.cancelSubcategoriesLoad$.complete();
 	}
 
 	private toSubcategoryArray(value: string): string[] {

@@ -19,6 +19,16 @@
 	overflow: hidden;
 }
 
+.upload-label.is-loading {
+	cursor: wait;
+	background-color: #f9f9f9;
+}
+
+.upload-spinner {
+	flex-shrink: 0;
+	margin-left: auto;
+}
+
 .flex-content {
 	display: flex;
 	align-items: center;

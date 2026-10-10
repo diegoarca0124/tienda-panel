@@ -1,3 +1,13 @@
+import type { SafeHtml } from '@angular/platform-browser';
+
+export interface CategoryProductPreviewInterface {
+	id: string;
+	name: string;
+	code: string;
+	cover: string;
+	categoryId: string;
+}
+
 export interface CategoryInterface {
 	id?: string;
 	name: string;
@@ -6,7 +16,7 @@ export interface CategoryInterface {
 	icon?: string;
 	description?: string;
 	prefix: string;
-	safeIcon?: any;
+	safeIcon?: SafeHtml;
 	color?: string;
 
 	isDimensions?: boolean;
@@ -17,9 +27,9 @@ export interface CategoryInterface {
 	isMaterial?: boolean;
 	isTemperature?: boolean;
 	totalProducts?: number;
-	latestProducts?: Array<any>;
+	latestProducts?: CategoryProductPreviewInterface[];
 	moreProducts?: number;
-	subcategories?: any;
+	subcategories?: SubcategoryInterface[];
 
 	status?: boolean;
 	createdAt?: Date;
@@ -28,14 +38,14 @@ export interface CategoryInterface {
 }
 
 export interface SubcategoryInterface {
-	id?: any;
+	id?: string;
 	name: string;
 	code?: string;
 	prefix: string;
 	slug?: string;
 	icon: string;
 	categoryId: string;
-	safeIcon?: any;
+	safeIcon?: SafeHtml;
 	status?: boolean;
 	createdAt?: Date;
 	updatedAt?: Date;

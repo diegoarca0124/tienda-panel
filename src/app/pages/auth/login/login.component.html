@@ -1,14 +1,7 @@
 <div class="login-page">
 	<main class="login-container">
 		<header class="login-header">
-			<!-- <img
-				src="images/logos/logo-color.png"
-				alt="Logo"
-				class="login-logo"
-			> -->
-
 			<h1 class="login-title">Iniciar sesión</h1>
-
 			<p class="login-description">Ingresa tus credenciales para acceder al panel administrativo.</p>
 		</header>
 
@@ -28,10 +21,6 @@
 					(keyup.enter)="login()"
 					[disabled]="loading"
 				/>
-
-				<div *ngIf="errorsLogin?.email" class="invalid-feedback d-block">
-					{{ errorsLogin.email[0] || ' ' }}
-				</div>
 			</div>
 
 			<div class="login-field">
@@ -41,21 +30,36 @@
 					<a class="login-recovery">¿Olvidaste tu contraseña?</a>
 				</div>
 
-				<input
-					id="loginPassword"
-					type="password"
-					class="form-control form-control-md"
-					[class.is-invalid]="errorsLogin?.password"
-					placeholder="Contraseña"
-					name="password"
-					autocomplete="current-password"
-					[(ngModel)]="auth.password"
-					(keyup.enter)="login()"
-					[disabled]="loading"
-				/>
-
-				<div *ngIf="errorsLogin?.password" class="invalid-feedback d-block">
-					{{ errorsLogin.password[0] || ' ' }}
+				<div class="login-password">
+					<input
+						id="loginPassword"
+						[type]="showPassword ? 'text' : 'password'"
+						class="form-control form-control-md"
+						[class.is-invalid]="errorsLogin?.password"
+						placeholder="Contraseña"
+						name="password"
+						autocomplete="current-password"
+						[(ngModel)]="auth.password"
+						(keyup.enter)="login()"
+						[disabled]="loading"
+					/>
+					<button
+						type="button"
+						class="login-password-toggle"
+						[attr.aria-label]="showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+						[attr.aria-pressed]="showPassword"
+						aria-controls="loginPassword"
+						[disabled]="loading"
+						(click)="showPassword = !showPassword"
+					>
+						<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+							<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"></path>
+							<circle cx="12" cy="12" r="3"></circle>
+							@if (showPassword) {
+								<path d="m3 3 18 18"></path>
+							}
+						</svg>
+					</button>
 				</div>
 			</div>
 

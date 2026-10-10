@@ -18,7 +18,7 @@
 
 						<a
 							[routerLink]="['/users/collaborators/create']"
-							class="btn btn-sm btn-primary page-header-action collaborator-header-action"
+							class="btn btn-sm btn-primary page-header-action page-header-action-with-text"
 							aria-label="Crear nuevo colaborador"
 							title="Nuevo colaborador"
 						>
@@ -205,9 +205,9 @@
 												<div class="dropdown-menu dropdown-menu-end action-dropdown-menu action-dropdown-menu-compact" aria-labelledby="dropdownTable">
 													<a
 														class="dropdown-item action-dropdown-item action-dropdown-item-compact"
-														[class.disabled]="selectedCollaboratorsIds.size === 0"
-														[attr.data-bs-toggle]="selectedCollaboratorsIds.size > 0 ? 'modal' : null"
-														[attr.data-bs-target]="selectedCollaboratorsIds.size > 0 ? '#modalMultipleActive' : null"
+														[class.disabled]="!canUpdateSelectedCollaborators"
+														[attr.data-bs-toggle]="canUpdateSelectedCollaborators ? 'modal' : null"
+														[attr.data-bs-target]="canUpdateSelectedCollaborators ? '#modalMultipleActive' : null"
 														style="text-transform: capitalize !important"
 													>
 														<span class="action-dropdown-item-icon">
@@ -217,9 +217,9 @@
 													</a>
 													<a
 														class="dropdown-item action-dropdown-item action-dropdown-item-compact"
-														[class.disabled]="selectedCollaboratorsIds.size === 0"
-														[attr.data-bs-toggle]="selectedCollaboratorsIds.size > 0 ? 'modal' : null"
-														[attr.data-bs-target]="selectedCollaboratorsIds.size > 0 ? '#modalMultipleDisabled' : null"
+														[class.disabled]="!canUpdateSelectedCollaborators"
+														[attr.data-bs-toggle]="canUpdateSelectedCollaborators ? 'modal' : null"
+														[attr.data-bs-target]="canUpdateSelectedCollaborators ? '#modalMultipleDisabled' : null"
 														style="text-transform: capitalize !important"
 													>
 														<span class="action-dropdown-item-icon">
@@ -230,7 +230,7 @@
 													<button
 														type="button"
 														class="dropdown-item action-dropdown-item action-dropdown-item-compact"
-														[disabled]="areAllCollaboratorsSelected"
+														[disabled]="areAllCollaboratorsSelected || selectedCollaboratorsIds.size >= maxSelectedCollaborators"
 														(click)="selectAllCollaborators()"
 													>
 														<span class="action-dropdown-item-icon">
@@ -313,6 +313,12 @@
 														class="form-check-input cursor-pointer"
 														type="checkbox"
 														[checked]="selectedCollaboratorsIds.has(item.id!)"
+														[disabled]="!item.id || (selectedCollaboratorsIds.size >= maxSelectedCollaborators && !selectedCollaboratorsIds.has(item.id!))"
+														[attr.title]="
+															selectedCollaboratorsIds.size >= maxSelectedCollaborators && !selectedCollaboratorsIds.has(item.id!)
+																? 'Máximo ' + maxSelectedCollaborators + ' registros seleccionados'
+																: null
+														"
 														(change)="onCollaboratorSelectionChange(item.id!, $any($event.target).checked)"
 													/>
 												</label>
@@ -469,6 +475,20 @@
 
 														<div class="action-dropdown-divider"></div>
 
+														<button
+															type="button"
+															class="dropdown-item action-dropdown-item action-dropdown-item-compact"
+															data-bs-toggle="modal"
+															data-bs-target="#modalRevokeCollaboratorSessions"
+															[disabled]="!item.id || isRevokingSessions() || isUpdatingSingleStatus() || isUpdatingMultipleStatuses()"
+															(click)="prepareSessionRevocation(item)"
+														>
+															<span class="action-dropdown-item-icon">
+																<ion-icon class="fs-4" name="log-out-outline" aria-hidden="true"></ion-icon>
+															</span>
+															<span class="action-dropdown-item-title">Cerrar sesiones</span>
+														</button>
+
 														<!-- Activar o desactivar -->
 														<a
 															class="dropdown-item action-dropdown-item action-dropdown-item-compact cursor-pointer"
@@ -498,14 +518,14 @@
 									} @else {
 										<tr>
 											<td colspan="6">
-												<app-not-found [error]="{ message: 'No se encontraron registros.' }"></app-not-found>
+												<app-not-found [error]="{ message: 'No se encontraron registros.', statusCode: 404 }"></app-not-found>
 											</td>
 										</tr>
 									}
 								</tbody>
 							</table>
 						</div>
-						<div class="collaborator-table-footer pb-10">
+						<div class="table-footer pb-10">
 							<label class="page-size-control">
 								<span>Mostrar</span>
 								<select
@@ -522,7 +542,7 @@
 								</select>
 								<span>por página</span>
 							</label>
-							<div class="collaborator-pagination">
+							<div class="table-pagination">
 								<app-pagination [currentPage]="currentPage" [totalPages]="totalPages" [isLoading]="isCollaboratorsLoading" (pageChanged)="onPageChange($event)"></app-pagination>
 							</div>
 						</div>
@@ -542,6 +562,12 @@
 	(actionConfirmed)="onUpdateStatusMultiple(true)"
 	[loadBtnDelete]="isUpdatingMultipleStatuses"
 ></app-modal-delete>
+<app-sesions-modal-index-collaborator
+	[collaborator]="collaboratorToRevokeSessions"
+	[isLoading]="isRevokingSessions()"
+	[errorMessage]="revokeSessionsError"
+	(confirmRequested)="onRevokeSessions()"
+></app-sesions-modal-index-collaborator>
 <app-modal-delete
 	[id]="'modalMultipleDisabled'"
 	[title]="'Desactivación Multiple'"

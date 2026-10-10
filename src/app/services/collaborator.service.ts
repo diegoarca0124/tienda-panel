@@ -1,4 +1,5 @@
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
+import { catchError } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { environment } from 'environments/environment.dev';
 import { Observable } from 'rxjs/internal/Observable';
@@ -8,6 +9,7 @@ import { GetCollaboratorsQPI } from '@app/pages/users/collaborators/interfaces/q
 import {
 	GetCollaboratorRESI,
 	GetCollaboratorsRESI,
+	RevokeCollaboratorSessionsRESI,
 	UpdateCollaboratorRESI,
 	UpdateCollaboratorsStatusRESI,
 	UpdateCollaboratorStatusRESI,
@@ -56,8 +58,23 @@ export class CollaboratorService {
 		return this.http.post<UpdateCollaboratorsStatusRESI>(`${this.apiUrl}/collaborator/updateCollaboratorsStatus`, data, { headers: this.getHeaders() });
 	}
 
-	exportCollaborators(data: any): Observable<any> {
-		return this.http.post(`${this.apiUrl}/collaborator/exportCollaborators`, data, { headers: this.getHeaders() });
+	revokeCollaboratorSessions(id: string): Observable<RevokeCollaboratorSessionsRESI> {
+		return this.http.post<RevokeCollaboratorSessionsRESI>(`${this.apiUrl}/collaborator/revokeCollaboratorSessions/${id}`, {}, { headers: this.getHeaders() });
+	}
+
+	exportCollaborators(data: any): Observable<Blob> {
+		return this.http.post(`${this.apiUrl}/collaborator/exportCollaborators`, data, { headers: this.getHeaders(), responseType: 'blob' }).pipe(
+			catchError(async (error: HttpErrorResponse) => {
+				if (!(error.error instanceof Blob)) throw error;
+				let body: unknown;
+				try {
+					body = JSON.parse(await error.error.text());
+				} catch {
+					throw error;
+				}
+				throw new HttpErrorResponse({ error: body, headers: error.headers, status: error.status, statusText: error.statusText, url: error.url ?? undefined });
+			})
+		);
 	}
 
 	importCollaborators(data: any): Observable<any> {

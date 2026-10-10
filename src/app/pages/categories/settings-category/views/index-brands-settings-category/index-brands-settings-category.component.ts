@@ -1,3 +1,4 @@
+import { getHttpErrorBody } from '@app/common/utils/get-http-error-body.util';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
@@ -11,7 +12,7 @@ import { CategoryService } from '@app/services/category.service';
 import { GLOBAL } from '@app/services/GLOBAL';
 import { NotFoundComponent } from '@app/shared/not-found/not-found.component';
 import { environment } from 'environments/environment.dev';
-import { finalize, Observable, Subject, switchMap, takeUntil, tap } from 'rxjs';
+import { catchError, EMPTY, finalize, Observable, Subject, switchMap, takeUntil, tap } from 'rxjs';
 
 @Component({
 	selector: 'app-index-brands-settings-category',
@@ -51,10 +52,11 @@ export class IndexBrandsSettingsCategoryComponent {
 							error: (error: HttpErrorResponse) => {
 								this.setLoadError(error);
 							},
-						})
+						}),
+						switchMap(() => this.initBrands$(this.id)),
+						catchError(() => EMPTY)
 					);
 				}),
-				switchMap(() => this.initBrands$(this.id)),
 				takeUntil(this.destroy$)
 			)
 			.subscribe({ error: () => {} });
@@ -82,7 +84,8 @@ export class IndexBrandsSettingsCategoryComponent {
 				error: (error: HttpErrorResponse) => {
 					this.setLoadError(error);
 				},
-			})
+			}),
+			catchError(() => EMPTY)
 		);
 	}
 
@@ -94,8 +97,8 @@ export class IndexBrandsSettingsCategoryComponent {
 
 	private setLoadError(error: HttpErrorResponse): void {
 		this.categoryLoadError = {
-			message: error.error?.message || 'No pudimos completar la solicitud.',
-			statusCode: error.error?.statusCode ?? error.status,
+			message: getHttpErrorBody(error, 'No pudimos completar la solicitud.').message,
+			statusCode: getHttpErrorBody(error)?.statusCode ?? error.status,
 		};
 	}
 }

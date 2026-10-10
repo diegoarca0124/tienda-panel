@@ -1,3 +1,4 @@
+import { getHttpErrorBody, type HttpErrorBody } from '@app/common/utils/get-http-error-body.util';
 import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -37,7 +38,7 @@ export class CreateGroupAttributeComponent {
 	public option = 1;
 
 	public categoriesSelected = [];
-	public errorMsmSeverListCategories: string = '';
+	public errorMsmSeverListCategories: HttpErrorBody | null = null;
 	public loadingCategories: boolean = true;
 	public categories: CategoryInterface[] = [];
 	public showErrors = showErrorsGroupAttribute;
@@ -59,7 +60,7 @@ export class CreateGroupAttributeComponent {
 
 	init_categories() {
 		this.loadingCategories = true;
-		this.errorMsmSeverListCategories = '';
+		this.errorMsmSeverListCategories = null;
 		this.categoryService
 			.get_categories_by_select()
 			.pipe(
@@ -72,7 +73,7 @@ export class CreateGroupAttributeComponent {
 					this.categories = next.data;
 				},
 				error: (err) => {
-					const error = err.error;
+					const error = getHttpErrorBody(err);
 					this.errorMsmSeverListCategories = error;
 				},
 			});
@@ -96,7 +97,7 @@ export class CreateGroupAttributeComponent {
 					this._router.navigate(['/products/attributes/groups']);
 				},
 				error: (err) => {
-					const error = err.error;
+					const error = getHttpErrorBody(err);
 					toastr.error(error.message || '¡Error desconocido!');
 					if (error.validation) {
 						this.errorsGroupAtribute = error.validation;

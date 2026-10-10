@@ -1,6 +1,5 @@
 import { SafeHtml } from '@angular/platform-browser';
 import { CategoryInterface, SubcategoryInterface } from './data.interface';
-import { ProductInterface } from '@app/pages/products/interfaces/product.interface';
 import { BrandInterface } from '@app/pages/brands/interfaces/data.interface';
 
 export interface GetCategoriesRESI {
@@ -71,12 +70,35 @@ export interface CreateCategoryRESI {
 
 export interface MoveSubcategoryRESI {
 	message: string;
-	data: number;
+	data: {
+		id: string;
+		name: string;
+		categoryId: string;
+		status: boolean;
+		affectedProducts: number;
+	};
 }
 
 export interface GetSubcategoriesByCategorySelectRESI {
 	message: string;
-	data: SubcategoryInterface[];
+	data: SubcategorySelectInterface[];
+}
+
+export interface SubcategorySelectInterface {
+	id: string;
+	name: string;
+	icon: string | null;
+	status: boolean;
+	prefix: string;
+	code: string;
+	totalProducts: number;
+}
+
+export interface BrandSelectInterface {
+	id: string;
+	name: string;
+	status: boolean;
+	logoUrl: string | null;
 }
 
 export interface GetBrandsByCategoryRESI {
@@ -84,14 +106,24 @@ export interface GetBrandsByCategoryRESI {
 	data: BrandInterface[];
 }
 
+export interface MappingSubcategoryInterface {
+	id: string;
+	name: string;
+	categoryId: string;
+	status: boolean;
+	prefix?: string;
+	code?: string;
+}
+
 export interface CategoryWithSubcategoriesRESI {
 	id: string;
 	name: string;
-	icon: string;
+	status: boolean;
+	icon: string | null;
 	safeIcon?: SafeHtml;
-	prefix: string;
+	code?: string;
 	color: string;
-	subcategories: SubcategoryInterface[];
+	subcategories: MappingSubcategoryInterface[];
 }
 
 export interface GetCategoriesWithSubcategoriesRESI {
@@ -101,7 +133,7 @@ export interface GetCategoriesWithSubcategoriesRESI {
 
 export interface FindCategoryProductsRESI {
 	category: string;
-	products: ProductInterface[];
+	products: CategoryProductInterface[];
 	meta: {
 		totalProducts: number;
 		totalPages: number;
@@ -116,9 +148,27 @@ export interface FindCategoryProductsRESI {
 		brandIds: string;
 		quality: string;
 		visibility: string;
-		minPrice: string;
-		maxPrice: string;
+		minPrice?: number;
+		maxPrice?: number;
 	};
+}
+
+export interface CategoryProductInterface {
+	id: string;
+	name: string;
+	cover: string;
+	status: 'draft' | 'published';
+	visibility: 'public' | 'private';
+	createdAt: string;
+	// PostgreSQL decimal columns are returned as strings by the driver.
+	priceRegular: number | string;
+	priceDiscount: number | string | null;
+	quality: number;
+	quality_label: string;
+	stockQuantity: number | null;
+	category: { id: string; name: string };
+	subcategory: { id: string; name: string; prefix: string; code: string };
+	brand: { id: string; name: string; logoUrl: string };
 }
 
 export interface MoveProductsToSubcategoryRESI {

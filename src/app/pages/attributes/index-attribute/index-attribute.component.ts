@@ -1,3 +1,4 @@
+import { getHttpErrorBody, type HttpErrorBody } from '@app/common/utils/get-http-error-body.util';
 import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, EventEmitter, Input, Output, signal, WritableSignal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -46,8 +47,8 @@ export class IndexAttributeComponent {
 	public categories: CategoryInterface[] = [];
 
 	private destroy$ = new Subject<void>();
-	public errorMsmServerListAttributes: string = '';
-	public errorMsmServerGroup: string = '';
+	public errorMsmServerListAttributes: HttpErrorBody | null = null;
+	public errorMsmServerGroup: HttpErrorBody | null = null;
 
 	public arrDataSkull: Array<any> = Array.from({ length: 5 }, () => ({}));
 	public attributes: AttributeInterface[] = [];
@@ -94,7 +95,7 @@ export class IndexAttributeComponent {
 				},
 				error: (err) => {
 					this.loading = false;
-					this.errorMsmServerGroup = err.error;
+					this.errorMsmServerGroup = getHttpErrorBody(err);
 				},
 			});
 	}
@@ -121,7 +122,7 @@ export class IndexAttributeComponent {
 					this.attributes = [];
 					this.currentPage = 1;
 					this.totalPages = 1;
-					this.errorMsmServerListAttributes = '';
+					this.errorMsmServerListAttributes = null;
 
 					return this.attributeService.get_attributes(this.id, this.filter, this.currentPage, this.status, this.limit, this.sort).pipe(
 						withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
@@ -136,7 +137,7 @@ export class IndexAttributeComponent {
 					this.totalPages = data.meta.totalPages;
 				},
 				error: (err) => {
-					this.errorMsmServerListAttributes = err.error;
+					this.errorMsmServerListAttributes = getHttpErrorBody(err);
 				},
 			});
 	}
@@ -199,7 +200,7 @@ export class IndexAttributeComponent {
 					closeModal(id);
 				},
 				error: (error: any) => {
-					toastr.error(error.error.message);
+					toastr.error(getHttpErrorBody(error).message);
 				},
 			});
 	}
@@ -266,7 +267,7 @@ export class IndexAttributeComponent {
 					this.selectedIds.clear();
 				},
 				error: (error: any) => {
-					toastr.error(error.error.message);
+					toastr.error(getHttpErrorBody(error).message);
 				},
 			});
 	}

@@ -1,10 +1,10 @@
+import { getHttpErrorBody, type HttpErrorBody } from '@app/common/utils/get-http-error-body.util';
 import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, ElementRef, signal, ViewChild, WritableSignal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { pageLimit } from '@app/common/constants/pageLimit.constant';
-import { statusProducts } from '@app/common/constants/statusProducts.contant';
 import { visibilityProducts } from '@app/common/constants/visibilityProducts.constant';
 import { withMinLoadingTime } from '@app/common/interface/with-min-loading-time.interface';
 import { sortColumnsTable } from '@app/common/utils/sort-columns-table.util';
@@ -59,9 +59,9 @@ export class IndexProductComponent {
 
 	public categories: any = '';
 	public categoriesSelected: any = [];
-	public errorMsmServerListProducts: string = '';
+	public errorMsmServerListProducts: HttpErrorBody | null = null;
 	public products: any[] = [];
-	public statusTable = statusProducts;
+	public statusTable = [];
 	public visibilityTable = visibilityProducts;
 	public qualityTable = qualityProduct;
 
@@ -235,7 +235,7 @@ export class IndexProductComponent {
 		quality: string
 	) {
 		this.loading = true;
-		this.errorMsmServerListProducts = '';
+		this.errorMsmServerListProducts = null;
 
 		this.productService
 			.get_products(filter, page, limit, status, visibility, categories, brands, countries, minPrice, maxPrice, quality)
@@ -261,7 +261,7 @@ export class IndexProductComponent {
 					this.totalPages = next.totalPages;
 				},
 				error: (err) => {
-					const error = err.error;
+					const error = getHttpErrorBody(err);
 					this.errorMsmServerListProducts = error;
 				},
 			});

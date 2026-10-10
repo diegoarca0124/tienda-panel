@@ -40,6 +40,14 @@ export interface UpdateCollaboratorsStatusRESI {
 	message: string;
 }
 
+export interface RevokeCollaboratorSessionsRESI {
+	data: {
+		id: string;
+		revokedSessions: number;
+	};
+	message: string;
+}
+
 export interface CreateCollaboratorRESI {
 	data: string;
 	message: string;

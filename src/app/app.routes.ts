@@ -61,6 +61,11 @@ export const routes: Routes = [
 				pathMatch: 'full',
 			},
 			{
+				path: ':id/settings/products',
+				redirectTo: ':id/products',
+				pathMatch: 'full',
+			},
+			{
 				path: ':id/settings',
 				canActivate: [AuthGuard],
 				loadComponent: () => import('./pages/categories/settings-category/settings-category.component').then((m) => m.SettingsCategoryComponent),
@@ -85,13 +90,6 @@ export const routes: Routes = [
 						loadComponent: () =>
 							import('./pages/categories/settings-category/views/index-subcategory-settings-category/index-subcategory-settings-category.component').then(
 								(m) => m.IndexSubcategorySettingsCategoryComponent
-							),
-					},
-					{
-						path: 'products',
-						loadComponent: () =>
-							import('./pages/categories/settings-category/views/index-products-settings-category/index-products-settings-category.component').then(
-								(m) => m.IndexProductsSettingsCategoryComponent
 							),
 					},
 					{

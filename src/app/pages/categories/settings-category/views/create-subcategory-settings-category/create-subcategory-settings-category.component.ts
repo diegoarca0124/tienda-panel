@@ -1,3 +1,4 @@
+import { getHttpErrorBody, type HttpErrorBody } from '@app/common/utils/get-http-error-body.util';
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
@@ -10,7 +11,7 @@ import { InputSvgComponent } from '@app/shared/input-svg/input-svg.component';
 import { NotFoundComponent } from '@app/shared/not-found/not-found.component';
 import { ValidationPopoverComponent } from '@app/shared/validation-popover/validation-popover.component';
 import { IMaskModule } from 'angular-imask';
-import { finalize, Subject, switchMap, takeUntil, tap } from 'rxjs';
+import { catchError, EMPTY, finalize, Subject, switchMap, takeUntil, tap } from 'rxjs';
 import { prefixMask } from '../../../constants/prefix-mask.constant';
 import { CategoryInterface, SubcategoryInterface } from '../../../interfaces/data.interface';
 import { SubcategoryFieldErrors, SubcategoryValidationErrors } from '../../../interfaces/validation.interface';
@@ -37,7 +38,7 @@ export class CreateSubcategorySettingsCategoryComponent {
 	public prefixMask = prefixMask;
 	public isGetCategoryLoading = true;
 	public isCreateSubcategoryLoading = false;
-	public categoryLoadError = '';
+	public categoryLoadError: HttpErrorBody | null = null;
 
 	constructor(
 		private readonly categoryService: CategoryService,
@@ -47,12 +48,11 @@ export class CreateSubcategorySettingsCategoryComponent {
 	ngOnInit(): void {
 		(this.route.parent ?? this.route).paramMap
 			.pipe(
-				takeUntil(this.destroy$),
 				switchMap((params) => {
 					this.id = params.get('id') ?? '';
 					this.subcategory.categoryId = this.id;
 					this.isGetCategoryLoading = true;
-					this.categoryLoadError = '';
+					this.categoryLoadError = null;
 
 					return this.categoryService.getCategory(this.id).pipe(
 						withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
@@ -62,11 +62,13 @@ export class CreateSubcategorySettingsCategoryComponent {
 								this.category = response.data;
 							},
 							error: (error: HttpErrorResponse) => {
-								this.categoryLoadError = error.error;
+								this.categoryLoadError = getHttpErrorBody(error);
 							},
-						})
+						}),
+						catchError(() => EMPTY)
 					);
-				})
+				}),
+				takeUntil(this.destroy$)
 			)
 			.subscribe({ error: () => {} });
 	}
@@ -77,6 +79,9 @@ export class CreateSubcategorySettingsCategoryComponent {
 	}
 
 	createSubcategory(): void {
+		if (!this.id || this.isGetCategoryLoading || this.categoryLoadError || this.isCreateSubcategoryLoading) return;
+		this.validationSubcategoryError = {};
+		this.fieldSubcategoryErrors = createEmptyFieldErrorsSubcategory();
 		this.isCreateSubcategoryLoading = true;
 		this.subcategory.categoryId = this.id;
 
@@ -96,7 +101,7 @@ export class CreateSubcategorySettingsCategoryComponent {
 					toastr.success(response.message);
 				},
 				error: (errorResponse: HttpErrorResponse) => {
-					const error = errorResponse.error;
+					const error = getHttpErrorBody(errorResponse);
 					toastr.error(error.message || '¡Error desconocido!');
 
 					if (error.validation) {

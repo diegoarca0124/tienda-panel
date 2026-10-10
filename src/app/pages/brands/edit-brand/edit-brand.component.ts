@@ -1,3 +1,4 @@
+import { getHttpErrorBody, type HttpErrorBody } from '@app/common/utils/get-http-error-body.util';
 import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -25,6 +26,7 @@ import { withMinLoadingTime } from '@app/common/interface/with-min-loading-time.
 import { prefixMask } from '@app/pages/brands/constants/prefix-mask.constant';
 import { buildShowErrors } from '@app/common/utils/build-show.errors.util';
 import { GetBrandRESI, UpdateBrandRESI } from '../interfaces/response.interface';
+import { DEFAULT_IMAGE_UPLOAD_CONFIG } from '@app/common/constants/file-upload.constant';
 declare const toastr: any;
 declare const $: any;
 
@@ -59,7 +61,7 @@ export class EditBrandComponent {
 
 	public id: string = '';
 
-	public brandLoadError: string = '';
+	public brandLoadError: HttpErrorBody | null = null;
 	public validationBrandError: BrandValidationErrors = {
 		logoUrl: [],
 		bannerUrl: [],
@@ -68,6 +70,8 @@ export class EditBrandComponent {
 	public logoUrlEdit: string = '';
 	public bannerUrlEdit: string = '';
 	public prefixMask = prefixMask;
+	public readonly logoUploadConfig = DEFAULT_IMAGE_UPLOAD_CONFIG;
+	public readonly bannerUploadConfig = DEFAULT_IMAGE_UPLOAD_CONFIG;
 	public fieldErrors: BrandFieldErrors = createEmptyFieldErrorsBrand();
 
 	constructor(
@@ -92,7 +96,7 @@ export class EditBrandComponent {
 
 	initData() {
 		this.isBrandLoading = true;
-		this.brandLoadError = '';
+		this.brandLoadError = null;
 		this.brandService
 			.getBrand(this.id)
 			.pipe(
@@ -109,7 +113,7 @@ export class EditBrandComponent {
 					this.brand.logoUrl = undefined;
 				},
 				error: (err: HttpErrorResponse) => {
-					const error = err.error;
+					const error = getHttpErrorBody(err);
 					this.brandLoadError = error;
 				},
 			});
@@ -146,7 +150,7 @@ export class EditBrandComponent {
 						logoUrl: [],
 						bannerUrl: [],
 					};
-					const error = err.error;
+					const error = getHttpErrorBody(err);
 					toastr.error(error.message || '¡Error desconocido!');
 
 					if (error.validation) {

@@ -5,7 +5,7 @@ import { RouterModule } from '@angular/router';
 import { FallbackImageDirective } from '@app/common/directives/fallback-image.directive';
 import { CurrencySymbolPipe } from '@app/common/pipes/currency-symbol.pipe';
 import { PadCodePipe } from '@app/common/pipes/pad-code.pipe';
-import { ProductInterface } from '@app/pages/products/interfaces/product.interface';
+import { CategoryProductInterface } from '../../../interfaces/response.interface';
 import { NotFoundComponent } from '@app/shared/not-found/not-found.component';
 import { PaginationComponent } from '@app/shared/pagination/pagination.component';
 import { PAGINATION_LIMITS } from '@app/common/constants/pageLimit.constant';
@@ -19,7 +19,7 @@ import { PAGINATION_LIMITS } from '@app/common/constants/pageLimit.constant';
 })
 export class TableProductsCategoryComponent {
 	readonly paginationLimits = PAGINATION_LIMITS;
-	@Input() products: ProductInterface[] = [];
+	@Input() products: CategoryProductInterface[] = [];
 	@Input() isLoading: boolean = false;
 	@Input() loadError: Record<string, any> | null = null;
 	@Input() selectedProductsIds = new Set<string>();
@@ -37,6 +37,10 @@ export class TableProductsCategoryComponent {
 		medium: 'Media',
 		high: 'Alta',
 	};
+
+	hasDiscount(product: CategoryProductInterface): boolean {
+		return Number(product.priceDiscount ?? 0) > 0;
+	}
 
 	toggleProduct(id: string, event: Event): void {
 		this.productSelectionChange.emit({ id, event });

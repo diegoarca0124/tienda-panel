@@ -208,9 +208,9 @@
 														<div class="dropdown-menu dropdown-menu-end action-dropdown-menu action-dropdown-menu-compact" aria-labelledby="categoryTableOptions">
 															<a
 																class="dropdown-item action-dropdown-item action-dropdown-item-compact"
-																[class.disabled]="selectedCategoriesIds.size === 0"
-																[attr.data-bs-toggle]="selectedCategoriesIds.size > 0 ? 'modal' : null"
-																[attr.data-bs-target]="selectedCategoriesIds.size > 0 ? '#modalMultipleActive' : null"
+																[class.disabled]="!canUpdateSelectedCategories"
+																[attr.data-bs-toggle]="canUpdateSelectedCategories ? 'modal' : null"
+																[attr.data-bs-target]="canUpdateSelectedCategories ? '#modalMultipleActive' : null"
 																style="text-transform: capitalize !important"
 															>
 																<span class="action-dropdown-item-icon">
@@ -220,9 +220,9 @@
 															</a>
 															<a
 																class="dropdown-item action-dropdown-item action-dropdown-item-compact"
-																[class.disabled]="selectedCategoriesIds.size === 0"
-																[attr.data-bs-toggle]="selectedCategoriesIds.size > 0 ? 'modal' : null"
-																[attr.data-bs-target]="selectedCategoriesIds.size > 0 ? '#modalMultipleDisabled' : null"
+																[class.disabled]="!canUpdateSelectedCategories"
+																[attr.data-bs-toggle]="canUpdateSelectedCategories ? 'modal' : null"
+																[attr.data-bs-target]="canUpdateSelectedCategories ? '#modalMultipleDisabled' : null"
 																style="text-transform: capitalize !important"
 															>
 																<span class="action-dropdown-item-icon">
@@ -233,7 +233,7 @@
 															<button
 																type="button"
 																class="dropdown-item action-dropdown-item action-dropdown-item-compact"
-																[disabled]="areAllCategoriesSelected"
+																[disabled]="areAllCategoriesSelected || selectedCategoriesIds.size >= maxSelectedCategories"
 																(click)="selectAllCategories()"
 															>
 																<span class="action-dropdown-item-icon">
@@ -327,6 +327,8 @@
 																class="form-check-input cursor-pointer"
 																type="checkbox"
 																[checked]="selectedCategoriesIds.has(item.id!)"
+																[disabled]="!item.id || (selectedCategoriesIds.size >= maxSelectedCategories && !selectedCategoriesIds.has(item.id!))"
+																[attr.title]="selectedCategoriesIds.size >= maxSelectedCategories && !selectedCategoriesIds.has(item.id!) ? 'Máximo ' + maxSelectedCategories + ' registros seleccionados' : null"
 																(change)="onCategorySelectionChange(item.id!, $any($event.target).checked)"
 															/>
 														</label>

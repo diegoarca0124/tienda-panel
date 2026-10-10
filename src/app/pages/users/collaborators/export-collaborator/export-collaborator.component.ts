@@ -1,3 +1,4 @@
+import { getHttpErrorBody } from '@app/common/utils/get-http-error-body.util';
 import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { RouterModule } from '@angular/router';
@@ -8,8 +9,7 @@ import { CollaboratorService } from '@app/services/collaborator.service';
 import { withMinLoadingTime } from '@app/common/interface/with-min-loading-time.interface';
 import { finalize, Subject, takeUntil } from 'rxjs';
 import { GLOBAL } from '@app/services/GLOBAL';
-import { ExportCollaboratorsXlsxUtil } from '../utils/export-collaborators-xlsx.util';
-import { ExportCollaboratorsCsvUtil } from '../utils/export-collaborators-csv.util';
+import { saveAs } from 'file-saver';
 import { FieldExportColumns, FieldExportColumnsErrors } from '../interfaces/validation.interface';
 import { HttpErrorResponse } from '@angular/common/http';
 import { fieldsExportOptions, sortOptions } from '../constants/selectors.constants';
@@ -52,14 +52,13 @@ export class ExportCollaboratorComponent {
 	}
 
 	onExport() {
+		const format = this.exportOptions.format;
 		this.exportOptions.data = this.fieldsExport.map((prev) => ({
 			field: prev.key,
 			checked: prev.checked,
 		}));
 		this.isExportCollaboratorLoading = true;
 		this.exportOptions.ids = [];
-		console.log(this.exportOptions);
-
 		this.collaboratorService
 			.exportCollaborators(this.exportOptions)
 			.pipe(
@@ -68,31 +67,20 @@ export class ExportCollaboratorComponent {
 				finalize(() => (this.isExportCollaboratorLoading = false))
 			)
 			.subscribe({
-				next: (next: { data: any[] }) => {
-					if (this.exportOptions.format === 'xlsx') {
-						ExportCollaboratorsXlsxUtil(next.data, {
-							fileName: 'IMP-COLLABORATORS',
-							sheetName: 'COLLABORATORS',
-						});
-					} else if (this.exportOptions.format === 'csv') {
-						ExportCollaboratorsCsvUtil(next.data, {
-							fileName: 'IMP-COLLABORATORS',
-						});
-					} else {
-						toastr.error('El formato seleccionado no es válido.');
-						return;
-					}
+				next: (file: Blob) => {
+					this.fieldErrors = createEmptyFieldExportErrors();
+					this.validationCollaboratorError = {};
+					saveAs(file, `EXP-COLLABORATORS-${Date.now()}.${format}`);
 					toastr.success('Archivo generado correctamente.');
 				},
 				error: async (err: HttpErrorResponse) => {
-					const error = err?.error ?? {};
+					const error = getHttpErrorBody(err);
 					toastr.error(error.message || '¡Error desconocido!');
 
 					if (error.validation) {
 						this.validationCollaboratorError = error.validation;
 						this.fieldErrors = buildShowErrors(this.fieldErrors, this.validationCollaboratorError);
 					}
-					console.log(this.validationCollaboratorError);
 				},
 			});
 	}

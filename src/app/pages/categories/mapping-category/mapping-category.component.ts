@@ -1,3 +1,4 @@
+import { getHttpErrorBody } from '@app/common/utils/get-http-error-body.util';
 import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { RouterModule } from '@angular/router';
@@ -11,8 +12,7 @@ import { finalize, Subject, takeUntil } from 'rxjs';
 import { CdkDragDrop, DragDropModule, transferArrayItem } from '@angular/cdk/drag-drop';
 import { DomSanitizer } from '@angular/platform-browser';
 import { HttpErrorResponse } from '@angular/common/http';
-import { CategoryInterface } from '../interfaces/data.interface';
-import { GetCategoriesRESI, GetCategoriesWithSubcategoriesRESI, MoveSubcategoryRESI } from '../interfaces/response.interface';
+import { CategoryWithSubcategoriesRESI, GetCategoriesWithSubcategoriesRESI, MappingSubcategoryInterface, MoveSubcategoryRESI } from '../interfaces/response.interface';
 declare const toastr: any;
 
 @Component({
@@ -23,9 +23,9 @@ declare const toastr: any;
 	schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class MappingCategoryComponent {
-	public categories: CategoryInterface[] = [];
+	public categories: CategoryWithSubcategoriesRESI[] = [];
 	private destroy$ = new Subject<void>();
-	public isCategoriesLoading: boolean = true;
+	public isCategoriesLoading: boolean = false;
 	public categoriesLoadError: Record<string, any> | null = null;
 	public dropListIds: string[] = [];
 	public dragOverCategoryId: string | undefined = undefined;
@@ -50,8 +50,8 @@ export class MappingCategoryComponent {
 		return this.categories.filter((category) => category.id !== currentCategoryId).map((category) => 'category-' + category.id);
 	}
 
-	drop(event: CdkDragDrop<any>) {
-		if (this.loadingMove) return;
+	drop(event: CdkDragDrop<CategoryWithSubcategoriesRESI, CategoryWithSubcategoriesRESI, MappingSubcategoryInterface>) {
+		if (this.loadingMove || this.isCategoriesLoading || this.categoriesLoadError) return;
 		if (event.previousContainer === event.container) return;
 
 		const previousCategory = event.previousContainer.data;
@@ -75,17 +75,20 @@ export class MappingCategoryComponent {
 			)
 			.subscribe({
 				next: (next: MoveSubcategoryRESI) => {
+					subcategory.categoryId = next.data.categoryId;
+					subcategory.status = next.data.status;
 					toastr.success(next.message);
 					transferArrayItem(previousCategory.subcategories, currentCategory.subcategories, event.previousIndex, event.currentIndex);
 				},
 				error: (err: HttpErrorResponse) => {
-					const error = err.error;
+					const error = getHttpErrorBody(err);
 					toastr.error(error.message || '¡Error desconocido!');
 				},
 			});
 	}
 
 	initCategories() {
+		if (this.loadingMove || this.isCategoriesLoading) return;
 		this.isCategoriesLoading = true;
 		this.categoriesLoadError = null;
 		this.categories = [];
@@ -101,12 +104,12 @@ export class MappingCategoryComponent {
 					console.log('next', next);
 					this.categories = next.data.map((i) => ({
 						...i,
-						safeIcon: this.sanitizer.bypassSecurityTrustHtml(i.icon),
+						safeIcon: this.sanitizer.bypassSecurityTrustHtml(i.icon ?? ''),
 					}));
-					this.dropListIds = this.categories.map((category: CategoryInterface) => 'category-' + category.id);
+					this.dropListIds = this.categories.map((category) => 'category-' + category.id);
 				},
 				error: (err: HttpErrorResponse) => {
-					this.categoriesLoadError = err?.error?.message || 'Ocurrió un error al actualizar las categorías.';
+					this.categoriesLoadError = getHttpErrorBody(err, 'Ocurrió un error al actualizar las categorías.');
 				},
 			});
 	}

@@ -1,6 +1,6 @@
 <div class="empty-result py-10 py-md-15" role="status" aria-live="polite">
 	<div
-		*ngIf="error?.statusCode != null"
+		*ngIf="(error?.statusCode ?? 0) > 0"
 		class="empty-result-code"
 		[ngClass]="{
 			'empty-result-code-danger': (error?.statusCode ?? 0) >= 500,
@@ -13,6 +13,7 @@
 	<div class="empty-result-content">
 		<span class="empty-result-label">
 			<ng-container [ngSwitch]="error?.statusCode">
+				<ng-container *ngSwitchCase="0">Sin respuesta del servidor</ng-container>
 				<ng-container *ngSwitchCase="401">No autorizado</ng-container>
 
 				<ng-container *ngSwitchDefault>
@@ -26,6 +27,8 @@
 		</h3>
 
 		<p *ngIf="error?.statusCode === 401" class="empty-result-description">No tienes autorización para acceder a esta información.</p>
+
+		<p *ngIf="error?.statusCode === 0" class="empty-result-description">No recibimos una respuesta del servidor. Intenta nuevamente.</p>
 
 		<p *ngIf="(error?.statusCode ?? 0) >= 400 && (error?.statusCode ?? 0) < 500 && error?.statusCode !== 401" class="empty-result-description">
 			No encontramos información que coincida con la solicitud.

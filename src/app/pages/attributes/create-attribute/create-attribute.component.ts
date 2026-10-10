@@ -1,3 +1,4 @@
+import { getHttpErrorBody, type HttpErrorBody } from '@app/common/utils/get-http-error-body.util';
 import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -51,7 +52,7 @@ export class CreateAttributeComponent {
 	public attribute: AttributeInterface = createEmptyAttribute();
 	public values: Array<{ value: string }> = [];
 	public value: string = '';
-	public errorMsmServerGetGroupAttribute: string = '';
+	public errorMsmServerGetGroupAttribute: HttpErrorBody | null = null;
 	public msmErrorAttribute: any = [];
 	public showErrors = showErrorsAttribute;
 	public valuesDefault: Array<{ name?: string; value?: string }> = valuesDefault;
@@ -72,7 +73,7 @@ export class CreateAttributeComponent {
 					this.id = params['id'];
 					this.attribute.attributeGroupId = this.id;
 					this.loading = true;
-					this.errorMsmServerGetGroupAttribute = '';
+					this.errorMsmServerGetGroupAttribute = null;
 					return forkJoin({
 						groupAttribute: this.attributeService.get_attribute_group(this.id),
 					}).pipe(
@@ -88,7 +89,7 @@ export class CreateAttributeComponent {
 					this.groupAttribute = groupAttribute;
 				},
 				error: (err) => {
-					const error = err.error;
+					const error = getHttpErrorBody(err);
 					this.errorMsmServerGetGroupAttribute = error;
 				},
 			});
@@ -155,7 +156,7 @@ export class CreateAttributeComponent {
 					this._router.navigate([`/products/attributes/groups/${this.id}/attributes`]);
 				},
 				error: (err) => {
-					const error = err.error;
+					const error = getHttpErrorBody(err);
 					toastr.error(error.message || '¡Error desconocido!');
 					if (error.validation) {
 						this.errorsAtribute = error.validation;

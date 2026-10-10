@@ -1,3 +1,4 @@
+import { getHttpErrorBody } from '@app/common/utils/get-http-error-body.util';
 import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -201,10 +202,7 @@ export class ProductsBrandComponent {
 					return throwError(() => error);
 				}
 
-				this.productsLoadError = error.error ?? {
-					message: 'No fue posible cargar los productos.',
-					statusCode: error.status,
-				};
+				this.productsLoadError = getHttpErrorBody(error, 'No fue posible cargar los productos.');
 
 				this.products = [];
 				this.totalPages = 0;

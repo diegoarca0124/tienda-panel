@@ -155,4 +155,18 @@
 	.page-header-action-text {
 		display: none;
 	}
+
+	/* Mantener el texto de la acción visible en móviles. */
+	.btn.page-header-action.page-header-action-with-text {
+		width: auto !important;
+		min-width: max-content !important;
+		height: 2.5rem;
+		padding: 0 0.75rem !important;
+		gap: 0.375rem;
+		font-size: 0.75rem;
+	}
+
+	.page-header-action-with-text .page-header-action-text {
+		display: inline !important;
+	}
 }

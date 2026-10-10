@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { PadCodePipe } from '@app/common/pipes/pad-code.pipe';
-import { CategoryInterface, SubcategoryInterface } from '../../../interfaces/data.interface';
+import { CategoryWithSubcategoriesRESI, MappingSubcategoryInterface } from '../../../interfaces/response.interface';
 
 @Component({
 	selector: 'app-move-products-category',
@@ -12,7 +12,7 @@ import { CategoryInterface, SubcategoryInterface } from '../../../interfaces/dat
 })
 
 export class MoveProductsCategoryComponent implements OnChanges {
-	@Input() categories: CategoryInterface[] = [];
+	@Input() categories: CategoryWithSubcategoriesRESI[] = [];
 	@Input() currentCategoryId: string = '';
 	@Input() selectedProductsCount: number = 0;
 	@Input() isCategoriesLoading: boolean = false;
@@ -21,7 +21,7 @@ export class MoveProductsCategoryComponent implements OnChanges {
 	@Input() categoriesLoadError: Record<string, any> | null = null;
 
 	@Output() refresh = new EventEmitter<void>();
-	@Output() moveRequested = new EventEmitter<{ category: CategoryInterface; subcategory: SubcategoryInterface }>();
+	@Output() moveRequested = new EventEmitter<{ category: CategoryWithSubcategoriesRESI; subcategory: MappingSubcategoryInterface }>();
 
 	expandedCategoryIndex: number | null = null;
 

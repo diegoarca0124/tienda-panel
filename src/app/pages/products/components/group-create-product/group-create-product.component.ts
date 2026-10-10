@@ -1,3 +1,4 @@
+import { getHttpErrorBody } from '@app/common/utils/get-http-error-body.util';
 import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, SimpleChanges } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -71,7 +72,7 @@ export class GroupCreateProductComponent {
 						console.log(next);
 					},
 					error: (err) => {
-						toastr.error(err.error.message);
+						toastr.error(getHttpErrorBody(err).message);
 					},
 				});
 		}
@@ -103,7 +104,7 @@ export class GroupCreateProductComponent {
 					}));
 				},
 				error: (err) => {
-					toastr.error(err.error.message);
+					toastr.error(getHttpErrorBody(err).message);
 				},
 			});
 	}

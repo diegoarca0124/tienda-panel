@@ -1,4 +1,6 @@
+import { getHttpErrorBody } from '@app/common/utils/get-http-error-body.util';
 import { Component } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { finalize, Subject, takeUntil } from 'rxjs';
 import { Store } from '@ngrx/store';
@@ -31,6 +33,7 @@ export class LoginComponent {
 	};
 	public errorMsmServer = '';
 	public loading = false;
+	public showPassword = false;
 	private destroy$ = new Subject<void>();
 
 	constructor(
@@ -40,7 +43,31 @@ export class LoginComponent {
 	) {}
 
 	ngOnInit() {
-		if (this.authService.getToken()) this.router.navigate(['/dashboard']);
+		if (!this.authService.getToken()) return;
+
+		this.loading = true;
+		this.authService
+			.validate_token()
+			.pipe(
+				takeUntil(this.destroy$),
+				finalize(() => (this.loading = false))
+			)
+			.subscribe({
+				next: (response) => {
+					if (response.valid === true) {
+						this.router.navigate(['/dashboard']);
+					} else {
+						this.authService.clearSession();
+					}
+				},
+				error: (error: unknown) => {
+					if (error instanceof HttpErrorResponse && error.status === 401) {
+						this.authService.clearSession();
+					} else {
+						toastr.error(getHttpErrorBody(error, 'No fue posible validar tu sesión. Intenta nuevamente.').message);
+					}
+				},
+			});
 	}
 
 	ngOnDestroy(): void {
@@ -67,7 +94,7 @@ export class LoginComponent {
 					this.router.navigate(['/dashboard']);
 				},
 				error: (err) => {
-					const error = err.error;
+					const error = getHttpErrorBody(err);
 					toastr.error(error.message || '¡Error desconocido!');
 					if (error.validation) {
 						this.errorsLogin = error.validation;

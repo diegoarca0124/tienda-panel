@@ -1,3 +1,4 @@
+import { getHttpErrorBody } from '@app/common/utils/get-http-error-body.util';
 import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, signal, WritableSignal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -83,7 +84,7 @@ export class VariationsCreateProductComponent {
 				error: (err) => {
 					console.log(err);
 
-					toastr.error(err.error.message || '¡Error desconocido!');
+					toastr.error(getHttpErrorBody(err, '¡Error desconocido!').message);
 				},
 			});
 	}
@@ -117,7 +118,7 @@ export class VariationsCreateProductComponent {
 					this.variationEdit = {};
 				},
 				error: (error: any) => {
-					toastr.error(error.error.message);
+					toastr.error(getHttpErrorBody(error).message);
 				},
 			});
 	}
@@ -142,7 +143,7 @@ export class VariationsCreateProductComponent {
 				this.variations = data;
 			}),
 			catchError((err) => {
-				this.errorMsmSeverListVariations = err?.error?.message || 'Error cargando variaciones';
+				this.errorMsmSeverListVariations = getHttpErrorBody(err, 'Error cargando variaciones').message;
 				return of([]);
 			}),
 
@@ -175,7 +176,7 @@ export class VariationsCreateProductComponent {
 					closeModal(id);
 				},
 				error: (error: any) => {
-					toastr.error(error.error.message);
+					toastr.error(getHttpErrorBody(error).message);
 				},
 			});
 	}

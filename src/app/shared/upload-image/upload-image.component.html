@@ -1,16 +1,28 @@
-<input type="file" [id]="inputId" class="d-none" accept="image/*" (change)="onFileChange($event)" />
+<input #fileInput type="file" [id]="inputId" class="d-none" [accept]="fileConfig.allowedMimeTypes.join(',')" [disabled]="isLoading" (change)="onFileChange($event)" />
 <div class="w-100">
-	<label [for]="inputId" class="upload-label flex-fill" [ngClass]="{ 'border-danger': hasError }" style="justify-content: space-between" [title]="fileName">
+	<label
+		[attr.for]="isLoading ? null : inputId"
+		class="upload-label flex-fill"
+		[ngClass]="{ 'border-danger': hasError, 'is-loading': isLoading }"
+		[attr.aria-busy]="isLoading"
+		[attr.aria-disabled]="isLoading"
+		style="justify-content: space-between"
+		[title]="fileName"
+	>
 		<ng-container *ngIf="imagePreview; else emptyState">
 			<div class="d-flex align-items-center gap-3 flex-content">
 				<img [src]="imagePreview" alt="Preview" class="preview-img" fallbackImage />
 				<span class="file-name">{{ fileName }}</span>
 			</div>
-			<button type="button" class="btn-clear fs-7 fw-700" (click)="clearImage(); $event.stopPropagation()">✕</button>
+			<button type="button" class="btn-clear fs-7 fw-700" [disabled]="isLoading" (click)="clearImage(); $event.stopPropagation()">✕</button>
 		</ng-container>
 
 		<ng-template #emptyState>
-			<span class="placeholder-text">Sube la imagen aquí</span>
+			<span class="placeholder-text">{{ isLoading ? 'Cargando imagen...' : 'Sube la imagen aquí' }}</span>
 		</ng-template>
+
+		<span *ngIf="isLoading" class="spinner-border spinner-border-sm upload-spinner" role="status">
+			<span class="visually-hidden">Cargando imagen</span>
+		</span>
 	</label>
 </div>

@@ -1,3 +1,4 @@
+import { getHttpErrorBody } from '@app/common/utils/get-http-error-body.util';
 import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, signal, WritableSignal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -22,6 +23,7 @@ import { BrandInterface } from '../interfaces/data.interface';
 import { BrandFieldErrors, BrandValidationErrors } from '../interfaces/validation.interface';
 import { prefixMask } from '@app/pages/brands/constants/prefix-mask.constant';
 import { CreateBrandRESI } from '../interfaces/response.interface';
+import { DEFAULT_IMAGE_UPLOAD_CONFIG } from '@app/common/constants/file-upload.constant';
 declare const toastr: any;
 
 @Component({
@@ -54,6 +56,8 @@ export class CreateBrandComponent {
 		bannerUrl: [],
 	};
 	public prefixMask = prefixMask;
+	public readonly logoUploadConfig = DEFAULT_IMAGE_UPLOAD_CONFIG;
+	public readonly bannerUploadConfig = DEFAULT_IMAGE_UPLOAD_CONFIG;
 	public fieldErrors: BrandFieldErrors = createEmptyFieldErrorsBrand();
 
 	constructor(
@@ -101,7 +105,7 @@ export class CreateBrandComponent {
 						logoUrl: [],
 						bannerUrl: [],
 					};
-					const error = err.error;
+					const error = getHttpErrorBody(err);
 					toastr.error(error.message || '¡Error desconocido!');
 
 					if (error.validation) {

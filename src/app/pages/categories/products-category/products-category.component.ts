@@ -1,3 +1,4 @@
+import { getHttpErrorBody } from '@app/common/utils/get-http-error-body.util';
 import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -8,7 +9,6 @@ import { TopbarComponent } from '@app/shared/topbar/topbar.component';
 import { catchError, combineLatest, concatMap, EMPTY, finalize, forkJoin, map, Observable, of, Subject, switchMap, takeUntil, tap, throwError } from 'rxjs';
 import { withMinLoadingTime } from '@app/common/interface/with-min-loading-time.interface';
 import { GLOBAL } from '@app/services/GLOBAL';
-import { ProductInterface } from '@app/pages/products/interfaces/product.interface';
 import { FormsModule } from '@angular/forms';
 import { PaginationComponent } from '@app/shared/pagination/pagination.component';
 import { validateProductsCategoryQueryParams } from '../utils/validate-productscategory-query-params..util';
@@ -16,8 +16,8 @@ import { MenuSubcategoriesComponent } from '@app/shared/menu-subcategories/menu-
 import { createEmptyCategory, createMoveProducts } from '../utils/empties.util';
 import { environment } from 'environments/environment.dev';
 import { HttpErrorResponse } from '@angular/common/http';
-import { CategoryInterface, MoveProductsInterface, SubcategoryInterface } from '../interfaces/data.interface';
-import { FindCategoryProductsRESI, GetCategoriesWithSubcategoriesRESI, MoveProductsToSubcategoryRESI, MoveSubcategoryRESI } from '../interfaces/response.interface';
+import { MoveProductsInterface } from '../interfaces/data.interface';
+import { CategoryProductInterface, CategoryWithSubcategoriesRESI, FindCategoryProductsRESI, GetCategoriesWithSubcategoriesRESI, MappingSubcategoryInterface, MoveProductsToSubcategoryRESI, MoveSubcategoryRESI } from '../interfaces/response.interface';
 import { GetProductsCategoryQPI } from '../interfaces/query-params.interface';
 import { SidebarProductsCategoryComponent } from './shared/sidebar-products-category/sidebar-products-category.component';
 import { TableProductsCategoryComponent } from './components/table-products-category/table-products-category.component';
@@ -47,8 +47,8 @@ export class ProductsCategoryComponent {
 
 	public id: string = '';
 	public categoryName: string = '';
-	public categories: CategoryInterface[] = [];
-	public products: ProductInterface[] = [];
+	public categories: CategoryWithSubcategoriesRESI[] = [];
+	public products: CategoryProductInterface[] = [];
 
 	public filter: string = '';
 	public selectedStatus: string = 'Todos';
@@ -166,7 +166,7 @@ export class ProductsCategoryComponent {
 			tap((response: FindCategoryProductsRESI) => {
 				this.productsLoadError = null;
 				this.categoryName = response.category;
-				this.products = response.products.map((product: ProductInterface) => ({
+				this.products = response.products.map((product) => ({
 					...product,
 					cover: `${environment.s3_public_url}/products/small/${product.cover}`,
 					brand: {
@@ -188,10 +188,7 @@ export class ProductsCategoryComponent {
 					return throwError(() => error);
 				}
 
-				this.productsLoadError = error.error ?? {
-					message: 'No fue posible cargar los productos.',
-					statusCode: error.status,
-				};
+				this.productsLoadError = getHttpErrorBody(error, 'No fue posible cargar los productos.');
 
 				this.products = [];
 				this.totalPages = 0;
@@ -228,7 +225,7 @@ export class ProductsCategoryComponent {
 				this.categories = response.data
 					.map((category) => ({
 						...category,
-						safeIcon: this.sanitizer.bypassSecurityTrustHtml(category.icon),
+						safeIcon: this.sanitizer.bypassSecurityTrustHtml(category.icon ?? ''),
 					}))
 					.sort((firstCategory, secondCategory) => {
 						if (firstCategory.id === this.id) return -1;
@@ -242,10 +239,7 @@ export class ProductsCategoryComponent {
 			catchError((error: HttpErrorResponse) => {
 				this.categories = [];
 
-				this.categoriesLoadError = error.error ?? {
-					message: 'No fue posible cargar las categorías.',
-					statusCode: error.status,
-				};
+				this.categoriesLoadError = getHttpErrorBody(error, 'No fue posible cargar las categorías.');
 
 				return EMPTY;
 			}),
@@ -287,7 +281,7 @@ export class ProductsCategoryComponent {
 
 		const parsedPrice = Number(price);
 
-		this.minPrice = Number.isFinite(parsedPrice) ? parsedPrice : null;
+		this.minPrice = parsedPrice;
 	}
 
 	onMaxPriceChange(price: number | null): void {
@@ -298,7 +292,7 @@ export class ProductsCategoryComponent {
 
 		const parsedPrice = Number(price);
 
-		this.maxPrice = Number.isFinite(parsedPrice) ? parsedPrice : null;
+		this.maxPrice = parsedPrice;
 	}
 
 	onLimitChange() {
@@ -357,6 +351,19 @@ export class ProductsCategoryComponent {
 	}
 
 	applyFilters(resetPage: boolean = true): void {
+		if (this.minPrice !== null && (!Number.isFinite(this.minPrice) || this.minPrice < 0)) {
+			toastr.error('El precio desde debe ser un número válido mayor o igual a cero.');
+			return;
+		}
+		if (this.maxPrice !== null && (!Number.isFinite(this.maxPrice) || this.maxPrice < 0)) {
+			toastr.error('El precio hasta debe ser un número válido mayor o igual a cero.');
+			return;
+		}
+		if (this.minPrice !== null && this.maxPrice !== null && this.minPrice > this.maxPrice) {
+			toastr.error('El precio desde no puede superar al precio hasta.');
+			return;
+		}
+
 		if (resetPage) {
 			this.currentPage = 1;
 		}
@@ -417,7 +424,7 @@ export class ProductsCategoryComponent {
 		return this.selectedProductsIds.size > 0;
 	}
 
-	moveSelectedProductsTo(category: CategoryInterface, subcategory: SubcategoryInterface): void {
+	moveSelectedProductsTo(category: CategoryWithSubcategoriesRESI, subcategory: MappingSubcategoryInterface): void {
 		if (this.selectedProductsIds.size === 0) {
 			toastr.error('Debes seleccionar al menos un producto.');
 			return;
@@ -451,7 +458,7 @@ export class ProductsCategoryComponent {
 				},
 
 				error: (error: HttpErrorResponse) => {
-					toastr.error(error.error?.message || 'No fue posible mover los productos.');
+					toastr.error(getHttpErrorBody(error, 'No fue posible mover los productos.').message);
 				},
 			});
 	}

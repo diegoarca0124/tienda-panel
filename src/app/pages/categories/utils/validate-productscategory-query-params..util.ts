@@ -17,6 +17,12 @@ const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a
 
 const parseNumber = (value: unknown): number => (typeof value === 'string' || typeof value === 'number' ? Number(value) : NaN);
 
+const parsePrice = (value: unknown): number => {
+	if (typeof value === 'number') return value;
+	if (typeof value !== 'string' || !/^\d+(\.\d+)?$/.test(value.trim())) return NaN;
+	return Number(value.trim());
+};
+
 const normalizeIds = (value: unknown): string => {
 	const values = Array.isArray(value) ? value : [value];
 	const ids = values
@@ -34,9 +40,14 @@ export const validateProductsCategoryQueryParams = (params: Params): ProductsCat
 	const limit = parseNumber(params['limit']);
 	const rawMinPrice = params['minPrice'];
 	const rawMaxPrice = params['maxPrice'];
-	const minPrice = rawMinPrice === undefined || rawMinPrice === null || rawMinPrice === '' ? NaN : parseNumber(rawMinPrice);
-	const maxPrice = rawMaxPrice === undefined || rawMaxPrice === null || rawMaxPrice === '' ? NaN : parseNumber(rawMaxPrice);
-	const validPrices = Number.isFinite(minPrice) && Number.isFinite(maxPrice) && minPrice >= 0 && maxPrice >= 0 && minPrice <= maxPrice;
+	const minPrice = parsePrice(rawMinPrice);
+	const maxPrice = parsePrice(rawMaxPrice);
+	const validMinPrice = Number.isFinite(minPrice) && minPrice >= 0;
+	const validMaxPrice = Number.isFinite(maxPrice) && maxPrice >= 0;
+	const validPrices =
+		(rawMinPrice === undefined || validMinPrice) &&
+		(rawMaxPrice === undefined || validMaxPrice) &&
+		!(validMinPrice && validMaxPrice && minPrice > maxPrice);
 	const queryParams: GetProductsCategoryQPI = {
 		filter: typeof params['filter'] === 'string' ? params['filter'] : '',
 		page: Number.isInteger(page) && page >= 1 ? page : 1,
@@ -50,8 +61,8 @@ export const validateProductsCategoryQueryParams = (params: Params): ProductsCat
 	};
 
 	if (validPrices) {
-		queryParams.minPrice = minPrice;
-		queryParams.maxPrice = maxPrice;
+		if (validMinPrice) queryParams.minPrice = minPrice;
+		if (validMaxPrice) queryParams.maxPrice = maxPrice;
 	}
 
 	const hasUnknownParams = Object.keys(params).some((key) => !Object.prototype.hasOwnProperty.call(queryParams, key));

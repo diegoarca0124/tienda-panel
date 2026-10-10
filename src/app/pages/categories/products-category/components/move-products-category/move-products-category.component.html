@@ -151,7 +151,7 @@
 													</div>
 
 													<p *ngIf="subcategory.prefix || subcategory.code" class="paragraph paragraph-sm text-gray-400 fw-400 text-truncate mb-0">
-														#{{ subcategory.prefix }}-{{ subcategory.code | padCode: 6 }}
+														#{{ subcategory.prefix }}-{{ (subcategory.code ?? '') | padCode: 6 }}
 													</p>
 												</div>
 											</div>

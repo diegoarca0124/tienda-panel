@@ -1,17 +1,21 @@
-<div class="position-relative w-100">
+<div class="position-relative w-100" [attr.aria-busy]="isLoading">
 	<input
 		type="file"
 		class="d-none"
 		[id]="inputId"
 		accept=".xls,.xlsx,.csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/csv"
 		(change)="onFileChange($event)"
+		[disabled]="isLoading"
 	/>
 
 	<label
 		class="form-control form-control-md upload-file-control mb-0"
 		[class.is-invalid]="hasError"
-		[class.pe-12]="fileName"
-		[for]="inputId"
+		[class.pe-12]="fileName || isLoading"
+		[class.bg-light]="isLoading"
+		[class.cursor-default]="isLoading"
+		[attr.for]="isLoading ? null : inputId"
+		[attr.aria-disabled]="isLoading"
 		[title]="fileName || 'Seleccionar archivo'"
 	>
 		<ng-container *ngIf="fileName; else emptyState">
@@ -29,7 +33,12 @@
 		</ng-template>
 	</label>
 
-	<button *ngIf="fileName" type="button" class="upload-file-clear" (click)="clearImage($event)" aria-label="Quitar archivo seleccionado" title="Quitar archivo">
+	<span *ngIf="isLoading" class="position-absolute top-50 end-0 translate-middle-y me-3 d-flex align-items-center text-primary" role="status">
+		<span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+		<span class="visually-hidden">Cargando archivo...</span>
+	</span>
+
+	<button *ngIf="fileName && !isLoading" type="button" class="upload-file-clear" (click)="clearImage($event)" aria-label="Quitar archivo seleccionado" title="Quitar archivo">
 		<ion-icon name="close-outline" aria-hidden="true"></ion-icon>
 	</button>
 </div>

@@ -1,3 +1,4 @@
+import { getHttpErrorBody, type HttpErrorBody } from '@app/common/utils/get-http-error-body.util';
 import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -52,7 +53,7 @@ export class EditCollaboratorComponent {
 	public isCollaboratorLoading: boolean = true;
 	public id: string = '';
 	public validationCollaboratioError: CollaboratorValidationErrors = {};
-	public collaboratorLoadError: string = '';
+	public collaboratorLoadError: HttpErrorBody | null = null;
 	public rolesOptions = rolesOptions;
 	public documentsOptions = documentsOptions;
 	public readonly collaboratorStatusDetails = COLLABORATOR_STATUS_DETAILS;
@@ -93,7 +94,7 @@ export class EditCollaboratorComponent {
 
 	initData() {
 		this.isCollaboratorLoading = true;
-		this.collaboratorLoadError = '';
+		this.collaboratorLoadError = null;
 		this.collaboratorService
 			.getCollaborator(this.id)
 			.pipe(
@@ -106,7 +107,7 @@ export class EditCollaboratorComponent {
 					this.collaborator = next.data;
 				},
 				error: (err: HttpErrorResponse) => {
-					const error = err.error;
+					const error = getHttpErrorBody(err);
 					this.collaboratorLoadError = error;
 				},
 			});
@@ -123,12 +124,13 @@ export class EditCollaboratorComponent {
 			)
 			.subscribe({
 				next: (next: UpdateCollaboratorRESI) => {
+					this.fieldErrors = createEmptyFieldErrors();
 					this.validationCollaboratioError = {};
 					this.collaborator = next.data;
 					toastr.success(next.message);
 				},
 				error: (err: HttpErrorResponse) => {
-					const error = err.error;
+					const error = getHttpErrorBody(err);
 					toastr.error(error.message || '¡Error desconocido!');
 
 					if (error.validation) {
@@ -158,7 +160,7 @@ export class EditCollaboratorComponent {
 					toastr.success(next.message);
 				},
 				error: (error: HttpErrorResponse) => {
-					toastr.error(error.error?.message || 'No fue posible actualizar el estado.');
+					toastr.error(getHttpErrorBody(error, 'No fue posible actualizar el estado.').message);
 				},
 			});
 	}

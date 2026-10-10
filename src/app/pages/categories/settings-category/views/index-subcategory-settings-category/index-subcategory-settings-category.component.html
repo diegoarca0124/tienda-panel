@@ -70,9 +70,9 @@
 							<div class="dropdown-menu dropdown-menu-end action-dropdown-menu action-dropdown-menu-compact" aria-labelledby="subcategoryTableOptions">
 								<a
 									class="dropdown-item action-dropdown-item action-dropdown-item-compact"
-									[class.disabled]="selectedSubcategoriesIds.size === 0"
-									[attr.data-bs-toggle]="selectedSubcategoriesIds.size > 0 ? 'modal' : null"
-									[attr.data-bs-target]="selectedSubcategoriesIds.size > 0 ? '#modalMultipleActive' : null"
+									[class.disabled]="!canUpdateSelectedSubcategories"
+									[attr.data-bs-toggle]="canUpdateSelectedSubcategories ? 'modal' : null"
+									[attr.data-bs-target]="canUpdateSelectedSubcategories ? '#modalMultipleActive' : null"
 									style="text-transform: capitalize !important"
 								>
 									<span class="action-dropdown-item-icon">
@@ -84,9 +84,9 @@
 
 								<a
 									class="dropdown-item action-dropdown-item action-dropdown-item-compact"
-									[class.disabled]="selectedSubcategoriesIds.size === 0"
-									[attr.data-bs-toggle]="selectedSubcategoriesIds.size > 0 ? 'modal' : null"
-									[attr.data-bs-target]="selectedSubcategoriesIds.size > 0 ? '#modalMultipleDisabled' : null"
+									[class.disabled]="!canUpdateSelectedSubcategories"
+									[attr.data-bs-toggle]="canUpdateSelectedSubcategories ? 'modal' : null"
+									[attr.data-bs-target]="canUpdateSelectedSubcategories ? '#modalMultipleDisabled' : null"
 									style="text-transform: capitalize !important"
 								>
 									<span class="action-dropdown-item-icon">
@@ -99,7 +99,7 @@
 								<button
 									type="button"
 									class="dropdown-item action-dropdown-item action-dropdown-item-compact"
-									[disabled]="areAllSubcategoriesSelected"
+									[disabled]="areAllSubcategoriesSelected || selectedSubcategoriesIds.size >= maxSelectedSubcategories"
 									(click)="selectAllSubcategories()"
 								>
 									<span class="action-dropdown-item-icon">
@@ -134,11 +134,17 @@
 			</thead>
 
 			<tbody>
-				@if (categoryLoadError) {
+				@if (categoryLoadError || subcategoriesLoadError) {
 					<tr>
 						<td colspan="4">
 							<div class="form-card-body">
-								<app-not-found [error]="categoryLoadError"></app-not-found>
+								<app-not-found [error]="categoryLoadError || subcategoriesLoadError"></app-not-found>
+								<div class="text-center pb-4">
+									<button type="button" class="btn btn-sm btn-primary" (click)="retryLoad()" [disabled]="isGetCategoryLoading || isGetSubcategoriesLoading">
+										<i class="bi bi-arrow-clockwise" aria-hidden="true"></i>
+										Reintentar
+									</button>
+								</div>
 							</div>
 						</td>
 					</tr>
@@ -176,6 +182,8 @@
 									class="form-check-input cursor-pointer"
 									type="checkbox"
 									[checked]="selectedSubcategoriesIds.has(item.id!)"
+									[disabled]="!item.id || (selectedSubcategoriesIds.size >= maxSelectedSubcategories && !selectedSubcategoriesIds.has(item.id!))"
+									[attr.title]="selectedSubcategoriesIds.size >= maxSelectedSubcategories && !selectedSubcategoriesIds.has(item.id!) ? 'Máximo ' + maxSelectedSubcategories + ' registros seleccionados' : null"
 									(change)="toggleItem(item.id!, $event)"
 									[attr.aria-label]="'Seleccionar subcategoría ' + item.name"
 								/>
@@ -245,7 +253,7 @@
 									[description]="
 										item.status
 											? `La subcategoría <b>${item.name}</b> dejará de estar disponible y se ocultará temporalmente del sistema.`
-											: `La subcategoría <b>${item.name}</b> volverá a estar disponible y visible dentro del sistema.`
+											: `La subcategoría <b>${item.name}</b> se activará si su categoría está activa. Sus productos conservarán su estado actual y no se publicarán automáticamente.`
 									"
 									[textButton]="item.status ? 'Desactivar' : 'Activar'"
 									(actionConfirmed)="onUpdateStatus(item.id!, item.status!)"
@@ -308,7 +316,7 @@
 <app-modal-delete
 	[id]="'modalMultipleActive'"
 	[title]="'Activación Multiple'"
-	[description]="'El estado de las subcategorias serán actualizadas. Verifica tu selección antes de continuar, ya que este cambio se aplicará a todos.'"
+	[description]="'Las subcategorías seleccionadas se activarán si sus categorías están activas. Sus productos conservarán su estado actual y no se publicarán automáticamente.'"
 	[textButton]="'Activar'"
 	(actionConfirmed)="onUpdateStatusMultiple(true)"
 	[loadBtnDelete]="isUpdatingMultipleStatus"
@@ -441,7 +449,7 @@
 			</div>
 			<div class="modal-footer app-modal-footer">
 				<button type="button" class="btn btn-sm btn-light-dark app-modal-button" [disabled]="isCreateSubcategoryLoading" (click)="cancelEdit()">Cancelar</button>
-				<button type="submit" class="btn btn-primary btn-sm app-modal-button" [disabled]="isGetSubcategoriesLoading || isCreateSubcategoryLoading || !!categoryLoadError">
+				<button type="submit" class="btn btn-primary btn-sm app-modal-button" [disabled]="isGetSubcategoriesLoading || isCreateSubcategoryLoading || !!categoryLoadError || !!subcategoriesLoadError">
 					<span *ngIf="isCreateSubcategoryLoading" class="spinner-border spinner-border-sm" aria-hidden="true"></span>
 					<span>{{ isCreateSubcategoryLoading ? 'Actualizando...' : 'Guardar cambios' }}</span>
 				</button>

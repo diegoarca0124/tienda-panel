@@ -75,6 +75,7 @@
 								placeholder="Ej. Bayas"
 								name="createSubcategoryName"
 								[(ngModel)]="subcategory.name"
+								[disabled]="isCreateSubcategoryLoading"
 								[class.is-invalid]="validationSubcategoryError?.name"
 								(keyup.enter)="createSubcategory()"
 							/>
@@ -104,6 +105,7 @@
 							placeholder="Ej. BA"
 							name="createSubcategoryPrefix"
 							[(ngModel)]="subcategory.prefix"
+							[disabled]="isCreateSubcategoryLoading"
 							[imask]="prefixMask"
 							[class.is-invalid]="validationSubcategoryError?.prefix"
 							(keyup.enter)="createSubcategory()"

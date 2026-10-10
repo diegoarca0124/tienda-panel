@@ -1,3 +1,4 @@
+import { getHttpErrorBody, type HttpErrorBody } from '@app/common/utils/get-http-error-body.util';
 import { CommonModule } from '@angular/common';
 import { Attribute, Component, CUSTOM_ELEMENTS_SCHEMA, signal, WritableSignal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -59,7 +60,7 @@ export class EditAttributeComponent {
 	public id: string = '';
 	public idAttribute: string = '';
 	public showErrors = showErrorsAttribute;
-	public errorMsmServerGetAttribute: string = '';
+	public errorMsmServerGetAttribute: HttpErrorBody | null = null;
 
 	constructor(
 		private _route: ActivatedRoute,
@@ -94,7 +95,7 @@ export class EditAttributeComponent {
 					this.values = values.data;
 				},
 				error: (err) => {
-					const error = err.error;
+					const error = getHttpErrorBody(err);
 					this.errorMsmServerGetAttribute = error;
 				},
 			});
@@ -116,7 +117,7 @@ export class EditAttributeComponent {
 					this.loadingValues = false;
 				},
 				error: (err) => {
-					const error = err.error;
+					const error = getHttpErrorBody(err);
 				},
 			});
 	}
@@ -144,7 +145,7 @@ export class EditAttributeComponent {
 					toastr.success(next.message);
 				},
 				error: (err) => {
-					const error = err.error;
+					const error = getHttpErrorBody(err);
 					toastr.error(error.message || '¡Error desconocido!');
 					if (error.validation) {
 						this.errorsAtribute = error.validation;
@@ -174,7 +175,7 @@ export class EditAttributeComponent {
 					toastr.success(next.message);
 				},
 				error: (err) => {
-					const error = err.error;
+					const error = getHttpErrorBody(err);
 					toastr.error(error.message || '¡Error desconocido!');
 
 					if (error.validation) {
@@ -203,7 +204,7 @@ export class EditAttributeComponent {
 					closeModal('modalDelete-' + id);
 				},
 				error: (error: any) => {
-					toastr.error(error.error.message);
+					toastr.error(getHttpErrorBody(error).message);
 				},
 			});
 	}

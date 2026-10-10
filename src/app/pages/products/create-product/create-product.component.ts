@@ -1,3 +1,4 @@
+import { getHttpErrorBody } from '@app/common/utils/get-http-error-body.util';
 import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, ElementRef, HostListener, Inject, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -190,7 +191,7 @@ export class CreateProductComponent {
 					}));
 				},
 				error: (err) => {
-					const error = err.error;
+					const error = getHttpErrorBody(err);
 					this.errorMsmSeverListCategories = error.message;
 				},
 			});
@@ -216,7 +217,7 @@ export class CreateProductComponent {
 					}));
 				},
 				error: (err) => {
-					const error = err.error;
+					const error = getHttpErrorBody(err);
 					this.errorMsmSeverListBrands = error.message;
 				},
 			});
@@ -242,7 +243,7 @@ export class CreateProductComponent {
 					}));
 				},
 				error: (err) => {
-					const error = err.error;
+					const error = getHttpErrorBody(err);
 					this.errorMsmSeverListSubcategories = error.message;
 				},
 			});
@@ -443,7 +444,7 @@ export class CreateProductComponent {
 				},
 				error: (err) => {
 					this.errorsProduct = {};
-					const error = err.error;
+					const error = getHttpErrorBody(err);
 					this.errorMsmServer = error.message || '¡Error desconocido!';
 					toastr.error(this.errorMsmServer);
 					console.log(error.validation);

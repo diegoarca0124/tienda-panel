@@ -34,6 +34,7 @@
 										(fileSelected)="onFileSelected($event)"
 										(validationError)="importValidationErrors.file[0] = $event ?? ''"
 										[inputId]="'fileImport'"
+										[isLoading]="isFileLoading"
 										[hasError]="importValidationErrors?.file[0]"
 									></app-upload-file-import>
 
@@ -159,9 +160,7 @@
 													'border-top-active': column.key,
 												}"
 											>
-												<span class="table-cell-title text-truncate-1 text-uppercase">
-													{{ column.label }}
-												</span>
+												<span class="table-cell-title text-truncate-1 text-uppercase">{{ column.label }} {{ column.index }}</span>
 											</div>
 										</th>
 									</tr>
@@ -499,7 +498,7 @@
 							</div>
 							<div style="flex: 1">
 								<select class="form-select form-select-sm w-100" (change)="mapSystemField($event, item.key)">
-									<option value="">Seleccionar...</option>
+									<option value="" [selected]="!hasFieldMapping(item.key)">Seleccionar...</option>
 									<ng-container *ngFor="let k of importedColumns">
 										<option [value]="k.label" [selected]="k.key == item.key">
 											{{ k.label }}

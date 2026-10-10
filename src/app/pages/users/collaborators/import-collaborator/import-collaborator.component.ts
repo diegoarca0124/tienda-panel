@@ -1,3 +1,4 @@
+import { getHttpErrorBody } from '@app/common/utils/get-http-error-body.util';
 import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -80,47 +81,107 @@ export class ImportCollaboratorComponent implements OnDestroy {
 	public isImporting = false;
 
 	private readonly destroy$ = new Subject<void>();
+	private fileSelectionVersion = 0;
+	private activeFileReader: FileReader | null = null;
 
 	constructor(private collaboratorService: CollaboratorService) {}
 
 	ngOnDestroy(): void {
+		this.fileSelectionVersion++;
+		this.cancelFileReading();
 		this.destroy$.next();
 		this.destroy$.complete();
 	}
 
 	onFileSelected(file: File | null): void {
+		const selectionVersion = ++this.fileSelectionVersion;
+		this.cancelFileReading();
 		this.importConfiguration.file = file ?? undefined;
-		if (!this.importConfiguration.file) return;
+		this.importedRows = [];
+		this.importedColumns = [];
+		this.selectedRowIndexes = [];
+		this.importValidationErrors = { file: [] };
+		this.dataValidationErrors = { data: [] };
+		this.validationSummary = { total: 0, errors: 0 };
+		this.validationSucceeded = false;
+		this.draggedColumnIndex = null;
+		this.dragOverColumnIndex = null;
+		if (!file) return;
 
-		const extension = file!.name.split('.').pop()?.toLowerCase();
+		const extension = file.name.split('.').pop()?.toLowerCase();
 		const fileReader = new FileReader();
+		this.activeFileReader = fileReader;
+		this.isFileLoading = true;
+
+		const finishReading = () => {
+			if (selectionVersion !== this.fileSelectionVersion) return;
+			fileReader.onload = null;
+			fileReader.onerror = null;
+			fileReader.onabort = null;
+			this.activeFileReader = null;
+			this.isFileLoading = false;
+		};
+		const showFileError = (message: string) => {
+			if (selectionVersion !== this.fileSelectionVersion) return;
+			this.importedRows = [];
+			this.importedColumns = [];
+			this.importValidationErrors.file = [message];
+			finishReading();
+			toastr.error(message);
+		};
+		fileReader.onerror = () => showFileError('No se pudo leer el archivo. Vuelve a seleccionarlo.');
+		fileReader.onabort = () => finishReading();
 
 		fileReader.onload = (event: ProgressEvent<FileReader>) => {
-			const fileContent = event.target?.result;
-			const workbook = extension === 'csv' ? XLSX.read(fileContent, { type: 'string' }) : XLSX.read(new Uint8Array(fileContent as ArrayBuffer), { type: 'array' });
-			const firstSheetName = workbook.SheetNames[0];
-			const firstWorksheet = workbook.Sheets[firstSheetName];
-			const worksheetRows = XLSX.utils.sheet_to_json(firstWorksheet, { defval: '' });
-
-			this.importedRows = worksheetRows.map((row, index) => ({
-				...(row as object),
-				index: index + 1,
-			}));
-			this.importedColumns = Object.keys(worksheetRows[0] || {}).map((label, index) => ({
-				index: index + 1,
-				key: '',
-				label,
-				inputType: '',
-				inputValues: [],
-			}));
+			if (selectionVersion !== this.fileSelectionVersion) return;
+			try {
+				const fileContent = event.target?.result;
+				if (fileContent === null || fileContent === undefined) throw new Error('El archivo no tiene contenido disponible.');
+				const workbook = extension === 'csv' ? XLSX.read(fileContent, { type: 'string', raw: true }) : XLSX.read(new Uint8Array(fileContent as ArrayBuffer), { type: 'array' });
+				const firstSheetName = workbook.SheetNames[0];
+				const firstWorksheet = workbook.Sheets[firstSheetName];
+				if (!firstWorksheet) throw new Error('El archivo no contiene una hoja disponible.');
+				// Conserva los valores del CSV y los ceros visibles en el formato numérico de Excel.
+				const worksheetRows = XLSX.utils.sheet_to_json(firstWorksheet, { defval: '', rawNumbers: false });
+	
+				this.importedRows = worksheetRows.map((row, index) => ({
+					...(row as object),
+					index: index + 1,
+				}));
+				this.importedColumns = Object.keys(worksheetRows[0] || {}).map((label, index) => ({
+					index: index + 1,
+					key: '',
+					label,
+					inputType: '',
+					inputValues: [],
+				}));
+			} catch {
+				showFileError('No se pudo procesar el archivo. Comprueba que sea válido.');
+			} finally {
+				finishReading();
+			}
 		};
 
-		if (extension === 'csv') {
-			fileReader.readAsText(this.importConfiguration.file, 'UTF-8');
-			return;
+		try {
+			if (extension === 'csv') {
+				fileReader.readAsText(file, 'UTF-8');
+			} else {
+				fileReader.readAsArrayBuffer(file);
+			}
+		} catch {
+			showFileError('No se pudo iniciar la lectura del archivo.');
 		}
+	}
 
-		fileReader.readAsArrayBuffer(this.importConfiguration.file);
+	private cancelFileReading(): void {
+		const reader = this.activeFileReader;
+		this.activeFileReader = null;
+		this.isFileLoading = false;
+		if (!reader) return;
+		reader.onload = null;
+		reader.onerror = null;
+		reader.onabort = null;
+		if (reader.readyState === FileReader.LOADING) reader.abort();
 	}
 
 	selectColumnField(column: ImportColumn, fieldKey: string): void {
@@ -207,7 +268,7 @@ export class ImportCollaboratorComponent implements OnDestroy {
 	addColumn(fieldKey: string): void {
 		const importField = this.availableFields.find((field) => field.key === fieldKey)!;
 		this.importedColumns.push({
-			index: this.importedColumns.length + 1,
+			index: Math.max(0, ...this.importedColumns.map((column) => column.index)) + 1,
 			key: fieldKey,
 			label: importField.label,
 			inputType: importField.inputType,
@@ -272,7 +333,7 @@ export class ImportCollaboratorComponent implements OnDestroy {
 					toastr.success(response.message);
 				},
 				error: (httpError: HttpErrorResponse) => {
-					const error = httpError.error ?? {};
+					const error = getHttpErrorBody(httpError);
 					toastr.error(error.message || '¡Error desconocido!');
 
 					if (!error.validation) return;
@@ -286,8 +347,18 @@ export class ImportCollaboratorComponent implements OnDestroy {
 
 	mapSystemField(event: Event, fieldKey: string): void {
 		const columnLabel = (event.target as HTMLSelectElement).value;
-		const column = this.importedColumns.find((item) => item.label === columnLabel)!;
-		const field = this.availableFields.find((item) => item.key === fieldKey)!;
+		const field = this.availableFields.find((item) => item.key === fieldKey);
+		if (!field) return;
+		const column = columnLabel ? this.importedColumns.find((item) => item.label === columnLabel) : undefined;
+		if (columnLabel && !column) return;
+
+		this.importedColumns.forEach((item) => {
+			if (item.key !== fieldKey) return;
+			item.key = '';
+			item.inputType = '';
+			item.inputValues = [];
+		});
+		if (!column) return;
 		this.applyFieldToColumn(column, field);
 	}
 
@@ -345,9 +416,9 @@ export class ImportCollaboratorComponent implements OnDestroy {
 		column.inputType = field.inputType;
 		column.inputValues = field.inputValues;
 
-		if (field.key === 'status') {
+		if (field.key === 'status' || field.key === 'prefix') {
 			this.importedRows.forEach((row) => {
-				row[column.label] = this.normalizeImportedValue('status', row[column.label]);
+				row[column.label] = this.normalizeImportedValue(field.key, row[column.label]);
 			});
 		}
 	}
@@ -370,6 +441,12 @@ export class ImportCollaboratorComponent implements OnDestroy {
 	}
 
 	private normalizeImportedValue(fieldKey: string, value: any): any {
+		if (fieldKey === 'prefix' && typeof value === 'string') {
+			const prefix = value.trim();
+			const originalPrefix = prefix.startsWith("'") ? prefix.slice(1) : prefix;
+			const allowedPrefixes = this.availableFields.find((field) => field.key === 'prefix')?.inputValues ?? [];
+			return allowedPrefixes.some((option) => option.value === originalPrefix) ? originalPrefix : value;
+		}
 		if (fieldKey !== 'status') return value;
 		if (typeof value === 'boolean') return value ? 'Activo' : 'Inactivo';
 		if (typeof value !== 'string') return value;

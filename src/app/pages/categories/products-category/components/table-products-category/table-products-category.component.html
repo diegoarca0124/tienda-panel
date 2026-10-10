@@ -157,12 +157,12 @@
 
 					<td class="fixed-sd">
 						<div class="d-flex flex-column">
-							<span class="paragraph paragraph-sm fw-600 m-0" [class.text-danger]="item.priceDiscount > 0" [class.text-gray-700]="!(item.priceDiscount > 0)">
+						<span class="paragraph paragraph-sm fw-600 m-0" [class.text-danger]="hasDiscount(item)" [class.text-gray-700]="!hasDiscount(item)">
 								{{ 'PE' | currencySymbol }}
-								{{ (item.priceDiscount > 0 ? item.priceDiscount : item.priceRegular) | number: '1.2-2' }}
+							{{ (hasDiscount(item) ? item.priceDiscount : item.priceRegular) | number: '1.2-2' }}
 							</span>
 
-							<span *ngIf="item.priceDiscount > 0" class="paragraph paragraph-sm text-gray-400 text-decoration-line-through m-0">
+						<span *ngIf="hasDiscount(item)" class="paragraph paragraph-sm text-gray-400 text-decoration-line-through m-0">
 								{{ 'PE' | currencySymbol }}
 								{{ item.priceRegular | number: '1.2-2' }}
 							</span>
@@ -180,7 +180,7 @@
 					</td>
 
 					<td class="fixed-sm">
-						<span class="paragraph paragraph-sm text-gray-700 fw-600 m-0">0</span>
+						<span class="paragraph paragraph-sm text-gray-700 fw-600 m-0">{{ item.stockQuantity ?? 0 }}</span>
 					</td>
 
 					<td class="fixed-sm">

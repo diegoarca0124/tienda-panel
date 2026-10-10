@@ -1,3 +1,4 @@
+import { getHttpErrorBody, type HttpErrorBody } from '@app/common/utils/get-http-error-body.util';
 import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -50,8 +51,8 @@ export class EditGroupAttributeComponent {
 	public option = 1;
 
 	public categoriesSelected: any = [];
-	public errorMsmSeverListCategories: string = '';
-	public errorMsmServerGetGroupAttribute: string = '';
+	public errorMsmSeverListCategories: HttpErrorBody | null = null;
+	public errorMsmServerGetGroupAttribute: HttpErrorBody | null = null;
 	public loadingCategories: boolean = true;
 	public categories = [];
 	public id: string = '';
@@ -72,8 +73,8 @@ export class EditGroupAttributeComponent {
 					this.id = params['id'];
 					this.loading = true;
 					this.loadingCategories = true;
-					this.errorMsmServerGetGroupAttribute = '';
-					this.errorMsmSeverListCategories = '';
+					this.errorMsmServerGetGroupAttribute = null;
+					this.errorMsmSeverListCategories = null;
 					return forkJoin({
 						groupAttribute: this.attributeService.get_attribute_group(this.id),
 						categories: this.categoryService.get_categories_by_select(),
@@ -97,7 +98,7 @@ export class EditGroupAttributeComponent {
 				error: (err) => {
 					console.log(err);
 
-					const error = err.error;
+					const error = getHttpErrorBody(err);
 					this.errorMsmServerGetGroupAttribute = error;
 					this.errorMsmSeverListCategories = error;
 				},
@@ -111,7 +112,7 @@ export class EditGroupAttributeComponent {
 
 	init_categories() {
 		this.loadingCategories = true;
-		this.errorMsmSeverListCategories = '';
+		this.errorMsmSeverListCategories = null;
 		this.categoryService
 			.get_categories_by_select()
 			.pipe(
@@ -124,7 +125,7 @@ export class EditGroupAttributeComponent {
 					this.categories = next;
 				},
 				error: (err) => {
-					const error = err.error;
+					const error = getHttpErrorBody(err);
 					this.errorMsmSeverListCategories = error;
 				},
 			});
@@ -150,7 +151,7 @@ export class EditGroupAttributeComponent {
 					toastr.success(next.message);
 				},
 				error: (err) => {
-					const error = err.error;
+					const error = getHttpErrorBody(err);
 					this.errorMsmServer = error.message || '¡Error desconocido!';
 					toastr.error(this.errorMsmServer);
 

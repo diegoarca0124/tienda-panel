@@ -1,3 +1,4 @@
+import { getHttpErrorBody } from '@app/common/utils/get-http-error-body.util';
 import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -62,6 +63,8 @@ export class CreateCategoryComponent {
 	}
 
 	createCategory() {
+		this.validationCategoryError = {};
+		this.fieldErrors = createEmptyFieldErrorsCategory();
 		this.isCreateCategoryLoading = true;
 		if (this.category.icon == null) this.category.icon = '';
 
@@ -79,7 +82,7 @@ export class CreateCategoryComponent {
 					this._router.navigate(['/products/categories']);
 				},
 				error: (err: HttpErrorResponse) => {
-					const error = err.error;
+					const error = getHttpErrorBody(err);
 					toastr.error(error.message || '¡Error desconocido!');
 
 					if (error.validation) {

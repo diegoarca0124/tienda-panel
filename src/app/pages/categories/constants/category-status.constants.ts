@@ -6,9 +6,8 @@ export const CATEGORY_STATUS_DETAILS = {
 		'Sus productos se desactivarán en el panel y ocultarán en la tienda.',
 	],
 	activate: [
-		'La categoría volverá a estar disponible en el panel.',
-		'La categoría podrá mostrarse en la tienda.',
-		'Sus subcategorías se activarán en el panel y mostrarán en la tienda.',
-		'Sus productos se activarán en el panel y mostrarán en la tienda.',
+		'La categoría se activará.',
+		'Sus subcategorías conservarán su estado actual.',
+		'Sus productos conservarán su estado actual y no se publicarán automáticamente.',
 	],
 } as const;

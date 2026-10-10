@@ -1,0 +1,57 @@
+<div
+	class="modal fade"
+	id="modalRevokeCollaboratorSessions"
+	tabindex="-1"
+	aria-labelledby="modalRevokeCollaboratorSessionsTitle"
+	aria-describedby="modalRevokeCollaboratorSessionsDescription"
+	aria-hidden="true"
+	data-bs-backdrop="static"
+	data-bs-keyboard="false"
+>
+	<div class="modal-dialog modal-dialog-centered app-modal-dialog">
+		<div class="modal-content app-modal-content">
+			<div class="modal-header app-modal-header">
+				<h2 class="app-modal-title" id="modalRevokeCollaboratorSessionsTitle">Cerrar todas las sesiones</h2>
+				<button type="button" class="btn-close app-modal-close" data-bs-dismiss="modal" aria-label="Cerrar" [disabled]="isLoading"></button>
+			</div>
+			<div class="modal-body app-modal-body">
+				<div class="app-modal-description" id="modalRevokeCollaboratorSessionsDescription">
+					Se cerrarán las sesiones actuales de <strong>{{ collaborator?.names }} {{ collaborator?.surname }}</strong> en todos sus dispositivos.
+				</div>
+				<div class="app-modal-details">
+					<ul class="app-modal-details__list">
+						<li class="app-modal-details__item">
+							<span class="app-modal-details__bullet" aria-hidden="true"></span>
+							<span>
+								@if (collaborator?.status) {
+									La cuenta seguirá activa y podrá iniciar sesión nuevamente.
+								} @else {
+									La cuenta seguirá inactiva y no podrá iniciar sesión hasta que sea activada.
+								}
+							</span>
+						</li>
+					</ul>
+				</div>
+				@if (errorMessage) {
+					<div class="alert alert-danger mt-4 mb-0" role="alert">{{ errorMessage }}</div>
+				}
+			</div>
+			<div class="modal-footer app-modal-footer">
+				<button type="button" class="btn btn-sm btn-light-dark app-modal-button" data-bs-dismiss="modal" [disabled]="isLoading">Cancelar</button>
+				<button
+					type="button"
+					class="btn btn-sm btn-danger app-modal-button"
+					[disabled]="isLoading || !collaborator?.id"
+					(click)="confirmRequested.emit()"
+				>
+					@if (isLoading) {
+						<span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+						<span>Procesando...</span>
+					} @else {
+						<span>{{ errorMessage ? 'Reintentar cierre de sesiones' : 'Cerrar sesiones' }}</span>
+					}
+				</button>
+			</div>
+		</div>
+	</div>
+</div>

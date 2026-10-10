@@ -18,6 +18,7 @@ export interface ProductInterface {
 	priceRegular: any;
 	priceDiscount?: any;
 	minStock?: number | string;
+	stockQuantity?: number | null;
 	maxStock?: number | string;
 	maxOrderLimit?: number | string;
 	tags: string[];

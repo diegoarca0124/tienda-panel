@@ -23,7 +23,7 @@
 						</div>
 
 						<button
-							[disabled]="isCategoriesLoading"
+							[disabled]="isCategoriesLoading || loadingMove"
 							(click)="initCategories()"
 							class="btn btn-xs btn-light-primary page-header-action"
 							aria-label="Volver a categorías"
@@ -84,10 +84,9 @@
 												</div>
 
 												<div class="category-meta">
-													<span class="category-count">
-														{{ category.subcategories.length }}
-
-														<span>subcategorías</span>
+													<span class="category-status" [class.category-status-active]="category.status">
+														<span class="category-status-dot" aria-hidden="true"></span>
+														{{ category.status ? 'Activa' : 'Inactiva' }}
 													</span>
 
 													<span class="spinner-border spinner-border-sm text-primary" *ngIf="categoryDestination === category.id && loadingMove" role="status">

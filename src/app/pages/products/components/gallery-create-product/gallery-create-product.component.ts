@@ -1,3 +1,4 @@
+import { getHttpErrorBody } from '@app/common/utils/get-http-error-body.util';
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -96,7 +97,7 @@ export class GalleryCreateProductComponent {
 					toastr.success(next.message);
 				},
 				error: (err) => {
-					toastr.error(err.error.message);
+					toastr.error(getHttpErrorBody(err).message);
 				},
 			});
 	}
@@ -127,7 +128,7 @@ export class GalleryCreateProductComponent {
 			}),
 
 			catchError((err) => {
-				this.errorMsmSeverListPhotos = err?.error?.message || 'Error cargando fotos';
+				this.errorMsmSeverListPhotos = getHttpErrorBody(err, 'Error cargando fotos').message;
 				return of([]);
 			}),
 			finalize(() => (this.loadPhotos = false))
@@ -163,7 +164,7 @@ export class GalleryCreateProductComponent {
 					toastr.success(next.message);
 				},
 				error: (err) => {
-					toastr.error(err.error.message);
+					toastr.error(getHttpErrorBody(err).message);
 				},
 			});
 	}
@@ -185,7 +186,7 @@ export class GalleryCreateProductComponent {
 					toastr.success(next.message);
 				},
 				error: (err) => {
-					toastr.error(err.error.message);
+					toastr.error(getHttpErrorBody(err).message);
 				},
 			});
 	}
@@ -207,7 +208,7 @@ export class GalleryCreateProductComponent {
 					toastr.success(next.message);
 				},
 				error: (err) => {
-					toastr.error(err.error.message);
+					toastr.error(getHttpErrorBody(err).message);
 				},
 			});
 	}

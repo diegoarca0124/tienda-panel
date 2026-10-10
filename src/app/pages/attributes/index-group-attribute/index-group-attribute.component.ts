@@ -1,3 +1,4 @@
+import { getHttpErrorBody, type HttpErrorBody } from '@app/common/utils/get-http-error-body.util';
 import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, signal, WritableSignal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -44,7 +45,7 @@ export class IndexGroupAttributeComponent {
 	public sortColumns = sortColumnsAttributes;
 	public selectedIds = new Set<string>();
 	public attributeGroups: AttributeGroupInterface[] = [];
-	public errorMsmServerListGroupsAttributes: string = '';
+	public errorMsmServerListGroupsAttributes: HttpErrorBody | null = null;
 
 	constructor(
 		private _router: Router,
@@ -95,7 +96,7 @@ export class IndexGroupAttributeComponent {
 
 	init_groups(filter: string, page: number, status: string, limit: number, categories: string, sort: string) {
 		this.loading = true;
-		this.errorMsmServerListGroupsAttributes = '';
+		this.errorMsmServerListGroupsAttributes = null;
 		this.attributeService
 			.get_groups_attributes(filter, page, limit, status, categories, sort)
 			.pipe(
@@ -110,7 +111,7 @@ export class IndexGroupAttributeComponent {
 					this.attributeGroups = next.attributeGroups;
 				},
 				error: (err) => {
-					const error = err.error;
+					const error = getHttpErrorBody(err);
 					this.errorMsmServerListGroupsAttributes = error;
 				},
 			});
@@ -160,7 +161,7 @@ export class IndexGroupAttributeComponent {
 					closeModal(id);
 				},
 				error: (error: any) => {
-					toastr.error(error.error.message);
+					toastr.error(getHttpErrorBody(error).message);
 				},
 			});
 	}
@@ -245,7 +246,7 @@ export class IndexGroupAttributeComponent {
 					this.selectedIds.clear();
 				},
 				error: (error: any) => {
-					toastr.error(error.error.message);
+					toastr.error(getHttpErrorBody(error).message);
 				},
 			});
 	}

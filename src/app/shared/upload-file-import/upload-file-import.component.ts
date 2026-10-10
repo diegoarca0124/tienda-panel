@@ -16,6 +16,7 @@ export class UploadFileImportComponent implements OnChanges {
 
 	@Input() hasError: string | boolean | string[] | null = null;
 	@Input() previewImage: string | false | null = null;
+	@Input() isLoading = false;
 
 	@Output() fileSelected = new EventEmitter<File | null>();
 	@Output() validationError = new EventEmitter<string | null>();
@@ -51,6 +52,7 @@ export class UploadFileImportComponent implements OnChanges {
 	}
 
 	onFileChange(event: Event): void {
+		if (this.isLoading) return;
 		const input = event.target as HTMLInputElement;
 		const file = input.files?.[0];
 
@@ -80,6 +82,7 @@ export class UploadFileImportComponent implements OnChanges {
 	clearImage(event?: Event): void {
 		event?.preventDefault();
 		event?.stopPropagation();
+		if (this.isLoading) return;
 
 		this.imagePreview = null;
 		this.fileName = null;

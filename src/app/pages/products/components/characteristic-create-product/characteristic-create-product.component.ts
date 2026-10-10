@@ -1,3 +1,4 @@
+import { getHttpErrorBody } from '@app/common/utils/get-http-error-body.util';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, SimpleChanges } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { withMinLoadingTime } from '@app/common/interface/with-min-loading-time.interface';
@@ -114,7 +115,7 @@ export class CharacteristicCreateProductComponent {
 					this.const_attributes = structuredClone(this.attributes);
 				},
 				error: (err) => {
-					const error = err.error;
+					const error = getHttpErrorBody(err);
 					this.errorMsmSeverListAttributes = error.message;
 				},
 			});
@@ -144,7 +145,7 @@ export class CharacteristicCreateProductComponent {
 					console.log(this.products);
 				},
 				error: (err) => {
-					const error = err.error;
+					const error = getHttpErrorBody(err);
 					this.errorMsmServerListProducts = error.message;
 				},
 			});
@@ -171,7 +172,7 @@ export class CharacteristicCreateProductComponent {
 			}),
 
 			catchError((err) => {
-				this.errorMsmSeverListAttributes = err?.error?.message || 'Error cargando subcategorías';
+				this.errorMsmSeverListAttributes = getHttpErrorBody(err, 'Error cargando subcategorías').message;
 				return of([]);
 			}),
 
@@ -188,7 +189,7 @@ export class CharacteristicCreateProductComponent {
 				this.const_attributes = structuredClone(this.attributes);
 			}),
 			catchError((err) => {
-				this.errorMsmSeverListAttributes = err?.error?.message || 'Error cargando subcategorías';
+				this.errorMsmSeverListAttributes = getHttpErrorBody(err, 'Error cargando subcategorías').message;
 				return of([]);
 			})
 		);
@@ -253,7 +254,7 @@ export class CharacteristicCreateProductComponent {
 					toastr.success(next.message);
 				},
 				error: (err) => {
-					const error = err.error;
+					const error = getHttpErrorBody(err);
 					this.attributes.find((item) => item.id == group.id).attributes.find((attr: any) => attr.id == attribute.id).attributeValueId = snnipet;
 					toastr.error(error.message || '¡Error desconocido!');
 				},
