@@ -58,16 +58,20 @@ describe('TagifyInputComponent async options', () => {
 		fixture.detectChanges();
 		const input = fixture.nativeElement.querySelector('.tagify__input') as HTMLElement;
 		const placeholder = getComputedStyle(input, '::before');
+		const placeholderPosition = [placeholder.top, placeholder.height, placeholder.transform];
 		const style = getComputedStyle(input);
 		const height = fixture.nativeElement.querySelector('.app-tagify').getBoundingClientRect().height;
 		expect(placeholder.content).toContain('Buscar y seleccionar categorías');
 		expect(placeholder.opacity).toBe('1');
 		expect(getComputedStyle(input).visibility).toBe('visible');
+		expect(parseFloat(placeholder.top)).toBeCloseTo(input.clientHeight / 2, 0);
 		expect(input.clientHeight).toBeGreaterThanOrEqual(Math.floor(parseFloat(placeholder.lineHeight) + parseFloat(style.paddingTop) + parseFloat(style.paddingBottom)));
 		fixture.componentRef.setInput('disabled', false);
 		fixture.componentRef.setInput('loading', false);
 		fixture.detectChanges();
 		expect(fixture.nativeElement.querySelector('.app-tagify').getBoundingClientRect().height).toBe(height);
+		const enabledPlaceholder = getComputedStyle(input, '::before');
+		expect([enabledPlaceholder.top, enabledPlaceholder.height, enabledPlaceholder.transform]).toEqual(placeholderPosition);
 	});
 
 	it('opens category suggestions after the initially disabled field finishes loading', fakeAsync(() => {

@@ -80,10 +80,6 @@ app-tagify-input.category-tagify .app-tagify[disabled] .tagify__input {
 	margin: 0 !important;
 }
 
-app-tagify-input.category-tagify .app-tagify[disabled] .tagify__input::before {
-	position: absolute !important;
-}
-
 app-tagify-input.category-tagify .app-tagify.tagify--loading .tagify__input::before {
 	content: attr(data-placeholder) !important;
 }
@@ -146,6 +142,12 @@ app-tagify-input.category-tagify .app-tagify .tagify__input {
 
 /* Match the form-control-md placeholders used by Name and Description. */
 app-tagify-input.category-tagify .app-tagify .tagify__input::before {
+	position: absolute !important;
+	top: 50%;
+	height: auto;
+	margin: 0;
+	transform: translateY(-50%) !important;
+	transition: none;
 	font-family: inherit !important;
 	font-size: var(--form-control-text-md, 0.9375rem) !important;
 	line-height: var(--form-control-line-height, 1.4) !important;

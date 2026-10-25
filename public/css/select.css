@@ -299,6 +299,10 @@
 	white-space: nowrap;
 }
 
+.ng-select.ng-select-multiple .ng-input > input {
+	caret-color: transparent;
+}
+
 .app-select.ng-select.ng-select-multiple .ng-value-container .ng-value .app-select-value,
 .app-select.ng-select.ng-select-multiple .ng-value-container .ng-value .ng-value-label {
 	overflow: hidden;

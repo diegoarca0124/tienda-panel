@@ -305,7 +305,9 @@
 															<div class="skeleton skeleton-text skeleton-w-40"></div>
 														</div>
 													</td>
-													<td class="fixed-md"><div class="skeleton skeleton-badge"></div></td>
+													<td class="fixed-md">
+														<div class="skeleton skeleton-badge" style="width: 99.03px !important; height: 26px !important; border-radius: 0.5rem !important"></div>
+													</td>
 													<td class="fixed-sm"><div class="skeleton skeleton-badge"></div></td>
 													<td class="fixed-xs text-center p-0"><div class="skeleton skeleton-btn"></div></td>
 												</tr>
@@ -397,9 +399,9 @@
 																[loadBtnDelete]="isUpdatingSingleStatus"
 															></app-modal-delete>
 															<div class="dropdown-menu dropdown-menu-end action-dropdown-menu action-dropdown-menu-compact">
-																<a class="dropdown-item action-dropdown-item action-dropdown-item-compact" [routerLink]="['/products/attributes/groups/' + item.id + '/edit']">
-																	<span class="action-dropdown-item-icon"><ion-icon name="create-outline" class="fs-4" aria-hidden="true"></ion-icon></span>
-																	<span class="action-dropdown-item-title">Editar</span>
+																<a class="dropdown-item action-dropdown-item action-dropdown-item-compact" [routerLink]="['/products/attributes/groups/' + item.id + '/settings']">
+																	<span class="action-dropdown-item-icon"><ion-icon name="settings-outline" class="fs-4" aria-hidden="true"></ion-icon></span>
+																	<span class="action-dropdown-item-title">Configuraciones</span>
 																</a>
 																<a class="dropdown-item action-dropdown-item action-dropdown-item-compact" data-bs-toggle="modal" [attr.data-bs-target]="'#modalDelete-' + item.id">
 																	<span class="action-dropdown-item-icon">

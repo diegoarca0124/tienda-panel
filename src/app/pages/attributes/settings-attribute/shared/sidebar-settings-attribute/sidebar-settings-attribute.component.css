@@ -36,17 +36,9 @@
 	border: 1px solid var(--bs-gray-200);
 }
 
-.settings-sidebar .section-sidebar-item.active {
-	border-color: rgba(var(--bs-primary-rgb), 0.3);
-}
-
 .settings-sidebar .section-sidebar-item:hover:not(.active):not(:focus-visible) {
 	color: var(--bs-gray-700);
 	background: transparent;
-}
-
-.settings-sidebar .section-sidebar-copy {
-	gap: 0.25rem;
 }
 
 .settings-sidebar .section-sidebar-copy small {

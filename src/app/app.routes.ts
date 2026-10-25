@@ -165,8 +165,21 @@ export const routes: Routes = [
 			},
 			{
 				path: 'groups/:id/edit',
+				redirectTo: 'groups/:id/settings',
+				pathMatch: 'full',
+			},
+			{
+				path: 'groups/:id/settings',
 				canActivate: [AuthGuard],
-				loadComponent: () => import('./pages/attributes/edit-group-attribute/edit-group-attribute.component').then((m) => m.EditGroupAttributeComponent),
+				loadComponent: () => import('./pages/attributes/settings-attribute/settings-attribute.component').then((m) => m.SettingsAttributeComponent),
+				children: [
+					{ path: '', redirectTo: 'group-attribute', pathMatch: 'full' },
+					{
+						path: 'group-attribute',
+						loadComponent: () =>
+							import('./pages/attributes/settings-attribute/views/edit-group-attribute/edit-group-attribute.component').then((m) => m.EditGroupAttributeComponent),
+					},
+				],
 			},
 			{
 				path: 'groups/:id/attributes',

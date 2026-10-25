@@ -6,17 +6,15 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 import { IconCheckComponent } from '@app/icons/icon-check/icon-check.component';
 import { AlertComponent } from '@app/shared/alert/alert.component';
 import { NotFoundComponent } from '@app/shared/not-found/not-found.component';
-import { SidebarComponent } from '@app/shared/sidebar/sidebar.component';
-import { TopbarComponent } from '@app/shared/topbar/topbar.component';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { finalize, forkJoin, Subject, switchMap, takeUntil } from 'rxjs';
-import { AttributeGroupInterface } from '../interfaces/attribute-group.interface';
-import { createEmptyGroupAttribute } from '../utils/empties.util';
+import { AttributeGroupInterface } from '../../../interfaces/attribute-group.interface';
+import { createEmptyGroupAttribute } from '../../../utils/empties.util';
 import { CategoryService } from '@app/services/category.service';
 import { withMinLoadingTime } from '@app/common/interface/with-min-loading-time.interface';
 import { GLOBAL } from '@app/services/GLOBAL';
 import { AttributeService } from '@app/services/attribute.service';
-import { showErrorsGroupAttribute } from '../constants/show-errors-group-attribute.constant';
+import { showErrorsGroupAttribute } from '../../../constants/show-errors-group-attribute.constant';
 import { ValidationPopoverComponent } from '@app/shared/validation-popover/validation-popover.component';
 import { TextFieldModule } from '@angular/cdk/text-field';
 import { TextareaAutoresizeDirective } from '@app/common/directives/textarea-autoresize.directive';
@@ -25,8 +23,6 @@ declare const toastr: any;
 @Component({
 	selector: 'app-edit-group-attribute',
 	imports: [
-		TopbarComponent,
-		SidebarComponent,
 		CommonModule,
 		FormsModule,
 		RouterModule,
@@ -66,7 +62,7 @@ export class EditGroupAttributeComponent {
 	) {}
 
 	ngOnInit(): void {
-		this._route.params
+		(this._route.parent ?? this._route).params
 			.pipe(
 				takeUntil(this.destroy$),
 				switchMap((params) => {
