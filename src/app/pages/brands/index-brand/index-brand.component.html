@@ -63,7 +63,7 @@
 							<div class="list-toolbar-actions">
 								<div class="dropdown action-dropdown">
 									<button
-										id="categoryOptionsButton"
+										id="brandOptionsButton"
 										type="button"
 										class="btn btn-sm btn-dark"
 										data-bs-toggle="dropdown"
@@ -77,16 +77,16 @@
 										<span class="app-btn-label">Opciones</span>
 										<ion-icon name="chevron-down-outline" class="app-btn-chevron" aria-hidden="true"></ion-icon>
 									</button>
-									<ul class="dropdown-menu dropdown-menu-end action-dropdown-menu" aria-labelledby="categoryOptionsButton"></ul>
+									<ul class="dropdown-menu dropdown-menu-end action-dropdown-menu" aria-labelledby="brandOptionsButton"></ul>
 								</div>
 							</div>
 						</div>
 
 						<div class="list-filter-row my-7">
 							<div class="list-filter-item list-filter-md">
-								<label class="list-filter-label" for="categoryStatus">Estado</label>
+								<label class="list-filter-label" for="brandStatus">Estado</label>
 								<ng-select
-									id="categoryStatus"
+									id="brandStatus"
 									[items]="statusFilters"
 									bindLabel="name"
 									bindValue="value"
@@ -118,9 +118,9 @@
 							</div>
 
 							<div class="list-filter-item list-filter-md">
-								<label class="list-filter-label" for="categorySort">Orden</label>
+								<label class="list-filter-label" for="brandSort">Orden</label>
 								<ng-select
-									id="categorySort"
+									id="brandSort"
 									[items]="sortFilters"
 									bindLabel="name"
 									bindValue="value"
@@ -218,9 +218,9 @@
 														<div class="dropdown-menu dropdown-menu-end action-dropdown-menu action-dropdown-menu-compact" aria-labelledby="brandsTableOptions">
 															<a
 																class="dropdown-item action-dropdown-item action-dropdown-item-compact"
-																[class.disabled]="selectedBrandsIds.size === 0"
-																[attr.data-bs-toggle]="selectedBrandsIds.size > 0 ? 'modal' : null"
-																[attr.data-bs-target]="selectedBrandsIds.size > 0 ? '#modalMultipleActive' : null"
+																[class.disabled]="!canUpdateSelectedBrands"
+																[attr.data-bs-toggle]="canUpdateSelectedBrands ? 'modal' : null"
+																[attr.data-bs-target]="canUpdateSelectedBrands ? '#modalMultipleActive' : null"
 																style="text-transform: capitalize !important"
 															>
 																<span class="action-dropdown-item-icon">
@@ -230,9 +230,9 @@
 															</a>
 															<a
 																class="dropdown-item action-dropdown-item action-dropdown-item-compact"
-																[class.disabled]="selectedBrandsIds.size === 0"
-																[attr.data-bs-toggle]="selectedBrandsIds.size > 0 ? 'modal' : null"
-																[attr.data-bs-target]="selectedBrandsIds.size > 0 ? '#modalMultipleDisabled' : null"
+																[class.disabled]="!canUpdateSelectedBrands"
+																[attr.data-bs-toggle]="canUpdateSelectedBrands ? 'modal' : null"
+																[attr.data-bs-target]="canUpdateSelectedBrands ? '#modalMultipleDisabled' : null"
 																style="text-transform: capitalize !important"
 															>
 																<span class="action-dropdown-item-icon">
@@ -243,7 +243,7 @@
 															<button
 																type="button"
 																class="dropdown-item action-dropdown-item action-dropdown-item-compact"
-																[disabled]="areAllBrandsSelected"
+																[disabled]="areAllBrandsSelected || selectedBrandsIds.size >= maxSelectedBrands"
 																(click)="selectAllBrands()"
 															>
 																<span class="action-dropdown-item-icon">
@@ -301,7 +301,10 @@
 													</td>
 
 													<td class="fixed-lg">
-														<div class="skeleton skeleton-text skeleton-w-100" style="height: 24.02px"></div>
+														<div class="brand-website-link" aria-hidden="true">
+															<div class="skeleton skeleton-text skeleton-w-60"></div>
+															<div class="skeleton brand-website-skeleton-icon"></div>
+														</div>
 													</td>
 
 													<td class="fixed-md">
@@ -343,12 +346,18 @@
 																class="form-check-input cursor-pointer"
 																type="checkbox"
 																[checked]="selectedBrandsIds.has(item.id!)"
+																[disabled]="!item.id || (selectedBrandsIds.size >= maxSelectedBrands && !selectedBrandsIds.has(item.id!))"
+																[attr.title]="
+																	selectedBrandsIds.size >= maxSelectedBrands && !selectedBrandsIds.has(item.id!)
+																		? 'Máximo ' + maxSelectedBrands + ' registros seleccionados'
+																		: null
+																"
 																(change)="onBrandsSelectionChange(item.id!, $any($event.target).checked)"
 															/>
 														</label>
 													</td>
 
-													<!-- Categoría -->
+													<!-- Marca -->
 													<td class="flex-column">
 														<div class="d-flex align-items-center gap-2" style="min-width: 0">
 															<div class="symbol me-3" style="height: 30px; width: 30px; border: 1px dashed #e3e3e3; flex-shrink: 0">
@@ -378,9 +387,6 @@
 																[attr.aria-label]="'Abrir sitio web de ' + item.name + ' en una nueva ventana'"
 															>
 																<div class="d-flex align-items-center gap-1 text-truncate" style="max-width: 100%">
-																	<span class="brand-website-icon">
-																		<ion-icon name="globe-outline" aria-hidden="true"></ion-icon>
-																	</span>
 																	<span class="brand-website-url">{{ item.websiteUrl }}</span>
 																</div>
 																<ion-icon class="brand-website-external" name="open-outline" aria-hidden="true"></ion-icon>
@@ -459,7 +465,7 @@
 																data-bs-toggle="dropdown"
 																data-bs-offset="0,7"
 																aria-expanded="false"
-																[attr.aria-label]="'Opciones de la categoría ' + item.name"
+																[attr.aria-label]="'Opciones de la marca ' + item.name"
 																title="Opciones"
 															>
 																<i class="bi bi-three-dots" aria-hidden="true"></i>
@@ -467,20 +473,22 @@
 
 															<app-modal-delete
 																[id]="'modalDelete-' + item.id"
-																[title]="item.status ? 'Desactivar categoría' : 'Activar categoría'"
+																[title]="item.status ? 'Desactivar marca' : 'Activar marca'"
 																[description]="
 																	item.status
-																		? `La categoría <b>${item.name}</b> dejará de estar disponible y se ocultará temporalmente del sistema.`
-																		: `La categoría <b>${item.name}</b> volverá a estar disponible y visible dentro del sistema.`
+																		? `Se desactivará la marca <b>${item.name}</b> y sus productos pasarán a borrador.`
+																		: `Se activará la marca <b>${item.name}</b>. Sus productos no se publicarán automáticamente.`
 																"
 																[textButton]="item.status ? 'Desactivar' : 'Activar'"
+																[detailsTitle]="item.status ? 'Al desactivar esta marca:' : 'Al activar esta marca:'"
+																[details]="item.status ? brandStatusDetails.deactivate : brandStatusDetails.activate"
 																(actionConfirmed)="onUpdateStatus(item.id!, item.status!)"
 																[loadBtnDelete]="isUpdatingSingleStatus"
 															></app-modal-delete>
 
 															<div class="dropdown-menu dropdown-menu-end action-dropdown-menu action-dropdown-menu-compact">
 																<!-- Editar -->
-																<a class="dropdown-item action-dropdown-item action-dropdown-item-compact" [routerLink]="['/products/brands/' + item.id + '/edit']">
+																<a class="dropdown-item action-dropdown-item action-dropdown-item-compact" [routerLink]="['/products/brands/' + item.id + '/settings']">
 																	<span class="action-dropdown-item-icon">
 																		<ion-icon name="create-outline" class="fs-4" aria-hidden="true"></ion-icon>
 																	</span>
@@ -555,7 +563,7 @@
 											[(ngModel)]="limit"
 											(change)="onLimitChange()"
 											[disabled]="isBrandsLoading"
-											aria-label="Cantidad de categorías por página"
+											aria-label="Cantidad de marcas por página"
 										>
 											@for (pageLimit of paginationLimits; track pageLimit) {
 												<option [ngValue]="pageLimit">{{ pageLimit }}</option>
@@ -584,6 +592,8 @@
 	[description]="'El estado de las marcas serán actualizadas. Verifica tu selección antes de continuar, ya que este cambio se aplicará a todos.'"
 	[textButton]="'Activar'"
 	(actionConfirmed)="onUpdateStatusMultiple(true)"
+	[detailsTitle]="'Al activar estas marcas:'"
+	[details]="brandStatusDetails.activate"
 	[loadBtnDelete]="isUpdatingMultipleStatuses"
 ></app-modal-delete>
 
@@ -593,5 +603,7 @@
 	[description]="'El estado de las marcas serán actualizadas. Verifica tu selección antes de continuar, ya que este cambio se aplicará a todos.'"
 	[textButton]="'Desactivar'"
 	(actionConfirmed)="onUpdateStatusMultiple(false)"
-	[loadBtnDelete]="isUpdatingSingleStatus"
+	[detailsTitle]="'Al desactivar estas marcas:'"
+	[details]="brandStatusDetails.deactivate"
+	[loadBtnDelete]="isUpdatingMultipleStatuses"
 ></app-modal-delete>

@@ -15,10 +15,10 @@
 	justify-content: space-between;
 	gap: 0.45rem;
 	width: 100%;
-	padding: 0.35rem 0.55rem;
+	padding: 0;
 	color: #4b5d87;
-	background: #f1f5f9;
-	border: 1px solid rgba(var(--bs-primary-rgb), 0.2);
+	background: transparent;
+	border: 0;
 	border-radius: 0.55rem;
 	font-size: 0.75rem;
 	font-weight: 600;
@@ -27,20 +27,14 @@
 
 .brand-website-link:hover {
 	color: var(--bs-primary);
-	background: var(--bs-primary-light, #eef6ff);
-	border-color: rgba(var(--bs-primary-rgb), 0.2);
+	background: transparent;
 	text-decoration: none;
 }
 
-.brand-website-icon,
 .brand-website-external {
 	display: inline-flex;
 	align-items: center;
 	flex: 0 0 auto;
-}
-
-.brand-website-icon {
-	font-size: 1rem;
 }
 
 .brand-website-external {
@@ -52,6 +46,12 @@
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
+}
+
+.brand-website-skeleton-icon {
+	flex: 0 0 0.85rem;
+	height: 0.85rem;
+	border-radius: 0.125rem;
 }
 
 .brand-website-empty {

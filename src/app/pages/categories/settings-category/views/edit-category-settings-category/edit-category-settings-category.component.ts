@@ -92,10 +92,7 @@ export class EditCategorySettingsCategoryComponent {
 		const categoryId = this.id;
 		const contextVersion = this.categoryContextVersion;
 		const isCurrentContext = () => contextVersion === this.categoryContextVersion && categoryId === this.id;
-		this.validationCategoryError = {};
-		this.fieldCategoryErrors = createEmptyFieldErrorsCategory();
 		this.isUpdateCategoryLoading = true;
-
 		this.categoryService
 			.updateCategory(categoryId, { ...this.category })
 			.pipe(
@@ -109,6 +106,7 @@ export class EditCategorySettingsCategoryComponent {
 			.subscribe({
 				next: (response: { data: CategoryInterface; message: string }) => {
 					if (!isCurrentContext()) return;
+					this.fieldCategoryErrors = createEmptyFieldErrorsCategory();
 					this.validationCategoryError = {};
 					this.category = response.data;
 					toastr.success(response.message);

@@ -21,6 +21,7 @@ export class TableProductsCategoryComponent {
 	readonly paginationLimits = PAGINATION_LIMITS;
 	@Input() products: CategoryProductInterface[] = [];
 	@Input() isLoading: boolean = false;
+	@Input() isInteractionDisabled: boolean = false;
 	@Input() loadError: Record<string, any> | null = null;
 	@Input() selectedProductsIds = new Set<string>();
 	@Input() currentPage: number = 1;

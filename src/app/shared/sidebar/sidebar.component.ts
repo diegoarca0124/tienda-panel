@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
+import { NavigationEnd, Router, RouterModule } from '@angular/router';
+import { filter, Subject, takeUntil } from 'rxjs';
 import { IconUsersComponent } from '../../icons/icon-users/icon-users.component';
 import { IconInventoryComponent } from '@app/icons/icon-inventory/icon-inventory.component';
 declare var $: any;
@@ -20,10 +21,24 @@ declare var KTApp: any;
 	styleUrl: './sidebar.component.css',
 })
 export class SidebarComponent {
+	private readonly destroy$ = new Subject<void>();
+	private initializationTimer?: ReturnType<typeof setTimeout>;
+	public expandedMenu: 'users' | 'products' | null = null;
+	public animateMenu = false;
+
 	constructor(public router: Router) {}
 
 	ngOnInit() {
-		setTimeout(() => {
+		this.syncExpandedMenu(this.router.url);
+		this.router.events
+			.pipe(
+				filter((event): event is NavigationEnd => event instanceof NavigationEnd),
+				takeUntil(this.destroy$)
+			)
+			.subscribe((event) => {
+				this.syncExpandedMenu(event.urlAfterRedirects);
+			});
+		this.initializationTimer = setTimeout(() => {
 			KTApp.init();
 			KTUtil.init();
 			KTDrawer.init();
@@ -33,5 +48,21 @@ export class SidebarComponent {
 			KTScrolltop.init();
 			KTMenu.init();
 		}, 50);
+	}
+
+	ngOnDestroy(): void {
+		clearTimeout(this.initializationTimer);
+		this.destroy$.next();
+		this.destroy$.complete();
+	}
+
+	toggleMenu(menu: 'users' | 'products'): void {
+		this.animateMenu = true;
+		this.expandedMenu = this.expandedMenu === menu ? null : menu;
+	}
+
+	private syncExpandedMenu(url: string): void {
+		this.animateMenu = false;
+		this.expandedMenu = url.startsWith('/users') ? 'users' : url.startsWith('/products') ? 'products' : null;
 	}
 }

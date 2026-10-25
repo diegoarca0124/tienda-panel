@@ -28,6 +28,7 @@ import { sortOptions, statusOptions } from '../constants/selectors.constant';
 import { GetBrandsRESI, UpdateBrandsStatusRESI, UpdateBrandStatusRESI } from '../interfaces/response.interface';
 import { BrandInterface } from '../interfaces/data.interface';
 import { DomSanitizer } from '@angular/platform-browser';
+import { BRAND_STATUS_DETAILS } from '../constants/brand-status.constants';
 declare const toastr: any;
 declare const $: any;
 type BrandsLoadResult = { data: GetBrandsRESI; error: null } | { data: null; error: HttpErrorResponse };
@@ -71,8 +72,10 @@ export class IndexBrandComponent {
 	public readonly statusFilters = statusOptions;
 	public readonly sortFilters = sortOptions;
 	public readonly countryFilters = countries;
+	public readonly brandStatusDetails = BRAND_STATUS_DETAILS;
 
 	public selectedBrandsIds = new Set<string>();
+	public readonly maxSelectedBrands = 20;
 	public isBrandsLoading: boolean = true;
 	public brandsLoadError: Record<string, any> | null = null;
 
@@ -128,6 +131,7 @@ export class IndexBrandComponent {
 				switchMap((query) => {
 					this.isBrandsLoading = true;
 					this.brandsLoadError = null;
+					this.clearBrandsTable();
 					return this.brandService.getBrands(query).pipe(
 						withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
 						map(
@@ -149,6 +153,7 @@ export class IndexBrandComponent {
 			.subscribe(({ data, error }) => {
 				this.isBrandsLoading = false;
 				if (error) {
+					this.clearBrandsTable();
 					this.brandsLoadError = getHttpErrorBody(error);
 					return;
 				}
@@ -159,6 +164,20 @@ export class IndexBrandComponent {
 				this.totalBrands = data.meta.totalBrands;
 				this.syncCurrentPage(data.meta.currentPage);
 			});
+	}
+
+	private clearBrandsTable(): void {
+		this.brands = [];
+		this.totalBrands = 0;
+		this.totalPages = 0;
+		this.selectedBrandsIds.clear();
+	}
+
+	get canUpdateSelectedBrands(): boolean {
+		return !this.isBrandsLoading && !this.brandsLoadError && !this.isUpdatingMultipleStatuses() && !this.isUpdatingSingleStatus()
+			&& this.selectedBrandsIds.size > 0
+			&& this.selectedBrandsIds.size <= this.maxSelectedBrands
+			&& [...this.selectedBrandsIds].every((id) => this.brands.some((brand) => brand.id === id));
 	}
 
 	syncCurrentPage(currentPage: number): void {
@@ -201,27 +220,7 @@ export class IndexBrandComponent {
 	}
 
 	private refreshBrands(): void {
-		this.brandService
-			.getBrands({
-				filter: this.filter,
-				page: this.currentPage,
-				limit: this.limit,
-				status: this.selectedStatus,
-				sort: this.selectedSort,
-				countries: this.selectedCountries,
-			})
-			.pipe(takeUntil(this.destroy$))
-			.subscribe({
-				next: (response: GetBrandsRESI) => {
-					this.brands = this.mapBrands(response.brands);
-					this.totalPages = response.meta.totalPages;
-					this.totalBrands = response.meta.totalBrands;
-					this.syncCurrentPage(response.meta.currentPage);
-				},
-				error: (error: HttpErrorResponse) => {
-					toastr.error(getHttpErrorBody(error, 'No fue posible actualizar la lista.').message);
-				},
-			});
+		this.loadBrands();
 	}
 
 	getCountries(countries: string[]): void {
@@ -234,7 +233,9 @@ export class IndexBrandComponent {
 	}
 
 	onBrandsSelectionChange(id: string, checked: boolean): void {
+		if (!id || this.isBrandsLoading || this.brandsLoadError) return;
 		if (checked) {
+			if (!this.selectedBrandsIds.has(id) && this.selectedBrandsIds.size >= this.maxSelectedBrands) return;
 			this.selectedBrandsIds.add(id);
 		} else {
 			this.selectedBrandsIds.delete(id);
@@ -260,7 +261,15 @@ export class IndexBrandComponent {
 	}
 
 	selectAllBrands(): void {
-		this.selectedBrandsIds = new Set(this.brands.map((brand) => brand.id).filter((id): id is string => Boolean(id)));
+		if (this.isBrandsLoading || this.brandsLoadError) return;
+		const ids = [...new Set(this.brands.map((brand) => brand.id).filter((id): id is string => Boolean(id)))];
+		for (const id of ids) {
+			if (this.selectedBrandsIds.size >= this.maxSelectedBrands) break;
+			this.selectedBrandsIds.add(id);
+		}
+		if (ids.some((id) => !this.selectedBrandsIds.has(id))) {
+			toastr.info(`Puedes seleccionar un máximo de ${this.maxSelectedBrands} registros.`);
+		}
 	}
 
 	get areAllBrandsSelected(): boolean {
@@ -361,6 +370,7 @@ export class IndexBrandComponent {
 	}
 
 	onUpdateStatusMultiple(status: boolean) {
+		if (!this.canUpdateSelectedBrands) return;
 		this.isUpdatingMultipleStatuses.set(true);
 		this.brandService
 			.updateBrandsStatus({

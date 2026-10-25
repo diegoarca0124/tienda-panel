@@ -118,6 +118,20 @@ textarea::placeholder,
    INPUTS, SELECTS Y TEXTAREAS
 ========================================================= */
 
+:is(input:not([type='checkbox'], [type='radio'], [type='range'], [type='color'], [type='button'], [type='submit'], [type='reset']), select, textarea):disabled {
+	background-color: var(--bs-body-bg, #ffffff);
+	opacity: 1;
+}
+
+.form-control.form-control-solid:disabled,
+.form-select.form-select-solid:disabled {
+	background-color: var(--bs-gray-100);
+}
+
+.ng-select.ng-select-disabled > .ng-select-container {
+	background-color: #ffffff;
+}
+
 .form-field .form-control,
 .form-field .form-select {
 	box-sizing: border-box;
@@ -158,7 +172,7 @@ textarea::placeholder,
 .form-field .form-control:disabled,
 .form-field .form-select:disabled {
 	color: #98a2b3;
-	background-color: #f4f6f8;
+	background-color: #ffffff;
 	cursor: not-allowed;
 	opacity: 1;
 }

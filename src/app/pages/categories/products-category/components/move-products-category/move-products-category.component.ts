@@ -1,11 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
-import { PadCodePipe } from '@app/common/pipes/pad-code.pipe';
 import { CategoryWithSubcategoriesRESI, MappingSubcategoryInterface } from '../../../interfaces/response.interface';
 
 @Component({
 	selector: 'app-move-products-category',
-	imports: [CommonModule, PadCodePipe],
+	imports: [CommonModule],
 	templateUrl: './move-products-category.component.html',
 	styleUrl: './move-products-category.component.css',
 	schemas: [CUSTOM_ELEMENTS_SCHEMA],

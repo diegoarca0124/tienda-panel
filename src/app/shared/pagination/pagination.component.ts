@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
 
 type PaginationItem = number | '...';
 
@@ -11,12 +11,23 @@ type PaginationItem = number | '...';
 	styleUrls: ['./pagination.component.css'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PaginationComponent {
+export class PaginationComponent implements OnChanges {
 	@Input() currentPage = 1;
 	@Input() totalPages = 1;
 	@Input() isLoading = false;
 
 	@Output() pageChanged = new EventEmitter<number>();
+	private lastTotalPages = 0;
+
+	ngOnChanges(): void {
+		if (!this.isLoading) {
+			this.lastTotalPages = Math.max(0, this.totalPages);
+		}
+	}
+
+	get visibleTotalPages(): number {
+		return this.isLoading ? this.lastTotalPages : Math.max(0, this.totalPages);
+	}
 
 	changePage(page: number): void {
 		if (this.isLoading || page < 1 || page > this.totalPages || page === this.currentPage) {
@@ -33,7 +44,7 @@ export class PaginationComponent {
 	}
 
 	get pages(): PaginationItem[] {
-		const total = Math.max(0, this.totalPages);
+		const total = this.visibleTotalPages;
 		const current = Math.min(Math.max(1, this.currentPage), Math.max(1, total));
 
 		if (total === 0) {

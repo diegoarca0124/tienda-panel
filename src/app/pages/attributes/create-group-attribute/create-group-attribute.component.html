@@ -1,178 +1,161 @@
 <div class="app-page flex-column flex-column-fluid" id="kt_app_page">
 	<app-topbar></app-topbar>
+
 	<div class="app-wrapper flex-column flex-row-fluid" id="kt_app_wrapper">
 		<app-sidebar></app-sidebar>
+
 		<div class="app-main flex-column flex-row-fluid">
 			<div class="d-flex flex-column flex-column-fluid">
-				<div id="kt_app_toolbar" class="app-toolbar py-5 py-lg-6">
-					<div id="kt_app_toolbar_container" class="app-container container-fluid d-flex flex-stack">
-						<div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
-							<h1 class="page-heading d-flex text-gray-700 fs-3 flex justify-content-start my-0 align-items-center text-uppercase ls-1px fw-700">Grupos Atributos</h1>
+				<div id="kt_app_toolbar" class="app-toolbar page-header py-5 py-lg-6">
+					<div id="kt_app_toolbar_container" class="app-container container-fluid page-header-layout">
+						<div class="page-header-content">
+							<nav aria-label="Navegación actual">
+								<ol class="page-header-breadcrumb">
+									<li class="page-header-breadcrumb-item">
+										<a class="page-header-breadcrumb-link" [routerLink]="['/products/attributes/groups']">Grupos de atributos</a>
+									</li>
 
-							<ul class="breadcrumb breadcrumb-separatorless fs-7 my-0 pt-1">
-								<li class="breadcrumb-item text-muted">
-									<a [routerLink]="['/products/attributes/groups']" class="text-muted text-hover-primary">Grupos</a>
-								</li>
-								<li class="breadcrumb-item">
-									<span class="bullet bg-gray-400 w-5px h-2px"></span>
-								</li>
-								<li class="breadcrumb-item text-primary fw-600">Nuevo Grupo</li>
-							</ul>
+									<li class="page-header-breadcrumb-item page-header-breadcrumb-active" aria-current="page">Nuevo grupo de atributos</li>
+								</ol>
+							</nav>
+
+							<h1 class="page-header-title">Nuevo grupo de atributos</h1>
 						</div>
-						<div class="d-flex align-items-center gap-2 gap-lg-3"></div>
 					</div>
 				</div>
-				<div class="app-content flex-column-fluid">
-					<div class="app-container container">
-						<div class="card mb-10">
-							<!--begin::Card header-->
-							<div class="card-header" style="background-color: #f1f5f9">
-								<!--begin::Heading-->
-								<h4 class="card-title m-0 d-flex flex-column">
-									<span class="fs-5 fw-600">Nuevo Grupo</span>
-									<span class="text-gray-600 mt-1 fw-400 fs-0-9rem">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eligendi, quaerat..</span>
-								</h4>
-								<!--end::Heading-->
-							</div>
-							<!--end::Card header-->
 
-							<!--begin::Card body-->
-							<ng-container>
-								<div class="card-body">
-									<div class="col-lg-6">
-										<div class="d-flex flex-column mb-5 fv-row fv-plugins-icon-container">
-											<div class="d-flex align-items-center justify-content-between mb-1">
-												<label class="required fw-500 text-gray-700 fs-6 mb-1">Nombre</label>
-												<small class="text-danger cursor-pointer d-flex align-items-center gap-1" *ngIf="errorsGroupAtribute?.name" (click)="showErrors.name = !showErrors.name">
-													<ion-icon name="information-circle-outline" class="validation-icon"></ion-icon>
-													{{ showErrors.name ? 'Ocultar errores' : 'Ver errores' }}
-												</small>
-											</div>
-
-											<input
-												type="text"
-												class="form-control mb-1"
-												placeholder="Certificaciones Alimenticias"
-												name="name"
-												[(ngModel)]="groupAttribute.name"
-												[ngClass]="{ 'is-invalid': errorsGroupAtribute?.name }"
-											/>
-											<span class="fs-8 text-muted">Agrupa atributos relacionados.</span>
-
-											<div class="validation-wrapper" [class.open]="showErrors.name">
-												<app-validation-popover [errors]="errorsGroupAtribute?.name"></app-validation-popover>
-											</div>
-										</div>
-									</div>
-									<div class="col-lg-12">
-										<div class="d-flex flex-column mb-5 fv-row fv-plugins-icon-container">
-											<div class="d-flex align-items-center justify-content-between mb-1">
-												<label class="required fw-500 text-gray-700 fs-6 mb-1">Descripción</label>
-
-												<small
-													class="text-danger cursor-pointer d-flex align-items-center gap-1"
-													*ngIf="errorsGroupAtribute?.description"
-													(click)="showErrors.description = !showErrors.description"
-												>
-													<ion-icon name="information-circle-outline" class="validation-icon"></ion-icon>
-													{{ showErrors.description ? 'Ocultar errores' : 'Ver errores' }}
-												</small>
-											</div>
-
-											<textarea
-												type="text"
-												class="form-control mb-1"
-												placeholder="Atributos de certificaciones alimenticias"
-												name="description"
-												[(ngModel)]="groupAttribute.description"
-												[ngClass]="{ 'is-invalid': errorsGroupAtribute?.description }"
-												textAreaAutoResize
-												rows="3"
-											></textarea>
-
-											<span class="fs-8 text-muted">Descripción breve del grupo.</span>
-
-											<div class="validation-wrapper" [class.open]="showErrors.description">
-												<app-validation-popover [errors]="errorsGroupAtribute?.description"></app-validation-popover>
-											</div>
-										</div>
-									</div>
-									<div class="col-lg-12">
-										<div class="d-flex flex-column fv-row fv-plugins-icon-container">
-											<div class="d-flex align-items-center justify-content-between mb-1">
-												<label class="required fw-500 text-gray-700 fs-6 mb-1">Categoría</label>
-
-												<div class="d-flex gap-3">
-													<small class="text-primary cursor-pointer" (click)="init_categories()">Recargar</small>
-													<small
-														class="text-danger cursor-pointer d-flex align-items-center gap-1"
-														*ngIf="errorsGroupAtribute?.categories"
-														(click)="showErrors.categories = !showErrors.categories"
-													>
-														<ion-icon name="information-circle-outline" class="validation-icon"></ion-icon>
-														{{ showErrors.categories ? 'Ocultar errores' : 'Ver errores' }}
-													</small>
+				<div class="app-content flex-column-fluid mt-5">
+					<div class="app-container container-fluid">
+						<div class="form-card mb-10">
+							<div class="form-card-body">
+								<section class="mb-7">
+									<header class="border-bottom pb-3 mb-4">
+										<h2 class="form-card-title">Información general</h2>
+										<p class="form-card-description">Datos principales para identificar el grupo y asociarlo a sus categorías.</p>
+									</header>
+									<div class="row g-4">
+										<div class="col-12 col-md-6">
+											<div class="form-field">
+												<div class="d-flex align-items-center justify-content-between gap-2">
+													<label class="form-field-label required" for="attributeGroupName">Nombre</label>
+													<button *ngIf="validationGroupAttributeError.name" type="button" class="form-error-toggle" (click)="fieldErrors.name = !fieldErrors.name">
+														{{ fieldErrors.name ? 'Ocultar errores' : 'Ver errores' }}
+													</button>
+												</div>
+												<input
+													id="attributeGroupName"
+													type="text"
+													class="form-control form-control-md"
+													placeholder="Ej. Certificaciones alimenticias"
+													name="name"
+													[(ngModel)]="groupAttribute.name"
+													[class.is-invalid]="validationGroupAttributeError.name"
+													[disabled]="isCreateGroupAttributeLoading"
+												/>
+												<p class="form-field-help">Nombre que identifica los atributos relacionados.</p>
+												<div class="validation-wrapper" [class.open]="fieldErrors.name">
+													<app-validation-popover [errors]="validationGroupAttributeError.name!"></app-validation-popover>
 												</div>
 											</div>
-											<!--end::Label-->
-
-											<div [ngClass]="{ 'is-invalid': errorsGroupAtribute?.categories }">
-												<ng-select
-													[items]="categories"
-													bindLabel="name"
-													bindValue="id"
-													[(ngModel)]="categoriesSelected"
-													[multiple]="true"
-													placeholder="Selecciona países"
-													[clearable]="false"
-													[closeOnSelect]="false"
-													class="select-element mb-1"
-													appendTo="body"
-													[loading]="loadingCategories"
-													[disabled]="loadingCategories"
-												>
-													<!-- Opción en el dropdown -->
-													<ng-template ng-option-tmp let-item="item">
-														<div class="option-item d-flex gap-3 align-items-center">
-															<div class="option-name fs-7">{{ item.name }}</div>
-														</div>
-													</ng-template>
-
-													<!-- Opción seleccionada en el input -->
-													<ng-template ng-label-tmp let-item="item">
-														<div class="option-item d-flex gap-3 align-items-center">
-															<div class="option-name fs-7">{{ item.name }}</div>
-														</div>
-													</ng-template>
-
-													<ng-template ng-loading-text>
-														<div class="spinner-container">
-															<span class="spinner-border spinner-border-sm"></span>
-														</div>
-													</ng-template>
-												</ng-select>
+										</div>
+										<div class="col-12">
+											<div class="form-field">
+												<div class="d-flex align-items-center justify-content-between gap-2">
+													<label class="form-field-label required" for="attributeGroupDescription">Descripción</label>
+													<button
+														*ngIf="validationGroupAttributeError.description"
+														type="button"
+														class="form-error-toggle"
+														(click)="fieldErrors.description = !fieldErrors.description"
+													>
+														{{ fieldErrors.description ? 'Ocultar errores' : 'Ver errores' }}
+													</button>
+												</div>
+												<textarea
+													id="attributeGroupDescription"
+													class="form-control form-control-md"
+													placeholder="Describe qué atributos pertenecen a este grupo"
+													name="description"
+													[(ngModel)]="groupAttribute.description"
+													[class.is-invalid]="validationGroupAttributeError.description"
+													[disabled]="isCreateGroupAttributeLoading"
+													textAreaAutoResize
+													rows="3"
+												></textarea>
+												<p class="form-field-help">Descripción breve del grupo.</p>
+												<div class="validation-wrapper" [class.open]="fieldErrors.description">
+													<app-validation-popover [errors]="validationGroupAttributeError.description!"></app-validation-popover>
+												</div>
 											</div>
+										</div>
+										<div class="col-12 col-md-12">
+											<div class="form-field">
+												<div class="category-field-header d-flex align-items-center justify-content-between gap-2">
+													<label id="attributeGroupCategoriesLabel" class="form-field-label required" for="attributeGroupCategories" (click)="categoryTagify.focus()">
+														Categorías
+													</label>
+													<div class="d-flex flex-wrap align-items-center justify-content-end gap-3">
+														<button
+															*ngIf="validationGroupAttributeError.categories"
+															type="button"
+															class="form-error-toggle"
+															(click)="fieldErrors.categories = !fieldErrors.categories"
+														>
+															{{ fieldErrors.categories ? 'Ocultar errores' : 'Ver errores' }}
+														</button>
+														<button
+															type="button"
+															class="form-error-toggle category-reload text-primary d-inline-flex align-items-center gap-1"
+															(click)="loadCategories()"
+															[disabled]="isCategoriesLoading || isCreateGroupAttributeLoading"
+															title="Recargar"
+														>
+															<span>{{ isCategoriesLoading ? 'Recargando...' : 'Recargar' }}</span>
+														</button>
+													</div>
+												</div>
 
-											<span class="fs-8 text-muted">Categorías donde esta disponible el atributo.</span>
-
-											<div class="validation-wrapper" [class.open]="showErrors.categories">
-												<app-validation-popover [errors]="errorsGroupAtribute?.categories"></app-validation-popover>
+												<div class="d-flex align-items-start gap-2">
+													<app-tagify-input
+														#categoryTagify
+														class="flex-grow-1 category-tagify"
+														inputId="attributeGroupCategories"
+														[whiteList]="categoryOptions"
+														[selectedTags]="categoriesSelected"
+														(tagsChange)="categoriesSelected = $event"
+														[enforceWhitelist]="true"
+														placeholder="Buscar y seleccionar categorías"
+														[loading]="isCategoriesLoading"
+														[disabled]="isCategoriesLoading || isCreateGroupAttributeLoading"
+														[invalid]="!!validationGroupAttributeError.categories"
+														describedBy="attributeGroupCategoriesHelp"
+														labelledBy="attributeGroupCategoriesLabel"
+													></app-tagify-input>
+												</div>
+												<p id="attributeGroupCategoriesHelp" class="form-field-help">Busca y selecciona las categorías donde estará disponible el grupo de atributos.</p>
+												<p *ngIf="categoriesLoadError" class="form-field-help text-danger">{{ categoriesLoadError.message }}</p>
+												<div class="validation-wrapper" [class.open]="fieldErrors.categories">
+													<app-validation-popover [errors]="validationGroupAttributeError.categories!"></app-validation-popover>
+												</div>
 											</div>
 										</div>
 									</div>
-								</div>
-								<div class="card-footer" style="background-color: #f1f5f9">
-									<a *ngIf="!loadBtn" class="btn btn-sm btn-primary my-1 cursor-pointer d-inline-flex align-items-center gap-1" (click)="create()">
-										<i class="bi bi-collection"></i>
-										Crear grupo
-									</a>
-
-									<button *ngIf="loadBtn" class="btn btn-sm btn-primary my-1 cursor-pointer d-inline-flex align-items-center" type="button" disabled>
-										<span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
-										<span role="status">Procesando...</span>
+								</section>
+							</div>
+							<footer class="form-card-footer">
+								<div class="d-flex flex-column-reverse flex-sm-row align-items-stretch align-items-sm-center justify-content-end gap-2">
+									<button
+										type="button"
+										class="btn btn-primary btn-sm px-5"
+										[disabled]="isCreateGroupAttributeLoading"
+										(click)="!isCreateGroupAttributeLoading && createGroupAttribute()"
+									>
+										<span *ngIf="isCreateGroupAttributeLoading" class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+										<i *ngIf="!isCreateGroupAttributeLoading" class="bi bi-collection" aria-hidden="true"></i>
+										<span>{{ isCreateGroupAttributeLoading ? 'Creando...' : 'Crear grupo' }}</span>
 									</button>
 								</div>
-							</ng-container>
+							</footer>
 						</div>
 					</div>
 				</div>

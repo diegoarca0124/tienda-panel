@@ -17,524 +17,132 @@
 								</ol>
 							</nav>
 
-							<h1 class="page-header-title">Productos por marca</h1>
+							<h1 class="page-header-title d-flex align-items-center gap-2">
+								<span>Productos de</span>
+								@if (isProductsLoading && !brandName) {
+									<span class="skeleton skeleton-title" aria-label="Cargando nombre de la marca"></span>
+								} @else {
+									<span>{{ brandName || 'la marca' }}</span>
+								}
+							</h1>
 						</div>
 					</div>
 				</div>
 				<div class="app-content flex-column-fluid mt-5">
 					<div class="app-container container-fluid">
-						<div class="list-toolbar">
-							<!-- Buscador -->
-							<div class="list-toolbar-search">
-								<div class="list-toolbar-search-field">
-									<input
-										type="text"
-										class="form-control form-control-sm"
-										placeholder="Buscar producto"
-										name="filter"
-										[(ngModel)]="filter"
-										(keyup.enter)="applyFilters()"
-										[disabled]="isProductsLoading"
-										maxlength="50"
-									/>
-									<i class="bi bi-search list-toolbar-input-icon" aria-hidden="true"></i>
-								</div>
-								<!-- Buscar -->
-								<button
-									type="button"
-									class="btn btn-sm btn-icon btn-primary"
-									(click)="applyFilters()"
-									[disabled]="isProductsLoading"
-									aria-label="Buscar producto"
-									title="Buscar producto"
-								>
-									<i *ngIf="!isProductsLoading" class="bi bi-search"></i>
-									<span *ngIf="isProductsLoading" class="spinner-border spinner-border-sm" aria-hidden="true"></span>
-								</button>
-								<!-- Restablecer -->
-								<button
-									type="button"
-									class="btn btn-sm btn-icon btn-light-primary"
-									(click)="resetFilters()"
-									[disabled]="isProductsLoading"
-									aria-label="Restablecer filtros"
-									title="Restablecer filtros"
-								>
-									<i *ngIf="!isProductsLoading" class="bi bi-arrow-clockwise"></i>
-									<span *ngIf="isProductsLoading" class="spinner-border spinner-border-sm" aria-hidden="true"></span>
-								</button>
-							</div>
-							<!-- Acciones del lado derecho -->
-							<div class="list-toolbar-actions">
-								<div class="dropdown action-dropdown">
-									<button
-										disabled
-										id="productsOptionsButton"
-										type="button"
-										class="btn btn-sm btn-dark"
-										data-bs-toggle="dropdown"
-										data-bs-offset="0,10"
-										aria-expanded="false"
-										aria-label="Opciones"
-										title="Opciones"
-									>
-										<ion-icon name="settings-outline" aria-hidden="true"></ion-icon>
-										<span class="app-btn-label">Opciones</span>
-										<ion-icon name="chevron-down-outline" class="app-btn-chevron" aria-hidden="true"></ion-icon>
-									</button>
-									<ul class="dropdown-menu dropdown-menu-end action-dropdown-menu" aria-labelledby="productsOptionsButton">
-										<!-- <li>
-											<a class="dropdown-item action-dropdown-item action-dropdown-item-compact" [routerLink]="['/products/categories/mapping']">
-												<span class="action-dropdown-item-icon">
-													<ion-icon class="fs-4" name="document-outline" aria-hidden="true"></ion-icon>
-												</span>
-												<span class="action-dropdown-item-title">Mapeo</span>
-											</a>
-										</li> -->
-									</ul>
-								</div>
-							</div>
-						</div>
-
-						<div class="list-filter-row my-7">
-							<div class="list-filter-item list-filter-sm">
-								<label class="list-filter-label" for="categoryStatus">Estado</label>
-								<ng-select
-									id="categoryStatus"
-									[items]="statusFilters"
-									bindLabel="name"
-									bindValue="value"
-									name="selectedStatus"
-									[(ngModel)]="selectedStatus"
-									placeholder="Seleccionar estado"
-									[clearable]="false"
-									[closeOnSelect]="true"
-									[searchable]="false"
-									[disabled]="isProductsLoading"
-									appendTo="body"
-									dropdownPanelClass="app-select-panel"
-									class="app-select app-select-sm"
-								>
-									<ng-template ng-option-tmp let-item="item">
-										<div class="app-select-option">
-											<span class="app-select-dot" [ngClass]="'bg-' + item.color"></span>
-											<span class="app-select-option-text">{{ item.name }}</span>
-											<ion-icon name="checkmark-outline" class="app-select-check" aria-hidden="true"></ion-icon>
+						<div class="section-sidebar-layout">
+							<main class="section-sidebar-content products-section-content">
+								<div class="list-toolbar">
+									<!-- Buscador -->
+									<div class="list-toolbar-search">
+										<div class="list-toolbar-search-field">
+											<input
+												type="text"
+												class="form-control form-control-sm"
+												placeholder="Buscar producto"
+												name="filter"
+												[(ngModel)]="filter"
+												(keyup.enter)="applyFilters()"
+												[disabled]="isProductsLoading"
+												maxlength="50"
+											/>
+											<i class="bi bi-search list-toolbar-input-icon" aria-hidden="true"></i>
 										</div>
-									</ng-template>
-									<ng-template ng-label-tmp let-item="item">
-										<div class="app-select-value">
-											<span class="app-select-dot" [ngClass]="'bg-' + item.color"></span>
-											<span class="app-select-value-text">{{ item.name }}</span>
-										</div>
-									</ng-template>
-								</ng-select>
-							</div>
-
-							<div class="list-filter-item list-filter-md">
-								<label class="list-filter-label" for="categorySort">Orden</label>
-								<ng-select
-									id="categorySort"
-									[items]="sortFilters"
-									bindLabel="name"
-									bindValue="value"
-									name="selectedSort"
-									[(ngModel)]="selectedSort"
-									placeholder="Seleccionar orden"
-									[clearable]="false"
-									[closeOnSelect]="true"
-									[searchable]="false"
-									[disabled]="isProductsLoading"
-									appendTo="body"
-									dropdownPanelClass="app-select-panel"
-									class="app-select app-select-sm"
-								>
-									<ng-template ng-option-tmp let-item="item">
-										<div class="app-select-option">
-											<ion-icon [name]="item.icon" class="app-select-option-icon" aria-hidden="true"></ion-icon>
-											<span class="app-select-option-text">{{ item.name }}</span>
-											<ion-icon name="checkmark-outline" class="app-select-check" aria-hidden="true"></ion-icon>
-										</div>
-									</ng-template>
-									<ng-template ng-label-tmp let-item="item">
-										<div class="app-select-value">
-											<ion-icon [name]="item.icon" class="app-select-value-icon" aria-hidden="true"></ion-icon>
-											<span class="app-select-value-text">{{ item.name }}</span>
-										</div>
-									</ng-template>
-								</ng-select>
-							</div>
-
-							<div class="list-filter-item list-filter-sm">
-								<label class="list-filter-label" for="productQuality">Calidad</label>
-								<ng-select
-									id="productQuality"
-									[items]="qualityFilters"
-									bindLabel="name"
-									bindValue="value"
-									name="selectedQuality"
-									[(ngModel)]="selectedQuality"
-									placeholder="Seleccionar calidad"
-									[clearable]="false"
-									[closeOnSelect]="true"
-									[searchable]="false"
-									[disabled]="isProductsLoading"
-									appendTo="body"
-									dropdownPanelClass="app-select-panel"
-									class="app-select app-select-sm"
-								>
-									<ng-template ng-option-tmp let-item="item">
-										<div class="app-select-option">
-											<span class="app-select-dot" [ngClass]="'bg-' + item.color"></span>
-											<span class="app-select-option-text">{{ item.name }}</span>
-											<ion-icon name="checkmark-outline" class="app-select-check" aria-hidden="true"></ion-icon>
-										</div>
-									</ng-template>
-									<ng-template ng-label-tmp let-item="item">
-										<div class="app-select-value">
-											<span class="app-select-dot" [ngClass]="'bg-' + item.color"></span>
-											<span class="app-select-value-text">{{ item.name }}</span>
-										</div>
-									</ng-template>
-								</ng-select>
-							</div>
-
-							<div class="list-filter-item list-filter-sm">
-								<label class="list-filter-label" for="productVisibility">Visibilidad</label>
-								<ng-select
-									id="productVisibility"
-									[items]="visibilityFilters"
-									bindLabel="name"
-									bindValue="value"
-									name="selectedVisibility"
-									[(ngModel)]="selectedVisibility"
-									placeholder="Seleccionar visibilidad"
-									[clearable]="false"
-									[closeOnSelect]="true"
-									[searchable]="false"
-									[disabled]="isProductsLoading"
-									appendTo="body"
-									dropdownPanelClass="app-select-panel"
-									class="app-select app-select-sm"
-								>
-									<ng-template ng-option-tmp let-item="item">
-										<div class="app-select-option">
-											<ion-icon [name]="item.icon" class="app-select-option-icon" aria-hidden="true"></ion-icon>
-											<span class="app-select-option-text">{{ item.name }}</span>
-											<ion-icon name="checkmark-outline" class="app-select-check" aria-hidden="true"></ion-icon>
-										</div>
-									</ng-template>
-									<ng-template ng-label-tmp let-item="item">
-										<div class="app-select-value">
-											<ion-icon [name]="item.icon" class="app-select-value-icon" aria-hidden="true"></ion-icon>
-											<span class="app-select-value-text">{{ item.name }}</span>
-										</div>
-									</ng-template>
-								</ng-select>
-							</div>
-							<div class="list-filter-item list-filter-lg">
-								<label class="list-filter-label">Precios</label>
-
-								<div class="d-flex align-items-center gap-2 w-100">
-									<div class="flex-fill min-w-0">
-										<app-input-dialer
-											class="d-block w-100"
-											[value]="minPrice"
-											(valueChange)="onMinPriceChange($event)"
-											placeholder="Mín."
-											[step]="5"
+										<!-- Buscar -->
+										<button
+											type="button"
+											class="btn btn-sm btn-icon btn-primary"
+											(click)="applyFilters()"
 											[disabled]="isProductsLoading"
-										></app-input-dialer>
-									</div>
+											aria-label="Buscar producto"
+											title="Buscar producto"
+										>
+											<i *ngIf="!isProductsLoading" class="bi bi-search"></i>
+											<span *ngIf="isProductsLoading" class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+										</button>
 
-									<div class="flex-fill min-w-0">
-										<app-input-dialer
-											class="d-block w-100"
-											[value]="maxPrice"
-											(valueChange)="onMaxPriceChange($event)"
-											placeholder="Máx."
-											[step]="5"
+										<button
+											type="button"
+											class="btn btn-sm btn-icon btn-light-primary"
+											(click)="resetFilters()"
 											[disabled]="isProductsLoading"
-										></app-input-dialer>
+											aria-label="Restablecer filtros"
+											title="Restablecer filtros"
+										>
+											<i *ngIf="!isProductsLoading" class="bi bi-arrow-clockwise" aria-hidden="true"></i>
+											<span *ngIf="isProductsLoading" class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+										</button>
 									</div>
-								</div>
-							</div>
-						</div>
-
-						<div class="table-wrapper mb-7">
-							<table class="table custom-table align-middle mb-0">
-								<thead>
-									<tr>
-										<th class="fixed-xs text-center p-0" style="position: unset !important">
-											<div class="dropdown">
-												<button
-													id="productTableOptions"
-													type="button"
-													class="btn btn-icon btn-dark h-25px w-25px"
-													data-bs-toggle="dropdown"
-													aria-expanded="false"
-													aria-label="Acciones para productos seleccionados"
-													title="Acciones"
-													[disabled]="isProductsLoading"
-												>
-													<ion-icon name="settings-outline" class="fs-5" aria-hidden="true"></ion-icon>
-												</button>
-
-												<div class="dropdown-menu dropdown-menu-end action-dropdown-menu action-dropdown-menu-compact" aria-labelledby="productTableOptions">
-													<a
-														class="dropdown-item action-dropdown-item action-dropdown-item-compact"
-														[class.disabled]="selectedProductsIds.size === 0"
-														[attr.data-bs-toggle]="selectedProductsIds.size > 0 ? 'modal' : null"
-														[attr.data-bs-target]="selectedProductsIds.size > 0 ? '#modalMove' : null"
-													>
-														<span class="action-dropdown-item-icon">
-															<ion-icon name="folder-open-outline" class="fs-4" aria-hidden="true"></ion-icon>
-														</span>
-
-														<span class="action-dropdown-item-title" style="text-transform: capitalize !important">Mover productos</span>
-													</a>
-												</div>
-											</div>
-										</th>
-
-										<th class="flex-column min-w-250px">Producto</th>
-
-										<th class="fixed-sm">Calidad</th>
-
-										<th class="fixed-sm">Precio</th>
-
-										<th class="fixed-md">Marca</th>
-
-										<th class="fixed-md">Subcategoría</th>
-
-										<th class="fixed-sm">Stock</th>
-
-										<th class="fixed-sm">Estado</th>
-
-										<th class="fixed-xs text-center"></th>
-									</tr>
-								</thead>
-
-								<tbody>
-									@if (isProductsLoading) {
-										<tr *ngFor="let item of [1, 2, 3, 4, 5, 6]">
-											<td class="fixed-xs text-center p-0">
-												<div class="skeleton skeleton-check"></div>
-											</td>
-
-											<td class="flex-column">
-												<div class="d-flex align-items-center">
-													<div class="skeleton skeleton-square-sm me-3"></div>
-
-													<div class="skeleton-lines d-flex flex-column gap-2">
-														<div class="skeleton skeleton-text skeleton-w-60"></div>
-
-														<div class="skeleton skeleton-text skeleton-w-40"></div>
-													</div>
-												</div>
-											</td>
-
-											<td class="fixed-sm">
-												<div class="skeleton skeleton-text skeleton-w-60"></div>
-											</td>
-
-											<td class="fixed-sd">
-												<div class="skeleton skeleton-text skeleton-w-60"></div>
-											</td>
-
-											<td class="fixed-md">
-												<div class="d-flex align-items-center">
-													<div class="skeleton skeleton-square-sm me-3"></div>
-
-													<div class="skeleton skeleton-text skeleton-w-60"></div>
-												</div>
-											</td>
-
-											<td class="fixed-md">
-												<div class="skeleton-lines d-flex flex-column gap-2">
-													<div class="skeleton skeleton-text skeleton-w-60"></div>
-
-													<div class="skeleton skeleton-text skeleton-w-40"></div>
-												</div>
-											</td>
-
-											<td class="fixed-sm">
-												<div class="skeleton skeleton-text skeleton-w-40"></div>
-											</td>
-
-											<td class="fixed-sm">
-												<div class="skeleton skeleton-badge"></div>
-											</td>
-
-											<td class="fixed-xs text-center p-0">
-												<div class="skeleton skeleton-btn"></div>
-											</td>
-										</tr>
-									} @else if (productsLoadError) {
-										<tr>
-											<td colspan="9">
-												<app-not-found [error]="productsLoadError"></app-not-found>
-											</td>
-										</tr>
-									} @else if (products.length >= 1) {
-										<tr *ngFor="let item of products">
-											<td class="fixed-xs text-center p-0">
-												<label class="form-check form-check-customs form-check-sm m-0 d-flex align-items-center justify-content-center h-100">
-													<input
-														class="form-check-input cursor-pointer"
-														type="checkbox"
-														[checked]="selectedProductsIds.has(item.id!)"
-														(change)="onProductSelectionChange(item.id!, $event)"
-														[attr.aria-label]="'Seleccionar producto ' + item.name"
-													/>
-												</label>
-											</td>
-
-											<td class="flex-column">
-												<div class="d-flex align-items-center gap-2" style="min-width: 0">
-													<div class="symbol me-3" style="flex-shrink: 0">
-														<span class="symbol-label" style="width: 30px; height: 30px; border: 1px dashed #e3e3e3">
-															<img [src]="item.cover" [alt]="item.name" class="w-100 h-100" style="object-fit: cover" fallbackImage />
-														</span>
-													</div>
-
-													<div class="d-flex flex-column" style="min-width: 0">
-														<p class="paragraph paragraph-sm text-gray-700 fw-600 lh-tight text-truncate-1 m-0">
-															{{ item.name }}
-														</p>
-
-														<p class="paragraph paragraph-sm text-gray-400 fs-12 fw-400 lh-tight text-truncate-1 m-0">
-															{{ item.type }}
-														</p>
-													</div>
-												</div>
-											</td>
-
-											<td class="fixed-sm">
-												<div class="d-flex align-items-center">
-													<span
-														class="d-inline-block rounded-circle me-2"
-														style="width: 6px; height: 6px"
-														[ngClass]="{
-															'bg-danger': item.quality_label === 'low',
-															'bg-warning': item.quality_label === 'medium',
-															'bg-success': item.quality_label === 'high',
-														}"
-													></span>
-
-													<span class="paragraph paragraph-sm text-gray-700 fw-500 text-truncate-1 m-0">
-														{{ qualityLabels[item.quality_label!] }}
-													</span>
-												</div>
-											</td>
-
-											<td class="fixed-sd">
-												<div class="d-flex flex-column">
-													<span class="paragraph paragraph-sm fw-600 m-0" [class.text-danger]="item.priceDiscount > 0" [class.text-gray-700]="!(item.priceDiscount > 0)">
-														{{ 'PE' | currencySymbol }}
-														{{ (item.priceDiscount > 0 ? item.priceDiscount : item.priceRegular) | number: '1.2-2' }}
-													</span>
-
-													<span *ngIf="item.priceDiscount > 0" class="paragraph paragraph-sm text-gray-400 text-decoration-line-through m-0">
-														{{ 'PE' | currencySymbol }}
-														{{ item.priceRegular | number: '1.2-2' }}
-													</span>
-												</div>
-											</td>
-
-											<td class="fixed-md">
-												<div class="d-flex align-items-center gap-2">
-													<span class="symbol symbol-25px flex-shrink-0" style="border: 1px dashed #e3e3e3">
-														<img [src]="item.brand.logoUrl" [alt]="item.brand.name" fallbackImage />
-													</span>
-
-													<span class="paragraph paragraph-sm text-gray-700 fw-600 text-truncate-1 m-0">
-														{{ item.brand.name }}
-													</span>
-												</div>
-											</td>
-
-											<td class="fixed-md">
-												<div class="d-flex flex-column">
-													<p class="paragraph paragraph-sm text-gray-700 fw-500 text-truncate-1 m-0">
-														{{ item.subcategory.name }}
-													</p>
-
-													<p class="paragraph paragraph-sm text-gray-400 fw-400 text-truncate-1 m-0">#{{ item.subcategory.prefix }}-{{ item.subcategory.code | padCode: 6 }}</p>
-												</div>
-											</td>
-
-											<td class="fixed-sm">
-												<span class="paragraph paragraph-sm text-gray-700 fw-600 m-0">0</span>
-											</td>
-
-											<td class="fixed-sm">
-												<span
-													class="badge rounded-pill fw-700"
-													[ngClass]="{
-														'bg-outline-warning text-gray-700': item.status === 'draft',
-														'bg-outline-success text-success': item.status === 'published',
-													}"
-												>
-													<span
-														class="d-inline-block rounded-circle me-1"
-														style="width: 6px; height: 6px"
-														[ngClass]="{
-															'bg-warning': item.status === 'draft',
-															'bg-success': item.status === 'published',
-														}"
-													></span>
-
-													{{ item.status === 'published' ? 'Publicado' : 'Borrador' }}
-												</span>
-											</td>
-
-											<td class="fixed-xs text-center p-0">
-												<div class="dropdown">
+									<!-- Acciones del lado derecho -->
+									<div class="list-toolbar-actions">
+										<div class="dropdown action-dropdown">
+											<button
+												id="productsOptionsButton"
+												type="button"
+												class="btn btn-sm btn-dark"
+												data-bs-toggle="dropdown"
+												data-bs-offset="0,10"
+												aria-expanded="false"
+												aria-label="Opciones"
+												title="Opciones"
+												disabled
+											>
+												<ion-icon name="settings-outline" aria-hidden="true"></ion-icon>
+												<span class="app-btn-label">Opciones</span>
+												<ion-icon name="chevron-down-outline" class="app-btn-chevron" aria-hidden="true"></ion-icon>
+											</button>
+											<ul class="dropdown-menu dropdown-menu-end action-dropdown-menu" aria-labelledby="productsOptionsButton">
+												<li class="d-md-none">
 													<button
 														type="button"
-														class="icon-btn btn-action dropdown-toggle dropdown-toggle-no-arrow d-flex align-items-center justify-content-center mx-auto"
-														data-bs-toggle="dropdown"
-														data-bs-offset="0,7"
-														aria-expanded="false"
-														[attr.aria-label]="'Opciones del producto ' + item.name"
-														title="Opciones"
-														disabled
+														class="dropdown-item action-dropdown-item action-dropdown-item-compact"
+														[attr.data-bs-toggle]="hasSelectedProducts() ? 'modal' : null"
+														[attr.data-bs-target]="hasSelectedProducts() ? '#modalMove' : null"
+														[disabled]="!hasSelectedProducts() || isProductsLoading || isMovingProducts"
 													>
-														<i class="bi bi-three-dots" aria-hidden="true"></i>
+														<span class="action-dropdown-item-icon">
+															<ion-icon class="fs-4" name="folder-outline" aria-hidden="true"></ion-icon>
+														</span>
+														<span class="action-dropdown-item-title">Mover productos</span>
 													</button>
+												</li>
+											</ul>
+										</div>
+									</div>
+								</div>
 
-													<div class="dropdown-menu dropdown-menu-end action-dropdown-menu action-dropdown-menu-compact">
-														<!-- <a
-															class="dropdown-item action-dropdown-item action-dropdown-item-compact cursor-pointer"
-															data-bs-toggle="modal"
-															data-bs-target="#modalMove"
-															(click)="selectedProductsIds.clear(); selectedProductsIds.add(item.id!)"
-														>
-															<span class="action-dropdown-item-icon">
-																<ion-icon name="folder-open-outline" class="fs-4" aria-hidden="true"></ion-icon>
-															</span>
+								<app-sidebar-products-brand
+									[(selectedStatus)]="selectedStatus"
+									[(selectedSort)]="selectedSort"
+									[(selectedQuality)]="selectedQuality"
+									[(selectedVisibility)]="selectedVisibility"
+									[categories]="categories"
+									[isCategoriesLoading]="isCategoriesLoading"
+									[(selectedSubcategoryIds)]="selectedSubcategoryIds"
+									[(selectedCategoryIds)]="selectedCategoryIds"
+									[minPrice]="minPrice"
+									(minPriceChange)="onMinPriceChange($event)"
+									[maxPrice]="maxPrice"
+									(maxPriceChange)="onMaxPriceChange($event)"
+									[isLoading]="isProductsLoading"
+									(apply)="applyFilters()"
+								></app-sidebar-products-brand>
 
-															<span class="action-dropdown-item-title">Mover producto</span>
-														</a> -->
-													</div>
-												</div>
-											</td>
-										</tr>
-									} @else {
-										<tr>
-											<td colspan="9">
-												<app-not-found
-													[error]="{
-														message: 'No se encontraron registros.',
-														statusCode: 404,
-													}"
-												></app-not-found>
-											</td>
-										</tr>
-									}
-								</tbody>
-							</table>
+								<app-table-products-brand
+									[isInteractionDisabled]="isMovingProducts"
+									[products]="products"
+									[isLoading]="isProductsLoading"
+									[loadError]="productsLoadError"
+									[selectedProductsIds]="selectedProductsIds"
+									[currentPage]="currentPage"
+									[totalPages]="totalPages"
+									[limit]="limit"
+									(productSelectionChange)="onProductSelectionChange($event.id, $event.event)"
+									(productMoveRequested)="selectProductForMove($event)"
+									(pageChanged)="onPageChange($event)"
+									(limitChanged)="limit = $event; onLimitChange()"
+								></app-table-products-brand>
+							</main>
 						</div>
 					</div>
 				</div>
@@ -542,3 +150,13 @@
 		</div>
 	</div>
 </div>
+<app-move-products-category
+	[categories]="categories"
+	[selectedProductsCount]="selectedProductsIds.size"
+	[isCategoriesLoading]="isCategoriesLoading"
+	[isMovingProducts]="isMovingProducts"
+	[movingToSubcategoryId]="movingToSubcategoryId"
+	[categoriesLoadError]="categoriesLoadError"
+	(refresh)="initCategories()"
+	(moveRequested)="moveSelectedProductsTo($event.category, $event.subcategory)"
+></app-move-products-category>

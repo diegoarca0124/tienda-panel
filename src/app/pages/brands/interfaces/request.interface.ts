@@ -14,6 +14,7 @@ export interface FindBrandProductsREQI {
 	status: string;
 	sort: string;
 	subcategoryIds: string;
+	categoryIds: string;
 	quality: string;
 	visibility: string;
 	minPrice: number | null;

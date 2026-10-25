@@ -38,6 +38,16 @@
 	border-radius: var(--control-radius) !important;
 }
 
+/* Fija el color desde que Angular inserta el botón, sin animar el texto. */
+.btn.btn-primary {
+	--bs-btn-color: var(--bs-primary-inverse, #ffffff);
+	--bs-btn-hover-color: var(--bs-primary-inverse, #ffffff);
+	--bs-btn-active-color: var(--bs-primary-inverse, #ffffff);
+	--bs-btn-disabled-color: var(--bs-primary-inverse, #ffffff);
+	color: var(--bs-primary-inverse, #ffffff);
+	transition-property: background-color, border-color, box-shadow;
+}
+
 /* =========================================================
    BOTÓN XS
    Mismo alto que form-control-xs

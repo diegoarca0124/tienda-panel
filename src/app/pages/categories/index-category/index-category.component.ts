@@ -22,11 +22,10 @@ import { FallbackImageDirective } from '@app/common/directives/fallback-image.di
 import { environment } from 'environments/environment.dev';
 import { PadCodePipe } from '../../../common/pipes/pad-code.pipe';
 import { HttpErrorResponse } from '@angular/common/http';
-import { MenuSettingsCategoriesComponent } from '@app/shared/menu-settings-categories/menu-settings-categories.component';
 import { GetCategoriesRESI, UpdateCategoriesStatusRESI, UpdateCategoryStatusRESI } from '../interfaces/response.interface';
 import { CategoryInterface } from '../interfaces/data.interface';
 import { GetCategoriesQPI } from '../interfaces/query-params.interface';
-import { sortOptions, statusOptions } from '../constants/selectors.constant';
+import { configurationsOptions, sortOptions, statusOptions } from '../constants/selectors.constant';
 import { CATEGORY_STATUS_DETAILS } from '../constants/category-status.constants';
 import { PAGINATION_LIMITS } from '@app/common/constants/pageLimit.constant';
 declare const toastr: any;
@@ -49,7 +48,6 @@ type CategoriesLoadResult = { data: GetCategoriesRESI; error: null } | { data: n
 		NgbTooltipModule,
 		FallbackImageDirective,
 		PadCodePipe,
-		MenuSettingsCategoriesComponent,
 	],
 	templateUrl: './index-category.component.html',
 	styleUrl: './index-category.component.css',
@@ -64,6 +62,7 @@ export class IndexCategoryComponent {
 	public selectedStatus: string = 'Todos';
 	public selectedSort: string = 'Predeterminado';
 	public selectedConfigurations: string = 'Predeterminado';
+	public selectedConfigurationValues: string[] = [];
 
 	public currentPage: number = 1;
 	public totalPages: number = 0;
@@ -72,6 +71,7 @@ export class IndexCategoryComponent {
 
 	public readonly statusFilters = statusOptions;
 	public readonly sortFilters = sortOptions;
+	public readonly configurationFilters = configurationsOptions;
 	public readonly categoryStatusDetails = CATEGORY_STATUS_DETAILS;
 
 	public selectedCategoriesIds = new Set<string>();
@@ -126,6 +126,7 @@ export class IndexCategoryComponent {
 		this.selectedStatus = params.status;
 		this.selectedSort = params.sort;
 		this.selectedConfigurations = params.configurations;
+		this.selectedConfigurationValues = this.selectedConfigurations === 'Predeterminado' ? [] : this.selectedConfigurations.split(',');
 	}
 
 	private listenCategoriesQueries(): void {
@@ -233,7 +234,8 @@ export class IndexCategoryComponent {
 		return getColorBasedOnLetter(str);
 	}
 
-	getConfigurations(configurations: any) {
+	getConfigurations(configurations: string[]): void {
+		this.selectedConfigurationValues = [...configurations];
 		if (configurations.length >= 1) {
 			this.selectedConfigurations = configurations.join(',');
 		} else {
@@ -357,6 +359,7 @@ export class IndexCategoryComponent {
 		this.currentPage = 1;
 		this.limit = 10;
 		this.selectedConfigurations = 'Predeterminado';
+		this.selectedConfigurationValues = [];
 
 		this.router.navigate([], {
 			queryParams: {

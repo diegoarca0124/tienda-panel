@@ -1,0 +1,15 @@
+.products-section-content {
+	display: contents;
+}
+
+.products-section-content > .list-toolbar {
+	grid-column: 2;
+	grid-row: 1;
+}
+
+@media (max-width: 1249.98px) {
+	.products-section-content > .list-toolbar {
+		grid-column: 1;
+		grid-row: 2;
+	}
+}

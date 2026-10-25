@@ -78,8 +78,8 @@ export class EditAttributeComponent {
 					this.loading = true;
 					this.loadingValues = true;
 					return forkJoin({
-						next: this.attributeService.get_attribute(this.idAttribute),
-						values: this.attributeService.get_values_attribute(this.idAttribute),
+						next: this.attributeService.getAttribute(this.idAttribute),
+						values: this.attributeService.getAttributeValues(this.idAttribute),
 					}).pipe(
 						withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
 						finalize(() => {
@@ -104,7 +104,7 @@ export class EditAttributeComponent {
 	init_values(id: string) {
 		this.loadingValues = true;
 		this.attributeService
-			.get_values_attribute(id)
+			.getAttributeValues(id)
 			.pipe(
 				takeUntil(this.destroy$),
 				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
@@ -127,7 +127,7 @@ export class EditAttributeComponent {
 		this.errorsAtribute.value = '';
 		let val = this.value && this.attribute.unit ? this.value + this.attribute.unit : this.value;
 		this.attributeService
-			.add_value_attribute({
+			.createAttributeValue({
 				value: val,
 				attributeId: this.idAttribute,
 			})
@@ -160,7 +160,7 @@ export class EditAttributeComponent {
 		this.msmErrorAttribute = '';
 
 		this.attributeService
-			.update_attribute(this.idAttribute, this.attribute)
+			.updateAttribute(this.idAttribute, this.attribute)
 			.pipe(
 				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
 				takeUntil(this.destroy$),
@@ -191,7 +191,7 @@ export class EditAttributeComponent {
 	onDeleteValue(id: string) {
 		this.loadBtnDelete.set(true);
 		this.attributeService
-			.delete_value_attribute(id)
+			.deleteAttributeValue(id)
 			.pipe(
 				takeUntil(this.destroy$),
 				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),

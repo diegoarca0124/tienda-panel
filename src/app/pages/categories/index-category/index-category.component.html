@@ -169,14 +169,40 @@
 
 							<div class="list-filter-item list-filter-lg">
 								<label class="list-filter-label" for="fieldStatus">Campos</label>
-								<app-menu-settings-categories
-									(applyData)="getConfigurations($event)"
-									[selectedData]="selectedConfigurations"
+								<ng-select
+									id="fieldStatus"
+									[items]="configurationFilters"
+									bindLabel="name"
+									bindValue="value"
+									name="selectedConfigurationValues"
+									[ngModel]="selectedConfigurationValues"
+									(ngModelChange)="getConfigurations($event)"
+									[multiple]="true"
+									[closeOnSelect]="false"
+									[clearable]="false"
+									[searchable]="false"
 									[disabled]="isCategoriesLoading"
-									[title]="'Configuraciones'"
-									[placeholder]="'Filtrar por configuraciones'"
-									[sizeClass]="'sm'"
-								></app-menu-settings-categories>
+									placeholder="Filtrar por campos"
+									appendTo="body"
+									dropdownPanelClass="app-select-panel"
+									class="app-select app-select-sm"
+								>
+									<ng-template ng-option-tmp let-item="item">
+										<div class="app-select-option">
+											<ion-icon [name]="item.icon" class="app-select-option-icon" aria-hidden="true"></ion-icon>
+											<span class="app-select-option-text">{{ item.name }}</span>
+											<ion-icon name="checkmark-outline" class="app-select-check" aria-hidden="true"></ion-icon>
+										</div>
+									</ng-template>
+									<ng-template ng-multi-label-tmp let-items="items">
+										<div class="app-select-value">
+											@if (items.length === 1) {
+												<ion-icon [name]="items[0].icon" class="app-select-value-icon" aria-hidden="true"></ion-icon>
+											}
+											<span class="app-select-value-text">{{ items.length === 1 ? items[0].name : items.length + ' seleccionados' }}</span>
+										</div>
+									</ng-template>
+								</ng-select>
 							</div>
 							<div class="table-counter" aria-live="polite">
 								<span>Mostrando {{ firstVisibleCategory }}–{{ lastVisibleCategory }} de {{ totalCategories }} categorías</span>

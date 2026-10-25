@@ -1,0 +1,41 @@
+.app-sidebar-logo {
+	background-color: #151921 !important;
+	border-bottom: 0 !important;
+}
+
+.sidebar-menu-toggle {
+	width: 100%;
+	border: 0;
+	background: transparent;
+	font: inherit;
+	text-align: left;
+}
+
+.sidebar-menu-toggle:focus-visible {
+	outline: 2px solid var(--bs-primary);
+	outline-offset: -2px;
+}
+
+.sidebar-submenu.menu-sub.menu-sub-accordion {
+	display: grid;
+	grid-template-rows: 0fr;
+}
+
+.sidebar-submenu.menu-sub.menu-sub-accordion.animate {
+	transition: grid-template-rows 250ms ease;
+}
+
+.sidebar-submenu.menu-sub.menu-sub-accordion.expanded {
+	grid-template-rows: 1fr;
+}
+
+.sidebar-submenu-content {
+	min-height: 0;
+	overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.sidebar-submenu.menu-sub.menu-sub-accordion.animate {
+		transition: none;
+	}
+}

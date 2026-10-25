@@ -1,7 +1,23 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-bs-theme="light">
 	<head>
 		<meta charset="utf-8" />
+		<script>
+			(function () {
+				try {
+					const mode = localStorage.getItem('data-bs-theme-mode');
+					const savedTheme = localStorage.getItem('data-bs-theme');
+					const theme = mode === 'system'
+						? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+						: (mode === 'light' || mode === 'dark' ? mode : savedTheme);
+					if (theme === 'light' || theme === 'dark') {
+						document.documentElement.setAttribute('data-bs-theme', theme);
+					}
+				} catch {
+					// El tema claro inicial también funciona si el almacenamiento está bloqueado.
+				}
+			})();
+		</script>
 		<title>Panel Administrador</title>
 		<base href="/" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />

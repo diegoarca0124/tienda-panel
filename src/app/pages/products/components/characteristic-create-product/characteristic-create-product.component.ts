@@ -102,7 +102,7 @@ export class CharacteristicCreateProductComponent {
 		this.errorMsmSeverListAttributes = '';
 		this.attributes = [];
 		this.attributeService
-			.get_attributes_by_category(this.product.categoryId!)
+			.getAttributesByCategory(this.product.categoryId!)
 			.pipe(
 				takeUntil(this.destroy$),
 				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),

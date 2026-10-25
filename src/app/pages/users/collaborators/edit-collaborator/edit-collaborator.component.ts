@@ -47,6 +47,8 @@ declare const toastr: any;
 })
 export class EditCollaboratorComponent {
 	private destroy$ = new Subject<void>();
+	private readonly cancelContext$ = new Subject<void>();
+	private contextVersion = 0;
 	public collaborator: CollaboratorInterface = createEmptyCollaborator();
 	public isEditCollaboratorLoading: boolean = false;
 	public readonly isUpdateStatusLoading = signal(false);
@@ -78,6 +80,7 @@ export class EditCollaboratorComponent {
 	ngOnDestroy(): void {
 		this.destroy$.next();
 		this.destroy$.complete();
+		this.cancelContext$.complete();
 	}
 
 	generatePassword(length: number = 6) {
@@ -93,20 +96,34 @@ export class EditCollaboratorComponent {
 	}
 
 	initData() {
+		const contextVersion = ++this.contextVersion;
+		this.cancelContext$.next();
+		const collaboratorId = this.id;
+		const isCurrentContext = () => contextVersion === this.contextVersion && collaboratorId === this.id;
+		this.collaborator = createEmptyCollaborator();
+		this.fieldErrors = createEmptyFieldErrors();
+		this.validationCollaboratioError = {};
+		this.isEditCollaboratorLoading = false;
+		this.isUpdateStatusLoading.set(false);
 		this.isCollaboratorLoading = true;
 		this.collaboratorLoadError = null;
 		this.collaboratorService
-			.getCollaborator(this.id)
+			.getCollaborator(collaboratorId)
 			.pipe(
 				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
+				takeUntil(this.cancelContext$),
 				takeUntil(this.destroy$),
-				finalize(() => (this.isCollaboratorLoading = false))
+				finalize(() => {
+					if (isCurrentContext()) this.isCollaboratorLoading = false;
+				})
 			)
 			.subscribe({
 				next: (next: GetCollaboratorRESI) => {
+					if (!isCurrentContext()) return;
 					this.collaborator = next.data;
 				},
 				error: (err: HttpErrorResponse) => {
+					if (!isCurrentContext()) return;
 					const error = getHttpErrorBody(err);
 					this.collaboratorLoadError = error;
 				},
@@ -114,22 +131,31 @@ export class EditCollaboratorComponent {
 	}
 
 	updateCollaborator() {
+		if (!this.id || this.collaborator.id !== this.id || this.isCollaboratorLoading || this.collaboratorLoadError || this.isEditCollaboratorLoading || this.isUpdateStatusLoading()) return;
+		const collaboratorId = this.id;
+		const contextVersion = this.contextVersion;
+		const isCurrentContext = () => contextVersion === this.contextVersion && collaboratorId === this.id;
 		this.isEditCollaboratorLoading = true;
 		this.collaboratorService
-			.updateCollaborator(this.id, this.collaborator)
+			.updateCollaborator(collaboratorId, { ...this.collaborator })
 			.pipe(
 				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
+				takeUntil(this.cancelContext$),
 				takeUntil(this.destroy$),
-				finalize(() => (this.isEditCollaboratorLoading = false))
+				finalize(() => {
+					if (isCurrentContext()) this.isEditCollaboratorLoading = false;
+				})
 			)
 			.subscribe({
 				next: (next: UpdateCollaboratorRESI) => {
+					if (!isCurrentContext()) return;
 					this.fieldErrors = createEmptyFieldErrors();
 					this.validationCollaboratioError = {};
 					this.collaborator = next.data;
 					toastr.success(next.message);
 				},
 				error: (err: HttpErrorResponse) => {
+					if (!isCurrentContext()) return;
 					const error = getHttpErrorBody(err);
 					toastr.error(error.message || '¡Error desconocido!');
 
@@ -142,24 +168,33 @@ export class EditCollaboratorComponent {
 	}
 
 	updateCollaboratorStatus(): void {
+		if (!this.id || this.collaborator.id !== this.id || this.isCollaboratorLoading || this.collaboratorLoadError || this.isEditCollaboratorLoading || this.isUpdateStatusLoading()) return;
+		const collaboratorId = this.id;
+		const contextVersion = this.contextVersion;
+		const isCurrentContext = () => contextVersion === this.contextVersion && collaboratorId === this.id;
 		const nextStatus = !this.collaborator.status;
 		this.isUpdateStatusLoading.set(true);
 
 		this.collaboratorService
-			.updateCollaboratorStatus(this.id, { status: nextStatus })
+			.updateCollaboratorStatus(collaboratorId, { status: nextStatus })
 			.pipe(
 				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
+				takeUntil(this.cancelContext$),
 				takeUntil(this.destroy$),
-				finalize(() => this.isUpdateStatusLoading.set(false))
+				finalize(() => {
+					if (isCurrentContext()) this.isUpdateStatusLoading.set(false);
+				})
 			)
 			.subscribe({
 				next: (next: UpdateCollaboratorStatusRESI) => {
+					if (!isCurrentContext()) return;
 					this.collaborator.status = next.data.status;
 					this.collaborator.statusAt = next.data.statusAt ? new Date(next.data.statusAt) : new Date();
 					closeModal('modalCollaboratorStatus');
 					toastr.success(next.message);
 				},
 				error: (error: HttpErrorResponse) => {
+					if (!isCurrentContext()) return;
 					toastr.error(getHttpErrorBody(error, 'No fue posible actualizar el estado.').message);
 				},
 			});

@@ -50,7 +50,7 @@
 
 .form-control.settings-trigger:disabled {
 	color: #98a2b3 !important;
-	background-color: #f5f7fa !important;
+	background-color: #ffffff !important;
 	border-color: #d7dee8 !important;
 	box-shadow: none !important;
 	cursor: default;

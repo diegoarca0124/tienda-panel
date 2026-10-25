@@ -74,10 +74,7 @@ export class IndexSubcategorySettingsCategoryComponent {
 	) {}
 
 	ngOnInit(): void {
-		merge(
-			(this.route.parent ?? this.route).paramMap.pipe(map((params) => params.get('id') ?? '')),
-			this.categoryRetry$.pipe(map(() => this.id))
-		)
+		merge((this.route.parent ?? this.route).paramMap.pipe(map((params) => params.get('id') ?? '')), this.categoryRetry$.pipe(map(() => this.id)))
 			.pipe(
 				switchMap((id) => {
 					this.subcategoriesLoadCancel$.next();
@@ -189,11 +186,17 @@ export class IndexSubcategorySettingsCategoryComponent {
 	}
 
 	get canUpdateSelectedSubcategories(): boolean {
-		return !this.isGetCategoryLoading && !this.isGetSubcategoriesLoading && !this.categoryLoadError && !this.subcategoriesLoadError
-			&& !this.isUpdatingMultipleStatus() && !this.isUpdatingSingleStatus()
-			&& this.selectedSubcategoriesIds.size > 0
-			&& this.selectedSubcategoriesIds.size <= this.maxSelectedSubcategories
-			&& [...this.selectedSubcategoriesIds].every((id) => this.subcategories.some((subcategory) => subcategory.id === id));
+		return (
+			!this.isGetCategoryLoading &&
+			!this.isGetSubcategoriesLoading &&
+			!this.categoryLoadError &&
+			!this.subcategoriesLoadError &&
+			!this.isUpdatingMultipleStatus() &&
+			!this.isUpdatingSingleStatus() &&
+			this.selectedSubcategoriesIds.size > 0 &&
+			this.selectedSubcategoriesIds.size <= this.maxSelectedSubcategories &&
+			[...this.selectedSubcategoriesIds].every((id) => this.subcategories.some((subcategory) => subcategory.id === id))
+		);
 	}
 
 	private setSubcategories(subcategories: SubcategoryInterface[]): void {
@@ -206,10 +209,7 @@ export class IndexSubcategorySettingsCategoryComponent {
 
 	updateSubcategory(): void {
 		if (!this.subcategory.id || this.isCreateSubcategoryLoading || this.isGetSubcategoriesLoading || this.categoryLoadError || this.subcategoriesLoadError) return;
-		this.validationSubcategoryError = {};
-		this.fieldSubcategoryErrors = createEmptyFieldErrorsSubcategory();
 		this.isCreateSubcategoryLoading = true;
-
 		this.categoryService
 			.updateSubcategory(this.subcategory.id, this.subcategory)
 			.pipe(
@@ -219,6 +219,7 @@ export class IndexSubcategorySettingsCategoryComponent {
 			)
 			.subscribe({
 				next: (response: { data: SubcategoryInterface; message: string }) => {
+					this.fieldSubcategoryErrors = createEmptyFieldErrorsSubcategory();
 					this.validationSubcategoryError = {};
 					toastr.success(response.message);
 					this.isCreateSubcategoryLoading = false;

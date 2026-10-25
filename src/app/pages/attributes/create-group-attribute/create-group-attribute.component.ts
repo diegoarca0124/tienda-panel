@@ -8,40 +8,39 @@ import { CategoryService } from '@app/services/category.service';
 import { GLOBAL } from '@app/services/GLOBAL';
 import { SidebarComponent } from '@app/shared/sidebar/sidebar.component';
 import { TopbarComponent } from '@app/shared/topbar/topbar.component';
-import { NgSelectModule } from '@ng-select/ng-select';
+import { TagifyInputComponent, TagifyOption } from '@app/shared/tagify-input/tagify-input.component';
 import { finalize, Subject, takeUntil } from 'rxjs';
 import { AttributeGroupInterface } from '../interfaces/attribute-group.interface';
-import { createEmptyGroupAttribute } from '../utils/empties.util';
+import { createEmptyGroupAttribute, createEmptyFieldErrorsGroupAttribute } from '../utils/empties.util';
 import { AttributeService } from '@app/services/attribute.service';
-import { AlertComponent } from '@app/shared/alert/alert.component';
 import { ValidationPopoverComponent } from '@app/shared/validation-popover/validation-popover.component';
-import { showErrorsGroupAttribute } from '../constants/show-errors-group-attribute.constant';
 import { buildShowErrors } from '@app/common/utils/build-show.errors.util';
-import { TextFieldModule } from '@angular/cdk/text-field';
 import { TextareaAutoresizeDirective } from '@app/common/directives/textarea-autoresize.directive';
 import { CategoryInterface } from '@app/pages/categories/interfaces/data.interface';
+import { HttpErrorResponse } from '@angular/common/http';
+import { GroupAttributeValidationErrors, GroupAttributeFieldErrors } from '../interfaces/validation.interface';
+import { CreateGroupAttributeRESI } from '../interfaces/response.interface';
 declare const toastr: any;
 
 @Component({
 	selector: 'app-create-group-attribute',
-	imports: [TopbarComponent, SidebarComponent, CommonModule, RouterModule, FormsModule, NgSelectModule, AlertComponent, ValidationPopoverComponent, TextareaAutoresizeDirective],
+	imports: [TopbarComponent, SidebarComponent, CommonModule, RouterModule, FormsModule, TagifyInputComponent, ValidationPopoverComponent, TextareaAutoresizeDirective],
 	templateUrl: './create-group-attribute.component.html',
 	styleUrl: './create-group-attribute.component.css',
 	schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class CreateGroupAttributeComponent {
-	public errorsGroupAtribute: any = {};
+	public validationGroupAttributeError: GroupAttributeValidationErrors = {};
 	private destroy$ = new Subject<void>();
-	public loadBtn: boolean = false;
+	public isCreateGroupAttributeLoading: boolean = false;
 	public groupAttribute: AttributeGroupInterface = createEmptyGroupAttribute();
-	public msmErrorGroupAttribute: any = [];
-	public option = 1;
 
-	public categoriesSelected = [];
-	public errorMsmSeverListCategories: HttpErrorBody | null = null;
-	public loadingCategories: boolean = true;
+	public categoriesSelected: string[] = [];
+	public categoriesLoadError: HttpErrorBody | null = null;
+	public isCategoriesLoading: boolean = true;
 	public categories: CategoryInterface[] = [];
-	public showErrors = showErrorsGroupAttribute;
+	public categoryOptions: TagifyOption[] = [];
+	public fieldErrors: GroupAttributeFieldErrors = createEmptyFieldErrorsGroupAttribute();
 
 	constructor(
 		private categoryService: CategoryService,
@@ -50,7 +49,7 @@ export class CreateGroupAttributeComponent {
 	) {}
 
 	ngOnInit() {
-		this.init_categories();
+		this.loadCategories();
 	}
 
 	ngOnDestroy(): void {
@@ -58,51 +57,52 @@ export class CreateGroupAttributeComponent {
 		this.destroy$.complete();
 	}
 
-	init_categories() {
-		this.loadingCategories = true;
-		this.errorMsmSeverListCategories = null;
+	loadCategories() {
+		this.isCategoriesLoading = true;
+		this.categoriesLoadError = null;
 		this.categoryService
 			.get_categories_by_select()
 			.pipe(
 				takeUntil(this.destroy$),
 				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
-				finalize(() => (this.loadingCategories = false))
+				finalize(() => (this.isCategoriesLoading = false))
 			)
 			.subscribe({
 				next: (next: { data: CategoryInterface[]; message: string }) => {
 					this.categories = next.data;
+					this.categoryOptions = next.data.filter((category) => !!category.id).map((category) => ({ value: category.id!, name: category.name }));
 				},
-				error: (err) => {
+				error: (err: HttpErrorResponse) => {
 					const error = getHttpErrorBody(err);
-					this.errorMsmSeverListCategories = error;
+					this.categoriesLoadError = error;
 				},
 			});
 	}
 
-	create() {
-		this.loadBtn = true;
+	createGroupAttribute() {
+		if (this.isCreateGroupAttributeLoading) return;
+		this.isCreateGroupAttributeLoading = true;
 		this.groupAttribute.categories = this.categoriesSelected;
-		this.msmErrorGroupAttribute = '';
 		this.attributeService
-			.create_group_attribute(this.groupAttribute)
+			.createGroupAttribute(this.groupAttribute)
 			.pipe(
 				takeUntil(this.destroy$),
 				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
-				finalize(() => (this.loadBtn = false))
+				finalize(() => (this.isCreateGroupAttributeLoading = false))
 			)
 			.subscribe({
-				next: (next: { message: string; attribute: AttributeGroupInterface }) => {
-					this.errorsGroupAtribute = {};
+				next: (next: CreateGroupAttributeRESI) => {
+					this.fieldErrors = createEmptyFieldErrorsGroupAttribute();
+					this.validationGroupAttributeError = {};
 					toastr.success(next.message);
 					this._router.navigate(['/products/attributes/groups']);
 				},
-				error: (err) => {
+				error: (err: HttpErrorResponse) => {
 					const error = getHttpErrorBody(err);
 					toastr.error(error.message || '¡Error desconocido!');
 					if (error.validation) {
-						this.errorsGroupAtribute = error.validation;
-						this.msmErrorGroupAttribute = Object.values(this.errorsGroupAtribute).flat();
-						this.showErrors = buildShowErrors(this.showErrors, this.errorsGroupAtribute);
+						this.validationGroupAttributeError = error.validation;
+						this.fieldErrors = buildShowErrors(this.fieldErrors, this.validationGroupAttributeError);
 					}
 				},
 			});

@@ -79,7 +79,7 @@ export class MenuCategoriesComponent {
 				},
 				error: (err) => {
 					const error = getHttpErrorBody(err);
-					this.errorMsmSeverListCategories = error;
+					this.errorMsmSeverListCategories = error.message;
 				},
 			});
 	}

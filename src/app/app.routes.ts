@@ -128,8 +128,20 @@ export const routes: Routes = [
 			},
 			{
 				path: ':id/edit',
+				redirectTo: ':id/settings',
+				pathMatch: 'full',
+			},
+			{
+				path: ':id/settings',
 				canActivate: [AuthGuard],
-				loadComponent: () => import('./pages/brands/edit-brand/edit-brand.component').then((m) => m.EditBrandComponent),
+				loadComponent: () => import('./pages/brands/settings-brand/settings-brand.component').then((m) => m.SettingsBrandComponent),
+				children: [
+					{ path: '', redirectTo: 'brand', pathMatch: 'full' },
+					{
+						path: 'brand',
+						loadComponent: () => import('./pages/brands/settings-brand/views/edit-brand/edit-brand.component').then((m) => m.EditBrandComponent),
+					},
+				],
 			},
 			{
 				path: ':id/products',

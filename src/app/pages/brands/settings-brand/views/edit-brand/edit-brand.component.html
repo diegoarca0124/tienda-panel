@@ -1,0 +1,378 @@
+<div class="form-card mb-10">
+	@if (isBrandLoading) {
+		<div class="form-card-body">
+			<section class="mb-7">
+				<header class="border-bottom pb-3 mb-4">
+					<h2 class="form-card-title">Información general</h2>
+
+					<p class="form-card-description">Datos principales con los que se identificará la marca.</p>
+				</header>
+
+				<div class="row g-4">
+					<div class="col-12 col-md-5">
+						<div class="form-field">
+							<div class="d-flex align-items-center justify-content-between gap-2">
+								<label class="form-field-label required" for="brandName">Nombre</label>
+							</div>
+
+							<div class="skeleton skeleton-input"></div>
+
+							<p class="form-field-help">Nombre comercial visible en el panel y la tienda.</p>
+						</div>
+					</div>
+
+					<div class="col-12 col-md-3">
+						<div class="form-field">
+							<div class="d-flex align-items-center justify-content-between gap-2">
+								<label class="form-field-label required" for="brandPrefix">Prefijo</label>
+							</div>
+
+							<div class="skeleton skeleton-input"></div>
+
+							<p class="form-field-help">Exactamente tres letras identificadoras.</p>
+						</div>
+					</div>
+
+					<div class="col-12 col-md-4">
+						<div class="form-field">
+							<div class="d-flex align-items-center justify-content-between gap-2">
+								<label class="form-field-label required" for="brandCountry">País de origen</label>
+							</div>
+
+							<div class="skeleton skeleton-input"></div>
+
+							<p class="form-field-help">País con el que se identifica la marca.</p>
+						</div>
+					</div>
+
+					<div class="col-12">
+						<div class="form-field">
+							<div class="d-flex align-items-center justify-content-between gap-2">
+								<label class="form-field-label" for="brandWebsite">Sitio web</label>
+							</div>
+
+							<div class="skeleton skeleton-input"></div>
+
+							<p class="form-field-help">Página web oficial de la marca.</p>
+						</div>
+					</div>
+
+					<div class="col-12">
+						<div class="form-field">
+							<div class="d-flex align-items-center justify-content-between gap-2">
+								<label class="form-field-label" for="brandDescription">Descripción</label>
+							</div>
+
+							<div class="skeleton skeleton-textarea"></div>
+
+							<p class="form-field-help">Información que permita reconocer y contextualizar la marca.</p>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section>
+				<header class="border-bottom pb-3 mb-4">
+					<h2 class="form-card-title">Identidad visual</h2>
+
+					<p class="form-card-description">Recursos gráficos con los que se presentará la marca.</p>
+				</header>
+
+				<div class="row g-4">
+					<div class="col-12 col-lg-6">
+						<div class="form-field h-100">
+							<div class="d-flex align-items-center justify-content-between gap-2">
+								<label class="form-field-label required">Logo</label>
+							</div>
+
+							<div class="skeleton skeleton-input"></div>
+
+							<p class="form-field-help">Imagen cuadrada en proporción 1:1.</p>
+						</div>
+					</div>
+
+					<div class="col-12 col-lg-6">
+						<div class="form-field h-100">
+							<div class="d-flex align-items-center justify-content-between gap-2">
+								<label class="form-field-label required">Banner</label>
+							</div>
+
+							<div class="skeleton skeleton-input"></div>
+
+							<p class="form-field-help">Imagen horizontal en proporción 2:1.</p>
+						</div>
+					</div>
+				</div>
+			</section>
+		</div>
+	}
+	@if (!isBrandLoading && brandLoadError) {
+		<div class="form-card-bodisCy">
+			<app-not-found [error]="brandLoadError"></app-not-found>
+		</div>
+	}
+
+	@if (!isBrandLoading && !brandLoadError) {
+		<div class="form-card-body">
+			<section class="mb-7">
+				<header class="border-bottom pb-3 mb-4">
+					<h2 class="form-card-title">Información general</h2>
+
+					<p class="form-card-description">Datos principales con los que se identificará la marca.</p>
+				</header>
+
+				<div class="row g-4">
+					<div class="col-12 col-md-5">
+						<div class="form-field">
+							<div class="d-flex align-items-center justify-content-between gap-2">
+								<label class="form-field-label required" for="brandName">Nombre</label>
+
+								<button *ngIf="validationBrandError?.name" type="button" class="form-error-toggle" (click)="fieldErrors.name = !fieldErrors.name">
+									{{ fieldErrors.name ? 'Ocultar errores' : 'Ver errores' }}
+								</button>
+							</div>
+
+							<input
+								id="brandName"
+								type="text"
+								class="form-control form-control-md"
+								placeholder="Ej. The North Face"
+								name="name"
+								autocomplete="organization"
+								[(ngModel)]="brand.name"
+								[class.is-invalid]="validationBrandError?.name"
+							/>
+
+							<p class="form-field-help">Nombre comercial visible en el panel y la tienda.</p>
+
+							<div class="validation-wrapper" [class.open]="fieldErrors.name">
+								<app-validation-popover [errors]="validationBrandError?.name!"></app-validation-popover>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-12 col-md-3">
+						<div class="form-field">
+							<div class="d-flex align-items-center justify-content-between gap-2">
+								<label class="form-field-label required" for="brandPrefix">Prefijo</label>
+
+								<button *ngIf="validationBrandError?.prefix" type="button" class="form-error-toggle" (click)="fieldErrors.prefix = !fieldErrors.prefix">
+									{{ fieldErrors.prefix ? 'Ocultar errores' : 'Ver errores' }}
+								</button>
+							</div>
+
+							<input
+								id="brandPrefix"
+								type="text"
+								class="form-control form-control-md text-uppercase"
+								placeholder="Ej. TNF"
+								name="prefix"
+								[(ngModel)]="brand.prefix"
+								[imask]="prefixMask"
+								[class.is-invalid]="validationBrandError?.prefix"
+							/>
+
+							<p class="form-field-help">Exactamente tres letras identificadoras.</p>
+
+							<div class="validation-wrapper" [class.open]="fieldErrors.prefix">
+								<app-validation-popover [errors]="validationBrandError?.prefix!"></app-validation-popover>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-12 col-md-4">
+						<div class="form-field">
+							<div class="d-flex align-items-center justify-content-between gap-2">
+								<label class="form-field-label required" for="brandCountry">País de origen</label>
+
+								<button *ngIf="validationBrandError?.country" type="button" class="form-error-toggle" (click)="fieldErrors.country = !fieldErrors.country">
+									{{ fieldErrors.country ? 'Ocultar errores' : 'Ver errores' }}
+								</button>
+							</div>
+
+							<ng-select
+								id="brandCountry"
+								class="app-select app-select-md"
+								[items]="countriesValues"
+								bindLabel="name"
+								name="country"
+								[(ngModel)]="brand.country"
+								placeholder="Seleccionar país"
+								[clearable]="false"
+								[closeOnSelect]="true"
+								appendTo="body"
+								dropdownPanelClass="app-select-panel"
+								[class.ng-select-invalid]="validationBrandError?.country"
+							>
+								<ng-template ng-option-tmp let-item="item">
+									<div class="app-select-option">
+										<img [src]="item.flag" class="w-20px h-15px rounded-1 flex-shrink-0" alt="" />
+
+										<span class="app-select-option-text">
+											{{ item.name }}
+										</span>
+									</div>
+								</ng-template>
+
+								<ng-template ng-label-tmp let-item="item">
+									<div class="app-select-value">
+										<img [src]="item.flag" class="w-20px h-15px rounded-1 flex-shrink-0" alt="" />
+
+										<span class="app-select-value-text">
+											{{ item.name }}
+										</span>
+									</div>
+								</ng-template>
+							</ng-select>
+
+							<p class="form-field-help">País con el que se identifica la marca.</p>
+
+							<div class="validation-wrapper" [class.open]="fieldErrors.country">
+								<app-validation-popover [errors]="validationBrandError?.country!"></app-validation-popover>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-12">
+						<div class="form-field">
+							<div class="d-flex align-items-center justify-content-between gap-2">
+								<label class="form-field-label" for="brandWebsite">Sitio web</label>
+
+								<button *ngIf="validationBrandError?.websiteUrl" type="button" class="form-error-toggle" (click)="fieldErrors.websiteUrl = !fieldErrors.websiteUrl">
+									{{ fieldErrors.websiteUrl ? 'Ocultar errores' : 'Ver errores' }}
+								</button>
+							</div>
+
+							<input
+								id="brandWebsite"
+								type="url"
+								class="form-control form-control-md"
+								placeholder="https://www.ejemplo.com"
+								name="websiteUrl"
+								autocomplete="url"
+								[(ngModel)]="brand.websiteUrl"
+								[class.is-invalid]="validationBrandError?.websiteUrl"
+							/>
+
+							<p class="form-field-help">Página web oficial de la marca.</p>
+
+							<div class="validation-wrapper" [class.open]="fieldErrors.websiteUrl">
+								<app-validation-popover [errors]="validationBrandError?.websiteUrl!"></app-validation-popover>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-12">
+						<div class="form-field">
+							<div class="d-flex align-items-center justify-content-between gap-2">
+								<label class="form-field-label" for="brandDescription">Descripción</label>
+
+								<button *ngIf="validationBrandError?.description" type="button" class="form-error-toggle" (click)="fieldErrors.description = !fieldErrors.description">
+									{{ fieldErrors.description ? 'Ocultar errores' : 'Ver errores' }}
+								</button>
+							</div>
+
+							<textarea
+								id="brandDescription"
+								class="form-control form-control-md"
+								placeholder="Describe brevemente la marca"
+								name="description"
+								[(ngModel)]="brand.description"
+								[class.is-invalid]="validationBrandError?.description"
+								textAreaAutoResize
+								rows="3"
+							></textarea>
+
+							<p class="form-field-help">Información que permita reconocer y contextualizar la marca.</p>
+
+							<div class="validation-wrapper" [class.open]="fieldErrors.description">
+								<app-validation-popover [errors]="validationBrandError?.description!"></app-validation-popover>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section>
+				<header class="border-bottom pb-3 mb-4">
+					<h2 class="form-card-title">Identidad visual</h2>
+
+					<p class="form-card-description">Recursos gráficos con los que se presentará la marca.</p>
+				</header>
+
+				<div class="row g-4">
+					<div class="col-12 col-lg-6">
+						<div class="form-field h-100">
+							<div class="d-flex align-items-center justify-content-between gap-2">
+								<label class="form-field-label required">Logo</label>
+
+								<button *ngIf="validationBrandError?.logoUrl?.length" type="button" class="form-error-toggle" (click)="fieldErrors.logoUrl = !fieldErrors.logoUrl">
+									{{ fieldErrors.logoUrl ? 'Ocultar errores' : 'Ver errores' }}
+								</button>
+							</div>
+
+							<app-upload-image
+								(fileSelected)="brand.logoUrl = $event ? $event : undefined"
+								(imageValidationError)="handleValidationError($event, 'logo')"
+								[aspectMode]="'square'"
+								[fileConfig]="logoUploadConfig"
+								[inputId]="'logoUrl'"
+								[hasError]="validationBrandError?.logoUrl?.[0]"
+								[previewImage]="logoUrlEdit"
+							></app-upload-image>
+
+							<p class="form-field-help">Imagen cuadrada en proporción 1:1.</p>
+
+							<div class="validation-wrapper" [class.open]="fieldErrors.logoUrl">
+								<app-validation-popover [errors]="validationBrandError?.logoUrl!"></app-validation-popover>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-12 col-lg-6">
+						<div class="form-field h-100">
+							<div class="d-flex align-items-center justify-content-between gap-2">
+								<label class="form-field-label required">Banner</label>
+
+								<button *ngIf="validationBrandError?.bannerUrl?.length" type="button" class="form-error-toggle" (click)="fieldErrors.bannerUrl = !fieldErrors.bannerUrl">
+									{{ fieldErrors.bannerUrl ? 'Ocultar errores' : 'Ver errores' }}
+								</button>
+							</div>
+
+							<app-upload-image
+								(fileSelected)="brand.bannerUrl = $event ? $event : undefined"
+								(imageValidationError)="handleValidationError($event, 'banner')"
+								[aspectMode]="'rectangle'"
+								[fileConfig]="bannerUploadConfig"
+								[inputId]="'bannerUrl'"
+								[hasError]="validationBrandError?.bannerUrl?.[0]"
+								[previewImage]="bannerUrlEdit"
+							></app-upload-image>
+
+							<p class="form-field-help">Imagen horizontal en proporción 2:1.</p>
+
+							<div class="validation-wrapper" [class.open]="fieldErrors.bannerUrl">
+								<app-validation-popover [errors]="validationBrandError?.bannerUrl!"></app-validation-popover>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+		</div>
+	}
+
+	<footer class="form-card-footer" *ngIf="!brandLoadError">
+		<div class="d-flex flex-column-reverse flex-sm-row align-items-stretch align-items-sm-center justify-content-end gap-2">
+			<button
+				class="btn btn-primary btn-sm px-5"
+				type="button"
+				[disabled]="isBrandLoading || isUpdateBrandLoading || brandLoadError"
+				(click)="!isBrandLoading && !isUpdateBrandLoading && !brandLoadError && updateBrand()"
+			>
+				<span *ngIf="isUpdateBrandLoading" class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+				<i *ngIf="!isUpdateBrandLoading" class="bi bi-person-check" aria-hidden="true"></i>
+				<span>{{ isUpdateBrandLoading ? 'Actualizando...' : 'Actualizar marca' }}</span>
+			</button>
+		</div>
+	</footer>
+</div>

@@ -80,8 +80,6 @@ export class CreateSubcategorySettingsCategoryComponent {
 
 	createSubcategory(): void {
 		if (!this.id || this.isGetCategoryLoading || this.categoryLoadError || this.isCreateSubcategoryLoading) return;
-		this.validationSubcategoryError = {};
-		this.fieldSubcategoryErrors = createEmptyFieldErrorsSubcategory();
 		this.isCreateSubcategoryLoading = true;
 		this.subcategory.categoryId = this.id;
 
@@ -94,8 +92,8 @@ export class CreateSubcategorySettingsCategoryComponent {
 			)
 			.subscribe({
 				next: (response: { data: SubcategoryInterface; message: string }) => {
-					this.validationSubcategoryError = {};
 					this.fieldSubcategoryErrors = createEmptyFieldErrorsSubcategory();
+					this.validationSubcategoryError = {};
 					this.subcategory = createEmptySubcategory();
 					this.subcategory.categoryId = this.id;
 					toastr.success(response.message);

@@ -76,7 +76,7 @@ export class EditGroupAttributeComponent {
 					this.errorMsmServerGetGroupAttribute = null;
 					this.errorMsmSeverListCategories = null;
 					return forkJoin({
-						groupAttribute: this.attributeService.get_attribute_group(this.id),
+						groupAttribute: this.attributeService.getAttributeGroup(this.id),
 						categories: this.categoryService.get_categories_by_select(),
 					}).pipe(
 						withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
@@ -137,7 +137,7 @@ export class EditGroupAttributeComponent {
 		this.errorMsmServer = '';
 		this.msmErrorGroupAttribute = '';
 		this.attributeService
-			.update_attribute_group(this.id, this.groupAttribute)
+			.updateAttributeGroup(this.id, this.groupAttribute)
 			.pipe(
 				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
 				takeUntil(this.destroy$),

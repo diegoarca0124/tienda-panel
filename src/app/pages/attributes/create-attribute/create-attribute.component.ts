@@ -75,7 +75,7 @@ export class CreateAttributeComponent {
 					this.loading = true;
 					this.errorMsmServerGetGroupAttribute = null;
 					return forkJoin({
-						groupAttribute: this.attributeService.get_attribute_group(this.id),
+						groupAttribute: this.attributeService.getAttributeGroup(this.id),
 					}).pipe(
 						withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
 						finalize(() => (this.loading = false))
@@ -143,7 +143,7 @@ export class CreateAttributeComponent {
 		if (!this.attribute.unit) delete this.attribute.unit;
 		console.log(this.attribute);
 		this.attributeService
-			.create_attribute(this.attribute)
+			.createAttribute(this.attribute)
 			.pipe(
 				takeUntil(this.destroy$),
 				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),

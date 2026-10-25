@@ -2,6 +2,7 @@ import { ProductInterface } from '@app/pages/products/interfaces/product.interfa
 import { BrandInterface } from './data.interface';
 import { SafeHtml } from '@angular/platform-browser';
 import { SubcategoryInterface } from '@app/pages/products/interfaces/subcategory.interface';
+import { CategoryProductInterface } from '@app/pages/categories/interfaces/response.interface';
 
 export interface GetBrandsRESI {
 	brands: BrandInterface[];
@@ -60,7 +61,8 @@ export interface GetCategoriesWithSubcategoriesRESI {
 }
 
 export interface FindBrandProductsRESI {
-	products: ProductInterface[];
+	brand: string;
+	products: CategoryProductInterface[];
 	meta: {
 		totalProducts: number;
 		totalPages: number;
@@ -71,10 +73,11 @@ export interface FindBrandProductsRESI {
 		filter: string;
 		status: 'Todos' | 'published' | 'draft';
 		sort: string;
-		subcategoryIds: string[];
+		subcategoryIds: string;
+		categoryIds: string;
 		quality: string;
 		visibility: string;
-		minPrice: string;
-		maxPrice: string;
+		minPrice?: number;
+		maxPrice?: number;
 	};
 }

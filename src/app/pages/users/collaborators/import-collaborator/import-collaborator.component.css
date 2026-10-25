@@ -3,10 +3,6 @@
 	transition: background-color 0.15s ease;
 }
 
-.form-control:disabled {
-	background-color: transparent !important;
-}
-
 .bg-error {
 	background-color: #ffd8d8 !important;
 }

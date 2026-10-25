@@ -1,0 +1,264 @@
+app-tagify-input {
+	display: block;
+	min-width: 0;
+}
+
+app-tagify-input .app-tagify {
+	--tags-border-color: var(--form-control-border, #d7dee8);
+	--tags-hover-border-color: var(--form-control-focus, #84bbff);
+	--tags-focus-border-color: var(--form-control-focus, #84bbff);
+	--tag-bg: #eef6ff;
+	--tag-hover: #e1efff;
+	--tag-text-color: #2870bd;
+	--tag-remove-bg: #d2e7ff;
+	--tag-remove-btn-color: #2870bd;
+	--tag-remove-btn-bg--hover: #d2e7ff;
+	--tag-border-radius: 0.35rem;
+	--tag-pad: 0.3rem 0.5rem;
+	--placeholder-color: #98a2b3;
+	display: flex;
+	align-items: center;
+	gap: 0.25rem;
+	box-sizing: border-box;
+	width: 100%;
+	min-height: var(--form-control-height-md, 3.25rem);
+	padding: 0.375rem 0.625rem;
+	font-family: inherit;
+	font-size: var(--form-control-text-md, 0.9375rem);
+	font-weight: 500;
+	line-height: var(--form-control-line-height, 1.4);
+	color: #4b5d7b;
+	background: #fff;
+	border: 1px solid var(--tags-border-color);
+	border-radius: var(--form-control-radius, 0.475rem);
+	transition:
+		border-color 150ms ease,
+		box-shadow 150ms ease;
+}
+
+app-tagify-input .app-tagify.tagify--focus {
+	border-color: var(--form-control-focus, #84bbff);
+	box-shadow: 0 0 0 0.1875rem rgba(27, 132, 255, 0.1);
+}
+
+app-tagify-input .app-tagify .tagify__input {
+	min-width: min(10rem, 100%);
+	margin: 0;
+	padding: 0.375rem 0.25rem;
+}
+
+app-tagify-input .app-tagify .tagify__tag {
+	max-width: 100%;
+	margin: 0;
+	font-size: var(--form-text-sm, 0.8125rem);
+}
+
+app-tagify-input .app-tagify .tagify__tag-text {
+	white-space: normal;
+	overflow-wrap: anywhere;
+}
+
+app-tagify-input.category-tagify .app-tagify {
+	--tag-hide-transition: 0s;
+	--tag-bg: #f2f6fc;
+	--tag-hover: #eaf2fc;
+	--tag-text-color: #476182;
+	flex-wrap: wrap;
+	align-items: center;
+	align-content: center;
+	gap: 0.375rem;
+	padding: 0.5rem 0.625rem;
+}
+
+app-tagify-input.category-tagify .app-tagify.tagify:not(.form-control-sm):not(.form-control-lg) {
+	min-height: var(--form-control-height-md, 3.25rem);
+}
+
+app-tagify-input.category-tagify .app-tagify[disabled] .tagify__input {
+	visibility: visible !important;
+	width: auto !important;
+	margin: 0 !important;
+}
+
+app-tagify-input.category-tagify .app-tagify[disabled] .tagify__input::before {
+	position: absolute !important;
+}
+
+app-tagify-input.category-tagify .app-tagify.tagify--loading .tagify__input::before {
+	content: attr(data-placeholder) !important;
+}
+
+app-tagify-input.category-tagify .app-tagify.tagify--loading .tagify__input::after {
+	display: none;
+}
+
+app-tagify-input.category-tagify .app-tagify[disabled] .tagify__tag .tagify__tag__removeBtn {
+	display: inline-flex;
+	visibility: hidden;
+}
+
+app-tagify-input.category-tagify .app-tagify.tagify .tagify__tag {
+	box-sizing: border-box;
+	min-height: 1.75rem;
+	max-width: 100%;
+	margin: 0;
+	padding: 0.1875rem 0.375rem 0.1875rem 0.5rem !important;
+	line-height: 1.35;
+	background: var(--tag-bg);
+	border: 1px solid #dce7f4;
+	border-radius: 0.375rem;
+}
+
+app-tagify-input.category-tagify .app-tagify .tagify__tag:hover {
+	background: var(--tag-hover);
+	border-color: #c8daef;
+}
+
+app-tagify-input.category-tagify .app-tagify .tagify__tag > div {
+	min-width: 0;
+	/* Disabled Tagify adds its own inner padding; keep label geometry unchanged. */
+	padding: 0 !important;
+}
+
+app-tagify-input.category-tagify .app-tagify .tagify__tag > div::before {
+	display: none;
+}
+
+app-tagify-input.category-tagify .app-tagify.tagify .tagify__tag .tagify__tag-text {
+	/* Override the legacy theme's fixed Tagify text size. */
+	font-family: inherit !important;
+	font-size: var(--form-text-sm, 0.8125rem) !important;
+	font-weight: 500;
+	line-height: 1.35;
+	color: var(--tag-text-color) !important;
+	white-space: normal;
+	overflow-wrap: anywhere;
+}
+
+app-tagify-input.category-tagify .app-tagify .tagify__input {
+	/* Reserve the placeholder line even when there is no contenteditable text. */
+	min-height: calc(var(--form-control-text-md, 0.9375rem) * var(--form-control-line-height, 1.4) + 0.75rem);
+	font-family: inherit !important;
+	font-size: var(--form-text-sm, 0.8125rem) !important;
+	font-weight: 400;
+	line-height: var(--form-control-line-height, 1.4);
+}
+
+/* Match the form-control-md placeholders used by Name and Description. */
+app-tagify-input.category-tagify .app-tagify .tagify__input::before {
+	font-family: inherit !important;
+	font-size: var(--form-control-text-md, 0.9375rem) !important;
+	line-height: var(--form-control-line-height, 1.4) !important;
+	font-weight: 400;
+	letter-spacing: 0.02em;
+	text-transform: none;
+	color: #98a2b3 !important;
+	opacity: 1;
+}
+
+app-tagify-input.category-tagify .app-tagify .tagify__tag .tagify__tag__removeBtn {
+	flex: 0 0 1rem;
+	width: 1rem;
+	height: 1rem;
+	margin: 0 0 0 0.25rem;
+	color: #7c8da5;
+	background: transparent;
+	border-radius: 0.25rem;
+	-webkit-mask-image: none;
+	mask-image: none;
+	transition: none;
+}
+
+app-tagify-input.category-tagify .app-tagify .tagify__tag .tagify__tag__removeBtn::after {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1;
+	transition: none;
+}
+
+app-tagify-input.category-tagify .app-tagify .tagify__tag .tagify__tag__removeBtn:hover {
+	color: #7c8da5;
+	background: transparent;
+	-webkit-mask-image: none;
+	mask-image: none;
+}
+
+app-tagify-input.category-tagify .app-tagify .tagify__tag__removeBtn:hover + div > span {
+	opacity: 1;
+}
+
+app-tagify-input.category-tagify .app-tagify .tagify__tag:has(.tagify__tag__removeBtn:hover) {
+	background: var(--tag-bg);
+	border-color: #dce7f4;
+	transition: none;
+}
+
+app-tagify-input .app-tagify.app-tagify-invalid {
+	--tags-border-color: var(--form-control-error, #f04438);
+	--tags-hover-border-color: var(--form-control-error, #f04438);
+	--tags-focus-border-color: var(--form-control-error, #f04438);
+	border-color: var(--form-control-error, #f04438);
+}
+
+app-tagify-input .app-tagify[disabled] {
+	--tags-disabled-bg: #ffffff;
+	--input-color: #98a2b3;
+	--tag-text-color: #98a2b3;
+	color: #98a2b3;
+	background-color: #ffffff;
+	border-color: var(--tags-border-color);
+	box-shadow: none;
+	filter: none;
+	cursor: not-allowed;
+	opacity: 1;
+	pointer-events: auto;
+}
+
+app-tagify-input .app-tagify[disabled] > * {
+	pointer-events: none;
+}
+
+app-tagify-input .app-tagify[disabled] .tagify__input,
+app-tagify-input.category-tagify .app-tagify[disabled] .tagify__tag .tagify__tag-text {
+	color: #98a2b3 !important;
+}
+
+.tagify__dropdown.app-tagify-dropdown {
+	--tagify-dd-color-primary: #1b84ff;
+	padding: 0;
+	transform: translateY(0.5rem);
+	font-family: inherit;
+	font-size: var(--form-text-md, 0.875rem);
+	color: #344054;
+}
+
+.tagify__dropdown.app-tagify-dropdown[placement='top'] {
+	transform: translateY(calc(-100% - 0.5rem));
+}
+
+.app-tagify-dropdown .tagify__dropdown__wrapper {
+	padding: 0.375rem;
+	background: #fff;
+	border: 1px solid #e4e9f0;
+	border-radius: var(--form-control-radius, 0.475rem);
+	box-shadow: 0 8px 24px rgba(16, 24, 40, 0.1);
+}
+
+.tagify__dropdown.app-tagify-dropdown .tagify__dropdown__wrapper,
+.tagify__dropdown.app-tagify-dropdown.tagify__dropdown--initial[placement] .tagify__dropdown__wrapper {
+	max-height: var(--tagify-dd-max-height, 300px);
+	overflow-y: auto;
+	transform: none;
+	transition: none;
+	animation: none;
+}
+
+.app-tagify-dropdown .tagify__dropdown__item {
+	padding: 0.625rem 0.75rem;
+	border-radius: 0.35rem;
+}
+
+.app-tagify-dropdown .tagify__dropdown__item--active {
+	color: #2870bd;
+	background: #eef6ff;
+}

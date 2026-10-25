@@ -93,26 +93,17 @@ export class CreateBrandComponent {
 			)
 			.subscribe({
 				next: (next: CreateBrandRESI) => {
-					this.validationBrandError = {
-						logoUrl: [],
-						bannerUrl: [],
-					};
+					this.fieldErrors = createEmptyFieldErrorsBrand();
+					this.validationBrandError = {};
 					toastr.success(next.message);
 					this._router.navigate(['/products/brands']);
 				},
 				error: (err: HttpErrorResponse) => {
-					this.validationBrandError = {
-						logoUrl: [],
-						bannerUrl: [],
-					};
 					const error = getHttpErrorBody(err);
 					toastr.error(error.message || '¡Error desconocido!');
 
 					if (error.validation) {
-						this.validationBrandError = {
-							...this.validationBrandError,
-							...error.validation,
-						};
+						this.validationBrandError = error.validation;
 						this.fieldErrors = buildShowErrors(this.fieldErrors, this.validationBrandError);
 					}
 				},

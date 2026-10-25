@@ -63,8 +63,6 @@ export class CreateCategoryComponent {
 	}
 
 	createCategory() {
-		this.validationCategoryError = {};
-		this.fieldErrors = createEmptyFieldErrorsCategory();
 		this.isCreateCategoryLoading = true;
 		if (this.category.icon == null) this.category.icon = '';
 
@@ -77,6 +75,7 @@ export class CreateCategoryComponent {
 			)
 			.subscribe({
 				next: (next: CreateCategoryRESI) => {
+					this.fieldErrors = createEmptyFieldErrorsCategory();
 					this.validationCategoryError = {};
 					toastr.success(next.message);
 					this._router.navigate(['/products/categories']);

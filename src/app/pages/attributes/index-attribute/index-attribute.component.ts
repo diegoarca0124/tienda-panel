@@ -120,7 +120,6 @@ export class IndexAttributeComponent {
 
 					// Reset
 					this.attributes = [];
-					this.currentPage = 1;
 					this.totalPages = 1;
 					this.errorMsmServerListAttributes = null;
 
@@ -181,7 +180,7 @@ export class IndexAttributeComponent {
 	setStatus(id: string, status: boolean) {
 		this.loadBtnDelete.set(true);
 		this.attributeService
-			.update_status_attribute(id, { status })
+			.updateAttributeStatus(id, { status: !status })
 			.pipe(
 				takeUntil(this.destroy$),
 				withMinLoadingTime(GLOBAL.MIN_LOADING_TIME),
@@ -242,7 +241,7 @@ export class IndexAttributeComponent {
 	onUpdateStatusMultiple(status: boolean) {
 		this.loadBtnMultipleStatus.set(true);
 		this.attributeService
-			.update_status_attributes({
+			.updateAttributesStatus({
 				ids: this.getSelectedIds(),
 				status,
 			})

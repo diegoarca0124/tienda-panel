@@ -20,9 +20,9 @@
 						<div class="dropdown-menu dropdown-menu-end action-dropdown-menu action-dropdown-menu-compact" aria-labelledby="productTableOptions">
 							<a
 								class="dropdown-item action-dropdown-item action-dropdown-item-compact"
-								[class.disabled]="selectedProductsIds.size === 0"
-								[attr.data-bs-toggle]="selectedProductsIds.size > 0 ? 'modal' : null"
-								[attr.data-bs-target]="selectedProductsIds.size > 0 ? '#modalMove' : null"
+								[class.disabled]="selectedProductsIds.size === 0 || isInteractionDisabled"
+								[attr.data-bs-toggle]="selectedProductsIds.size > 0 && !isInteractionDisabled ? 'modal' : null"
+								[attr.data-bs-target]="selectedProductsIds.size > 0 && !isInteractionDisabled ? '#modalMove' : null"
 							>
 								<span class="action-dropdown-item-icon">
 									<ion-icon name="folder-open-outline" class="fs-4" aria-hidden="true"></ion-icon>
@@ -99,7 +99,7 @@
 				</tr>
 			} @else if (loadError) {
 				<tr>
-						<td colspan="8">
+					<td colspan="8">
 						<app-not-found [error]="loadError"></app-not-found>
 					</td>
 				</tr>
@@ -110,6 +110,7 @@
 							<input
 								class="form-check-input cursor-pointer"
 								type="checkbox"
+								[disabled]="isInteractionDisabled"
 								[checked]="selectedProductsIds.has(item.id!)"
 								(change)="toggleProduct(item.id!, $event)"
 								[attr.aria-label]="'Seleccionar producto ' + item.name"
@@ -157,12 +158,12 @@
 
 					<td class="fixed-sd">
 						<div class="d-flex flex-column">
-						<span class="paragraph paragraph-sm fw-600 m-0" [class.text-danger]="hasDiscount(item)" [class.text-gray-700]="!hasDiscount(item)">
+							<span class="paragraph paragraph-sm fw-600 m-0" [class.text-danger]="hasDiscount(item)" [class.text-gray-700]="!hasDiscount(item)">
 								{{ 'PE' | currencySymbol }}
-							{{ (hasDiscount(item) ? item.priceDiscount : item.priceRegular) | number: '1.2-2' }}
+								{{ (hasDiscount(item) ? item.priceDiscount : item.priceRegular) | number: '1.2-2' }}
 							</span>
 
-						<span *ngIf="hasDiscount(item)" class="paragraph paragraph-sm text-gray-400 text-decoration-line-through m-0">
+							<span *ngIf="hasDiscount(item)" class="paragraph paragraph-sm text-gray-400 text-decoration-line-through m-0">
 								{{ 'PE' | currencySymbol }}
 								{{ item.priceRegular | number: '1.2-2' }}
 							</span>
@@ -231,9 +232,10 @@
 
 								<a
 									class="dropdown-item action-dropdown-item action-dropdown-item-compact cursor-pointer"
-									data-bs-toggle="modal"
-									data-bs-target="#modalMove"
-									(click)="productMoveRequested.emit(item.id!)"
+									[class.disabled]="isInteractionDisabled"
+									[attr.data-bs-toggle]="isInteractionDisabled ? null : 'modal'"
+									[attr.data-bs-target]="isInteractionDisabled ? null : '#modalMove'"
+									(click)="!isInteractionDisabled && productMoveRequested.emit(item.id!)"
 								>
 									<span class="action-dropdown-item-icon">
 										<ion-icon name="folder-open-outline" class="fs-4" aria-hidden="true"></ion-icon>
@@ -247,7 +249,7 @@
 				</tr>
 			} @else {
 				<tr>
-						<td colspan="8">
+					<td colspan="8">
 						<app-not-found
 							[error]="{
 								message: 'No se encontraron registros.',
@@ -265,14 +267,7 @@
 	<label class="page-size-control">
 		<span>Mostrar</span>
 
-		<select
-			class="form-select page-size-select"
-			name="limit"
-			[(ngModel)]="limit"
-			(change)="onLimitChange()"
-			[disabled]="isLoading"
-			aria-label="Cantidad de productos por página"
-		>
+		<select class="form-select page-size-select" name="limit" [(ngModel)]="limit" (change)="onLimitChange()" [disabled]="isLoading" aria-label="Cantidad de productos por página">
 			@for (pageLimit of paginationLimits; track pageLimit) {
 				<option [ngValue]="pageLimit">{{ pageLimit }}</option>
 			}

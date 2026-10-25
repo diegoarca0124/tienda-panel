@@ -63,7 +63,7 @@
 				type="button"
 				class="pagination-control arrow-control"
 				(click)="changePage(currentPage + 1)"
-				[disabled]="isLoading || currentPage === totalPages"
+				[disabled]="isLoading || currentPage === visibleTotalPages"
 				aria-label="Ir a la página siguiente"
 				title="Página siguiente"
 			>
@@ -78,8 +78,8 @@
 			<button
 				type="button"
 				class="pagination-control edge-control"
-				(click)="changePage(totalPages)"
-				[disabled]="isLoading || currentPage === totalPages"
+				(click)="changePage(visibleTotalPages)"
+				[disabled]="isLoading || currentPage === visibleTotalPages"
 				aria-label="Ir a la última página"
 				title="Última página"
 			>

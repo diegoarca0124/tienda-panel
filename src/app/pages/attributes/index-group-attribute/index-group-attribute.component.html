@@ -5,365 +5,460 @@
 		<div class="app-main flex-column flex-row-fluid">
 			<div class="d-flex flex-column flex-column-fluid">
 				<div id="kt_app_toolbar" class="app-toolbar py-3 py-lg-6">
-					<div id="kt_app_toolbar_container" class="app-container container-fluid d-flex flex-stack">
-						<div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
-							<h1 class="page-heading d-flex text-gray-700 fs-3 flex justify-content-start my-0 align-items-center text-uppercase ls-1px fw-700">Grupos Atributos</h1>
+					<div id="kt_app_toolbar_container" class="app-container container-fluid page-header-layout">
+						<div class="page-header-content">
+							<nav aria-label="Migas de pan">
+								<ol class="page-header-breadcrumb">
+									<li class="page-header-breadcrumb-item page-header-breadcrumb-active" aria-current="page">Grupos de atributos</li>
+								</ol>
+							</nav>
 
-							<ul class="breadcrumb breadcrumb-separatorless fs-7 my-0 pt-1">
-								<li class="breadcrumb-item text-primary fw-600">Grupos</li>
-							</ul>
+							<h1 class="page-header-title">Grupos de atributos</h1>
 						</div>
-						<div class="d-flex align-items-center gap-2 gap-lg-3">
-							<a
-								[routerLink]="['/products/attributes/groups/create']"
-								routerLinkActive="router-link-active"
-								class="btn btn-sm fw-bold btn-primary d-inline-flex align-items-center gap-1"
-							>
-								<i class="bi bi-collection"></i>
-								<span>Nuevo grupo</span>
-							</a>
-						</div>
+
+						<a [routerLink]="['/products/attributes/groups/create']" class="btn btn-sm btn-primary page-header-action" aria-label="Crear nuevo grupo" title="Nuevo grupo">
+							<ion-icon name="duplicate-outline" aria-hidden="true"></ion-icon>
+
+							<span class="page-header-action-text">Nuevo grupo</span>
+						</a>
 					</div>
 				</div>
-				<div class="app-content flex-column-fluid">
+				<div class="app-content flex-column-fluid mt-5">
 					<div class="app-container container-fluid">
-						<div class="d-flex justify-content-between align-items-center flex-nowrap gap-2 mt-5">
-							<div class="d-flex gap-2">
-								<div>
-									<div class="d-flex align-items-center gap-2">
-										<div class="position-relative">
-											<input
-												type="text"
-												class="form-control form-control-sm w-300px pe-10"
-												placeholder="Buscar grupo"
-												name="filter"
-												[(ngModel)]="filter"
-												(keyup.enter)="onFilterOrStatusChange()"
-											/>
-
-											<i class="bi bi-search position-absolute cursor-pointer" style="right: 15px; top: 50%; transform: translateY(-50%)" (click)="onFilterOrStatusChange()"></i>
-										</div>
-										<button
-											type="button"
-											class="btn btn-sm btn-icon btn-light-primary d-flex align-items-center justify-content-center"
-											(click)="resetFilters()"
-											[disabled]="loading"
-										>
-											<span *ngIf="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-											<i *ngIf="!loading" class="bi bi-arrow-clockwise fs-5"></i>
-										</button>
-									</div>
+						<div class="list-toolbar">
+							<!-- Buscador -->
+							<div class="list-toolbar-search">
+								<div class="list-toolbar-search-field">
+									<input
+										type="text"
+										class="form-control form-control-sm"
+										placeholder="Buscar grupo"
+										name="filter"
+										[(ngModel)]="filter"
+										(keyup.enter)="applyFilters()"
+										[disabled]="isAttributeGroupsLoading"
+										maxlength="50"
+									/>
+									<i class="bi bi-search list-toolbar-input-icon" aria-hidden="true"></i>
 								</div>
-							</div>
-							<div class="dropdown">
-								<button class="btn btn-dark btn-sm d-flex align-items-center gap-2 my-1" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-									<ion-icon name="settings-outline" class="fs-5"></ion-icon>
-									<span>Opciones</span>
-									<ion-icon name="chevron-down-outline" class="fs-6"></ion-icon>
+								<!-- Buscar -->
+								<button
+									type="button"
+									class="btn btn-sm btn-icon btn-primary"
+									(click)="applyFilters()"
+									[disabled]="isAttributeGroupsLoading"
+									aria-label="Buscar grupo"
+									title="Buscar grupo"
+								>
+									<i *ngIf="!isAttributeGroupsLoading" class="bi bi-search"></i>
+									<span *ngIf="isAttributeGroupsLoading" class="spinner-border spinner-border-sm" aria-hidden="true"></span>
 								</button>
-								<ul class="dropdown-menu menu-state-bg-light-primary" aria-labelledby="dropdownMenuButton">
-									<li>
-										<a
-											class="dropdown-item cursor-pointer d-flex align-items-center gap-2"
-											[class.disabled]="selectedIds.size === 0"
-											[attr.data-bs-toggle]="selectedIds.size > 0 ? 'modal' : null"
-											[attr.data-bs-target]="selectedIds.size > 0 ? '#modalMultipleActive' : null"
-										>
-											<ion-icon name="checkmark-circle-outline" class="text-primary"></ion-icon>
-											Activar
-										</a>
-									</li>
-									<li>
-										<a
-											class="dropdown-item cursor-pointer d-flex align-items-center gap-2"
-											[class.disabled]="selectedIds.size === 0"
-											[attr.data-bs-toggle]="selectedIds.size > 0 ? 'modal' : null"
-											[attr.data-bs-target]="selectedIds.size > 0 ? '#modalMultipleDisabled' : null"
-										>
-											<ion-icon name="close-circle-outline" class="text-danger"></ion-icon>
-											Desactivar
-										</a>
-									</li>
-								</ul>
+								<!-- Restablecer -->
+								<button
+									type="button"
+									class="btn btn-sm btn-icon btn-light-primary"
+									(click)="resetFilters()"
+									[disabled]="isAttributeGroupsLoading"
+									aria-label="Restablecer filtros"
+									title="Restablecer filtros"
+								>
+									<i *ngIf="!isAttributeGroupsLoading" class="bi bi-arrow-clockwise"></i>
+									<span *ngIf="isAttributeGroupsLoading" class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+								</button>
 							</div>
-						</div>
-
-						<div class="filters-container mt-7">
-							<div class="filter-item">
-								<div class="d-flex flex-column mb-1 gap-1">
-									<div class="d-flex align-items-center">
-										<span class="text-gray-700 ls-1px" style="font-size: 0.7rem">ESTADO</span>
-									</div>
-									<ng-select
-										[items]="statusTable"
-										bindLabel="name"
-										bindValue="value"
-										name="status"
-										(change)="onFilterOrStatusChange()"
-										[(ngModel)]="status"
-										placeholder="Estado"
-										[clearable]="false"
-										[closeOnSelect]="true"
-										class="select-label-sm mb-1"
-										appendTo="body"
-										[searchable]="false"
+							<!-- Acciones del lado derecho -->
+							<div class="list-toolbar-actions">
+								<div class="dropdown action-dropdown">
+									<button
+										id="attributeGroupOptionsButton"
+										type="button"
+										class="btn btn-sm btn-dark"
+										data-bs-toggle="dropdown"
+										data-bs-offset="0,10"
+										aria-expanded="false"
+										aria-label="Opciones"
+										title="Opciones"
+										[disabled]="isAttributeGroupsLoading"
 									>
-										<!-- Opción en el dropdown -->
-										<ng-template ng-option-tmp let-item="item">
-											<div class="d-flex align-items-center gap-2">
-												<span class="bullet bullet-dot h-8px w-8px" [ngClass]="'bg-' + item.color"></span>
-												<span>{{ item.name }}</span>
-											</div>
-										</ng-template>
-
-										<!-- Opción seleccionada en el input -->
-										<ng-template ng-label-tmp let-item="item">
-											<div class="d-flex align-items-center gap-2">
-												<span class="bullet bullet-dot h-8px w-8px" [ngClass]="'bg-' + item.color"></span>
-												<span>{{ item.name }}</span>
-											</div>
-										</ng-template>
-									</ng-select>
-								</div>
-							</div>
-							<div class="filter-item">
-								<div class="d-flex flex-column mb-1 gap-1">
-									<div class="d-flex align-items-center">
-										<span class="text-gray-700 ls-1px" style="font-size: 0.7rem">ORDEN</span>
+										<ion-icon name="settings-outline" aria-hidden="true"></ion-icon>
+										<span class="app-btn-label">Opciones</span>
+										<ion-icon name="chevron-down-outline" class="app-btn-chevron" aria-hidden="true"></ion-icon>
+									</button>
+									<div class="dropdown-menu dropdown-menu-end action-dropdown-menu action-dropdown-menu-compact" aria-labelledby="attributeGroupOptionsButton">
+										<a
+											class="dropdown-item action-dropdown-item action-dropdown-item-compact"
+											[class.disabled]="!canUpdateSelectedAttributeGroups"
+											[attr.data-bs-toggle]="canUpdateSelectedAttributeGroups ? 'modal' : null"
+											[attr.data-bs-target]="canUpdateSelectedAttributeGroups ? '#modalMultipleActive' : null"
+										>
+											<span class="action-dropdown-item-icon"><ion-icon name="checkmark-circle-outline" class="fs-4 text-primary" aria-hidden="true"></ion-icon></span>
+											<span class="action-dropdown-item-title text-primary">Activar</span>
+										</a>
+										<a
+											class="dropdown-item action-dropdown-item action-dropdown-item-compact"
+											[class.disabled]="!canUpdateSelectedAttributeGroups"
+											[attr.data-bs-toggle]="canUpdateSelectedAttributeGroups ? 'modal' : null"
+											[attr.data-bs-target]="canUpdateSelectedAttributeGroups ? '#modalMultipleDisabled' : null"
+										>
+											<span class="action-dropdown-item-icon"><ion-icon name="close-circle-outline" class="fs-4 text-danger" aria-hidden="true"></ion-icon></span>
+											<span class="action-dropdown-item-title text-danger">Desactivar</span>
+										</a>
 									</div>
-									<ng-select
-										[items]="sortColumns"
-										bindLabel="name"
-										bindValue="value"
-										name="sort"
-										(change)="onFilterOrStatusChange()"
-										[(ngModel)]="sort"
-										placeholder="Orden"
-										[clearable]="false"
-										[closeOnSelect]="true"
-										class="select-label-sm mb-1"
-										appendTo="body"
-										[searchable]="false"
-									>
-										<!-- Opción en el dropdown -->
-										<ng-template ng-option-tmp let-item="item">
-											<div class="d-flex align-items-center gap-2">
-												<ion-icon [name]="item.icon"></ion-icon>
-												<span>{{ item.name }}</span>
-											</div>
-										</ng-template>
-
-										<!-- Opción seleccionada en el input -->
-										<ng-template ng-label-tmp let-item="item">
-											<div class="d-flex align-items-center gap-2">
-												<ion-icon [name]="item.icon"></ion-icon>
-												<span>{{ item.name }}</span>
-											</div>
-										</ng-template>
-									</ng-select>
-								</div>
-							</div>
-							<div class="filter-item">
-								<div class="d-flex flex-column mb-1 gap-1">
-									<div class="d-flex align-items-center">
-										<span class="text-gray-700 ls-1px" style="font-size: 0.7rem">CATEGORÍAS</span>
-									</div>
-									<app-menu-select-categories
-										(applyCategories)="getCategories($event)"
-										[selectedCategories]="categories"
-										[title]="'Categorías'"
-										[placeholder]="'Filtrar por categoría'"
-										[sizeClass]="'sm'"
-									></app-menu-select-categories>
 								</div>
 							</div>
 						</div>
 
-						<div class="table-wrapper mt-4 mb-7">
-							<table class="table custom-table align-middle mb-0">
-								<thead>
-									<tr>
-										<th class="fixed-xs text-center p-0" style="position: unset !important">
-											<div class="dropdown">
-												<button
-													class="btn btn-icon btn-dark h-25px w-25px"
-													type="button"
-													placement="top"
-													tooltipClass="tooltip-dark"
-													container="body"
-													[disabled]="!hasSelectedGroups()"
-													id="dropdownTable"
-													data-bs-toggle="dropdown"
-													aria-expanded="false"
-												>
-													<ion-icon name="settings-outline" class="fs-5"></ion-icon>
-												</button>
-												<ul class="dropdown-menu menu-state-bg-light-primary" aria-labelledby="dropdownTable">
-													<li>
-														<a
-															class="dropdown-item cursor-pointer d-flex align-items-center gap-2 fs-7"
-															[class.disabled]="selectedIds.size === 0"
-															[attr.data-bs-toggle]="selectedIds.size > 0 ? 'modal' : null"
-															[attr.data-bs-target]="selectedIds.size > 0 ? '#modalMultipleActive' : null"
-															style="text-transform: capitalize !important"
-														>
-															<ion-icon name="checkmark-circle-outline" class="text-primary"></ion-icon>
-															Activar
-														</a>
-													</li>
-													<li>
-														<a
-															class="dropdown-item cursor-pointer d-flex align-items-center gap-2 fs-7"
-															[class.disabled]="selectedIds.size === 0"
-															[attr.data-bs-toggle]="selectedIds.size > 0 ? 'modal' : null"
-															[attr.data-bs-target]="selectedIds.size > 0 ? '#modalMultipleDisabled' : null"
-															style="text-transform: capitalize !important"
-														>
-															<ion-icon name="close-circle-outline" class="text-danger"></ion-icon>
-															Desactivar
-														</a>
-													</li>
-												</ul>
-											</div>
-										</th>
-										<th class="flex-column">Atributo</th>
-										<th class="fixed-md">Atributos</th>
-										<th class="fixed-md">Estado</th>
-										<th class="fixed-xs text-center text-center"></th>
-									</tr>
-								</thead>
-								<tbody>
-									<ng-container *ngIf="loading">
-										<tr *ngFor="let item of [1, 2, 3, 4, 5, 6]">
-											<td class="fixed-xs text-center p-0">
-												<div class="skeleton skeleton-check"></div>
-											</td>
-											<td class="flex-column fw-medium">
-												<div class="d-flex align-items-center">
-													<div class="d-flex flex-column gap-2" style="width: 100%; max-width: 250px">
-														<div class="skeleton skeleton-text" style="width: 60%"></div>
-														<div class="skeleton skeleton-text" style="width: 40%"></div>
-													</div>
-												</div>
-											</td>
-											<td class="fixed-md">
-												<div class="skeleton skeleton-badge" style="height: 26.07px !important; width: 150px"></div>
-											</td>
-											<td class="fixed-md">
-												<div class="skeleton skeleton-badge"></div>
-											</td>
-											<td class="fixed-xs text-center p-0">
-												<div class="skeleton skeleton-btn"></div>
-											</td>
-										</tr>
-									</ng-container>
-									<ng-container *ngIf="!loading && attributeGroups.length >= 1">
-										<tr *ngFor="let item of attributeGroups">
-											<td class="fixed-xs text-center p-0">
-												<label class="form-check form-check-customs form-check-sm m-0 d-flex align-items-center justify-content-center h-100">
-													<input class="form-check-input cursor-pointer" type="checkbox" [checked]="selectedIds.has(item.id!)" (change)="toggleItem(item.id!, $event)" />
-												</label>
-											</td>
-											<td class="flex-column">
-												<div class="d-flex align-items-center gap-2" style="min-width: 0">
-													<div class="d-flex flex-column" style="min-width: 0">
-														<a class="text-gray-700 fs-8 fw-500 text-truncate-1">
-															{{ item.name }}
-														</a>
+						<div class="list-filter-row my-7">
+							<div class="list-filter-item list-filter-md">
+								<label class="list-filter-label" for="attributeGroupStatus">Estado</label>
+								<ng-select
+									id="attributeGroupStatus"
+									[items]="statusFilters"
+									bindLabel="name"
+									bindValue="value"
+									name="selectedStatus"
+									[(ngModel)]="selectedStatus"
+									placeholder="Seleccionar estado"
+									[clearable]="false"
+									[closeOnSelect]="true"
+									[searchable]="false"
+									[disabled]="isAttributeGroupsLoading"
+									appendTo="body"
+									dropdownPanelClass="app-select-panel"
+									class="app-select app-select-sm"
+								>
+									<ng-template ng-option-tmp let-item="item">
+										<div class="app-select-option">
+											<span class="app-select-dot" [ngClass]="'bg-' + item.color"></span>
+											<span class="app-select-option-text">{{ item.name }}</span>
+											<ion-icon name="checkmark-outline" class="app-select-check" aria-hidden="true"></ion-icon>
+										</div>
+									</ng-template>
+									<ng-template ng-label-tmp let-item="item">
+										<div class="app-select-value">
+											<span class="app-select-dot" [ngClass]="'bg-' + item.color"></span>
+											<span class="app-select-value-text">{{ item.name }}</span>
+										</div>
+									</ng-template>
+								</ng-select>
+							</div>
 
-														<small class="text-gray-500 fw-400 text-truncate-1 fs-8">
-															{{ item.description }}
-														</small>
-													</div>
-												</div>
-											</td>
-											<td class="fixed-md">
-												<a
-													class="btn btn-xs bg-light text-primary cursor-pointer d-flex align-items-center gap-2 fw-600 text-truncate-1 bg-light-primary fs-8"
-													[routerLink]="['/products/attributes/groups/' + item?.id + '/attributes']"
-													style="border-radius: 3rem !important"
-												>
-													<ion-icon name="open-outline"></ion-icon>
-													<small class="text-uppercase">Atributos</small>
-												</a>
-											</td>
-											<td class="fixed-md">
-												<span class="badge rounded-pill text-gray-700" [ngClass]="{ 'bg-outline-danger': !item.status, 'bg-outline-success': item.status }">
-													<span
-														class="d-inline-block rounded-circle me-1"
-														style="width: 6px; height: 6px"
-														[ngClass]="{ 'bg-danger': !item.status, 'bg-success': item.status }"
-													></span>
-													{{ item.status ? 'Activo' : 'Inactivo' }}
-												</span>
-											</td>
-											<td class="fixed-xs text-center p-0">
-												<div class="dropdown">
-													<button class="icon-btn btn-action dropdown-toggle d-flex align-items-center justify-content-center mx-auto" data-bs-toggle="dropdown">
-														<i class="bi bi-three-dots"></i>
-													</button>
-													<app-modal-delete
-														[id]="'modalDelete-' + item.id"
-														[title]="item.status ? 'Desactivar grupo' : 'Activar grupo'"
-														[description]="
-															item.status
-																? `El grupo de atributos <b>${item.name}</b> quedará deshabilitado temporalmente y no podrá ser utilizado en el sistema.`
-																: `El grupo de atributos <b>${item.name}</b> volverá a estar activo y disponible nuevamente en el sistema.`
-														"
-														[textButton]="item.status ? 'Desactivar' : 'Activar'"
-														(actionConfirmed)="setStatus(item.id!, item.status!)"
-														[loadBtnDelete]="loadBtnDelete"
-													></app-modal-delete>
-													<div class="dropdown-menu menu-state-bg-light-primary" data-bs-display="static">
-														<a class="dropdown-item d-flex align-items-center gap-2 cursor-pointer" [routerLink]="['/products/attributes/groups/' + item?.id + '/edit']">
-															<ion-icon name="create-outline"></ion-icon>
-															Editar
-														</a>
+							<div class="list-filter-item list-filter-md">
+								<label class="list-filter-label" for="attributeGroupSort">Orden</label>
+								<ng-select
+									id="attributeGroupSort"
+									[items]="sortFilters"
+									bindLabel="name"
+									bindValue="value"
+									name="selectedSort"
+									[(ngModel)]="selectedSort"
+									placeholder="Seleccionar orden"
+									[clearable]="false"
+									[closeOnSelect]="true"
+									[searchable]="false"
+									[disabled]="isAttributeGroupsLoading"
+									appendTo="body"
+									dropdownPanelClass="app-select-panel"
+									class="app-select app-select-sm"
+								>
+									<ng-template ng-option-tmp let-item="item">
+										<div class="app-select-option">
+											<ion-icon [name]="item.icon" class="app-select-option-icon" aria-hidden="true"></ion-icon>
+											<span class="app-select-option-text">{{ item.name }}</span>
+											<ion-icon name="checkmark-outline" class="app-select-check" aria-hidden="true"></ion-icon>
+										</div>
+									</ng-template>
+									<ng-template ng-label-tmp let-item="item">
+										<div class="app-select-value">
+											<ion-icon [name]="item.icon" class="app-select-value-icon" aria-hidden="true"></ion-icon>
+											<span class="app-select-value-text">{{ item.name }}</span>
+										</div>
+									</ng-template>
+								</ng-select>
+							</div>
 
-														<a class="dropdown-item d-flex align-items-center gap-2 cursor-pointer" data-bs-toggle="modal" [attr.data-bs-target]="'#modalDelete-' + item?.id">
-															<ion-icon [name]="item?.status ? 'close-circle-outline' : 'checkmark-circle-outline'"></ion-icon>
-															{{ item?.status ? 'Desactivar' : 'Activar' }}
-														</a>
-
-														<a class="dropdown-item d-flex align-items-center gap-2 cursor-pointer" [routerLink]="['/products/attributes/groups/' + item?.id + '/attributes']">
-															<ion-icon name="list-outline"></ion-icon>
-															Atributos
-														</a>
-													</div>
-												</div>
-											</td>
-										</tr>
-									</ng-container>
-									<ng-container *ngIf="!loading && attributeGroups.length == 0 && !errorMsmServerListGroupsAttributes">
-										<tr>
-											<td colspan="6">
-												<app-not-found [error]="{ message: 'No se encontraron registros.', statusCode: 404 }"></app-not-found>
-											</td>
-										</tr>
-									</ng-container>
-									<ng-container *ngIf="!loading && errorMsmServerListGroupsAttributes">
-										<tr>
-											<td colspan="6">
-												<app-not-found [error]="errorMsmServerListGroupsAttributes"></app-not-found>
-											</td>
-										</tr>
-									</ng-container>
-								</tbody>
-							</table>
+							<div class="list-filter-item list-filter-lg">
+								<label class="list-filter-label" for="attributeGroupCategories">Categorías</label>
+								<ng-select
+									id="attributeGroupCategories"
+									[items]="categoryFilters"
+									bindLabel="name"
+									bindValue="id"
+									name="selectedCategoryIds"
+									[ngModel]="selectedCategoryIds"
+									(ngModelChange)="getCategories($event)"
+									[multiple]="true"
+									[closeOnSelect]="false"
+									[clearable]="false"
+									[searchable]="true"
+									[disabled]="isAttributeGroupsLoading || isCategoriesLoading"
+									[loading]="isCategoriesLoading"
+									placeholder="Filtrar por categorías"
+									appendTo="body"
+									dropdownPanelClass="app-select-panel"
+									class="app-select app-select-sm"
+								>
+									<ng-template ng-option-tmp let-item="item">
+										<div class="app-select-option">
+											<span class="app-select-option-text">{{ item.name }}</span>
+											<ion-icon name="checkmark-outline" class="app-select-check" aria-hidden="true"></ion-icon>
+										</div>
+									</ng-template>
+									<ng-template ng-multi-label-tmp let-items="items">
+										<div class="app-select-value">
+											<span class="app-select-value-text">{{ items.length === 1 ? items[0].name : items.length + ' seleccionadas' }}</span>
+										</div>
+									</ng-template>
+								</ng-select>
+							</div>
+							<div class="table-counter" aria-live="polite">
+								<span>Mostrando {{ firstVisibleAttributeGroup }}–{{ lastVisibleAttributeGroup }} de {{ totalAttributeGroups }} grupos</span>
+							</div>
 						</div>
 
-						<div class="d-flex justify-content-between" *ngIf="attributeGroups.length >= 1">
-							<div class="d-flex align-items-center gap-2 text-gray-600 fs-8 text-uppercase ls-1px">
-								Ver
-								<select class="form-select form-select-sm w-auto" name="limit" [(ngModel)]="limit" (change)="setLimit()">
-									<option value="10">10</option>
-									<option value="20">20</option>
-									<option value="25">25</option>
-								</select>
-								Por pagina
-							</div>
-							<div class="d-flex align-items-center gap-3">
-								<app-pagination [currentPage]="currentPage" [totalPages]="totalPages" (pageChanged)="onPageChange($event)"></app-pagination>
+						<div class="row g-3 g-lg-4">
+							<div class="col-12">
+								<div class="table-wrapper mb-7">
+									<table class="table custom-table align-middle mb-0">
+										<thead>
+											<tr>
+												<th class="fixed-xs text-center p-0" style="position: unset !important">
+													<div class="dropdown">
+														<button
+															id="attributeGroupTableOptions"
+															type="button"
+															class="btn btn-icon btn-dark h-25px w-25px"
+															data-bs-toggle="dropdown"
+															aria-expanded="false"
+															aria-label="Acciones para grupos seleccionados"
+															title="Acciones"
+															[disabled]="isAttributeGroupsLoading"
+														>
+															<ion-icon name="settings-outline" class="fs-5" aria-hidden="true"></ion-icon>
+														</button>
+
+														<div class="dropdown-menu dropdown-menu-end action-dropdown-menu action-dropdown-menu-compact" aria-labelledby="attributeGroupTableOptions">
+															<a
+																class="dropdown-item action-dropdown-item action-dropdown-item-compact"
+																[class.disabled]="!canUpdateSelectedAttributeGroups"
+																[attr.data-bs-toggle]="canUpdateSelectedAttributeGroups ? 'modal' : null"
+																[attr.data-bs-target]="canUpdateSelectedAttributeGroups ? '#modalMultipleActive' : null"
+																style="text-transform: capitalize !important"
+															>
+																<span class="action-dropdown-item-icon">
+																	<ion-icon class="fs-4 text-primary" name="checkmark-circle-outline" aria-hidden="true"></ion-icon>
+																</span>
+																<span class="action-dropdown-item-title text-primary">Activar</span>
+															</a>
+															<a
+																class="dropdown-item action-dropdown-item action-dropdown-item-compact"
+																[class.disabled]="!canUpdateSelectedAttributeGroups"
+																[attr.data-bs-toggle]="canUpdateSelectedAttributeGroups ? 'modal' : null"
+																[attr.data-bs-target]="canUpdateSelectedAttributeGroups ? '#modalMultipleDisabled' : null"
+																style="text-transform: capitalize !important"
+															>
+																<span class="action-dropdown-item-icon">
+																	<ion-icon class="fs-4 text-danger" name="close-circle-outline" aria-hidden="true"></ion-icon>
+																</span>
+																<span class="action-dropdown-item-title text-danger">Desactivar</span>
+															</a>
+															<button
+																type="button"
+																class="dropdown-item action-dropdown-item action-dropdown-item-compact"
+																[disabled]="areAllAttributeGroupsSelected || selectedAttributeGroupsIds.size >= maxSelectedAttributeGroups"
+																(click)="selectAllAttributeGroups()"
+															>
+																<span class="action-dropdown-item-icon">
+																	<ion-icon class="fs-4" name="checkbox-outline" aria-hidden="true"></ion-icon>
+																</span>
+
+																<span class="action-dropdown-item-title">Seleccionar todos</span>
+															</button>
+															<button
+																type="button"
+																class="dropdown-item action-dropdown-item action-dropdown-item-compact"
+																[disabled]="selectedAttributeGroupsIds.size === 0"
+																(click)="clearAttributeGroupsSelection()"
+															>
+																<span class="action-dropdown-item-icon">
+																	<ion-icon class="fs-4" name="square-outline" aria-hidden="true"></ion-icon>
+																</span>
+
+																<span class="action-dropdown-item-title">Quitar selección</span>
+															</button>
+														</div>
+													</div>
+												</th>
+												<th class="flex-column">Grupo de atributos</th>
+												<th class="fixed-md">Atributos</th>
+												<th class="fixed-sm">Estado</th>
+												<th class="fixed-xs text-center"></th>
+											</tr>
+										</thead>
+										<tbody>
+											@if (isAttributeGroupsLoading) {
+												<tr *ngFor="let item of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]">
+													<td class="fixed-xs text-center p-0"><div class="skeleton skeleton-check"></div></td>
+													<td class="flex-column">
+														<div class="skeleton-lines d-flex flex-column gap-2">
+															<div class="skeleton skeleton-text skeleton-w-60"></div>
+															<div class="skeleton skeleton-text skeleton-w-40"></div>
+														</div>
+													</td>
+													<td class="fixed-md"><div class="skeleton skeleton-badge"></div></td>
+													<td class="fixed-sm"><div class="skeleton skeleton-badge"></div></td>
+													<td class="fixed-xs text-center p-0"><div class="skeleton skeleton-btn"></div></td>
+												</tr>
+											} @else if (attributeGroupsLoadError) {
+												<tr>
+													<td colspan="5"><app-not-found [error]="attributeGroupsLoadError"></app-not-found></td>
+												</tr>
+											} @else if (attributeGroups.length >= 1) {
+												<tr *ngFor="let item of attributeGroups">
+													<td class="fixed-xs text-center p-0">
+														<label class="form-check form-check-customs form-check-sm m-0 d-flex align-items-center justify-content-center h-100">
+															<input
+																class="form-check-input cursor-pointer"
+																type="checkbox"
+																[checked]="selectedAttributeGroupsIds.has(item.id!)"
+																[disabled]="!item.id || (selectedAttributeGroupsIds.size >= maxSelectedAttributeGroups && !selectedAttributeGroupsIds.has(item.id!))"
+																[attr.title]="
+																	selectedAttributeGroupsIds.size >= maxSelectedAttributeGroups && !selectedAttributeGroupsIds.has(item.id!)
+																		? 'Máximo ' + maxSelectedAttributeGroups + ' registros seleccionados'
+																		: null
+																"
+																(change)="onAttributeGroupsSelectionChange(item.id!, $any($event.target).checked)"
+															/>
+														</label>
+													</td>
+													<td class="flex-column">
+														<div class="d-flex flex-column" style="min-width: 0">
+															<p class="paragraph paragraph-sm text-gray-700 fw-600 lh-tight text-truncate-1 m-0">{{ item.name }}</p>
+															<p class="paragraph paragraph-sm text-gray-400 fs-12 fw-400 lh-tight text-truncate-1 m-0">{{ item.description || '---' }}</p>
+														</div>
+													</td>
+													<td class="fixed-md">
+														<a
+															class="btn btn-xs btn-light-primary"
+															[routerLink]="['/products/attributes/groups/' + item.id + '/attributes']"
+															[attr.aria-label]="'Ver atributos de ' + item.name"
+														>
+															<ion-icon name="list-outline" aria-hidden="true"></ion-icon>
+															<span>Ver atributos</span>
+														</a>
+													</td>
+													<!-- Estado -->
+													<td class="fixed-sm">
+														<span
+															class="badge rounded-pill fw-700"
+															[ngClass]="{
+																'bg-outline-danger': !item.status,
+																'bg-outline-primary': item.status,
+																'text-danger': !item.status,
+																'text-primary': item.status,
+															}"
+														>
+															<span
+																class="d-inline-block rounded-circle me-1"
+																style="width: 6px; height: 6px"
+																[ngClass]="{
+																	'bg-danger': !item.status,
+																	'bg-primary': item.status,
+																}"
+															></span>
+
+															{{ item.status ? 'Activo' : 'Inactivo' }}
+														</span>
+													</td>
+
+													<td class="fixed-xs text-center p-0">
+														<div class="dropdown">
+															<button
+																type="button"
+																class="icon-btn btn-action dropdown-toggle dropdown-toggle-no-arrow d-flex align-items-center justify-content-center mx-auto"
+																data-bs-toggle="dropdown"
+																data-bs-offset="0,7"
+																aria-expanded="false"
+																[attr.aria-label]="'Opciones del grupo ' + item.name"
+																title="Opciones"
+															>
+																<i class="bi bi-three-dots" aria-hidden="true"></i>
+															</button>
+															<app-modal-delete
+																[id]="'modalDelete-' + item.id"
+																[title]="item.status ? 'Desactivar grupo' : 'Activar grupo'"
+																[description]="
+																	item.status
+																		? `El grupo de atributos <b>${item.name}</b> quedará deshabilitado temporalmente y no podrá ser utilizado en el sistema.`
+																		: `El grupo de atributos <b>${item.name}</b> volverá a estar activo y disponible nuevamente en el sistema.`
+																"
+																[textButton]="item.status ? 'Desactivar' : 'Activar'"
+																(actionConfirmed)="onUpdateStatus(item.id!, item.status!)"
+																[loadBtnDelete]="isUpdatingSingleStatus"
+															></app-modal-delete>
+															<div class="dropdown-menu dropdown-menu-end action-dropdown-menu action-dropdown-menu-compact">
+																<a class="dropdown-item action-dropdown-item action-dropdown-item-compact" [routerLink]="['/products/attributes/groups/' + item.id + '/edit']">
+																	<span class="action-dropdown-item-icon"><ion-icon name="create-outline" class="fs-4" aria-hidden="true"></ion-icon></span>
+																	<span class="action-dropdown-item-title">Editar</span>
+																</a>
+																<a class="dropdown-item action-dropdown-item action-dropdown-item-compact" data-bs-toggle="modal" [attr.data-bs-target]="'#modalDelete-' + item.id">
+																	<span class="action-dropdown-item-icon">
+																		<ion-icon
+																			[name]="item.status ? 'close-circle-outline' : 'checkmark-circle-outline'"
+																			class="fs-4"
+																			[ngClass]="item.status ? 'text-danger' : 'text-primary'"
+																			aria-hidden="true"
+																		></ion-icon>
+																	</span>
+																	<span class="action-dropdown-item-title" [ngClass]="item.status ? 'text-danger' : 'text-primary'">
+																		{{ item.status ? 'Desactivar' : 'Activar' }}
+																	</span>
+																</a>
+																<a
+																	class="dropdown-item action-dropdown-item action-dropdown-item-compact"
+																	[routerLink]="['/products/attributes/groups/' + item.id + '/attributes']"
+																>
+																	<span class="action-dropdown-item-icon"><ion-icon name="list-outline" class="fs-4" aria-hidden="true"></ion-icon></span>
+																	<span class="action-dropdown-item-title">Atributos</span>
+																</a>
+															</div>
+														</div>
+													</td>
+												</tr>
+											} @else {
+												<tr>
+													<td colspan="5"><app-not-found [error]="{ message: 'No se encontraron registros.', statusCode: 404 }"></app-not-found></td>
+												</tr>
+											}
+										</tbody>
+									</table>
+								</div>
+								<div class="d-flex justify-content-between pb-10">
+									<label class="page-size-control">
+										<span>Mostrar</span>
+										<select
+											class="form-select page-size-select"
+											name="limit"
+											[(ngModel)]="limit"
+											(change)="onLimitChange()"
+											[disabled]="isAttributeGroupsLoading"
+											aria-label="Cantidad de grupos por página"
+										>
+											@for (pageLimit of paginationLimits; track pageLimit) {
+												<option [ngValue]="pageLimit">{{ pageLimit }}</option>
+											}
+										</select>
+										<span>por página</span>
+									</label>
+									<div class="d-flex align-items-center gap-3">
+										<app-pagination
+											[currentPage]="currentPage"
+											[totalPages]="totalPages"
+											[isLoading]="isAttributeGroupsLoading"
+											(pageChanged)="onPageChange($event)"
+										></app-pagination>
+									</div>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -375,18 +470,18 @@
 
 <app-modal-delete
 	[id]="'modalMultipleActive'"
-	[title]="'Activación Multiple'"
-	[description]="'El estado de los grupos serán actualizadas. Verifica tu selección antes de continuar, ya que este cambio se aplicará a todos.'"
+	[title]="'Activación múltiple'"
+	[description]="'Se activarán los grupos seleccionados. Verifica tu selección antes de continuar.'"
 	[textButton]="'Activar'"
 	(actionConfirmed)="onUpdateStatusMultiple(true)"
-	[loadBtnDelete]="loadBtnMultipleStatus"
+	[loadBtnDelete]="isUpdatingMultipleStatuses"
 ></app-modal-delete>
 
 <app-modal-delete
 	[id]="'modalMultipleDisabled'"
-	[title]="'Desactivación Multiple'"
-	[description]="'El estado de los grupos serán actualizadas. Verifica tu selección antes de continuar, ya que este cambio se aplicará a todos.'"
+	[title]="'Desactivación múltiple'"
+	[description]="'Se desactivarán los grupos seleccionados. Verifica tu selección antes de continuar.'"
 	[textButton]="'Desactivar'"
 	(actionConfirmed)="onUpdateStatusMultiple(false)"
-	[loadBtnDelete]="loadBtnMultipleStatus"
+	[loadBtnDelete]="isUpdatingMultipleStatuses"
 ></app-modal-delete>
